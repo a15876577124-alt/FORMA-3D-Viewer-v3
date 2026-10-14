@@ -1,0 +1,235 @@
+{
+  "generatedAt": "2026-10-14T21:49:20.999Z",
+  "study": "hardedge",
+  "note": "硬边阈值扫描：数值越小，越多夹角余弦不同的邻接面被排除出平滑",
+  "base": "http://127.0.0.1:5173",
+  "webgl": {
+    "api": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "variants": [
+    {
+      "key": "180",
+      "label": "180° 纯平滑（当前交付）",
+      "dir": "./../assets/models/"
+    },
+    {
+      "key": "90",
+      "label": "90°",
+      "dir": "./../assets/variants/HA-90/"
+    },
+    {
+      "key": "75",
+      "label": "75°",
+      "dir": "./../assets/variants/HA-75/"
+    },
+    {
+      "key": "60",
+      "label": "60°",
+      "dir": "./../assets/variants/HA-60/"
+    },
+    {
+      "key": "45",
+      "label": "45°",
+      "dir": "./../assets/variants/HA-45/"
+    },
+    {
+      "key": "30",
+      "label": "30°（接近逐面着色）",
+      "dir": "./../assets/variants/HA-30/"
+    }
+  ],
+  "exhibits": [
+    {
+      "id": "sheng",
+      "variants": {
+        "30": {
+          "bg": 2.23,
+          "mean": 18.78,
+          "stddev": 45.09,
+          "coverage": 0.20934,
+          "subjectMean": 88.87,
+          "laplacian": 56.082,
+          "load": {
+            "tris": 47512,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "45": {
+          "bg": 2.23,
+          "mean": 18.78,
+          "stddev": 45.1,
+          "coverage": 0.20945,
+          "subjectMean": 88.86,
+          "laplacian": 56.116,
+          "load": {
+            "tris": 47512,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "60": {
+          "bg": 2.23,
+          "mean": 18.78,
+          "stddev": 45.1,
+          "coverage": 0.20947,
+          "subjectMean": 88.85,
+          "laplacian": 56.061,
+          "load": {
+            "tris": 47512,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "75": {
+          "bg": 2.23,
+          "mean": 18.79,
+          "stddev": 45.1,
+          "coverage": 0.2092,
+          "subjectMean": 88.97,
+          "laplacian": 55.996,
+          "load": {
+            "tris": 47512,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "90": {
+          "bg": 2.23,
+          "mean": 18.8,
+          "stddev": 45.11,
+          "coverage": 0.20942,
+          "subjectMean": 88.94,
+          "laplacian": 55.893,
+          "load": {
+            "tris": 47512,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "180": {
+          "bg": 2.23,
+          "mean": 18.82,
+          "stddev": 45.14,
+          "coverage": 0.20945,
+          "subjectMean": 89.01,
+          "laplacian": 55.844,
+          "load": {
+            "tris": 47512,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        }
+      }
+    },
+    {
+      "id": "jing-red",
+      "variants": {
+        "30": {
+          "bg": 0.94,
+          "mean": 19.99,
+          "stddev": 50.08,
+          "coverage": 0.20171,
+          "subjectMean": 98.21,
+          "laplacian": 93.719,
+          "load": {
+            "tris": 49178,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "45": {
+          "bg": 0.95,
+          "mean": 19.99,
+          "stddev": 50.08,
+          "coverage": 0.20166,
+          "subjectMean": 98.22,
+          "laplacian": 93.606,
+          "load": {
+            "tris": 49178,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "60": {
+          "bg": 0.95,
+          "mean": 19.99,
+          "stddev": 50.09,
+          "coverage": 0.20188,
+          "subjectMean": 98.14,
+          "laplacian": 93.923,
+          "load": {
+            "tris": 49178,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "75": {
+          "bg": 0.95,
+          "mean": 19.99,
+          "stddev": 50.08,
+          "coverage": 0.2019,
+          "subjectMean": 98.12,
+          "laplacian": 93.801,
+          "load": {
+            "tris": 49178,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "90": {
+          "bg": 0.94,
+          "mean": 19.99,
+          "stddev": 50.1,
+          "coverage": 0.20209,
+          "subjectMean": 98.04,
+          "laplacian": 93.81,
+          "load": {
+            "tris": 49178,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        },
+        "180": {
+          "bg": 0.95,
+          "mean": 19.99,
+          "stddev": 50.08,
+          "coverage": 0.20188,
+          "subjectMean": 98.11,
+          "laplacian": 93.749,
+          "load": {
+            "tris": 49178,
+            "meshesWithNormal": 1,
+            "mesh": 1,
+            "metalness": 0,
+            "flatShading": false
+          }
+        }
+      }
+    }
+  ],
+  "consoleErrors": []
+}

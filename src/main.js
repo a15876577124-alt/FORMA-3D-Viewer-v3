@@ -1,0 +1,294 @@
+// Application entry: wires detection -> renderer -> catalogue -> panels, and
+// owns every cross-cutting action (switching exhibits, shortcuts, persistence).
+import { detectCapabilities } from './core/capabilities.js';
+import { Viewer } from './core/viewer.js';
+import { ViewState } from './state/viewState.js';
+import { BY_ID, CATALOG, FIGURINES, figurineOrdinal } from './models/catalog.js';
+import { buildSidebar } from './ui/sidebar.js';
+import { buildInspector } from './ui/inspector.js';
+import { setupChrome } from './ui/chrome.js';
+import { importFiles } from './loaders/registry.js';
+import { describeError } from './loaders/errors.js';
+import { $, setProgress, toast, fatal, formatNumber } from './utils/dom.js';
+
+const pad2 = (n) => String(n).padStart(2, '0');
+
+const FORMAT_LABEL = {
+  glb: 'glTF 2.0 / GLB', gltf: 'glTF 2.0 / .gltf',
+  obj: 'Wavefront OBJ', fbx: 'Autodesk FBX', procedural: 'Three.js 内置几何体',
+};
+
+function webglSupported() {
+  const c = document.createElement('canvas');
+  return !!(c.getContext('webgl2') || c.getContext('webgl'));
+}
+
+function boot() {
+  if (!webglSupported()) {
+    fatal('无法启动三维视图', '当前浏览器不支持 WebGL。请使用最新版 Chrome / Edge / Firefox / Safari，并确认没有在系统设置里关闭硬件加速。');
+    return;
+  }
+
+  const caps = detectCapabilities();
+  const canvas = $('stage');
+  if (!canvas) { fatal('页面结构损坏', '找不到画布元素 #stage。'); return; }
+
+  let viewer;
+  try {
+    viewer = new Viewer(canvas, caps);
+  } catch (err) {
+    console.error(err);
+    const info = describeError(err);
+    fatal('无法启动三维渲染器', info.message);
+    return;
+  }
+
+  const viewState = new ViewState();
+  const extra = new Map();          // imported entries, keyed by id
+  const current = { entry: null };
+
+  const resolveEntry = (id) => BY_ID.get(id) || extra.get(id) || null;
+  const getEntry = () => current.entry;
+
+  // ------------------------------------------------------------- panels ----
+  const sidebar = buildSidebar({ onSelect: (id) => { select(id); } });
+
+  const inspector = buildInspector({
+    viewer, viewState, getEntry,
+    onView: (state) => chrome.syncView(state),
+  });
+
+  // ------------------------------------------------------------- actions ---
+  function toggle(field) {
+    const entry = getEntry();
+    if (!entry) return;
+    const s = viewState.get(entry);
+    s.view[field] = !s.view[field];
+    viewState.touch();
+    inspector.applyView();
+  }
+
+  function capture() {
+    const entry = getEntry();
+    if (!entry) return null;
+    try {
+      const url = viewer.capturePNG(2, viewer.currentFilename());
+      toast('已导出 PNG 截图', 'ok');
+      return url;
+    } catch (err) {
+      console.error(err);
+      toast('截图失败：' + (err?.message || err), 'err', 8000);
+      return null;
+    }
+  }
+
+  function resetView() {
+    const entry = getEntry();
+    if (!entry) return;
+    const s = viewState.get(entry);
+    const best = entry.best || { yaw: 0.42, pitch: 0.2, distMul: 1, targetYMul: 0.5 };
+    s.camera = { ...s.camera, ...best, fov: s.camera.fov };
+    viewState.touch();
+    viewer.applyViewAngle(false, s.camera);
+    toast('已回到最佳展示视角', 'ok', 1800);
+  }
+
+  function setImmersive(on) {
+    const next = on === undefined ? !document.body.classList.contains('mode-immersive') : !!on;
+    viewer.setImmersive(next);
+    chrome.setImmersiveUI(next);
+  }
+
+  function step(delta) {
+    const entry = getEntry();
+    const list = CATALOG;
+    const i = entry ? list.findIndex((c) => c.id === entry.id) : 0;
+    const next = list[((i + delta) % list.length + list.length) % list.length];
+    select(next.id);
+  }
+
+  async function doImport(files) {
+    return importFiles(files, viewer, {
+      onMounted: (imported) => {
+        if (!extra.has(imported.id)) {
+          extra.set(imported.id, imported);
+          sidebar.addImported(imported, (id) => select(id));
+        }
+        adoptImported(imported);
+      },
+    });
+  }
+
+  const chrome = setupChrome({
+    toggleImmersive: () => setImmersive(),
+    setImmersive,
+    resetView,
+    capture,
+    step,
+    toggle,
+    importFiles: (files) => { doImport(files); },
+  });
+
+  // --------------------------------------------------------------- select --
+  function updateMeta(entry) {
+    const st = viewer.stats || {};
+    const tri = st.tris ?? entry.tris;
+    const vtx = st.verts ?? entry.verts;
+
+    $('crumbItem').textContent = entry.name;
+    $('objectName').textContent = entry.name;
+    $('objectRoman').textContent = entry.sub || '';
+
+    const ord = figurineOrdinal(entry.id);
+    $('objNum').textContent = ord
+      ? `${pad2(ord.index + 1)} / ${pad2(ord.total)}`
+      : (entry.group === 'demos' ? 'TECHNICAL DEMO' : 'IMPORTED');
+
+    $('objectCaption').textContent = [
+      tri ? `${formatNumber(tri)} 三角形` : '',
+      vtx ? `${formatNumber(vtx)} 顶点` : '',
+    ].filter(Boolean).join(' · ');
+
+    $('modelType').textContent = entry.formatLabel
+      || (entry.procedural ? FORMAT_LABEL.procedural : null)
+      || FORMAT_LABEL[st.format] || 'glTF 2.0 / GLB';
+    $('meshCount').textContent = `${st.meshes ?? 0} 个网格`;
+
+    $('immName').textContent = entry.name;
+    $('immRoman').textContent = entry.sub || '';
+    $('immIndex').textContent = ord
+      ? `${pad2(ord.index + 1)} / ${pad2(ord.total)}`
+      : (entry.group === 'demos' ? 'TECHNICAL DEMO' : 'IMPORTED');
+  }
+
+  // An import is adopted exactly like a catalogue exhibit - same wiring, same
+  // per-exhibit parameter persistence - it just lives in its own sidebar group.
+  async function adoptImported(entry) {
+    current.entry = entry;
+    const s = viewState.get(entry);
+    inspector.sync(s);
+    inspector.setAnimations(viewer.animations, 0);
+    sidebar.select(entry.id);
+    updateMeta(entry);
+    viewer.applyStoredView(s);
+    viewState.touch();
+  }
+
+  async function select(id, opts = {}) {
+    const entry = resolveEntry(id);
+    if (!entry) { toast('找不到展品：' + id, 'err'); return false; }
+
+    // Hand the outgoing camera to its own exhibit before switching away.
+    if (current.entry && current.entry.id !== entry.id) {
+      try { viewState.get(current.entry).camera = viewer.readCamera(); } catch { /* no model yet */ }
+      viewState.touch();
+    }
+
+    setProgress(2, '载入 ' + entry.name + '…');
+    try {
+      await viewer.showEntry(entry, opts);
+    } catch (err) {
+      setProgress(null);
+      if (err && err.stale) return false;
+      const info = describeError(err);
+      console.error('[showEntry]', info.detail || err);
+      toast(info.message, 'err', 9000);
+      return false;
+    }
+    setProgress(null);
+
+    current.entry = entry;
+    const s = viewState.get(entry);
+    inspector.sync(s);
+    inspector.setAnimations(viewer.animations, 0);
+    sidebar.select(entry.id);
+    updateMeta(entry);
+    viewer.applyStoredView(s);
+    viewState.touch();
+
+    try { history.replaceState(null, '', '#' + entry.id); } catch { /* file:// may refuse */ }
+    return true;
+  }
+
+  // Camera moves are persisted to the *current* exhibit only.
+  viewer.onStateChange = () => {
+    if (!current.entry) return;
+    try { viewState.get(current.entry).camera = viewer.readCamera(); } catch { /* ignore */ }
+    viewState.touch();
+  };
+
+  // ------------------------------------------------------------ shortcuts --
+  const KEYS = {
+    r: () => resetView(),
+    p: () => capture(),
+    g: () => toggle('grid'),
+    t: () => toggle('plinth'),
+    w: () => toggle('wireframe'),
+    f: () => chrome.toggleFullscreen(),
+    i: () => setImmersive(),
+    arrowleft: () => step(-1),
+    arrowright: () => step(1),
+  };
+
+  window.addEventListener('keydown', (e) => {
+    const tag = (e.target?.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      toggle('autoRotate');
+      return;
+    }
+    if (e.key === 'Escape') {
+      if (!$('helpModal').hidden) { $('helpModal').hidden = true; return; }
+      if (document.body.classList.contains('mode-immersive')) { setImmersive(false); return; }
+      if ($('inspector').classList.contains('open')) { $('inspector').classList.remove('open'); $('shade').hidden = true; }
+      return;
+    }
+    const fn = KEYS[(e.key || '').toLowerCase()];
+    if (fn) { e.preventDefault(); fn(); }
+  });
+
+  // Flush pending writes before the tab goes away, so nothing is lost.
+  window.addEventListener('pagehide', () => viewState.flush());
+  document.addEventListener('visibilitychange', () => { if (document.hidden) viewState.flush(); });
+
+  // ------------------------------------------------------------- startup ---
+  const hash = (location.hash || '').replace(/^#/, '');
+  const requested = caps.params.get('entry') || hash;
+  const first = (requested && resolveEntry(requested)) || FIGURINES[0];
+
+  let resolveReady;
+  const ready = new Promise((r) => { resolveReady = r; });
+
+  if (caps.params.has('test')) {
+    $('engineLabel').textContent = `本地运行 · TEST · ${caps.renderer ? caps.renderer.slice(0, 46) : 'unknown GPU'}`;
+  } else if (caps.software) {
+    $('engineLabel').textContent = '本地运行 · 软件渲染模式';
+  }
+
+  select(first.id).then((ok) => resolveReady(ok));
+
+  // Automation surface. Everything the test harness needs to assert real
+  // rendering happens against this object - no mocking, no shortcuts.
+  window.__FORMA = {
+    version: '3.0.0',
+    caps,
+    viewer,
+    viewState,
+    catalog: CATALOG.map((c) => ({ id: c.id, name: c.name, group: c.group, file: c.file })),
+    ready,
+    select,
+    actions: { toggle, capture, resetView, setImmersive, step, importFiles: doImport },
+    get current() { return current.entry; },
+    get info() { return viewer.info; },
+    renderNow: () => viewer.render(),
+    flushState: () => viewState.flush(),
+  };
+
+  return ready;
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+else boot();

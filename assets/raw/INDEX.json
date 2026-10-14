@@ -1,0 +1,127 @@
+[
+  {
+    "name": "sheng",
+    "sourceAssetKey": 3,
+    "sourceFile": "..\\FORMA-3D-Viewer-v2\\models\\sheng.js",
+    "glbBytes": 3813968,
+    "sha256": "6ce3cb51ba55d77581d0e873ecfcdccd9a639da5132a83d4090dbcf06ea6ec6e",
+    "verts": 26951,
+    "tris": 47512,
+    "bboxMin": [
+      -0.205421,
+      -0.5,
+      -0.360337
+    ],
+    "bboxMax": [
+      0.205421,
+      0.5,
+      0.360337
+    ],
+    "hasNormal": false,
+    "metallicFactor": null,
+    "roughnessFactor": 0.9036020036098448,
+    "images": 1,
+    "samplers": 0,
+    "generator": "https://github.com/mikedh/trimesh"
+  },
+  {
+    "name": "dan",
+    "sourceAssetKey": 4,
+    "sourceFile": "..\\FORMA-3D-Viewer-v2\\models\\dan.js",
+    "glbBytes": 5597176,
+    "sha256": "640e77d37273049347944181e48f2cbd2d0dec62563d97bbfc265823fe26ee70",
+    "verts": 28662,
+    "tris": 46828,
+    "bboxMin": [
+      -0.0508,
+      -0.15,
+      -0.11101
+    ],
+    "bboxMax": [
+      0.0508,
+      0.15,
+      0.11101
+    ],
+    "hasNormal": false,
+    "metallicFactor": null,
+    "roughnessFactor": 0.9036020036098448,
+    "images": 1,
+    "samplers": 0,
+    "generator": "https://github.com/mikedh/trimesh"
+  },
+  {
+    "name": "jing-red",
+    "sourceAssetKey": 5,
+    "sourceFile": "..\\FORMA-3D-Viewer-v2\\models\\jing-red.js",
+    "glbBytes": 5866772,
+    "sha256": "2290c61726996d8d4b1766d3fc0d5cb569731e1aab6d44a1a58bd7af6160a3ee",
+    "verts": 28472,
+    "tris": 49178,
+    "bboxMin": [
+      -0.172962,
+      -0.5,
+      -0.315366
+    ],
+    "bboxMax": [
+      0.172962,
+      0.5,
+      0.315366
+    ],
+    "hasNormal": false,
+    "metallicFactor": null,
+    "roughnessFactor": 0.9036020036098448,
+    "images": 1,
+    "samplers": 0,
+    "generator": "https://github.com/mikedh/trimesh"
+  },
+  {
+    "name": "jing-yellow",
+    "sourceAssetKey": 6,
+    "sourceFile": "..\\FORMA-3D-Viewer-v2\\models\\jing-yellow.js",
+    "glbBytes": 4166996,
+    "sha256": "390a8b5bdecafde02695eb7cf8442e75f989028c419d66365e8e6e717d9303fd",
+    "verts": 27361,
+    "tris": 47852,
+    "bboxMin": [
+      -0.198764,
+      -0.5,
+      -0.290008
+    ],
+    "bboxMax": [
+      0.198764,
+      0.5,
+      0.290008
+    ],
+    "hasNormal": false,
+    "metallicFactor": null,
+    "roughnessFactor": 0.9036020036098448,
+    "images": 1,
+    "samplers": 0,
+    "generator": "https://github.com/mikedh/trimesh"
+  },
+  {
+    "name": "jing-white",
+    "sourceAssetKey": 7,
+    "sourceFile": "..\\FORMA-3D-Viewer-v2\\models\\jing-white.js",
+    "glbBytes": 3826644,
+    "sha256": "1c5a7822420474026017b0559cd6b744850a827d96023b685a6f7ae7a0db7a57",
+    "verts": 26720,
+    "tris": 46939,
+    "bboxMin": [
+      -0.250068,
+      -0.5,
+      -0.330178
+    ],
+    "bboxMax": [
+      0.250068,
+      0.5,
+      0.330178
+    ],
+    "hasNormal": false,
+    "metallicFactor": null,
+    "roughnessFactor": 0.9036020036098448,
+    "images": 1,
+    "samplers": 0,
+    "generator": "https://github.com/mikedh/trimesh"
+  }
+]

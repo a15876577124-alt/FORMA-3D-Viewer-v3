@@ -1,0 +1,174 @@
+{
+  "args": {
+    "hardAngle": 180,
+    "out": "D:\\FORMA-3D-Viewer-琼剧五手办版\\FORMA-3D-Viewer-v3\\assets\\models",
+    "tag": null
+  },
+  "report": [
+    {
+      "name": "sheng",
+      "hardAngle": 180,
+      "rawBytes": 3813968,
+      "outBytes": 4138144,
+      "delta": 324176,
+      "verts": 26951,
+      "tris": 47512,
+      "degenerate": 0,
+      "flipped": false,
+      "weldGroups": 23744,
+      "duplicates": 3207,
+      "excludedFaces": 0,
+      "normalRange": [
+        [
+          -1,
+          -1,
+          -1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "ms": 39,
+      "outPath": "assets\\models\\sheng.glb",
+      "changes": [
+        "+NORMAL (26951 verts, area-weighted, hardAngle=180)",
+        "metallicFactor (absent -> glTF default 1.0) -> 0",
+        "+sampler (LINEAR / LINEAR_MIPMAP_LINEAR / REPEAT)"
+      ]
+    },
+    {
+      "name": "dan",
+      "hardAngle": 180,
+      "rawBytes": 5597176,
+      "outBytes": 5941880,
+      "delta": 344704,
+      "verts": 28662,
+      "tris": 46828,
+      "degenerate": 0,
+      "flipped": false,
+      "weldGroups": 23346,
+      "duplicates": 5316,
+      "excludedFaces": 0,
+      "normalRange": [
+        [
+          -1,
+          -1,
+          -1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "ms": 19,
+      "outPath": "assets\\models\\dan.glb",
+      "changes": [
+        "+NORMAL (28662 verts, area-weighted, hardAngle=180)",
+        "metallicFactor (absent -> glTF default 1.0) -> 0",
+        "+sampler (LINEAR / LINEAR_MIPMAP_LINEAR / REPEAT)"
+      ]
+    },
+    {
+      "name": "jing-red",
+      "hardAngle": 180,
+      "rawBytes": 5866772,
+      "outBytes": 6209212,
+      "delta": 342440,
+      "verts": 28472,
+      "tris": 49178,
+      "degenerate": 0,
+      "flipped": false,
+      "weldGroups": 24566,
+      "duplicates": 3906,
+      "excludedFaces": 0,
+      "normalRange": [
+        [
+          -1,
+          -1,
+          -1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "ms": 36,
+      "outPath": "assets\\models\\jing-red.glb",
+      "changes": [
+        "+NORMAL (28472 verts, area-weighted, hardAngle=180)",
+        "metallicFactor (absent -> glTF default 1.0) -> 0",
+        "+sampler (LINEAR / LINEAR_MIPMAP_LINEAR / REPEAT)"
+      ]
+    },
+    {
+      "name": "jing-yellow",
+      "hardAngle": 180,
+      "rawBytes": 4166996,
+      "outBytes": 4496104,
+      "delta": 329108,
+      "verts": 27361,
+      "tris": 47852,
+      "degenerate": 0,
+      "flipped": false,
+      "weldGroups": 23918,
+      "duplicates": 3443,
+      "excludedFaces": 0,
+      "normalRange": [
+        [
+          -1,
+          -1,
+          -1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "ms": 35,
+      "outPath": "assets\\models\\jing-yellow.glb",
+      "changes": [
+        "+NORMAL (27361 verts, area-weighted, hardAngle=180)",
+        "metallicFactor (absent -> glTF default 1.0) -> 0",
+        "+sampler (LINEAR / LINEAR_MIPMAP_LINEAR / REPEAT)"
+      ]
+    },
+    {
+      "name": "jing-white",
+      "hardAngle": 180,
+      "rawBytes": 3826644,
+      "outBytes": 4148076,
+      "delta": 321432,
+      "verts": 26720,
+      "tris": 46939,
+      "degenerate": 0,
+      "flipped": false,
+      "weldGroups": 23450,
+      "duplicates": 3270,
+      "excludedFaces": 0,
+      "normalRange": [
+        [
+          -1,
+          -1,
+          -1
+        ],
+        [
+          1,
+          0.9999,
+          1
+        ]
+      ],
+      "ms": 20,
+      "outPath": "assets\\models\\jing-white.glb",
+      "changes": [
+        "+NORMAL (26720 verts, area-weighted, hardAngle=180)",
+        "metallicFactor (absent -> glTF default 1.0) -> 0",
+        "+sampler (LINEAR / LINEAR_MIPMAP_LINEAR / REPEAT)"
+      ]
+    }
+  ]
+}

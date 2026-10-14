@@ -1,0 +1,28 @@
+{
+  "name": "forma-3d-viewer-v3",
+  "version": "3.0.0",
+  "private": true,
+  "description": "FORMA 3D - Qiong Opera Digital Figurine Showcase. Three.js based offline-capable viewer.",
+  "type": "module",
+  "scripts": {
+    "serve": "node serve.mjs",
+    "start": "node serve.mjs",
+    "vendor": "node tools/vendor-three.mjs",
+    "vendor:check": "node tools/vendor-three.mjs --check",
+    "assets:extract": "node tools/extract-glb.mjs",
+    "assets:fix": "node tools/fix-glb.mjs",
+    "assets:verify": "node tools/verify-glb.mjs",
+    "assets:all": "node tools/extract-glb.mjs && node tools/fix-glb.mjs && node tools/verify-glb.mjs",
+    "ao": "node tools/make-contact-ao.mjs",
+    "test": "node tests/run.mjs",
+    "test:gpu": "node tests/run.mjs --gpu",
+    "shots": "node tests/run.mjs --only=shots",
+    "shots:gpu": "node tests/run.mjs --only=shots --gpu"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^22.15.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

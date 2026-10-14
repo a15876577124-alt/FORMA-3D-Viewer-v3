@@ -1,0 +1,164 @@
+{
+  "version": "0.186.1",
+  "generator": "tools/vendor-three.mjs",
+  "files": {
+    "build/three.core.js": {
+      "bytes": 1458113,
+      "sha256": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+      "from": "build/three.core.js"
+    },
+    "build/three.module.js": {
+      "bytes": 662772,
+      "sha256": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+      "from": "build/three.module.js"
+    },
+    "addons/controls/OrbitControls.js": {
+      "bytes": 40755,
+      "sha256": "3d79d07ecb686b4e5d93232eedab255331c1beef711e13164eaa1f68655a5f2b",
+      "from": "examples/jsm/controls/OrbitControls.js"
+    },
+    "addons/curves/NURBSCurve.js": {
+      "bytes": 3888,
+      "sha256": "bef2607618a7778455e71a1f0bd206951c382d313e2e245808cc7d3533d60fb6",
+      "from": "examples/jsm/curves/NURBSCurve.js"
+    },
+    "addons/curves/NURBSUtils.js": {
+      "bytes": 10802,
+      "sha256": "c6bd7c4137d585098923f189687898ea3e8762ea3ecbe255d749a56353894379",
+      "from": "examples/jsm/curves/NURBSUtils.js"
+    },
+    "addons/environments/RoomEnvironment.js": {
+      "bytes": 4960,
+      "sha256": "55f466192cc84298755a424c5e040345006b2ee1455589b3b54126c2ea4123f4",
+      "from": "examples/jsm/environments/RoomEnvironment.js"
+    },
+    "addons/libs/fflate.module.js": {
+      "bytes": 89384,
+      "sha256": "209a4412eb48ce609edb4391992a792ffcc3983d30ee7e2b0b89a8c470f3cd8a",
+      "from": "examples/jsm/libs/fflate.module.js"
+    },
+    "addons/loaders/FBXLoader.js": {
+      "bytes": 113372,
+      "sha256": "7fb8586158a2cf98477b2ee40a82ebec10a81040c70369bb177043375c355322",
+      "from": "examples/jsm/loaders/FBXLoader.js"
+    },
+    "addons/loaders/GLTFLoader.js": {
+      "bytes": 117570,
+      "sha256": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+      "from": "examples/jsm/loaders/GLTFLoader.js"
+    },
+    "addons/loaders/MTLLoader.js": {
+      "bytes": 11356,
+      "sha256": "f1f8f0c6fcfa09671cb609954ea436521d835606853c110c5aff2dc8188f5e61",
+      "from": "examples/jsm/loaders/MTLLoader.js"
+    },
+    "addons/loaders/OBJLoader.js": {
+      "bytes": 22916,
+      "sha256": "86c8384e269b75a21d502d438e3f0dc2e09dc61b6e6da6b81947f5b119112bf8",
+      "from": "examples/jsm/loaders/OBJLoader.js"
+    },
+    "addons/postprocessing/EffectComposer.js": {
+      "bytes": 8501,
+      "sha256": "4e079a5886152d7e529a59aef644e968ab4d32c6a33ce016b36bf29b2eac26f7",
+      "from": "examples/jsm/postprocessing/EffectComposer.js"
+    },
+    "addons/postprocessing/MaskPass.js": {
+      "bytes": 4694,
+      "sha256": "7cd08eee9d5d6f5578beaddbdcbe9c384f6873810af27f22ab7db3ceeb127aa3",
+      "from": "examples/jsm/postprocessing/MaskPass.js"
+    },
+    "addons/postprocessing/OutputPass.js": {
+      "bytes": 4184,
+      "sha256": "02e4a261af34de71338185e9e87f0cbe5cba9115608d984363e1269dec1d2272",
+      "from": "examples/jsm/postprocessing/OutputPass.js"
+    },
+    "addons/postprocessing/Pass.js": {
+      "bytes": 4218,
+      "sha256": "444b409c235ead986893c472e720da1b779a56985c7d10b279c7944b52bd61c5",
+      "from": "examples/jsm/postprocessing/Pass.js"
+    },
+    "addons/postprocessing/RenderPass.js": {
+      "bytes": 4280,
+      "sha256": "817f6c3cdcd0fd41515d112359ea0532568eefb5aabd3b33903957ebca1b8a6a",
+      "from": "examples/jsm/postprocessing/RenderPass.js"
+    },
+    "addons/postprocessing/ShaderPass.js": {
+      "bytes": 3228,
+      "sha256": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d",
+      "from": "examples/jsm/postprocessing/ShaderPass.js"
+    },
+    "addons/postprocessing/UnrealBloomPass.js": {
+      "bytes": 15397,
+      "sha256": "ba8f2fcadfa6588384c9473498f974d81d120f02f0e63a0e59c265202a006b5a",
+      "from": "examples/jsm/postprocessing/UnrealBloomPass.js"
+    },
+    "addons/shaders/CopyShader.js": {
+      "bytes": 729,
+      "sha256": "a33057d5ac91c43304c186ac0e8816e62bb2ed471d3a00ff3018dfd5c0389718",
+      "from": "examples/jsm/shaders/CopyShader.js"
+    },
+    "addons/shaders/LuminosityHighPassShader.js": {
+      "bytes": 1291,
+      "sha256": "5044f780b6e6cf863947f64c36fe1587132f7fbe395ada863cd1e5f0388dcf1e",
+      "from": "examples/jsm/shaders/LuminosityHighPassShader.js"
+    },
+    "addons/shaders/OutputShader.js": {
+      "bytes": 1876,
+      "sha256": "353479f77a8d7e2629d49ccac9fc2f5dbfdda5442e0adf867b00377a2fcb0cb2",
+      "from": "examples/jsm/shaders/OutputShader.js"
+    },
+    "addons/utils/BufferGeometryUtils.js": {
+      "bytes": 37712,
+      "sha256": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+      "from": "examples/jsm/utils/BufferGeometryUtils.js"
+    },
+    "addons/utils/SkeletonUtils.js": {
+      "bytes": 11535,
+      "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+      "from": "examples/jsm/utils/SkeletonUtils.js"
+    },
+    "LICENSE": {
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "from": "LICENSE"
+    }
+  },
+  "bare": [
+    "three",
+    "three/addons/controls/OrbitControls.js",
+    "three/addons/curves/NURBSCurve.js",
+    "three/addons/curves/NURBSUtils.js",
+    "three/addons/environments/RoomEnvironment.js",
+    "three/addons/loaders/FBXLoader.js",
+    "three/addons/loaders/GLTFLoader.js",
+    "three/addons/loaders/MTLLoader.js",
+    "three/addons/loaders/OBJLoader.js",
+    "three/addons/postprocessing/EffectComposer.js",
+    "three/addons/postprocessing/MaskPass.js",
+    "three/addons/postprocessing/OutputPass.js",
+    "three/addons/postprocessing/Pass.js",
+    "three/addons/postprocessing/RenderPass.js",
+    "three/addons/postprocessing/ShaderPass.js",
+    "three/addons/postprocessing/UnrealBloomPass.js",
+    "three/addons/shaders/CopyShader.js",
+    "three/addons/shaders/LuminosityHighPassShader.js",
+    "three/addons/shaders/OutputShader.js",
+    "three/addons/utils/BufferGeometryUtils.js",
+    "three/addons/utils/SkeletonUtils.js"
+  ],
+  "entries": [
+    "build/three.module.js",
+    "examples/jsm/controls/OrbitControls.js",
+    "examples/jsm/environments/RoomEnvironment.js",
+    "examples/jsm/loaders/GLTFLoader.js",
+    "examples/jsm/loaders/OBJLoader.js",
+    "examples/jsm/loaders/MTLLoader.js",
+    "examples/jsm/loaders/FBXLoader.js",
+    "examples/jsm/utils/BufferGeometryUtils.js",
+    "examples/jsm/postprocessing/EffectComposer.js",
+    "examples/jsm/postprocessing/RenderPass.js",
+    "examples/jsm/postprocessing/ShaderPass.js",
+    "examples/jsm/postprocessing/OutputPass.js",
+    "examples/jsm/postprocessing/UnrealBloomPass.js"
+  ]
+}

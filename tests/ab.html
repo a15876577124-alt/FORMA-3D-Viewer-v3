@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<!--
+  Generic A/B harness for asset-repair and shading studies.
+
+  Renders the SAME figurine from a list of GLB sources through the SAME renderer,
+  scene, lights, post chain and camera as the shipping app - it imports
+  src/core/viewer.js directly, so nothing about the look is re-implemented here.
+
+  Usage:  tests/ab.html?v=[{"key":"A","dir":"./../assets/variants/A-raw/"}, ...]
+          &stripNormals=A         (comma separated keys: delete the normal
+                                   attribute AFTER loading, to show what the
+                                   mesh looks like with no shading data at all)
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<link rel="icon" href="data:," />
+<title>FORMA A/B</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "../vendor/three/build/three.module.js",
+    "three/": "../vendor/three/",
+    "three/addons/": "../vendor/three/addons/"
+  }
+}
+</script>
+<style>
+  html, body { margin: 0; height: 100%; background: #08090b; color: #d7dde5;
+               font: 12px/1.5 system-ui, sans-serif; }
+  #wrap { position: fixed; inset: 0; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="stage"></canvas></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { detectCapabilities } from '../src/core/capabilities.js';
+import { Viewer } from '../src/core/viewer.js';
+import { computeWeldedNormals } from '../src/loaders/normals.js';
+import { setProgress } from '../src/utils/dom.js';
+
+const BEST = { yaw: 1.62, pitch: 0.16, distMul: 1.0, targetYMul: 0.5 };
+const q = new URLSearchParams(location.search);
+
+const VARIANTS = JSON.parse(q.get('v') || '[]');
+
+/**
+ * post(p)  —  shading-data treatment applied AFTER loading:
+ *   'none'   leave whatever the file + import pipeline produced
+ *   'flat'   strip the normal attribute and enable flatShading. This is the
+ *            glTF 2.0 §3.7.2 specified behaviour for a primitive with no
+ *            NORMAL accessor, and exactly what three's GLTFLoader does on its
+ *            own - i.e. the honest "before repair" look.
+ *   'naive'  strip, then geometry.computeVertexNormals() - per-INDEX averaging.
+ *            What every default three.js / no-weld path produces, leaving dark
+ *            seams along UV island borders.
+ *   'welded' strip, then the project's position-welded, area-weighted pass.
+ */
+function postProcess(root, mode) {
+  if (!mode || mode === 'none') return;
+  root.traverse((o) => {
+    if (!o.isMesh || !o.geometry) return;
+    const src = o.geometry;
+    const g = new THREE.BufferGeometry();
+    if (src.index) g.setIndex(new THREE.BufferAttribute(src.index.array.slice(), 1));
+    for (const name of ['position', 'uv', 'uv1', 'color']) {
+      const a = src.attributes[name];
+      if (a) g.setAttribute(name, new THREE.BufferAttribute(a.array.slice(), a.itemSize));
+    }
+    const old = src;
+    if (mode === 'naive') g.computeVertexNormals();
+    else if (mode === 'welded') computeWeldedNormals(g);
+    o.geometry = g;
+    old.dispose();
+
+    if (mode === 'flat') {
+      // 'flat' also strips normals, but instead of leaving WebGL in an undefined
+      // state (generic attribute value is unspecified) it turns on flatShading,
+      // which is what glTF 2.0 §3.7.2 requires and what three's GLTFLoader does
+      // on its own when a primitive has no NORMAL. Face normals come from
+      // screen-space derivatives - this IS the standard pre-repair look.
+      if (o.material) {
+        for (const m of (Array.isArray(o.material) ? o.material : [o.material])) {
+          if (m && 'flatShading' in m) { m.flatShading = true; m.needsUpdate = true; }
+        }
+      }
+    }
+  });
+}
+
+function entryFor(id, v, i) {
+  return {
+    id: `ab-${i}-${id}`, group: 'ab', name: id,
+    file: v.dir + id + '.glb',
+    best: { ...BEST }, kind: 'glb', formatLabel: 'GLB',
+  };
+}
+
+async function boot() {
+  const caps = detectCapabilities();
+  const viewer = new Viewer(document.getElementById('stage'), caps);
+
+  window.__AB = {
+    ready: true, viewer, variants: VARIANTS.map(v => v.key),
+    async show(id, key) {
+      const i = VARIANTS.findIndex(v => v.key === key);
+      if (i < 0) throw new Error('unknown variant ' + key);
+      const entry = entryFor(id, VARIANTS[i], i);
+      const ok = await viewer.showEntry(entry, { force: true });
+      if (!ok) throw new Error('showEntry returned false');
+      postProcess(viewer.modelRoot, VARIANTS[i].post || 'none');
+      viewer.render();
+      return true;
+    },
+    stats() {
+      const m = viewer.modelRoot;
+      if (!m) return null;
+      let mesh = 0, verts = 0, tris = 0, hasNormal = 0, metal = null;
+      m.traverse((o) => {
+        if (!o.isMesh) return;
+        mesh++;
+        const g = o.geometry;
+        if (g.attributes.position) verts += g.attributes.position.count;
+        tris += g.index ? g.index.count / 3 : (g.attributes.position?.count || 0) / 3;
+        if (g.attributes.normal) hasNormal++;
+        for (const mm of (Array.isArray(o.material) ? o.material : [o.material]))
+          if (mm && 'metalness' in mm) metal = mm.metalness;
+      });
+      return { mesh, verts, tris, hasNormal, metalness: metal, renderTris: viewer.info.renderTriangles,
+               flatShading: (() => {
+                 let f = null;
+                 m.traverse((o) => { if (o.isMesh && o.material) {
+                   for (const mm of (Array.isArray(o.material) ? o.material : [o.material]))
+                     if (mm && 'flatShading' in mm) f = mm.flatShading;
+                 }});
+                 return f;
+               })() };
+    },
+    // Downsample the live framebuffer to a fixed grid so variants are directly
+    // comparable pixel-for-pixel from outside the page.
+    probe() {
+      const c = document.getElementById('stage');
+      const N = 192;
+      const c2 = document.createElement('canvas');
+      c2.width = N; c2.height = N;
+      const ctx = c2.getContext('2d', { willReadFrequently: true });
+      viewer.render();
+      ctx.drawImage(c, 0, 0, N, N);
+      const d = ctx.getImageData(0, 0, N, N).data;
+      const lum = new Array(N * N);
+      const rgb = new Array(N * N * 3);
+      for (let i = 0; i < N * N; i++) {
+        const r = d[i * 4], g = d[i * 4 + 1], b = d[i * 4 + 2];
+        rgb[i * 3] = r; rgb[i * 3 + 1] = g; rgb[i * 3 + 2] = b;
+        lum[i] = +(0.2126 * r + 0.7152 * g + 0.0722 * b).toFixed(2);
+      }
+      return { N, lum, rgb };
+    },
+    png(scale = 2) { return viewer.capturePNG(scale); },
+  };
+  setProgress(null);
+  window.__AB_READY = true;
+}
+
+boot().catch((e) => { window.__AB_ERR = String(e && e.stack || e); console.error(e); });
+</script>
+</body>
+</html>

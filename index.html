@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0b0d" />
+<link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+<title>FORMA 3D — 琼剧数字手办展厅</title>
+<link rel="stylesheet" href="./styles.css" />
+
+<!-- Offline import map. Must be the FIRST module-related tag and unique on the page.
+     Everything resolves to ./vendor so the bundle works with no network at all,
+     including from a GitHub Pages sub-path. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/build/three.module.js",
+    "three/": "./vendor/three/",
+    "three/addons/": "./vendor/three/addons/"
+  }
+}
+</script>
+</head>
+
+<body>
+<div id="app">
+
+  <!-- ══════════════════════════ LEFT ─ 作品列表 ══════════════════════════ -->
+  <aside class="sidebar" id="sidebar" aria-label="作品列表">
+    <div class="sidebar-head">
+      <div class="brand">
+        <span class="brand-mark">FORMA<span class="brand-mark-num">3D</span></span>
+        <span class="brand-sub">Qiong Opera Figurine Showcase</span>
+      </div>
+    </div>
+
+    <div class="sidebar-body">
+      <!-- 第一组：琼剧数字手办系列（主要作品，默认展开） -->
+      <section class="group" data-group="figurines">
+        <button class="group-head" id="groupFigurinesHead" aria-expanded="true" aria-controls="groupFigurines">
+          <svg class="group-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1 L8 5 L2 9 Z"/></svg>
+          <span class="group-title">琼剧数字手办系列</span>
+          <span class="group-count">5</span>
+        </button>
+        <div class="asset-list" id="groupFigurines" role="list"></div>
+      </section>
+
+      <!-- 第二组：程序化几何演示（技术演示，默认折叠） -->
+      <section class="group" data-group="demos">
+        <button class="group-head" id="groupDemosHead" aria-expanded="false" aria-controls="groupDemos">
+          <svg class="group-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1 L8 5 L2 9 Z"/></svg>
+          <span class="group-title">程序化几何演示</span>
+          <span class="group-count">3</span>
+        </button>
+        <div class="asset-list" id="groupDemos" role="list"></div>
+        <p class="group-note">Technical Demos — 由 Three.js 内置几何体实时生成，用于演示渲染与交互管线，非原创角色建模作品。</p>
+      </section>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="import-zone" id="importZone" tabindex="0" role="button" aria-label="导入模型文件">
+        <svg viewBox="0 0 24 24" class="import-icon" aria-hidden="true">
+          <path d="M12 16V4m0 0L7 9m5-5 5 5" /><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+        </svg>
+        <span class="import-title">导入模型</span>
+        <span class="import-hint">GLB / GLTF · OBJ+MTL · FBX</span>
+      </div>
+      <div class="engine-line">
+        <span class="dot"></span><span id="engineLabel">本地运行 · 无外部依赖</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════ CENTER ─ 三维视图 ══════════════════════════ -->
+  <main class="workspace" id="workspace">
+    <div class="topbar">
+      <nav class="crumb" id="projectCrumb">琼剧数字手办 / <span id="crumbItem">生角</span></nav>
+      <div class="topbar-tools">
+        <select id="mobileGallery" class="mobile-gallery" aria-label="切换作品"></select>
+        <button class="tool-btn" id="modeBtn" title="沉浸模式 (I)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4"/></svg>
+          <span>沉浸</span>
+        </button>
+        <button class="tool-btn" id="openInspector" title="显示参数面板">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <button class="tool-btn" id="helpBtn" title="帮助 (H)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17.2" r=".8" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="viewport-shell" id="viewportShell">
+      <div class="viewport" id="viewport">
+        <canvas id="stage"></canvas>
+
+        <div class="vp-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+        <div class="vp-meta vp-meta-tl">
+          <span class="obj-num" id="objNum">01 / 05</span>
+        </div>
+
+        <div class="vp-meta vp-meta-tr">
+          <h1 class="obj-name" id="objectName">生角</h1>
+          <p class="obj-roman" id="objectRoman">SHENG</p>
+          <p class="obj-caption" id="objectCaption">Qiongju · Male Role · 47,512 tris</p>
+        </div>
+
+        <div class="vp-meta vp-meta-bl">
+          <span class="model-type" id="modelType">glTF 2.0 / GLB</span>
+          <span class="sep">·</span>
+          <span id="meshCount">—</span>
+        </div>
+
+        <div class="axis-guide" aria-hidden="true">
+          <span class="ax ax-x">X</span><span class="ax ax-y">Y</span><span class="ax ax-z">Z</span>
+        </div>
+
+        <div class="vp-buttons">
+          <button class="vp-btn" id="resetCamera" title="回到最佳视角 (R)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+          </button>
+          <button class="vp-btn" id="captureTop" title="PNG 截图 (P)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M20 8V6a2 2 0 0 0-2-2h-2M4 16v2a2 2 0 0 0 2 2h2M20 16v2a2 2 0 0 1-2 2h-2"/><circle cx="12" cy="12" r="3.2"/></svg>
+          </button>
+        </div>
+
+        <div class="loader" id="loader" hidden>
+          <div class="loader-bar"><i id="loaderFill"></i></div>
+          <div class="loader-text" id="loaderText">载入中…</div>
+        </div>
+
+        <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+        <div class="drop-overlay" id="dropOverlay"><div class="drop-inner">释放以导入模型</div></div>
+
+        <!-- ═══ 沉浸模式专用层 ═══ -->
+        <div class="imm-title" id="immTitle" aria-hidden="true">
+          <span class="imm-index" id="immIndex">01 / 05</span>
+          <h2 class="imm-name" id="immName">生角</h2>
+          <p class="imm-roman" id="immRoman">SHENG</p>
+        </div>
+        <div class="imm-dock" id="immDock" aria-hidden="true">
+          <button class="imm-btn" id="immPrev" title="上一件 (←)"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="imm-btn" id="immRotate" title="自动旋转 (Space)"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3.2-6.9"/><path d="M21 4v5h-5"/></svg></button>
+          <button class="imm-btn" id="immNext" title="下一件 (→)"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+          <span class="imm-div"></span>
+          <button class="imm-btn" id="immShot" title="截图 (P)"><svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2M20 8V6a2 2 0 0 0-2-2h-2M4 16v2a2 2 0 0 0 2 2h2M20 16v2a2 2 0 0 1-2 2h-2"/><circle cx="12" cy="12" r="3.2"/></svg></button>
+          <button class="imm-btn" id="immFull" title="全屏 (F)"><svg viewBox="0 0 24 24"><path d="M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4"/></svg></button>
+          <button class="imm-btn imm-exit" id="immExit" title="退出沉浸 (Esc)"><svg viewBox="0 0 24 24"><path d="M9 9l6 6M15 9l-6 6"/></svg></button>
+        </div>
+        <div class="imm-strip" id="immStrip" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="bottombar" id="bottombar">
+      <div class="tool-cluster">
+        <button class="chip active" id="autoRotateBtn" title="自动旋转 (Space)"><i class="chip-dot"></i>自动旋转</button>
+        <button class="chip" id="resetChip" title="回到最佳视角 (R)">重置视角</button>
+        <button class="chip" id="wireframeQuick" title="线框 (W)">线框</button>
+        <button class="chip" id="gridQuick" title="参考网格 (G)">网格</button>
+        <button class="chip" id="plinthQuick" title="展台 (T)">展台</button>
+      </div>
+      <div class="tool-cluster tool-cluster-right">
+        <span class="hint-text">拖动旋转 · 滚轮缩放 · 双指缩放</span>
+        <button class="chip chip-solid" id="captureBtn" title="PNG 截图 (P)">导出 PNG</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════════════════════════ RIGHT ─ 参数面板 ══════════════════════════ -->
+  <aside class="inspector" id="inspector" aria-label="参数面板">
+    <div class="inspector-head">
+      <span class="inspector-title">参数</span>
+      <button class="icon-btn" id="closeInspector" aria-label="收起参数面板">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="inspector-body">
+
+      <details class="sect" open>
+        <summary>材质 <span class="sect-tag" id="matTag">原始贴图</span></summary>
+        <div class="sect-body">
+          <div class="seg" id="materialModes" role="group" aria-label="表面预设">
+            <button data-mode="original" class="active">原始</button>
+            <button data-mode="ceramic">陶瓷</button>
+            <button data-mode="matte">哑光</button>
+            <button data-mode="metal">金属</button>
+          </div>
+          <label class="field"><span>基色</span>
+            <input type="color" id="colorPicker" value="#ffffff" />
+            <em id="colorValue">#FFFFFF</em>
+          </label>
+          <label class="field"><span>金属度</span>
+            <input type="range" id="metalness" min="0" max="1" step="0.01" value="0" />
+            <em id="metalnessValue">0.00</em>
+          </label>
+          <label class="field"><span>粗糙度</span>
+            <input type="range" id="roughness" min="0" max="1" step="0.01" value="0.9" />
+            <em id="roughnessValue">0.90</em>
+          </label>
+          <label class="field"><span>环境反射</span>
+            <input type="range" id="envIntensity" min="0" max="2" step="0.01" value="0.85" />
+            <em id="envIntensityValue">0.85</em>
+          </label>
+          <p class="material-hint" id="materialHint">未接管材质时显示的是模型原始贴图与参数。</p>
+        </div>
+      </details>
+
+      <details class="sect" open>
+        <summary>灯光 <span class="sect-tag" id="lightTag">影棚</span></summary>
+        <div class="sect-body">
+          <div class="seg" id="lightModes" role="group" aria-label="灯光预设">
+            <button data-mode="studio" class="active">影棚</button>
+            <button data-mode="cool">冷调</button>
+            <button data-mode="warm">暖调</button>
+            <button data-mode="dramatic">戏剧</button>
+          </div>
+          <label class="field"><span>主光</span>
+            <input type="range" id="lightKey" min="0" max="6" step="0.05" value="2.2" />
+            <em id="lightKeyValue">2.20</em>
+          </label>
+          <label class="field"><span>补光</span>
+            <input type="range" id="lightFill" min="0" max="3" step="0.05" value="0.55" />
+            <em id="lightFillValue">0.55</em>
+          </label>
+          <label class="field"><span>轮廓光</span>
+            <input type="range" id="lightRim" min="0" max="4" step="0.05" value="1.1" />
+            <em id="lightRimValue">1.10</em>
+          </label>
+          <label class="field"><span>阴影浓度</span>
+            <input type="range" id="shadowOpacity" min="0" max="1" step="0.01" value="0.34" />
+            <em id="shadowOpacityValue">0.34</em>
+          </label>
+          <label class="field"><span>接触阴影</span>
+            <input type="range" id="contactAO" min="0" max="1" step="0.01" value="0.35" />
+            <em id="contactAOValue">0.35</em>
+          </label>
+          <label class="check"><input type="checkbox" id="shadowToggle" checked /><span>投射阴影</span></label>
+        </div>
+      </details>
+
+      <details class="sect" open>
+        <summary>相机与环境</summary>
+        <div class="sect-body">
+          <div class="seg" id="envModes" role="group" aria-label="背景预设">
+            <button data-mode="charcoal" class="active">墨灰</button>
+            <button data-mode="slate">青灰</button>
+            <button data-mode="warm">暖砂</button>
+            <button data-mode="void">纯黑</button>
+          </div>
+          <label class="field"><span>曝光</span>
+            <input type="range" id="exposure" min="0.3" max="2.2" step="0.01" value="1" />
+            <em id="exposureValue">1.00</em>
+          </label>
+          <label class="field"><span>色调映射</span>
+            <select id="toneMapping">
+              <option value="neutral" selected>Neutral（保色）</option>
+              <option value="aces">ACES Filmic</option>
+              <option value="none">关闭</option>
+            </select>
+          </label>
+          <label class="field"><span>视场角</span>
+            <input type="range" id="fov" min="20" max="70" step="1" value="38" />
+            <em id="fovValue">38°</em>
+          </label>
+        </div>
+      </details>
+
+      <details class="sect">
+        <summary>后期处理 <span class="sect-tag" id="postTag">关闭</span></summary>
+        <div class="sect-body">
+          <label class="check"><input type="checkbox" id="bloomToggle" /><span>启用辉光</span></label>
+          <label class="field"><span>阈值</span>
+            <input type="range" id="bloomThreshold" min="0" max="1" step="0.01" value="0.92" />
+            <em id="bloomThresholdValue">0.92</em>
+          </label>
+          <label class="field"><span>强度</span>
+            <input type="range" id="bloomStrength" min="0" max="1.5" step="0.01" value="0.22" />
+            <em id="bloomStrengthValue">0.22</em>
+          </label>
+          <label class="field"><span>半径</span>
+            <input type="range" id="bloomRadius" min="0" max="1" step="0.01" value="0.4" />
+            <em id="bloomRadiusValue">0.40</em>
+          </label>
+          <p class="material-hint">手办默认关闭辉光，避免糊掉服饰纹样。</p>
+        </div>
+      </details>
+
+      <details class="sect">
+        <summary>显示与动效</summary>
+        <div class="sect-body">
+          <label class="check"><input type="checkbox" id="wireframe" /><span>线框叠加</span></label>
+          <label class="check"><input type="checkbox" id="gridToggle" checked /><span>参考网格</span></label>
+          <label class="check"><input type="checkbox" id="plinthToggle" checked /><span>展台</span></label>
+          <label class="check"><input type="checkbox" id="shadowCatcherToggle" checked /><span>地面接影</span></label>
+          <label class="check"><input type="checkbox" id="autorotate" checked /><span>自动旋转</span></label>
+          <label class="field"><span>转速</span>
+            <input type="range" id="autoRotateSpeed" min="0.1" max="3" step="0.05" value="1" />
+            <em id="autoRotateSpeedValue">1.00</em>
+          </label>
+        </div>
+      </details>
+
+      <details class="sect">
+        <summary>动画</summary>
+        <div class="sect-body">
+          <div id="animationPanel" class="anim-empty">当前模型无动画。</div>
+        </div>
+      </details>
+
+      <div class="inspector-foot">
+        <button class="ghost-btn" id="resetAll">恢复默认参数</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="shade" id="shade" hidden></div>
+</div>
+
+<!-- 帮助 -->
+<div class="modal" id="helpModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="操作说明">
+    <div class="modal-head"><h3>操作说明</h3><button class="icon-btn" id="helpClose"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="modal-body">
+      <dl class="keys">
+        <dt>拖动</dt><dd>旋转视角</dd>
+        <dt>滚轮 / 双指</dt><dd>缩放</dd>
+        <dt>R</dt><dd>回到最佳展示视角</dd>
+        <dt>Space</dt><dd>自动旋转 开 / 关</dd>
+        <dt>W / G / T</dt><dd>线框 / 网格 / 展台</dd>
+        <dt>P</dt><dd>导出 PNG 截图</dd>
+        <dt>F</dt><dd>全屏</dd>
+        <dt>I</dt><dd>沉浸模式 开 / 关</dd>
+        <dt>← / →</dt><dd>切换上一件 / 下一件</dd>
+        <dt>Esc</dt><dd>退出沉浸 / 关闭弹窗</dd>
+      </dl>
+      <p class="modal-note">每个展品的参数（相机、灯光、材质、后期）会独立记录，切换回来时自动恢复。</p>
+    </div>
+  </div>
+</div>
+
+<div class="fatal" id="fatal" hidden><div class="fatal-card"><h2 id="fatalTitle">无法启动</h2><p id="fatalMsg"></p></div></div>
+
+<input type="file" id="fileInput" multiple accept=".glb,.gltf,.bin,.obj,.mtl,.fbx,.png,.jpg,.jpeg,.webp" hidden />
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
