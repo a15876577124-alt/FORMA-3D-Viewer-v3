@@ -35,6 +35,12 @@ const RULES = [
     msg: 'FBX 解析失败。本展示器支持常见静态网格与基础骨骼动画的 FBX；如果是极高版本、含复杂约束或特殊几何的 FBX，建议先转换为 GLB 再导入。',
   },
   {
+    // Must run before the 404 rule: a dead server and a missing file look
+    // similar in the console but need completely different advice.
+    test: /Failed to fetch|NetworkError|ERR_CONNECTION|ERR_INTERNET/i,
+    msg: '无法连接本地服务器——模型文件本身没有问题。请重新启动服务器：双击目录里的 启动展厅.bat，或在命令行运行 node serve.mjs 后刷新页面。',
+  },
+  {
     test: /Failed to fetch|NetworkError|404|Failed to load/i,
     msg: '文件读取失败。如果是通过 HTTP 打开的页面，请确认模型文件已经上传到同一目录（尤其是 .glb 旁边的 .mtl 与贴图）。',
   },
