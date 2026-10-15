@@ -4,6 +4,8 @@
 
 渲染内核为 **three.js r186**，全部依赖已本地化到 `vendor/`，**完全离线可用**——不需要 CDN，不需要联网，只需要一个静态文件服务器（浏览器对 ES Module 的 `file://` 限制，这是唯一的前置条件）。
 
+**在线演示**：<https://a15876577124-alt.github.io/FORMA-3D-Viewer-v3/>（GitHub Pages，与仓库 `main` 分支同步）
+
 ---
 
 ## 快速开始
