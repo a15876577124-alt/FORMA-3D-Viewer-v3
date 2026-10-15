@@ -1,0 +1,195 @@
+{
+ "scene": 0,
+ "scenes": [
+  {
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "asset": {
+  "version": "2.0",
+  "generator": "https://github.com/mikedh/trimesh",
+  "extras": {
+   "forma": {
+    "pipeline": "tools/fix-glb.mjs",
+    "sourceSha256": "6ce3cb51ba55d77581d0e873ecfcdccd9a639da5132a83d4090dbcf06ea6ec6e",
+    "source": "assets/raw/sheng.glb",
+    "sourceJs": "FORMA-3D-Viewer-v2/models/sheng.js",
+    "hardAngle": 180,
+    "degenerateTriangles": 0,
+    "weldGroups": 23744,
+    "duplicateVertices": 3207,
+    "changes": [
+     "+NORMAL (26951 verts, area-weighted, hardAngle=180)",
+     "metallicFactor (absent -> glTF default 1.0) -> 0",
+     "+sampler (LINEAR / LINEAR_MIPMAP_LINEAR / REPEAT)"
+    ]
+   }
+  }
+ },
+ "accessors": [
+  {
+   "componentType": 5125,
+   "type": "SCALAR",
+   "bufferView": 0,
+   "count": 142536,
+   "max": [
+    26950
+   ],
+   "min": [
+    0
+   ]
+  },
+  {
+   "componentType": 5126,
+   "type": "VEC3",
+   "byteOffset": 0,
+   "bufferView": 1,
+   "count": 26951,
+   "max": [
+    0.20542125403881073,
+    0.5,
+    0.3603372871875763
+   ],
+   "min": [
+    -0.20542125403881073,
+    -0.5,
+    -0.3603372871875763
+   ]
+  },
+  {
+   "componentType": 5126,
+   "type": "VEC2",
+   "byteOffset": 0,
+   "bufferView": 3,
+   "count": 26951,
+   "max": [
+    1,
+    1
+   ],
+   "min": [
+    0,
+    0
+   ]
+  },
+  {
+   "bufferView": 4,
+   "componentType": 5126,
+   "count": 26951,
+   "type": "VEC3",
+   "min": [
+    -1,
+    -1,
+    -1
+   ],
+   "max": [
+    1,
+    0.999993,
+    0.999997
+   ],
+   "byteOffset": 0
+  }
+ ],
+ "meshes": [
+  {
+   "name": "tripo_mesh_db4ad7f1-f414-4c34-b2ef-eb6043a462e4",
+   "extras": {},
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 1,
+      "TEXCOORD_0": 2,
+      "NORMAL": 3
+     },
+     "indices": 0,
+     "mode": 4,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "images": [
+  {
+   "uri": "sheng.png"
+  }
+ ],
+ "textures": [
+  {
+   "source": 0,
+   "sampler": 0
+  }
+ ],
+ "materials": [
+  {
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 0
+    },
+    "baseColorFactor": [
+     1,
+     1,
+     1,
+     1
+    ],
+    "roughnessFactor": 0.9036020036098448,
+    "metallicFactor": 0
+   },
+   "doubleSided": false
+  }
+ ],
+ "nodes": [
+  {
+   "name": "world",
+   "children": [
+    1
+   ]
+  },
+  {
+   "name": "tripo_mesh_db4ad7f1-f414-4c34-b2ef-eb6043a462e4",
+   "mesh": 0
+  }
+ ],
+ "buffers": [
+  {
+   "uri": "sheng.bin",
+   "byteLength": 4136044
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteOffset": 0,
+   "byteLength": 570144
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 570144,
+   "byteLength": 323412
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 893556,
+   "byteLength": 2703468
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 3597024,
+   "byteLength": 215608
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 3812632,
+   "byteLength": 323412,
+   "target": 34962
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987,
+   "wrapS": 10497,
+   "wrapT": 10497
+  }
+ ]
+}

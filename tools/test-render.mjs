@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import puppeteer from 'puppeteer-core';
+import { launchBrowser, browserPath } from './browser-test.mjs';
 
 // NOTE: never build paths from a raw file URL - import.meta.url is percent-encoded
 // and on a Chinese path that yields a directory that does not exist.
@@ -24,35 +24,12 @@ const arg = (name, fallback) => {
 const BASE = String(arg('base', process.env.FORMA_BASE || 'http://127.0.0.1:5173'));
 const WITH_PHOTOS = !!arg('photos', false);
 const PROBE_ONLY = !!arg('probe-only', false);
-// --headed uses the machine's real GPU instead of SwiftShader. Slower to launch,
-// flashes a window, but it is the closest thing to what an actual visitor sees.
+// --headed displays the browser. Both modes use the default backend; report the actual GPU.
 const HEADED = !!arg('headed', false);
 
-const BROWSERS = [
-  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-  'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
-  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-  'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-].find((p) => fs.existsSync(p));
+const BROWSERS = browserPath;
 
-const COMMON = [
-  '--no-sandbox', '--disable-gpu-sandbox', '--disable-dev-shm-usage',
-  '--disable-features=Vulkan', '--window-size=1400,900',
-  '--allow-file-access-from-files', '--mute-audio',
-];
-
-// Headless WebGL on Windows usually needs SwiftShader. Try the arg sets in order
-// and keep the first one where a real context can be created.
-const LADDER = [
-  ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
-  ['--use-gl=angle', '--use-angle=swiftshader-webgl', '--enable-unsafe-swiftshader'],
-  ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'],
-  ['--enable-unsafe-swiftshader'],
-  ['--use-gl=angle', '--use-angle=gl'],
-  [],
-];
-
-const OUT = path.join(ROOT, 'test-out', new Date().toISOString().replace(/[:.]/g, '-'));
+const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', new Date().toISOString().replace(/[:.]/g, '-')));
 fs.mkdirSync(OUT, { recursive: true });
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -131,36 +108,19 @@ const PROBE = () => {
 };
 
 async function launchWithGL() {
-  let lastErr = null;
-  const ladder = HEADED
-    ? [['--use-angle=default', '--disable-features=Vulkan'], []]
-    : LADDER;
-  for (const extra of ladder) {
-    let browser;
-    try {
-      browser = await puppeteer.launch({
-        executablePath: BROWSERS,
-        headless: !HEADED,
-        args: [...COMMON, ...extra],
-        protocolTimeout: 180000,
-      });
-      const page = await browser.newPage();
-      const ok = await page.evaluate(() => {
-        const c = document.createElement('canvas');
-        const gl = c.getContext('webgl2') || c.getContext('webgl');
-        if (!gl) return null;
-        const ext = gl.getExtension('WEBGL_debug_renderer_info');
-        const name = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : 'unknown';
-        return { api: gl instanceof WebGL2RenderingContext ? 'webgl2' : 'webgl1', renderer: String(name) };
-      }).catch(() => null);
-      if (ok) return { browser, args: extra, gl: ok };
-      await browser.close();
-    } catch (e) {
-      lastErr = e;
-      if (browser) await browser.close().catch(() => {});
-    }
-  }
-  throw new Error('no WebGL-capable headless configuration found: ' + (lastErr?.message || ''));
+  const browser = await launchBrowser(HEADED ? { headless: false } : {});
+  try {
+    const page = await browser.newPage();
+    const gl = await page.evaluate(() => {
+      const context = document.createElement('canvas').getContext('webgl2');
+      if (!context) return null;
+      const ext = context.getExtension('WEBGL_debug_renderer_info');
+      return { api: 'webgl2', renderer: ext ? context.getParameter(ext.UNMASKED_RENDERER_WEBGL) : context.getParameter(context.RENDERER) };
+    });
+    await page.close();
+    if (!gl) throw new Error('浏览器无法创建 WebGL2 上下文；没有降低浏览器安全设置。');
+    return { browser, args: [], gl };
+  } catch (error) { await browser.close(); throw error; }
 }
 
 // Colour guardrails: the face-paint hues that define each figurine must survive
@@ -275,6 +235,7 @@ function verdict(id, info, px) {
   await sleep(400);
   const cycled = await page.evaluate(() => window.__FORMA.info.memory);
 
+  const memoryBounded = ['geometries', 'textures', 'programs'].every((key) => cycled[key] <= after[key]);
   const report = {
     generatedAt: new Date().toISOString(),
     base: BASE,
@@ -283,7 +244,7 @@ function verdict(id, info, px) {
     webgl: gl,
     firstReady: !!firstOk,
     exhibits: results,
-    memory: { before, afterFirstCycle: after, afterSecondCycle: cycled },
+    memory: { before, afterFirstCycle: after, afterSecondCycle: cycled, bounded: memoryBounded },
     console: { errors: consoleErrors, warnings: consoleWarnings.slice(0, 20), pageErrors },
     summary: {
       exhibitsPassed: results.filter((r) => r.pass).length,
@@ -304,6 +265,6 @@ function verdict(id, info, px) {
   console.log(`报告: ${path.join(OUT, 'render-report.json')}`);
 
   await browser.close();
-  const ok = report.summary.exhibitsPassed === report.summary.exhibitsTotal && !consoleErrors.length && !pageErrors.length;
+  const ok = report.summary.exhibitsPassed === report.summary.exhibitsTotal && memoryBounded && !consoleErrors.length && !pageErrors.length;
   process.exit(ok ? 0 : 1);
 })().catch((e) => { console.error(e); process.exit(1); });

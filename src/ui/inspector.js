@@ -206,7 +206,7 @@ export function buildInspector(ctx) {
       });
       panel.append(b);
     }
-    if (list.length > 1) {
+    if (list.length > 0) {
       const pause = el('button', { type: 'button' }, '暂停 / 继续');
       pause.addEventListener('click', () => {
         const playing = viewer.toggleAnimation();

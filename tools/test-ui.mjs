@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import puppeteer from 'puppeteer-core';
+import { launchBrowser } from './browser-test.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -14,7 +14,7 @@ const get = (name, fallback) => {
   return hit ? hit.split('=')[1] : fallback;
 };
 const BASE = String(get('base', process.env.FORMA_BASE || 'http://127.0.0.1:5173'));
-const OUT = path.join(ROOT, 'test-out', 'ui-' + new Date().toISOString().replace(/[:.]/g, '-'));
+const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'ui-' + new Date().toISOString().replace(/[:.]/g, '-')));
 fs.mkdirSync(OUT, { recursive: true });
 
 const BROWSERS = [
@@ -309,12 +309,7 @@ t('收尾: 控制台无错误', async (ctx) => {
 
 // ------------------------------------------------------------------- main ---
 (async () => {
-  const browser = await puppeteer.launch({
-    executablePath: BROWSERS, headless: true,
-    args: ['--no-sandbox', '--disable-gpu-sandbox', '--disable-dev-shm-usage',
-      '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--mute-audio'],
-    protocolTimeout: 300000,
-  });
+  const browser = await launchBrowser();
   const page = await browser.newPage();
   await page.setViewport({ width: 1400, height: 900, deviceScaleFactor: 1 });
 

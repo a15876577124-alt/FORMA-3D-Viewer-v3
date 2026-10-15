@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
-import puppeteer from 'puppeteer-core';
+import { launchBrowser } from './browser-test.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OBJ_DIR = 'D:\\琼韵新生\\_Coze_Drive_3D模型生成项目_琼剧Q版玩偶_琼剧Q版玩偶_OBJ模型\\3D模型v5_OBJ\\01_生角';
@@ -19,6 +19,10 @@ const get = (name, fallback) => {
   return hit ? hit.split('=')[1] : fallback;
 };
 const BASE = String(get('base', process.env.FORMA_BASE || 'http://127.0.0.1:5173'));
+const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'import-' + new Date().toISOString().replace(/[:.]/g, '-')));
+fs.mkdirSync(OUT, { recursive: true });
+const scratch = [];
+process.once('exit', () => { for (const dir of scratch) fs.rmSync(dir, { recursive: true, force: true }); });
 
 const BROWSERS = [
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
@@ -32,6 +36,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // flaky depending on the Chromium build).
 function stage(name, ...sources) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'forma-import-'));
+  scratch.push(dir);
   const file = path.join(dir, name);
   fs.writeFileSync(file, Buffer.concat(sources.map((s) => (Buffer.isBuffer(s) ? s : fs.readFileSync(s)))));
   return file;
@@ -135,6 +140,32 @@ t('导入: FBX 静态网格（自产 ASCII FBX 样例）', async (ctx) => {
   if (!/不含动画/.test(toast)) throw new Error('应提示无动画剪辑');
 });
 
+t('导入: 真实 FBX（二进制、带骨骼动画剪辑）', async (ctx) => {
+  const fbx = path.join(ROOT, 'test-assets', 'RotationTest.fbx');
+  if (!fs.existsSync(fbx)) throw new Error('样例缺失：test-assets/RotationTest.fbx');
+  await upload(ctx.page, [fbx]);
+  await waitImported(ctx.page);
+  const s = await ctx.page.evaluate(() => ({
+    format: window.__FORMA.info.format,
+    tris: window.__FORMA.info.modelTris,
+    anims: window.__FORMA.info.animations,
+    hasMap: window.__FORMA.viewer.readMaterial()?.hasMap,
+  }));
+  if (s.format !== 'fbx') throw new Error('format=' + s.format);
+  if (s.tris < 10) throw new Error('几何未解析: ' + s.tris);
+  if (!s.anims) throw new Error('FBX 未解析出动画剪辑');
+  // The clip must be drivable: play it and confirm the mixer actually advances.
+  const moved = await ctx.page.evaluate(async () => {
+    const v = window.__FORMA.viewer;
+    v.playClip(0);
+    const before = v.mixer ? v.mixer.time : -1;
+    await new Promise((r) => setTimeout(r, 500));
+    return { before, after: v.mixer ? v.mixer.time : -1, playing: !!(v.action && v.action.isRunning()) };
+  });
+  if (moved.after <= moved.before) throw new Error(`动画剪辑未推进: ${moved.before} -> ${moved.after}`);
+  await ctx.page.evaluate(() => window.__FORMA.viewer.toggleAnimation());
+});
+
 t('导入: FBX 错误路径提示明确', async (ctx) => {
   const before = await ctx.page.evaluate(() => window.__FORMA.current.id);
   const bad = stage('fake.fbx', Buffer.from('Kaydara FBX Binary  \x00\x1a\x00\x00' + 'x'.repeat(256)));
@@ -163,6 +194,30 @@ t('导入: 拖放路径与对话框路径等价', async (ctx) => {
   if (fmt !== 'imported-gltf') throw new Error('format=' + fmt);
 });
 
+t('导入: 非嵌入式 .gltf + .bin + 贴图 三件套', async (ctx) => {
+  const PKG = path.join(ROOT, 'test-assets', 'gltf-package');
+  const gltf = path.join(PKG, 'sheng.gltf');
+  const bin = path.join(PKG, 'sheng.bin');
+  const png = path.join(PKG, 'sheng.png');
+  for (const f of [gltf, bin, png]) {
+    if (!fs.existsSync(f)) throw new Error('样例缺失: ' + path.basename(f) + '（先跑 node tools/make-gltf-sample.mjs）');
+  }
+  // The dependency files are passed alongside the main file, exactly like a
+  // user multi-selecting a whole export folder in the dialog.
+  await upload(ctx.page, [gltf, bin, png]);
+  await waitImported(ctx.page);
+  const s = await ctx.page.evaluate(() => ({
+    format: window.__FORMA.info.format,
+    tris: window.__FORMA.info.modelTris,
+    drawn: window.__FORMA.info.renderTriangles,
+    hasMap: window.__FORMA.viewer.readMaterial()?.hasMap,
+  }));
+  if (s.format !== 'imported-gltf') throw new Error('format=' + s.format);
+  if (s.tris !== 47512) throw new Error('.bin 未正确解析，三角形数 ' + s.tris);
+  if (s.drawn < 10000) throw new Error('未实际绘制: ' + s.drawn);
+  if (!s.hasMap) throw new Error('外部贴图未挂载');
+});
+
 t('导入: 返回目录展品并恢复其参数', async (ctx) => {
   await ctx.page.evaluate(() => window.__FORMA.select('sheng'));
   await ctx.page.waitForFunction(() => window.__FORMA.current && window.__FORMA.current.id === 'sheng', { timeout: 60000 });
@@ -175,12 +230,7 @@ t('收尾: 全程无页面异常', async (ctx) => {
 });
 
 (async () => {
-  const browser = await puppeteer.launch({
-    executablePath: BROWSERS, headless: true, acceptInsecureCerts: true,
-    args: ['--no-sandbox', '--disable-gpu-sandbox', '--disable-dev-shm-usage',
-      '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--mute-audio'],
-    protocolTimeout: 300000,
-  });
+  const browser = await launchBrowser();
   const page = await browser.newPage();
   await page.setViewport({ width: 1400, height: 900, deviceScaleFactor: 1 });
   await page.on('dialog', (d) => d.dismiss().catch(() => {}));
@@ -208,7 +258,7 @@ t('收尾: 全程无页面异常', async (ctx) => {
   }
   console.log(`\n导入测试: ${results.length - failed}/${results.length} 通过`);
   if (consoleErrors.length) console.log('（控制台错误 ' + consoleErrors.length + ' 条，导入场景中 4xx 资源与解析报错属预期，详见报告）');
-  fs.writeFileSync(path.join(ROOT, 'test-out', 'import-report.json'),
+  fs.writeFileSync(path.join(OUT, 'import-report.json'),
     JSON.stringify({ passed: results.length - failed, total: results.length, consoleErrors, pageErrors }, null, 2));
   await browser.close();
   process.exit(failed ? 1 : 0);

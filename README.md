@@ -30,7 +30,7 @@ node serve.mjs          # 零依赖静态服务器，默认 http://127.0.0.1:517
 
 ## 功能
 
-**展示**：左侧分组列表、平滑切换、拖拽/滚轮/触控旋转缩放、自动旋转（速度可调）、一键回最佳视角、键盘 `←/→` 切换 / `Space` 自动旋转 / `F` 沉浸 / `H` 帮助。
+**展示**：左侧分组列表、平滑切换、拖拽/滚轮/触控旋转缩放、自动旋转（速度可调）、一键回最佳视角、键盘 `←/→` 切换 / `Space` 自动旋转 / `R` 重置视角 / `I` 沉浸 / `F` 全屏；操作说明由右上角帮助按钮打开。
 
 **渲染**：三点影棚布光（主/补/轮廓，四套预设）+ 离线 IBL（PMREM + RoomEnvironment，无 HDRI 文件）+ VSM 接触阴影 + 径向 AO 贴片；可调曝光、环境强度、FOV、色调映射（Neutral / ACES / 关闭）、辉光后期三档。
 
@@ -66,7 +66,19 @@ node tools/make-thumbs.mjs      # 用渲染器自身生成缩略图
 
 ## 测试
 
-三个真实浏览器测试（puppeteer-core 驱动本机 Edge/Chrome，读的是**真实 WebGL 帧缓冲的像素**，不是 mock）：
+统一入口会自动启动独立本地服务器，使用系统分配的空闲端口，顺序执行依赖、资产、HTTP、真实渲染、交互、导入和扩展检查，并在结束时停止服务器：
+
+```bash
+npm test                         # 完整回归，无需手动启动服务器
+npm test -- --only=server         # HTTP 与模型 Range 请求
+npm test -- --only=extended       # 外部 glTF、Maya 蒙皮动画、拖动与移动取景
+npm run test:gpu                  # 使用有头浏览器查看测试
+npm run shots                     # 导出五个展品的实际渲染图
+```
+
+浏览器测试保持 Chromium 沙盒启用，使用默认图形后端；本机 headless Edge 已实测使用 RTX 4060。可用 `FORMA_BROWSER` 指定已安装的 Edge/Chrome。缺少浏览器或 WebGL2 时明确失败，不自动安装浏览器或降低安全设置。
+
+以下原有测试脚本也可在手动启动服务后单独运行（读取真实 WebGL 帧缓冲像素）：
 
 ```bash
 node tools/test-render.mjs      # 五展品渲染 + 显存泄漏 + 控制台错误   5/5，56/56 断言
@@ -76,7 +88,7 @@ node tools/test-ab.mjs --study=normals    # 法线修复前后对照实验
 node tools/test-ab.mjs --study=hardedge   # 硬边阈值扫描实验
 ```
 
-`--headed` 可让渲染测试跑在本机真实 GPU 上（默认 headless 走 SwiftShader）。测试报告落在 `test-out/<时间戳>/`。
+`--headed` 可让渲染测试显示浏览器窗口。headless 是否使用硬件取决于系统能力，报告记录实际 renderer，不预设为 SwiftShader。测试报告落在 `test-out/suite-<时间戳>/`；可以用 `FORMA_TEST_OUTPUT_DIR` 指定输出位置。扩展测试另外保存桌面、移动端和模型渲染截图。
 
 ## 目录
 
@@ -101,7 +113,7 @@ vendor/            本地化的 three.js r186（完全离线）
 
 ## 已知未验证项
 
-见 [KNOWN-ISSUES.md](KNOWN-ISSUES.md)。最重要的一条：**FBX 骨骼动画尚未在真实带动画的文件上验证过**（开发环境无 Blender/Maya 且离线，只能自产静态 FBX 验证加载链路）。加载器代码路径是完整的，但没有实锤。
+见 [KNOWN-ISSUES.md](KNOWN-ISSUES.md)。已使用本机 Maya 2025 导出的三关节蒙皮 FBX 实测动画播放、暂停与继续；也已实测 `.gltf + .bin + PNG` 外部依赖导入。复杂生产 FBX、真实手机及远程部署仍需对应场景验证。
 
 ## 许可与署名
 
