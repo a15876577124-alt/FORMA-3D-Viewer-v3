@@ -83,7 +83,7 @@ npm run shots                     # 导出五个展品的实际渲染图
 ```bash
 node tools/test-render.mjs      # 五展品渲染 + 显存泄漏 + 控制台错误   5/5，56/56 断言
 node tools/test-ui.mjs          # 交互全量回归                        26/26
-node tools/test-import.mjs      # 导入链路                            10/10
+node tools/test-import.mjs      # 导入链路                            12/12
 node tools/test-ab.mjs --study=normals    # 法线修复前后对照实验
 node tools/test-ab.mjs --study=hardedge   # 硬边阈值扫描实验
 ```
@@ -106,8 +106,9 @@ src/stage/         地面接触阴影 / 展台 / 网格
 src/state/         逐展品参数持久化
 src/ui/            侧栏 / 检查器 / 顶栏
 src/utils/         dispose、DOM、storage
-tests/             A/B 对照页
-tools/             资产管线与全部自动化测试
+tests/             tests/run.mjs 统一入口 + 扩展测试 + A/B 对照页
+test-assets/       导入测试用的真实样例（glTF 拆包 / FBX 蒙皮动画）
+tools/             资产管线与浏览器自动化测试
 vendor/            本地化的 three.js r186（完全离线）
 ```
 
