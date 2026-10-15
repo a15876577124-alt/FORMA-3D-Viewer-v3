@@ -343,6 +343,33 @@
 <div class="fatal" id="fatal" hidden><div class="fatal-card"><h2 id="fatalTitle">无法启动</h2><p id="fatalMsg"></p></div></div>
 
 <input type="file" id="fileInput" multiple accept=".glb,.gltf,.bin,.obj,.mtl,.fbx,.png,.jpg,.jpeg,.webp" hidden />
-<script type="module" src="./src/main.js"></script>
+
+<!-- Entry point. The module script is injected here instead of being declared
+     statically: on file:// the browser would fetch it, fail CORS (opaque
+     'null' origin), and leave a live-looking but completely dead UI shell.
+     Injecting only over http(s) keeps that case fully silent, and the classic
+     inline script below is the only code that can still run to explain it. -->
+<script>
+(function () {
+  if (location.protocol === 'file:') {
+    var fatal = document.getElementById('fatal');
+    if (fatal) {
+      document.getElementById('fatalTitle').textContent = '请通过本地服务器打开';
+      document.getElementById('fatalMsg').innerHTML =
+        '浏览器安全策略禁止 <code>file://</code> 协议加载 ES Module，' +
+        '直接双击 <code>index.html</code> 时应用无法启动（页面外壳会显示，但没有任何内容）。<br><br>' +
+        'Windows：双击本目录下的 <b>启动展厅.bat</b>，它会自动启动服务器并打开浏览器。<br>' +
+        '或在命令行运行 <code>node serve.mjs</code>，然后访问 ' +
+        '<a href="http://127.0.0.1:5173">http://127.0.0.1:5173</a>。';
+      fatal.hidden = false;
+    }
+    return;
+  }
+  var s = document.createElement('script');
+  s.type = 'module';
+  s.src = './src/main.js';
+  document.body.appendChild(s);
+})();
+</script>
 </body>
 </html>

@@ -26,6 +26,9 @@ async function upload(files) {
 try {
   await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
   await page.goto(process.env.FORMA_BASE, { waitUntil: 'domcontentloaded' });
+  // The entry module is injected dynamically, so it can finish loading after
+  // DOMContentLoaded - wait for readiness instead of assuming nav timing.
+  await page.waitForFunction(() => window.__FORMA && window.__FORMA.ready, { timeout: 60000 });
   assert.equal(await page.evaluate(async () => await window.__FORMA.ready), true);
   await check('外部 glTF + bin + PNG 真实导入', async () => {
     // Derive disposable external files from an existing real mesh. Original bytes stay untouched.
