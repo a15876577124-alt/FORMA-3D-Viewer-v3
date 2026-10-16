@@ -2,7 +2,7 @@
   "name": "forma-3d-viewer-v3",
   "version": "3.0.0",
   "private": true,
-  "description": "FORMA 3D - Qiong Opera Digital Figurine Showcase. Three.js based offline-capable viewer.",
+  "description": "FORMA 3D - Qiong Opera Digital Figurine Showcase + AI Asset Pipeline. Three.js based offline-capable viewer with local analysis backend.",
   "type": "module",
   "scripts": {
     "serve": "node serve.mjs",
@@ -17,12 +17,18 @@
     "test": "node tests/run.mjs",
     "test:gpu": "node tests/run.mjs --gpu",
     "shots": "node tests/run.mjs --only=shots",
-    "shots:gpu": "node tests/run.mjs --only=shots --gpu"
+    "shots:gpu": "node tests/run.mjs --only=shots --gpu",
+    "pipeline:serve": "node backend/server.mjs",
+    "test:pipeline": "node tests/run.mjs --only=pipeline"
   },
   "devDependencies": {
     "puppeteer-core": "^22.15.0"
   },
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "@tencent-ai/workbuddy-cloud-sdk": "^0.1.4-dev.ca27990.202610161713",
+    "three": "^0.186.1"
   }
 }

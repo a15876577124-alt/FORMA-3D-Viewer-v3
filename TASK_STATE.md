@@ -7,9 +7,9 @@
 
 - **分支**：`feature/ai-asset-pipeline`（基于 `main` @ `0b7c3d0`，基线标签 `v3.0.0-baseline`）
 - **远程同步**：✅ 分支已推送并跟踪 `origin/feature/ai-asset-pipeline`（2026-10-16 15:12）
-- **当前里程碑**：M0 ✅ 完成；**M0.5 LLM Spike ✅ 通过（阻断门解除）**
-- **下一里程碑**：M1 后端骨架 + 真实 GLB/GLTF/OBJ/FBX 分析闭环
-- **npm test 基线**：单元组全通过；render 组受阻（见「阻塞」），不阻塞后续开发
+- **当前里程碑**：M0 ✅ / M0.5 ✅ 完成；**M1 ✅ 完成**（pipeline 测试组 50/50）
+- **下一里程碑**：M2 AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验）
+- **npm test 基线**：单元组全通过；render 组受阻（见「阻塞」），不阻塞后续开发；pipeline 组 50/50 通过
 
 ## ✅ M0.5 LLM Spike 结论（2026-10-16 15:30）
 
@@ -44,13 +44,32 @@
 2. render 测试交由用户在本机桌面运行一次并归档结果
 3. 不阻塞 M1-M5 开发（后端/分析/Agent 开发不需要浏览器；UI 完成后统一处理）
 
+## ✅ M1 完成（2026-10-16 15:45）
+
+**后端架构**（`backend/`，仅监听 127.0.0.1）：
+- `server.mjs`：HTTP API（health/models/assets import+analyze+report）；CORS 仅本机前端源
+- `analyze.mjs`：分析器——GLB/GLTF 深度解析（网格/图元/材质/贴图/动画/蒙皮/边界盒）；OBJ/FBX 走 three.js loaders
+- `validate.mjs`：上传三重校验（魔数 + 扩展名白名单 + 256MB 上限）
+- `paths.mjs`：目录穿越防护（safeJoin + realpath 校验 + 资产 ID 字符白名单）
+- `llm.mjs`：云服务 LLM 客户端封装（models 缓存 10min、pickAgentModel、chat）
+- `texture-sniff.mjs`：PNG/JPEG/WebP 真实尺寸解析
+
+**已验证**（tests/pipeline.test.mjs，50 断言）：
+- 5 个手办 GLB verts/tris 与 ground truth 逐一精确一致；贴图 2048x2048 真实解析
+- GLTF（外嵌 buffer/贴图）、OBJ（未焊接诊断）、FBX ASCII/二进制（含动画、蒙皮）真实解析
+- 安全：伪造魔数 415 / 穿越文件名清洗 / workspace 外零写入 / 危险扩展名 415 / 空文件 415 / 恶意 id 403 / 陌生 Origin 无 CORS 头
+- 已知实现细节：three loaders 输出非索引化几何体（FBX/OBJ 每面独立顶点）——分析器如实报告
+- FBX Node Buffer → ArrayBuffer 转换（three `new Uint8Array(buffer, from, to)` 语义）
+
+**npm scripts**：`npm run pipeline:serve`、`npm run test:pipeline`
+
 ## 里程碑清单
 
 | ID | 内容 | 状态 |
 |----|------|------|
 | M0 | 基线标签 + 功能分支 + 备份 + .gitignore + 本文档 | ✅ 完成（render 受阻见阻塞） |
 | M0.5 | WorkBuddy 云端 LLM 独立 Node 进程连通性 Spike（阻断门） | ✅ 通过（见下） |
-| M1 | Node 后端骨架（http/https API）+ 真实 GLB/GLTF/OBJ/FBX 分析闭环 | ⬜ |
+| M1 | Node 后端骨架（http/https API）+ 真实 GLB/GLTF/OBJ/FBX 分析闭环 | ✅ 完成（50/50） |
 | M2 | AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验） | ⬜ |
 | M3 | 非破坏式处理算子 + Before/After 3D 对比（Day1 出口：单模型全流程） | ⬜ |
 | M4 | 批量处理 + 资产库 + 加入展厅 | ⬜ |

@@ -14,6 +14,19 @@ AI 3D 资产分析、修复、优化、转换、管理与发布平台。
 - `tools/llm-spike.mjs`：M0.5 LLM 连通性 spike（Node 独立进程调用云服务 LLM）
 - `backend/publicConfig.json`：云服务公开配置（endpoint + publishableKey，设计上可入仓库）
 - 依赖 `@tencent-ai/workbuddy-cloud-sdk@dev`：云服务 SDK（Database/Auth/Storage/LLM）
+- **M1 后端与分析闭环**（`backend/`，仅监听 127.0.0.1）：
+  - `server.mjs`：HTTP API（`/api/health` `/api/models` `/api/assets` import/analyze/report）
+  - `analyze.mjs`：真实解析 GLB/GLTF/OBJ/FBX（网格/材质/贴图/动画/蒙皮/边界盒 + 诊断规则）
+  - `validate.mjs`：上传魔数 + 扩展名 + 大小三重校验
+  - `paths.mjs`：目录穿越防护
+  - `llm.mjs`：云服务 LLM 客户端封装
+  - `texture-sniff.mjs`：PNG/JPEG/WebP 真实尺寸解析
+- `tests/pipeline.test.mjs`：pipeline 回归组（50 断言：ground truth 对账 + 多格式 + 端到端 + 安全）
+
+### Changed
+- `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）
+- `tests/run.mjs`：新增 `--only=pipeline` 测试组
+- `package.json`：新增 `pipeline:serve` / `test:pipeline` scripts；描述更新为 AI Asset Pipeline
 
 ### Changed
 - `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）
