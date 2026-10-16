@@ -11,9 +11,15 @@ AI 3D 资产分析、修复、优化、转换、管理与发布平台。
 
 ### Added
 - `TASK_STATE.md`：断点续作状态文件（里程碑 / 外部依赖 / 安全约束）
+- `tools/llm-spike.mjs`：M0.5 LLM 连通性 spike（Node 独立进程调用云服务 LLM）
+- `backend/publicConfig.json`：云服务公开配置（endpoint + publishableKey，设计上可入仓库）
+- 依赖 `@tencent-ai/workbuddy-cloud-sdk@dev`：云服务 SDK（Database/Auth/Storage/LLM）
 
 ### Changed
 - `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）
+
+### Verified (M0.5 阻断门)
+- Node 独立进程可持续调用 WorkBuddy 云服务 LLM：32 个可用模型（全部 supportsToolCall），连续流式调用成功
 
 ### Security
 - API 密钥仅允许写入 `backend/.env`（已被 gitignore），禁止进入前端代码、日志与仓库

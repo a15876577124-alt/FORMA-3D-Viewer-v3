@@ -6,16 +6,50 @@
 ## 当前状态
 
 - **分支**：`feature/ai-asset-pipeline`（基于 `main` @ `0b7c3d0`，基线标签 `v3.0.0-baseline`）
-- **当前里程碑**：M0 基线与备份 ✅ 进行中（分支已建、备份已完成、ignore 已更新）
-- **下一里程碑**：M0.5 LLM 连通性 Spike（阻断门，用户最高优先级）
-- **npm test 基线**：7/7 组通过（运行于 `test-out/suite-2026-10-15T19-58-40-566Z`，待 M0 完成后在新分支复跑确认）
+- **远程同步**：✅ 分支已推送并跟踪 `origin/feature/ai-asset-pipeline`（2026-10-16 15:12）
+- **当前里程碑**：M0 ✅ 完成；**M0.5 LLM Spike ✅ 通过（阻断门解除）**
+- **下一里程碑**：M1 后端骨架 + 真实 GLB/GLTF/OBJ/FBX 分析闭环
+- **npm test 基线**：单元组全通过；render 组受阻（见「阻塞」），不阻塞后续开发
+
+## ✅ M0.5 LLM Spike 结论（2026-10-16 15:30）
+
+- **独立 Node 进程可持续调用 WorkBuddy 云服务 LLM**：`models.list()` 380ms；连续流式 chat 调用 6.9s/3.9s 均成功
+- **Origin 匹配未构成阻碍**：Node 进程（无 Origin 头）可直接调用，服务端以 publishableKey 认证
+- 云服务应用已激活：`wbapp_fIlxy8R4EAkGCA3ubnQhE6`（FORMA资产管线），billing=normal
+- **可用模型 32 个**（全部 supportsToolCall=true）：`auto`、`glm-5.3`/`glm-5.3-flash`、`deepseek-v4-pro`/`deepseek-v4-flash`、`kimi-k2.7`、`hunyuan-2.0-thinking`、`step-5-preview` 等
+- 选型初判：日常分析/Agent 用 `glm-5.3-flash` 或 `deepseek-v4-flash`（快+工具调用）；复杂推理可升级 pro 级
+- 注意：部分模型带 reasoning（如 auto 实测 215 thinking tokens，首答 6.9s）——Agent 场景要容忍思考延迟
+- 凭据形态：`backend/publicConfig.json`（公开配置，可入仓库）；长期密钥只进 `backend/.env`（已 gitignore）
+- Spike 脚本：`tools/llm-spike.mjs`
+
+## 🔴 阻塞：测试浏览器无法启动（2026-10-16 14:29 发现）
+
+**现象**：Puppeteer 启动 Edge 报 `Failed to launch the browser process!`；npm test 的 render 组失败，其余组通过。
+
+**已排除**：
+- ~~沙箱进程创建限制~~——沙箱外（dangerouslyDisableSandbox）同样失败；notepad 可在沙箱内启动
+- ~~Edge 单例冲突~~——14:29 失败时用户 Edge 尚未启动（用户实例 14:38 才起）；且失败早于用户启动
+- ~~user-data-dir 残留/锁~~——全新 mkdtemp 目录同样失败；清理 8 个残留 profile 无效
+- ~~安装目录损坏~~——复制整个版本目录到 `D:\FORMA-tmp\edge-copy` 后同样 0.2s 秒退
+- ~~Chromium 自身 sandbox~~——`--no-sandbox` 无效
+- ~~IFEO 映像劫持~~——注册表无相关项
+- ~~改名绕过~~——副本改名后同样秒退（只走到 Crashpad 阶段）
+
+**特征**：msedge.exe 任意位置/参数组合均在 0.2 秒内 exit 0 无输出，连 `--version`、`--v=1 --enable-logging` 都零输出；profile 只创建 `Crashpad` 即止。**同一套测试 10-15 日正常运行**（suite-2026-10-15T19-58-40-566Z 7/7 通过），说明环境在此期间发生了变化。
+
+**进行中**：安装 Playwright 自带 Chromium（独立二进制）做区分实验——若 Playwright Chromium 可启动则为 Edge 特定问题；若同样秒退则为系统级浏览器进程拦截。
+
+**后备方案**：
+1. browser-test.mjs 增加 `FORMA_CDP_URL` attach 模式（连接用户桌面已启动的带调试端口浏览器，TCP 走 127.0.0.1 不受影响）
+2. render 测试交由用户在本机桌面运行一次并归档结果
+3. 不阻塞 M1-M5 开发（后端/分析/Agent 开发不需要浏览器；UI 完成后统一处理）
 
 ## 里程碑清单
 
 | ID | 内容 | 状态 |
 |----|------|------|
-| M0 | 基线标签 + 功能分支 + 备份 + .gitignore + 本文档 | 🔄 进行中 |
-| M0.5 | WorkBuddy 云端 LLM 独立 Node 进程连通性 Spike（阻断门） | ⬜ |
+| M0 | 基线标签 + 功能分支 + 备份 + .gitignore + 本文档 | ✅ 完成（render 受阻见阻塞） |
+| M0.5 | WorkBuddy 云端 LLM 独立 Node 进程连通性 Spike（阻断门） | ✅ 通过（见下） |
 | M1 | Node 后端骨架（http/https API）+ 真实 GLB/GLTF/OBJ/FBX 分析闭环 | ⬜ |
 | M2 | AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验） | ⬜ |
 | M3 | 非破坏式处理算子 + Before/After 3D 对比（Day1 出口：单模型全流程） | ⬜ |
