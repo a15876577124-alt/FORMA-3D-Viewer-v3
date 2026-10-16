@@ -156,11 +156,35 @@ export function buildSidebar({ onSelect }) {
     return node;
   }
 
+  // Library-published assets land in their own group (badge ★), same wiring.
+  function addLibraryEntry(entry, onSelectLibrary) {
+    let section = document.querySelector('.group[data-group="library"]');
+    if (!section) {
+      section = el('section', { class: 'group', 'data-group': 'library' });
+      const head = el('button', { class: 'group-head', type: 'button', id: 'groupLibraryHead', 'aria-expanded': 'true' });
+      head.innerHTML = '<svg class="group-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1 L8 5 L2 9 Z"/></svg><span class="group-title">资产库</span><span class="group-count">0</span>';
+      const list = el('div', { class: 'asset-list', id: 'groupLibrary', role: 'list' });
+      const note = el('p', { class: 'group-note' }, 'Library — 经 FORMA 管线处理并发布的可交付资产。');
+      section.append(head, list, note);
+      const imported = document.querySelector('.group[data-group="imported"]') || $('groupDemos').closest('.group');
+      imported.after(section);
+      setupGroupRaw(head, list, true);
+    }
+    const list = section.querySelector('.asset-list');
+    const node = assetCard(entry, '★', onSelectLibrary || onSelect);
+    list.append(node);
+    cards.set(entry.id, node);
+    strip.delete(entry.id);
+    groupOf.set(entry.id, 'library');
+    section.querySelector('.group-count').textContent = String(list.children.length);
+    return node;
+  }
+
   function setupGroupRaw(head, list, expanded) {
     const setOpen = (open) => { head.setAttribute('aria-expanded', String(!!open)); list.hidden = !open; };
     setOpen(expanded);
     head.addEventListener('click', () => setOpen(head.getAttribute('aria-expanded') !== 'true'));
   }
 
-  return { select: setSelected, addImported, cards, strip, gallery };
+  return { select: setSelected, addImported, addLibraryEntry, cards, strip, gallery };
 }

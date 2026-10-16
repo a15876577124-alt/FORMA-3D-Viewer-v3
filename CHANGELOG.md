@@ -35,6 +35,12 @@ AI 3D 资产分析、修复、优化、转换、管理与发布平台。
   - 确认门（HMAC token）+ 琼剧红线策略 + 后验（切片哈希/单调性/重解析）
   - `tools/op-demo.mjs` CLI + `tests/ops.test.mjs`（63 断言）
 - 依赖：`@gltf-transform/*@4.5.1`、`meshoptimizer@1.3.0`、`sharp@0.35.5`（真实安装并验证可用）
+- **M4 批量 + 资产库 + 加入展厅**：
+  - `backend/batch.mjs`：批量级确认门 + 逐资产真实执行（5 手办 5/5）
+  - `backend/library.mjs`：listLibrary / publishAsset（只复制）/ deleteLibraryFile（防穿越）/ listPublished
+  - 前端 `src/state/appState.js`（独立 key）+ `src/models/library.js` + `src/ui/sidebar.js`（资产库组）
+  - `src/main.js`：`resolveEntry` 加 libraryMap，`__FORMA.appState` / `__FORMA.library` 只追加
+  - `tools/batch-demo.mjs` CLI + `tests/batch.test.mjs`（19 断言）
 
 ### Changed
 - `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）

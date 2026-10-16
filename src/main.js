@@ -3,7 +3,9 @@
 import { detectCapabilities } from './core/capabilities.js';
 import { Viewer } from './core/viewer.js';
 import { ViewState } from './state/viewState.js';
+import { AppState } from './state/appState.js';
 import { BY_ID, CATALOG, FIGURINES, figurineOrdinal } from './models/catalog.js';
+import { buildLibraryEntries, libraryEntryToCatalog } from './models/library.js';
 import { buildSidebar } from './ui/sidebar.js';
 import { buildInspector } from './ui/inspector.js';
 import { setupChrome } from './ui/chrome.js';
@@ -44,10 +46,17 @@ function boot() {
   }
 
   const viewState = new ViewState();
+  const appState = new AppState();
   const extra = new Map();          // imported entries, keyed by id
+  const libraryMap = new Map();     // published library entries, keyed by 'lib:' id
   const current = { entry: null };
 
-  const resolveEntry = (id) => BY_ID.get(id) || extra.get(id) || null;
+  // Rehydrate library entries persisted in appState.
+  for (const entry of buildLibraryEntries(appState.get().library)) {
+    libraryMap.set(entry.id, entry);
+  }
+
+  const resolveEntry = (id) => BY_ID.get(id) || extra.get(id) || libraryMap.get(id) || null;
   const getEntry = () => current.entry;
 
   // ------------------------------------------------------------- panels ----
@@ -277,6 +286,7 @@ function boot() {
     caps,
     viewer,
     viewState,
+    appState,
     catalog: CATALOG.map((c) => ({ id: c.id, name: c.name, group: c.group, file: c.file })),
     ready,
     select,
@@ -285,6 +295,17 @@ function boot() {
     get info() { return viewer.info; },
     renderNow: () => viewer.render(),
     flushState: () => viewState.flush(),
+    // 资产库：把后端发布结果登记为展厅条目（只追加，不改现有字段）。
+    library: {
+      addEntry(item) {
+        const entry = libraryEntryToCatalog(item);
+        libraryMap.set(entry.id, entry);
+        appState.addLibraryEntry(item);
+        sidebar.addLibraryEntry(entry, (id) => select(id));
+        return entry;
+      },
+      entries: () => [...libraryMap.values()],
+    },
   };
 
   return ready;

@@ -26,3 +26,26 @@ export function verifyConfirmToken(token, assetId, ops) {
   const b = JSON.stringify(ops.map((o) => ({ op: o.op, params: o.params || {} })));
   return a === b;
 }
+
+// 批量确认：一次性确认一组资产 + 算子。batchKey = 排序后的 assetIds。
+export function generateBatchConfirmToken(assetIds, ops) {
+  const key = [...assetIds].sort().join(',');
+  const payload = JSON.stringify({ batchKey: key, ops, ts: Date.now() });
+  const sig = crypto.createHmac('sha256', SECRET).update(payload).digest('hex');
+  return `${Buffer.from(payload).toString('base64url')}.${sig}`;
+}
+
+export function verifyBatchConfirmToken(token, assetIds, ops) {
+  if (typeof token !== 'string' || !token.includes('.')) return false;
+  const [payloadB64, sig] = token.split('.');
+  let payload;
+  try { payload = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8')); }
+  catch { return false; }
+  const expect = crypto.createHmac('sha256', SECRET).update(JSON.stringify(payload)).digest('hex');
+  if (sig !== expect) return false;
+  if (Date.now() - payload.ts > TTL_MS) return false;
+  if (payload.batchKey !== [...assetIds].sort().join(',')) return false;
+  const a = JSON.stringify(payload.ops.map((o) => ({ op: o.op, params: o.params || {} })));
+  const b = JSON.stringify(ops.map((o) => ({ op: o.op, params: o.params || {} })));
+  return a === b;
+}

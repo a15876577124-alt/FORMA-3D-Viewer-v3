@@ -7,10 +7,11 @@
 
 - **分支**：`feature/ai-asset-pipeline`（基于 `main` @ `0b7c3d0`，基线标签 `v3.0.0-baseline`）
 - **远程同步**：✅ 分支已推送并跟踪 `origin/feature/ai-asset-pipeline`（2026-10-16 15:12）
-- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / M2 ✅ / **M3 ✅ 完成**（ops 测试组 63/63）
-- **下一里程碑**：M4 批量处理 + 资产库 + 加入展厅
+- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / M2 ✅ / M3 ✅ / **M4 ✅ 完成**（batch 测试组 19/19）
+- **下一里程碑**：M5 专业 UI/UX（Pipeline 工作模式）+ Before/After 对比 + 性能
 - **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级到 flash；`llm.mjs` 已设 DEFAULT_AGENT_MODEL）
-- **npm test 基线**：pipeline 50/50、agent 36/36、ops 63/63 通过；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
+- **npm test 基线**：pipeline 50/50、agent 36/36、ops 63/63、batch 19/19 通过；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
+- **远程同步**：本地领先（M3 `4b9fe91` + M4 未推送），push 遇 schannel/502，待重试或用户 Desktop 推送
 
 ## ✅ M0.5 LLM Spike 结论（2026-10-16 15:30）
 
@@ -111,6 +112,22 @@
 
 **npm scripts**：`npm run test:ops`、`npm run op:demo`
 
+## ✅ M4 完成（2026-10-17）
+
+**批量**（`backend/batch.mjs`）：`runBatch({assetIds, ops, concurrency:2, confirmToken})`——批量级确认门（gate 的 generateBatchConfirmToken）→ 逐资产派发真实执行；`tests/batch.test.mjs` 19 断言：5 手办 weld+genNormals+fixMaterials 5/5 成功、每资产 verify 通过、原始 sha256 全程不变、BATCH 报告落盘。
+
+**资产库**（`backend/library.mjs`）：`listLibrary`（扫描 pipeline-out 版本）/ `publishAsset`（只复制不移动，产物到 `assets/library/` 可上 Pages）/ `deleteLibraryFile`（safeJoinLibrary 防穿越）/ `listPublished`。
+
+**前端加入展厅**（不动 viewState SCHEMA、只追加 `__FORMA` 字段）：
+- `src/state/appState.js`：独立 key `forma3d.v4.app`（mode + library + recentRuns）
+- `src/models/library.js`：library 条目转 FIGURINES 同构 entry（id 前缀 `lib:`）
+- `src/main.js`：`resolveEntry` 加 libraryMap；`__FORMA.appState` + `__FORMA.library.addEntry()`
+- `src/ui/sidebar.js`：`addLibraryEntry`（「资产库」组，badge ★）
+
+**server 路由**：`POST /api/batch/run`、`GET /api/library`、`GET /api/library/published`、`POST /api/assets/:id/publish`、`DELETE /api/library/:file`（CORS 加 DELETE）。
+
+**npm scripts**：`npm run test:batch`、`npm run batch:demo`
+
 ## 里程碑清单
 
 | ID | 内容 | 状态 |
@@ -120,7 +137,7 @@
 | M1 | Node 后端骨架（http/https API）+ 真实 GLB/GLTF/OBJ/FBX 分析闭环 | ✅ 完成（50/50） |
 | M2 | AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验） | ✅ 完成（36/36 + 真实跑通） |
 | M3 | 非破坏式处理算子 + Before/After 3D 对比（Day1 出口：单模型全流程） | ✅ 完成（63/63） |
-| M4 | 批量处理 + 资产库 + 加入展厅 | ⬜ |
+| M4 | 批量处理 + 资产库 + 加入展厅 | ✅ 完成（19/19） |
 | M5 | 专业 UI/UX（Pipeline 工作模式）+ 性能 | ⬜ |
 | M6 | 测试 + 演示交付物 + 文档 + GitHub 同步 + Pages 验证 | ⬜ |
 

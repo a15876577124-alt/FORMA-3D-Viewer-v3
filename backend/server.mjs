@@ -20,6 +20,8 @@ import { TOOLS } from './agent/tools.mjs';
 import { runAssetPipeline, makeAgentCtx } from './runPipeline.mjs';
 import { listOps } from './ops/index.mjs';
 import { detectCapabilities } from './ops/capabilities.mjs';
+import { runBatch } from './batch.mjs';
+import { listLibrary, publishAsset, deleteLibraryFile, listPublished } from './library.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WORKSPACE = path.join(ROOT, 'backend', 'workspace');
@@ -58,7 +60,7 @@ function applyCors(req, res) {
   if (origin && ALLOWED_ORIGINS.has(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Vary', 'Origin');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Max-Age', '600');
   }
@@ -277,6 +279,31 @@ route('POST', '/api/assets/:id/run', async (req, params) => {
   const confirmToken = typeof body?.confirmToken === 'string' ? body.confirmToken : undefined;
   const dryRun = body?.dryRun === true;
   return runAssetPipeline({ assetId, ops, confirmToken, dryRun });
+});
+
+// ---------- 批量 + 资产库（M4） ----------
+
+route('POST', '/api/batch/run', async (req) => {
+  const body = await readJson(req);
+  const assetIds = Array.isArray(body?.assetIds) ? body.assetIds.map((s) => assertSafeId(String(s))) : [];
+  const ops = Array.isArray(body?.ops) ? body.ops : [];
+  const confirmToken = typeof body?.confirmToken === 'string' ? body.confirmToken : undefined;
+  const concurrency = Number.isInteger(body?.concurrency) ? body.concurrency : 2;
+  return runBatch({ assetIds, ops, confirmToken, concurrency });
+});
+
+route('GET', '/api/library', async () => listLibrary());
+
+route('GET', '/api/library/published', async () => listPublished());
+
+route('POST', '/api/assets/:id/publish', async (req, params) => {
+  const body = await readJson(req);
+  const version = Number.isInteger(body?.version) ? body.version : 1;
+  return publishAsset({ assetId: assertSafeId(params.id), version });
+});
+
+route('DELETE', '/api/library/:file', async (req, params) => {
+  return deleteLibraryFile(params.file);
 });
 
 // ---------- 服务器 ----------
