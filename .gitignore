@@ -11,3 +11,17 @@ assets/variants/
 # OS noise
 Thumbs.db
 .DS_Store
+
+# ---- AI Asset Pipeline (v4) ----
+
+# Backend runtime state: uploaded/derived assets are user data, never committed
+backend/workspace/
+
+# Secrets - API keys must NEVER enter the repo (see docs/SECURITY.md)
+backend/.env
+
+# Pipeline run outputs (regenerable; original assets are never touched)
+pipeline-out/
+
+# Demo capture frames (large, regenerable via docs/demo/README.md)
+docs/demo/frames/
