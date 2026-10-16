@@ -41,6 +41,14 @@ AI 3D 资产分析、修复、优化、转换、管理与发布平台。
   - 前端 `src/state/appState.js`（独立 key）+ `src/models/library.js` + `src/ui/sidebar.js`（资产库组）
   - `src/main.js`：`resolveEntry` 加 libraryMap，`__FORMA.appState` / `__FORMA.library` 只追加
   - `tools/batch-demo.mjs` CLI + `tests/batch.test.mjs`（19 断言）
+- **M5 Pipeline 工作模式 UI + 反向代理 + Before/After 对比**：
+  - `serve.mjs`：`/api/*` 反代到 8787（透传 + 502 降级）
+  - `src/net/api.js`：同源 API 客户端
+  - `src/ui/pipeline.js`：Pipeline 面板（惰性连接、算子勾选、AI 分析、确认门、对比、发布）
+  - `src/core/compare.js`：CompareRig（clippingPlanes 滑动对比）
+  - `src/core/viewer.js` +`pin/unpin`；`src/main.js` 顶栏「管线」按钮 + `__FORMA.pipeline`
+  - `tools/browser-test.mjs`：`FORMA_CDP_URL` attach 模式
+  - `tests/proxy.test.mjs`（5 断言）+ `docs/demo/README.md`（CDP 指引）
 
 ### Changed
 - `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）

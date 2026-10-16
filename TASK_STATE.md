@@ -7,11 +7,11 @@
 
 - **分支**：`feature/ai-asset-pipeline`（基于 `main` @ `0b7c3d0`，基线标签 `v3.0.0-baseline`）
 - **远程同步**：✅ 分支已推送并跟踪 `origin/feature/ai-asset-pipeline`（2026-10-16 15:12）
-- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / M2 ✅ / M3 ✅ / **M4 ✅ 完成**（batch 测试组 19/19）
-- **下一里程碑**：M5 专业 UI/UX（Pipeline 工作模式）+ Before/After 对比 + 性能
+- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / M2 ✅ / M3 ✅ / M4 ✅ / **M5 ✅ 完成**（proxy 5/5 + 前端语法全通过）
+- **下一里程碑**：M6 测试 + 演示交付物 + 文档 + GitHub 同步 + Pages 验证
 - **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级到 flash；`llm.mjs` 已设 DEFAULT_AGENT_MODEL）
-- **npm test 基线**：pipeline 50/50、agent 36/36、ops 63/63、batch 19/19 通过；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
-- **远程同步**：本地领先（M3 `4b9fe91` + M4 未推送），push 遇 schannel/502，待重试或用户 Desktop 推送
+- **npm test 基线**：pipeline 50/50、agent 36/36、ops 63/63、batch 19/19、proxy 5/5 通过；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
+- **远程同步**：本地与远程已同步（M4 `b36317c`），M5 待提交推送
 
 ## ✅ M0.5 LLM Spike 结论（2026-10-16 15:30）
 
@@ -128,6 +128,24 @@
 
 **npm scripts**：`npm run test:batch`、`npm run batch:demo`
 
+## ✅ M5 完成（2026-10-17）
+
+**反向代理**（`serve.mjs`）：`/api/*` → `127.0.0.1:8787`（方法/头/体透传，后端不可达 502 `backend_unavailable`）；前端用同源 `/api` 消灭 CORS 与随机端口问题。`tests/proxy.test.mjs` 5 断言（200 透传 / 502 降级 / 静态不受影响）。
+
+**Pipeline 工作模式 UI**（`src/ui/pipeline.js`，惰性连接启动零请求）：
+- 连接后端（health/ops/tools/models/assets）→ 资产下拉 + 算子勾选（风险 ⚠ 标记）+ 执行处理（确认门 409 → 二次确认）+ AI 分析（agentRun + 日志流）+ Before/After 滑条 + 加入展厅
+- `src/net/api.js`：同源 API 客户端（ApiError 携带 status/data 用于确认门）
+
+**Before/After 对比**（`src/core/compare.js` CompareRig）：同场景同相机，两个 group 相反法线 clippingPlanes 滑动对比；不写 cache、不接管 modelRoot；`viewer.js` +`pin/unpin`（_evictCache 跳过 pinned）。
+
+**集成**（`src/main.js`）：顶栏「管线」按钮切换 `mode-pipeline`；面板挂右栏顶部；`__FORMA.pipeline` / `__FORMA.appState` / `__FORMA.library` 只追加；`setMode()`。
+
+**CDP 方案**（`tools/browser-test.mjs`）：`FORMA_CDP_URL` 环境变量 → `puppeteer.connect`；启动指引 `docs/demo/README.md`。
+
+**已知**：UI 渲染（面板/对比/截图）需 CDP 或用户本机浏览器验证（沙箱起不了 Edge）；代码已语法检查通过，逻辑待真实渲染确认。
+
+**npm scripts**：`npm run test:proxy`
+
 ## 里程碑清单
 
 | ID | 内容 | 状态 |
@@ -138,7 +156,7 @@
 | M2 | AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验） | ✅ 完成（36/36 + 真实跑通） |
 | M3 | 非破坏式处理算子 + Before/After 3D 对比（Day1 出口：单模型全流程） | ✅ 完成（63/63） |
 | M4 | 批量处理 + 资产库 + 加入展厅 | ✅ 完成（19/19） |
-| M5 | 专业 UI/UX（Pipeline 工作模式）+ 性能 | ⬜ |
+| M5 | 专业 UI/UX（Pipeline 工作模式）+ 性能 | ✅ 完成（proxy 5/5；UI 代码就绪待 CDP 验证） |
 | M6 | 测试 + 演示交付物 + 文档 + GitHub 同步 + Pages 验证 | ⬜ |
 
 ## 外部依赖状态

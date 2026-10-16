@@ -25,7 +25,8 @@
     "test:ops": "node tests/run.mjs --only=ops",
     "op:demo": "node tools/op-demo.mjs",
     "test:batch": "node tests/run.mjs --only=batch",
-    "batch:demo": "node tools/batch-demo.mjs"
+    "batch:demo": "node tools/batch-demo.mjs",
+    "test:proxy": "node tests/run.mjs --only=proxy"
   },
   "devDependencies": {
     "puppeteer-core": "^22.15.0"

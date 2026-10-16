@@ -84,6 +84,7 @@ export class Viewer {
     this.immersive = false;
 
     this.cache = new Map();
+    this.pinned = new Set();   // pinned entries are never evicted (Before/After compare)
     this.ticket = 0;
     this.mixer = null;
     this.timer = new THREE.Timer();
@@ -194,11 +195,15 @@ export class Viewer {
     while (keys.length > cap) {
       const oldest = keys.shift();
       if (this.currentEntry && oldest === this.currentEntry.id) { keys.push(oldest); continue; }
+      if (this.pinned && this.pinned.has(oldest)) { keys.push(oldest); continue; }
       const victim = this.cache.get(oldest);
       this.cache.delete(oldest);
       this._disposeLoaded(victim);
     }
   }
+
+  pin(id) { this.pinned.add(id); }
+  unpin(id) { this.pinned.delete(id); }
 
   _disposeLoaded(loaded) {
     if (!loaded) return;

@@ -7,11 +7,12 @@ import { AppState } from './state/appState.js';
 import { BY_ID, CATALOG, FIGURINES, figurineOrdinal } from './models/catalog.js';
 import { buildLibraryEntries, libraryEntryToCatalog } from './models/library.js';
 import { buildSidebar } from './ui/sidebar.js';
+import { buildPipelinePanel } from './ui/pipeline.js';
 import { buildInspector } from './ui/inspector.js';
 import { setupChrome } from './ui/chrome.js';
 import { importFiles } from './loaders/registry.js';
 import { describeError } from './loaders/errors.js';
-import { $, setProgress, toast, fatal, formatNumber } from './utils/dom.js';
+import { $, el, setProgress, toast, fatal, formatNumber } from './utils/dom.js';
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -226,6 +227,46 @@ function boot() {
     viewState.touch();
   };
 
+  // ---------------------------------------------------------- pipeline -----
+  // Pipeline 面板：惰性连接后端（启动零请求），挂到右栏最上方。
+  const pipeline = buildPipelinePanel({
+    viewer,
+    appState,
+    onPublish: (url, assetId) => {
+      const file = url.split('/').pop();
+      const item = { id: assetId, name: assetId, url, version: 1 };
+      const entry = libraryEntryToCatalog(item);
+      libraryMap.set(entry.id, entry);
+      appState.addLibraryEntry(item);
+      sidebar.addLibraryEntry(entry, (id) => select(id));
+      toast('已加入展厅 · ' + file, 'ok');
+    },
+  });
+  const inspectorBody = $('inspectorBody') || document.querySelector('#inspector .inspector-body');
+  if (inspectorBody && inspectorBody.firstChild) inspectorBody.insertBefore(pipeline.node, inspectorBody.firstChild);
+  else if (inspectorBody) inspectorBody.append(pipeline.node);
+
+  // 顶栏模式切换按钮（动态插入，不新增静态 DOM）
+  const pipelineBtn = el('button', { class: 'tool-btn', type: 'button', id: 'pipelineBtn', title: 'AI 管线工作模式' }, '管线');
+  pipelineBtn.addEventListener('click', () => {
+    const next = appState.getMode() === 'pipeline' ? 'gallery' : 'pipeline';
+    appState.setMode(next);
+    document.body.classList.toggle('mode-pipeline', next === 'pipeline');
+    pipeline.node.open = next === 'pipeline';
+    pipelineBtn.classList.toggle('active', next === 'pipeline');
+    if (next === 'pipeline' && !pipeline.connected) toast('进入管线模式：点击面板「连接后端」开始', 'ok', 5000);
+  });
+  const tools = $('topbarTools') || document.querySelector('.topbar-tools');
+  if (tools) tools.append(pipelineBtn);
+
+  function setMode(mode) {
+    appState.setMode(mode);
+    document.body.classList.toggle('mode-pipeline', mode === 'pipeline');
+    pipeline.node.open = mode === 'pipeline';
+    pipelineBtn.classList.toggle('active', mode === 'pipeline');
+    return appState.getMode();
+  }
+
   // ------------------------------------------------------------ shortcuts --
   const KEYS = {
     r: () => resetView(),
@@ -305,6 +346,14 @@ function boot() {
         return entry;
       },
       entries: () => [...libraryMap.values()],
+    },
+    // Pipeline 工作模式（惰性，不发启动请求）。
+    pipeline: {
+      setMode,
+      getMode: () => appState.getMode(),
+      connect: () => pipeline.connect(),
+      get connected() { return pipeline.connected; },
+      get selectedAsset() { return pipeline.selectedAsset; },
     },
   };
 

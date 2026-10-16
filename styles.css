@@ -496,3 +496,24 @@ body.mode-immersive.idle-chrome .imm-dock:hover { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
+
+/* ---- AI Pipeline 工作模式（M5） ---- */
+#pipelineSect summary .sect-tag.ok { color: var(--ok); }
+#pipelineSect summary .sect-tag.err { color: var(--err); }
+
+.p-select {
+  width: 100%; padding: 6px 8px; font-size: 12px; color: var(--tx-0);
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius-s);
+}
+.p-ops { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; max-height: 180px; overflow: auto; }
+.p-ops .check { font-size: 12px; }
+.p-risk { color: var(--warn); font-style: normal; margin-left: 4px; }
+.p-log { font-family: var(--ff-num); font-size: 11px; color: var(--tx-2); background: var(--bg-1); border-radius: var(--radius-s); padding: 8px; max-height: 160px; overflow: auto; margin-top: 8px; }
+.p-log-head { color: var(--tx-0); margin-bottom: 4px; }
+.p-log-line { color: var(--tx-2); }
+.p-log-summary { color: var(--tx-1); margin-top: 6px; white-space: pre-wrap; }
+.p-compare { margin: 8px 0; }
+.p-compare input[type="range"] { width: 100%; }
+.p-compare-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--tx-2); }
+#pipelineSect .ghost-btn, #pipelineSect .chip-solid { margin: 6px 4px 0 0; }
+#pipelineBtn.active { color: var(--accent); }

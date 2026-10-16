@@ -1,5 +1,5 @@
 // Zero-dependency local server for modules and model assets.
-import { createServer } from 'node:http';
+import { createServer, request as httpRequest } from 'node:http';
 import { createReadStream, promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 5173);
 const HOST = process.env.HOST || '127.0.0.1';
+const BACKEND = process.env.FORMA_BACKEND || 'http://127.0.0.1:8787';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8',
   '.mjs': 'application/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -19,13 +20,20 @@ const MIME = {
 
 const server = createServer(async (req, res) => {
   try {
-    if (!['GET', 'HEAD'].includes(req.method)) {
-      res.writeHead(405, { Allow: 'GET, HEAD' }).end(); return;
-    }
     let pathname;
     try { pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); }
     catch { res.writeHead(400).end('400 Bad Request'); return; }
     if (pathname.includes('\0')) { res.writeHead(400).end('400 Bad Request'); return; }
+
+    // 反向代理 /api/* 到后端（127.0.0.1:8787）——前端用同源相对路径，消灭 CORS 与随机端口问题。
+    if (pathname.startsWith('/api/')) {
+      proxyToBackend(req, res, BACKEND);
+      return;
+    }
+
+    if (!['GET', 'HEAD'].includes(req.method)) {
+      res.writeHead(405, { Allow: 'GET, HEAD' }).end(); return;
+    }
     if (pathname === '/') pathname = '/index.html';
     const resolved = path.resolve(ROOT, '.' + pathname);
     const relative = path.relative(ROOT, resolved);
@@ -67,5 +75,36 @@ const server = createServer(async (req, res) => {
   }
 });
 server.listen(PORT, HOST, () => {
-  console.log(`FORMA 3D Viewer V3\n  serving : ${ROOT}\n  local   : http://${HOST}:${server.address().port}/\n  Ctrl+C to stop`);
+  console.log(`FORMA 3D Viewer V3\n  serving : ${ROOT}\n  local   : http://${HOST}:${server.address().port}/\n  api     : /api/* -> ${BACKEND}\n  Ctrl+C to stop`);
 });
+
+// 反向代理：把 /api/* 请求转发到后端，透传 method/headers/body，后端不可达返回 502。
+function proxyToBackend(req, res, target) {
+  let body = Buffer.alloc(0);
+  req.on('data', (c) => { body = Buffer.concat([body, c]); });
+  req.on('end', () => {
+    const upstream = httpRequest(target + req.url, {
+      method: req.method,
+      headers: {
+        ...req.headers,
+        host: new URL(target).host,
+        'content-length': body.length,
+      },
+    }, (upRes) => {
+      res.writeHead(upRes.statusCode || 502, upRes.headers);
+      upRes.pipe(res);
+    });
+    upstream.setTimeout(60000, () => { upstream.destroy(); });
+    upstream.on('error', () => {
+      if (!res.headersSent) {
+        res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ error: { message: '后端服务不可用，请先运行 npm run pipeline:serve', code: 'backend_unavailable' } }));
+      } else {
+        res.destroy();
+      }
+    });
+    if (body.length) upstream.write(body);
+    upstream.end();
+  });
+  req.on('error', () => { if (!res.headersSent) res.writeHead(400).end(); });
+}
