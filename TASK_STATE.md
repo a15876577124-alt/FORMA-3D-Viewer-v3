@@ -7,11 +7,10 @@
 
 - **分支**：`feature/ai-asset-pipeline`（基于 `main` @ `0b7c3d0`，基线标签 `v3.0.0-baseline`）
 - **远程同步**：✅ 分支已推送并跟踪 `origin/feature/ai-asset-pipeline`（2026-10-16 15:12）
-- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / M2 ✅ / M3 ✅ / M4 ✅ / **M5 ✅ 完成**（proxy 5/5 + 前端语法全通过）
-- **下一里程碑**：M6 测试 + 演示交付物 + 文档 + GitHub 同步 + Pages 验证
-- **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级到 flash；`llm.mjs` 已设 DEFAULT_AGENT_MODEL）
-- **npm test 基线**：pipeline 50/50、agent 36/36、ops 63/63、batch 19/19、proxy 5/5 通过；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
-- **远程同步**：本地与远程已同步（M4 `b36317c`），M5 待提交推送
+- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / M2 ✅ / M3 ✅ / M4 ✅ / M5 ✅ / **M6 ✅ 完成**
+- **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级到 flash）
+- **npm test 基线**：pipeline 50/50、agent 36/36、ops 63/63、batch 19/19、proxy 5/5 = **173 断言全通过**；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
+- **远程同步**：✅ 远程 `feature/ai-asset-pipeline` = `62ea92c` = 本地 HEAD；Pages 在线 HTTP 200（main 分支，v3 展示器）
 
 ## ✅ M0.5 LLM Spike 结论（2026-10-16 15:30）
 
@@ -157,7 +156,7 @@
 | M3 | 非破坏式处理算子 + Before/After 3D 对比（Day1 出口：单模型全流程） | ✅ 完成（63/63） |
 | M4 | 批量处理 + 资产库 + 加入展厅 | ✅ 完成（19/19） |
 | M5 | 专业 UI/UX（Pipeline 工作模式）+ 性能 | ✅ 完成（proxy 5/5；UI 代码就绪待 CDP 验证） |
-| M6 | 测试 + 演示交付物 + 文档 + GitHub 同步 + Pages 验证 | ⬜ |
+| M6 | 测试 + 演示交付物 + 文档 + GitHub 同步 + Pages 验证 | ✅ 完成（173 断言 + 文档 + 远程同步） |
 
 ## 外部依赖状态
 
