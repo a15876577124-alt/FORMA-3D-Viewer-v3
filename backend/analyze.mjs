@@ -398,5 +398,6 @@ export async function analyzeFile(absPath) {
   const buf = fs.readFileSync(absPath);
   const { validateFile } = await import('./validate.mjs');
   const { format } = validateFile(path.basename(absPath), buf);
-  return analyzeBuffer(path.basename(absPath), buf, format);
+  // 传完整路径，使 gltf 外部 .bin/贴图能按正确 dirname 解析
+  return analyzeBuffer(absPath, buf, format);
 }

@@ -7,10 +7,10 @@
 
 - **分支**：`feature/ai-asset-pipeline`（基于 `main` @ `0b7c3d0`，基线标签 `v3.0.0-baseline`）
 - **远程同步**：✅ 分支已推送并跟踪 `origin/feature/ai-asset-pipeline`（2026-10-16 15:12）
-- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / **M2 ✅ 完成**（agent 测试组 36/36，真实模式端到端跑通）
-- **下一里程碑**：M3 处理算子 + Before/After（Day1 出口：单模型全流程）
+- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / M2 ✅ / **M3 ✅ 完成**（ops 测试组 63/63）
+- **下一里程碑**：M4 批量处理 + 资产库 + 加入展厅
 - **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级到 flash；`llm.mjs` 已设 DEFAULT_AGENT_MODEL）
-- **npm test 基线**：pipeline 50/50、agent 36/36 通过；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
+- **npm test 基线**：pipeline 50/50、agent 36/36、ops 63/63 通过；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
 
 ## ✅ M0.5 LLM Spike 结论（2026-10-16 15:30）
 
@@ -86,6 +86,31 @@
 
 **npm scripts**：`npm run test:agent`、`npm run agent:spike`
 
+## ✅ M3 完成（2026-10-17）
+
+**依赖排查结果**：`@gltf-transform` 之前确实未安装（状态记录有误，已更正）。现成功安装并**真实验证可用**：
+- `@gltf-transform/core/extensions/functions` 4.5.1（84 函数）
+- `meshoptimizer` 1.3.0（MeshoptSimplifier，simplify 用）
+- `sharp` 0.35.5（原生二进制正常，textureResize/Compress 用）
+
+**算子架构**（`backend/ops/` + 编排 `backend/runPipeline.mjs`）：
+- 成熟库算子（gltf-transform）：weld/dedup/prune/simplify/quantize/join
+- sharp 自研：textureResize/textureCompress（compact 重建 BIN，丢弃旧贴图字节）
+- 自研：genNormals（法线生成，源自 fix-glb 算法）/ fixMaterials / setSampler / textureReport / convert（glb↔gltf↔obj；FBX 只进不出）
+- `index.mjs`：注册表 + 参数校验 + 能力门控 + 链式执行
+- `policy.mjs`：琼剧红线（appearance 算子 + 5 手办 prune/dedup 强制确认）
+- `gate.mjs`：HMAC 确认门 token（10min 有效）
+- `verify.mjs`：后验（容器/重解析/字节级切片哈希/贴图字节/单调性断言/bounds）
+
+**关键修复**：
+- `glbkit.readAccessor` 支持 interleaved bufferView（byteStride）——gltf-transform 常见输出
+- `analyze.analyzeFile` 传完整路径（gltf 外部 .bin/贴图正确 dirname）
+- `verifyPair` 逐算子「输入 vs 输出」对比（中间产物）；convert 后验适配 gltf/obj 格式
+
+**验证**（tests/ops.test.mjs 63 断言）：能力探测、13 算子独立执行+后验、simplify tris 真实下降、textureResize 贴图 2048→1024 且体积下降、convert fbx 400、确认门 409、链式执行、原始素材 sha256 全程不变、runAssetPipeline 端到端（版本目录+report+verify）。
+
+**npm scripts**：`npm run test:ops`、`npm run op:demo`
+
 ## 里程碑清单
 
 | ID | 内容 | 状态 |
@@ -94,7 +119,7 @@
 | M0.5 | WorkBuddy 云端 LLM 独立 Node 进程连通性 Spike（阻断门） | ✅ 通过（见下） |
 | M1 | Node 后端骨架（http/https API）+ 真实 GLB/GLTF/OBJ/FBX 分析闭环 | ✅ 完成（50/50） |
 | M2 | AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验） | ✅ 完成（36/36 + 真实跑通） |
-| M3 | 非破坏式处理算子 + Before/After 3D 对比（Day1 出口：单模型全流程） | ⬜ |
+| M3 | 非破坏式处理算子 + Before/After 3D 对比（Day1 出口：单模型全流程） | ✅ 完成（63/63） |
 | M4 | 批量处理 + 资产库 + 加入展厅 | ⬜ |
 | M5 | 专业 UI/UX（Pipeline 工作模式）+ 性能 | ⬜ |
 | M6 | 测试 + 演示交付物 + 文档 + GitHub 同步 + Pages 验证 | ⬜ |

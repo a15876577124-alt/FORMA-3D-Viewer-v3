@@ -83,13 +83,30 @@ export function readAccessor(gltf, index) {
 
   if (acc.bufferView !== undefined) {
     const bv = gltf.bufferViews[acc.bufferView];
-    if (bv.byteStride && bv.byteStride !== stride) {
-      throw new Error(`byteStride not implemented (accessor ${index})`);
-    }
     const start = (bv.byteOffset || 0) + (acc.byteOffset || 0);
-    // Buffer may be split across data: URI / GLB BIN chunk. All five assets are GLB-embedded.
-    const src = gltf.__bin.subarray(start, start + count * stride);
-    data = new comp.array(src.buffer, src.byteOffset, count * n);
+    if (bv.byteStride && bv.byteStride !== stride) {
+      // interleaved bufferView（gltf-transform 常见输出）：逐元素复制到连续数组
+      const elemStride = bv.byteStride;
+      const bin = gltf.__bin;
+      data = new comp.array(count * n);
+      const view = new DataView(bin.buffer, bin.byteOffset + start, count * elemStride);
+      const get = {
+        5120: (o) => view.getInt8(o),
+        5121: (o) => view.getUint8(o),
+        5122: (o) => view.getInt16(o, true),
+        5123: (o) => view.getUint16(o, true),
+        5125: (o) => view.getUint32(o, true),
+        5126: (o) => view.getFloat32(o, true),
+      }[acc.componentType];
+      for (let i = 0; i < count; i++) {
+        for (let k = 0; k < n; k++) {
+          data[i * n + k] = get(i * elemStride + k * comp.size);
+        }
+      }
+    } else {
+      const src = gltf.__bin.subarray(start, start + count * stride);
+      data = new comp.array(src.buffer, src.byteOffset, count * n);
+    }
   } else {
     data = new comp.array(count * n); // zero-filled per spec
   }

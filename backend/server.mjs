@@ -17,6 +17,9 @@ import { analyzeBuffer } from './analyze.mjs';
 import { listModels, pickAgentModel } from './llm.mjs';
 import { runAgent } from './agent/agent.mjs';
 import { TOOLS } from './agent/tools.mjs';
+import { runAssetPipeline, makeAgentCtx } from './runPipeline.mjs';
+import { listOps } from './ops/index.mjs';
+import { detectCapabilities } from './ops/capabilities.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WORKSPACE = path.join(ROOT, 'backend', 'workspace');
@@ -222,7 +225,7 @@ route('POST', '/api/agent/run', async (req) => {
   const dryRun = body.dryRun !== false; // 默认 dryRun，不写盘
   const log = await runAgent({
     assetId, goal, model, maxRounds, dryRun,
-    ctx: { assetsDir: ASSETS_DIR },
+    ctx: makeAgentCtx(),
   });
   return { runId: log.runId, log };
 });
@@ -258,6 +261,22 @@ route('GET', '/api/agent/runs', async () => {
     }
   }
   return { runs: out.slice(-20).reverse() };
+});
+
+// ---------- 处理算子（M3） ----------
+
+route('GET', '/api/ops', async () => ({ ops: listOps() }));
+
+route('GET', '/api/ops/capabilities', async () => ({ capabilities: await detectCapabilities() }));
+
+route('POST', '/api/assets/:id/run', async (req, params) => {
+  const body = await readJson(req);
+  const assetId = assertSafeId(params.id);
+  if (!readMeta(assetId)) throw new PathError(`资产不存在: ${assetId}`);
+  const ops = Array.isArray(body?.ops) ? body.ops : [];
+  const confirmToken = typeof body?.confirmToken === 'string' ? body.confirmToken : undefined;
+  const dryRun = body?.dryRun === true;
+  return runAssetPipeline({ assetId, ops, confirmToken, dryRun });
 });
 
 // ---------- 服务器 ----------

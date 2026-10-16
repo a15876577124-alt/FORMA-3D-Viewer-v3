@@ -29,11 +29,19 @@ AI 3D 资产分析、修复、优化、转换、管理与发布平台。
   - server +4 Agent 路由（tools/run/runs）
   - `tests/agent.test.mjs`（36 断言，含反证与离线失败）
 - 主力模型锁定 `deepseek-v4-pro`（`llm.mjs` DEFAULT_AGENT_MODEL，禁止 flash 自动降级）
+- **M3 处理算子 + 后验**（`backend/ops/` + `backend/runPipeline.mjs` + `backend/verify.mjs` + `backend/policy.mjs` + `backend/gate.mjs`）：
+  - 成熟库算子 weld/dedup/prune/simplify/quantize/join（gltf-transform + meshoptimizer）
+  - sharp 自研 textureResize/textureCompress；自研 genNormals/fixMaterials/setSampler/textureReport/convert（glb↔gltf↔obj）
+  - 确认门（HMAC token）+ 琼剧红线策略 + 后验（切片哈希/单调性/重解析）
+  - `tools/op-demo.mjs` CLI + `tests/ops.test.mjs`（63 断言）
+- 依赖：`@gltf-transform/*@4.5.1`、`meshoptimizer@1.3.0`、`sharp@0.35.5`（真实安装并验证可用）
 
 ### Changed
 - `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）
-- `tests/run.mjs`：新增 `--only=pipeline` / `--only=agent` 测试组
-- `package.json`：新增 `pipeline:serve` / `test:pipeline` / `test:agent` / `agent:spike` scripts；描述更新为 AI Asset Pipeline
+- `tests/run.mjs`：新增 `--only=pipeline` / `--only=agent` / `--only=ops` 测试组
+- `package.json`：新增 `pipeline:serve` / `test:pipeline` / `test:agent` / `test:ops` / `agent:spike` / `op:demo` scripts；描述更新为 AI Asset Pipeline
+- `tools/glbkit.mjs`：`readAccessor` 支持 interleaved bufferView（byteStride）
+- `backend/analyze.mjs`：`analyzeFile` 传完整路径（gltf 外部资源正确解析）
 
 ### Changed
 - `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）
