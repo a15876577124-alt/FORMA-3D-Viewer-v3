@@ -17,7 +17,7 @@ const OPS_META = {
   convert: { label: '转换格式', appearance: true, note: 'glb/gltf/obj' },
 };
 
-export function buildPipelinePanel({ viewer, appState, onPublish }) {
+export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary }) {
   const state = { connected: false, assets: [], ops: [], tools: [], models: [], selectedAsset: null, lastRun: null, rig: null, confirmToken: null };
 
   const node = el('details', { class: 'sect', id: 'pipelineSect' });
@@ -91,6 +91,14 @@ export function buildPipelinePanel({ viewer, appState, onPublish }) {
       status('已连接', 'ok');
       renderOps();
       renderAssets();
+
+      // 连接后同步「已发布到资产库」的处理产物，使其在左栏资产库组可见。
+      // 启动路径不请求后端（保持零请求），这里由用户显式点击「连接」触发。
+      try {
+        const pub = await pipelineApi.libraryPublished();
+        const added = onSyncLibrary ? (onSyncLibrary(pub.files || [], state.assets) || 0) : 0;
+        if (added > 0) toast(`已同步 ${added} 个处理产物到资产库组`, 'ok', 5000);
+      } catch { /* 资产库不可读不影响主流程 */ }
       setProgress(null);
     } catch (e) {
       state.connected = false;

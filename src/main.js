@@ -241,6 +241,33 @@ function boot() {
       sidebar.addLibraryEntry(entry, (id) => select(id));
       toast('已加入展厅 · ' + file, 'ok');
     },
+    // 连接后端后，把已发布的产物登记进左栏「资产库」组（按文件名去重，不重复添加）。
+    onSyncLibrary: (files, assets) => {
+      let added = 0;
+      for (const f of files) {
+        const file = String(f.file || f.url || '').split('/').pop();
+        const m = /^(.+)-v(\d+)\.(glb|gltf)$/.exec(file);
+        if (!m) continue;
+        const [, assetId, ver] = m;
+        const id = `${assetId}-v${ver}`;
+        if (libraryMap.has('lib:' + id)) continue; // 已登记，跳过
+        const src = (assets || []).find((a) => a.id === assetId);
+        const item = {
+          id,
+          name: `${src?.name || assetId} · 已处理 v${ver}`,
+          url: f.url || `/assets/library/${file}`,
+          version: Number(ver),
+          sourceId: assetId,
+          bytes: f.bytes ?? null,
+        };
+        const entry = libraryEntryToCatalog(item);
+        libraryMap.set(entry.id, entry);
+        appState.addLibraryEntry(item);
+        sidebar.addLibraryEntry(entry, (eid) => select(eid));
+        added += 1;
+      }
+      return added;
+    },
   });
   const inspectorBody = $('inspectorBody') || document.querySelector('#inspector .inspector-body');
   if (inspectorBody && inspectorBody.firstChild) inspectorBody.insertBefore(pipeline.node, inspectorBody.firstChild);
