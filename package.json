@@ -19,7 +19,9 @@
     "shots": "node tests/run.mjs --only=shots",
     "shots:gpu": "node tests/run.mjs --only=shots --gpu",
     "pipeline:serve": "node backend/server.mjs",
-    "test:pipeline": "node tests/run.mjs --only=pipeline"
+    "test:pipeline": "node tests/run.mjs --only=pipeline",
+    "test:agent": "node tests/run.mjs --only=agent",
+    "agent:spike": "node tools/llm-tools-spike.mjs"
   },
   "devDependencies": {
     "puppeteer-core": "^22.15.0"

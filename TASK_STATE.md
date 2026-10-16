@@ -7,9 +7,10 @@
 
 - **分支**：`feature/ai-asset-pipeline`（基于 `main` @ `0b7c3d0`，基线标签 `v3.0.0-baseline`）
 - **远程同步**：✅ 分支已推送并跟踪 `origin/feature/ai-asset-pipeline`（2026-10-16 15:12）
-- **当前里程碑**：M0 ✅ / M0.5 ✅ 完成；**M1 ✅ 完成**（pipeline 测试组 50/50）
-- **下一里程碑**：M2 AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验）
-- **npm test 基线**：单元组全通过；render 组受阻（见「阻塞」），不阻塞后续开发；pipeline 组 50/50 通过
+- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / **M2 ✅ 完成**（agent 测试组 36/36，真实模式端到端跑通）
+- **下一里程碑**：M3 处理算子 + Before/After（Day1 出口：单模型全流程）
+- **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级到 flash；`llm.mjs` 已设 DEFAULT_AGENT_MODEL）
+- **npm test 基线**：pipeline 50/50、agent 36/36 通过；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
 
 ## ✅ M0.5 LLM Spike 结论（2026-10-16 15:30）
 
@@ -63,6 +64,28 @@
 
 **npm scripts**：`npm run pipeline:serve`、`npm run test:pipeline`
 
+## ✅ M2 完成（2026-10-17）
+
+**关键实测**：SDK 网关**真实转发原生 tools 参数**——`deepseek-v4-pro`/`glm-5.3-flash`/`kimi-k2.7` 均返回 `finish_reason='tool_calls'` + 分片 `delta.tool_calls`（name 首片完整、arguments 逐字符分片）。主力 `deepseek-v4-pro` 首轮工具调用 2.0s。
+
+**Agent 架构**（`backend/agent/`）：
+- `tools.mjs`：8 工具单一真源（list_assets/analyze_asset/propose_ops/run_op/verify/compare/export_asset/finish），handler 经 ctx 注入，mutating/confirm 标记
+- `toolAccumulator.mjs`：分片累积 + 容错 JSON 解析（括号配平重试）+ index 升序
+- `llmStream.mjs`：透传 tools/tool_choice，采样 rawChunkSample 作「AI 决策」证据
+- `agent.mjs`：主循环（native/prompt 双协议、多轮回灌、死循环检测、maxRounds/maxToolCalls/墙钟上限、执行日志落盘 `workspace/assets/<id>/runs/<runId>.json`）
+- `fakeLlm.mjs`：离线回放，供无网自动化测试
+- `paths.mjs` +`safeJoinPipeline`/`safeJoinLibrary`（pipeline-out/、assets/library/）
+- `server.mjs` +4 路由（`/api/agent/tools`、`/api/agent/run`、`/api/agent/runs/:runId`、`/api/agent/runs`）
+
+**「证明是 LLM 决策」三重证据**（tests/agent.test.mjs 36 断言）：
+1. rawChunkSample 含 delta.tool_calls；dispatchTool 只接受日志 toolCalls，服务端无默认 op 填充
+2. 反证测试：朴素规则首推 simplify，Agent 首推 textureResize，两者不同（非规则冒充）
+3. `FORMA_LLM_OFFLINE=1` 抛 503 且零轮次、pipeline-out 无新增
+
+**真实模式验证**：`sheng` dryRun 端到端 2 轮完成，list_assets→analyze_asset，LLM 自发识别出 workspace 中 sheng/passwd 是同一文件重复导入。
+
+**npm scripts**：`npm run test:agent`、`npm run agent:spike`
+
 ## 里程碑清单
 
 | ID | 内容 | 状态 |
@@ -70,7 +93,7 @@
 | M0 | 基线标签 + 功能分支 + 备份 + .gitignore + 本文档 | ✅ 完成（render 受阻见阻塞） |
 | M0.5 | WorkBuddy 云端 LLM 独立 Node 进程连通性 Spike（阻断门） | ✅ 通过（见下） |
 | M1 | Node 后端骨架（http/https API）+ 真实 GLB/GLTF/OBJ/FBX 分析闭环 | ✅ 完成（50/50） |
-| M2 | AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验） | ⬜ |
+| M2 | AI Agent 工具链（真实 LLM + 工具调用 + 执行日志 + 后验） | ✅ 完成（36/36 + 真实跑通） |
 | M3 | 非破坏式处理算子 + Before/After 3D 对比（Day1 出口：单模型全流程） | ⬜ |
 | M4 | 批量处理 + 资产库 + 加入展厅 | ⬜ |
 | M5 | 专业 UI/UX（Pipeline 工作模式）+ 性能 | ⬜ |

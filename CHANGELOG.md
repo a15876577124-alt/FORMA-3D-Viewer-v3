@@ -21,12 +21,19 @@ AI 3D 资产分析、修复、优化、转换、管理与发布平台。
   - `paths.mjs`：目录穿越防护
   - `llm.mjs`：云服务 LLM 客户端封装
   - `texture-sniff.mjs`：PNG/JPEG/WebP 真实尺寸解析
-- `tests/pipeline.test.mjs`：pipeline 回归组（50 断言：ground truth 对账 + 多格式 + 端到端 + 安全）
+- `tests/pipeline.test.mjs`：pipeline 回归组（50 断言）
+- **M2 AI Agent 工具链**（`backend/agent/`）：
+  - 8 工具单一真源（tools.mjs）+ 分片累积（toolAccumulator.mjs）+ 流式封装（llmStream.mjs）
+  - 主循环（agent.mjs）：native/prompt 双协议、多轮回灌、死循环检测、执行日志、rawChunkSample 证据
+  - 离线回放（fakeLlm.mjs）+ `tools/llm-tools-spike.mjs`（阻断门）
+  - server +4 Agent 路由（tools/run/runs）
+  - `tests/agent.test.mjs`（36 断言，含反证与离线失败）
+- 主力模型锁定 `deepseek-v4-pro`（`llm.mjs` DEFAULT_AGENT_MODEL，禁止 flash 自动降级）
 
 ### Changed
 - `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）
-- `tests/run.mjs`：新增 `--only=pipeline` 测试组
-- `package.json`：新增 `pipeline:serve` / `test:pipeline` scripts；描述更新为 AI Asset Pipeline
+- `tests/run.mjs`：新增 `--only=pipeline` / `--only=agent` 测试组
+- `package.json`：新增 `pipeline:serve` / `test:pipeline` / `test:agent` / `agent:spike` scripts；描述更新为 AI Asset Pipeline
 
 ### Changed
 - `.gitignore`：追加 AI Pipeline 相关忽略项（`backend/workspace/`、`backend/.env`、`pipeline-out/`、`docs/demo/frames/`）

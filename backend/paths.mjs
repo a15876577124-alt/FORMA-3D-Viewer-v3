@@ -2,6 +2,7 @@
 // 防目录穿越（..、绝对路径、符号链接逃逸——符号链接在写入侧额外校验 realpath）。
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 export class PathError extends Error {
   constructor(message) { super(message); this.name = 'PathError'; this.status = 403; }
@@ -45,4 +46,20 @@ export function assertSafeId(id) {
   }
   if (id.startsWith('.')) throw new PathError('资产 ID 不能以点开头');
   return id;
+}
+
+// ---- 处理输出（pipeline-out/）与资产库（assets/library/）----
+
+export const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+export const PIPELINE_OUT_ROOT = path.join(PROJECT_ROOT, 'pipeline-out');
+export const LIBRARY_ROOT = path.join(PROJECT_ROOT, 'assets', 'library');
+
+// 处理输出目录：pipeline-out/<相对路径>，防穿越。
+export function safeJoinPipeline(relPath) {
+  return safeJoin(PIPELINE_OUT_ROOT, relPath);
+}
+
+// 资产库目录：assets/library/<相对路径>，防穿越。
+export function safeJoinLibrary(relPath) {
+  return safeJoin(LIBRARY_ROOT, relPath);
 }

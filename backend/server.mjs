@@ -15,6 +15,8 @@ import { safeJoin, assertSafeId, PathError } from './paths.mjs';
 import { validateFile, sanitizeName, ValidationError, MAX_FILE_BYTES } from './validate.mjs';
 import { analyzeBuffer } from './analyze.mjs';
 import { listModels, pickAgentModel } from './llm.mjs';
+import { runAgent } from './agent/agent.mjs';
+import { TOOLS } from './agent/tools.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WORKSPACE = path.join(ROOT, 'backend', 'workspace');
@@ -202,6 +204,60 @@ route('GET', '/api/assets/:id/report', async (req, params) => {
   const p = path.join(assetDir(params.id), 'report.json');
   if (!fs.existsSync(p)) throw new PathError(`报告不存在: ${params.id}`);
   return { asset: readMeta(params.id), report: JSON.parse(fs.readFileSync(p, 'utf8')) };
+});
+
+// ---------- AI Agent ----------
+
+route('GET', '/api/agent/tools', async () => ({
+  tools: TOOLS.map((t) => ({ name: t.name, description: t.description, parameters: t.parameters, mutating: t.mutating, confirm: t.confirm })),
+}));
+
+route('POST', '/api/agent/run', async (req) => {
+  const body = await readJson(req);
+  const assetId = assertSafeId(String(body?.assetId || ''));
+  if (!readMeta(assetId)) throw new PathError(`资产不存在: ${assetId}`);
+  const goal = typeof body.goal === 'string' && body.goal.trim() ? body.goal.trim() : '请分析该资产并给出处理建议';
+  const model = typeof body.model === 'string' ? body.model : undefined;
+  const maxRounds = Number.isInteger(body.maxRounds) ? body.maxRounds : undefined;
+  const dryRun = body.dryRun !== false; // 默认 dryRun，不写盘
+  const log = await runAgent({
+    assetId, goal, model, maxRounds, dryRun,
+    ctx: { assetsDir: ASSETS_DIR },
+  });
+  return { runId: log.runId, log };
+});
+
+route('GET', '/api/agent/runs/:runId', async (req, params) => {
+  const runId = assertSafeId(params.runId);
+  const runDir = path.join(ASSETS_DIR);
+  // runId 形如 run_<ts>_<hex>；在所有资产目录下查找
+  let found = null;
+  if (fs.existsSync(runDir)) {
+    for (const id of fs.readdirSync(runDir)) {
+      const p = path.join(runDir, id, 'runs', `${runId}.json`);
+      if (fs.existsSync(p)) { found = JSON.parse(fs.readFileSync(p, 'utf8')); break; }
+    }
+  }
+  if (!found) throw new PathError(`运行记录不存在: ${runId}`);
+  return { log: found };
+});
+
+route('GET', '/api/agent/runs', async () => {
+  const out = [];
+  if (fs.existsSync(ASSETS_DIR)) {
+    for (const id of fs.readdirSync(ASSETS_DIR)) {
+      const runsDir = path.join(ASSETS_DIR, id, 'runs');
+      if (!fs.existsSync(runsDir)) continue;
+      for (const f of fs.readdirSync(runsDir)) {
+        if (!f.endsWith('.json')) continue;
+        try {
+          const log = JSON.parse(fs.readFileSync(path.join(runsDir, f), 'utf8'));
+          out.push({ runId: log.runId, assetId: log.assetId, model: log.model, protocol: log.protocol, dryRun: log.dryRun, startedAt: log.startedAt, totalMs: log.totalMs, finish: log.finish ? log.finish.summary.slice(0, 80) : null });
+        } catch { /* 忽略损坏日志 */ }
+      }
+    }
+  }
+  return { runs: out.slice(-20).reverse() };
 });
 
 // ---------- 服务器 ----------

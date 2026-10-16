@@ -57,16 +57,20 @@ export async function listModels({ refresh = false } = {}) {
   return models;
 }
 
-// 选择一个适合 Agent 的模型：优先快 + 工具调用，其次任意可用。
+// 主力 Agent 模型（用户指定，2026-10-17）：DeepSeek-V4-Pro。禁止仅凭 flash|turbo 关键词自动降级。
+export const DEFAULT_AGENT_MODEL = 'deepseek-v4-pro';
+
+// 选择一个适合 Agent 的模型：优先显式 preferredId，其次 DEFAULT_AGENT_MODEL。
+// 降级只在两者都不可用时发生，且必须显式传入 preferredId 覆盖；本函数不会因 "flash" 字样自动降级。
 export function pickAgentModel(models, preferredId) {
   const usable = (models || []).filter((m) => m.disabled !== true);
-  if (preferredId) {
-    const hit = usable.find((m) => m.id === preferredId);
+  for (const id of [preferredId, DEFAULT_AGENT_MODEL]) {
+    if (!id) continue;
+    const hit = usable.find((m) => m.id === id);
     if (hit) return hit;
   }
-  const fast = usable.find((m) => m.supportsToolCall === true && /flash|turbo/i.test(m.id));
   const anyTool = usable.find((m) => m.supportsToolCall === true);
-  return fast || anyTool || usable[0] || null;
+  return anyTool || usable[0] || null;
 }
 
 // 单轮流式对话，收集完整文本。供 Agent 与一次性任务使用。
