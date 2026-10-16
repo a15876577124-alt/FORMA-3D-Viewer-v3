@@ -23,5 +23,8 @@ backend/.env
 # Pipeline run outputs (regenerable; original assets are never touched)
 pipeline-out/
 
+# Published library artifacts (regenerable via tools/batch-demo.mjs; keep local, not in repo)
+assets/library/
+
 # Demo capture frames (large, regenerable via docs/demo/README.md)
 docs/demo/frames/

@@ -1,6 +1,8 @@
-# FORMA 3D — 琼剧数字手办展厅（V3）
+# FORMA 3D — 琼剧数字手办展厅（V3）+ AI 资产管线
 
-一个纯前端的实时三维展示器，用于陈列五件琼剧角色数字手办（生角、旦角·完整头饰、净角·红谱 / 黄谱 / 白谱），支持专业影棚布光、材质与后期调整、多格式模型导入、逐展品参数持久化、沉浸模式与截图导出。
+一个实时三维展示器，用于陈列五件琼剧角色数字手办（生角、旦角·完整头饰、净角·红谱 / 黄谱 / 白谱），支持专业影棚布光、材质与后期调整、多格式模型导入、逐展品参数持久化、沉浸模式与截图导出。
+
+**V4 新增（开发分支 `feature/ai-asset-pipeline`）**：升级为 **AI 3D 资产分析 / 修复 / 优化 / 转换 / 管理 / 发布平台**——真实导入 → 分析 → AI 建议 → 处理 → Before/After 对比 → 导出可交付资产。详见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
 渲染内核为 **three.js r186**，全部依赖已本地化到 `vendor/`，**完全离线可用**——不需要 CDN，不需要联网，只需要一个静态文件服务器（浏览器对 ES Module 的 `file://` 限制，这是唯一的前置条件）。
 
@@ -21,6 +23,22 @@ node serve.mjs          # 零依赖静态服务器，默认 http://127.0.0.1:517
 然后用浏览器打开 <http://127.0.0.1:5173>。（任何静态服务器都可以，例如 `python -m http.server`。端口可用 `PORT` 环境变量修改。）
 
 > **不要直接双击 `index.html`。** 浏览器安全策略禁止 `file://` 协议加载 ES Module，直接打开时应用无法启动；此时页面会显示明确的提示指引，而不是一个看起来正常但什么都没有的界面。这是浏览器对 ES Module 的固有约束，与代码正确性无关。
+
+### AI 资产管线（Pipeline 工作模式）
+
+```bash
+npm run pipeline:serve   # 启动后端（仅监听 127.0.0.1:8787）
+node serve.mjs           # 启动展厅（/api 自动反代到后端）
+```
+
+浏览器打开后点顶栏「管线」进入工作模式，点面板「连接后端」。CLI 演示：
+
+```bash
+npm run op:demo -- --asset=assets/raw/sheng.glb --ops=weld,genNormals,fixMaterials
+npm run batch:demo       # 5 手办批量处理 + 发布到资产库
+```
+
+测试：`npm run test:pipeline` / `test:agent` / `test:ops` / `test:batch` / `test:proxy`（无浏览器，共 173 断言）。浏览器渲染验收见 [docs/demo/README.md](docs/demo/README.md)。
 
 ## 展品
 
