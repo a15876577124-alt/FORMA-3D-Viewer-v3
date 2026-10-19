@@ -1,0 +1,100 @@
+// FORMA V5 — 品牌外壳：顶栏 / 导航 / 页脚 / 路由出口
+import { el } from '../utils/dom.js';
+
+// 抽象脸谱几何（自绘，无第三方素材）：外圆取「面」，内折线取「谱式」，
+// 底边一道横线取「台口」——三者构成可缩放至 16px 的识别符号。
+const BRAND_MARK = `
+<svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+  <circle cx="20" cy="19" r="14.2" stroke="currentColor" stroke-width="1.4" opacity=".92"/>
+  <path d="M20 8.4v11.2M20 19.6l-5.4 4.6M20 19.6l5.4 4.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity=".82"/>
+  <path d="M13.6 28.2h12.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity=".62"/>
+  <path d="M6.6 33.4h26.8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" opacity=".4"/>
+</svg>`;
+
+// 仅列出当前阶段已实装的路由；新页面完工后再追加，避免死链。
+export const NAV_ITEMS = [
+  { to: '/', label: '首页', match: '/' },
+  { to: '/gallery', label: '数字展厅', match: '/gallery' },
+];
+
+export function buildV5Shell({ version = 'V5' } = {}) {
+  // ---- 顶栏 ----
+  const brand = el('a', { class: 'v5-brand', href: '#/', 'aria-label': 'FORMA 首页' },
+    el('span', { class: 'v5-brand-mark', html: BRAND_MARK }),
+    el('span', { class: 'v5-brand-text' },
+      document.createTextNode('FORMA'),
+      el('span', { class: 'v5-brand-ver' }, version),
+    ),
+  );
+
+  const nav = el('nav', { class: 'v5-nav', id: 'v5Nav', 'aria-label': '主导航' });
+  for (const item of NAV_ITEMS) {
+    nav.append(el('a', {
+      class: 'v5-nav-link',
+      href: '#' + item.to,
+      'data-match': item.match,
+      onclick: () => { nav.setAttribute('data-open', 'false'); },
+    }, item.label));
+  }
+
+  const toggle = el('button', {
+    class: 'v5-nav-toggle', type: 'button', 'aria-label': '切换导航', 'aria-expanded': 'false',
+    html: '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4.5h13M2 8.5h13M2 12.5h13"/></svg>',
+    onclick: () => {
+      const open = nav.getAttribute('data-open') === 'true';
+      nav.setAttribute('data-open', String(!open));
+      toggle.setAttribute('aria-expanded', String(!open));
+    },
+  });
+
+  const topbar = el('header', { class: 'v5-topbar' }, brand, toggle, nav);
+
+  // ---- 路由出口 ----
+  const outlet = el('main', { class: 'v5-page', id: 'v5Outlet' });
+
+  // ---- 页脚 ----
+  const footer = el('footer', { class: 'v5-footer' },
+    el('div', { class: 'v5-footer-grid' },
+      el('div', { class: 'v5-footer-brand' },
+        el('span', { class: 'v5-brand-mark', style: { width: '22px', height: '22px' }, html: BRAND_MARK }),
+        el('p', { class: 'v5-footer-tag' },
+          'FORMA 是一个面向数字文化遗产的三维创作平台：以琼剧手办为对象，贯通展示、分析、修复、优化与导出的完整资产生产链路。'),
+      ),
+      el('div', { class: 'v5-footer-cols' },
+        el('div', { class: 'v5-footer-col' },
+          el('h4', {}, '浏览'),
+          el('a', { href: '#/gallery' }, '数字展厅'),
+          el('a', { href: '#/work/sheng' }, '作品详情'),
+          el('a', { href: '#/compare' }, '对比实验室'),
+        ),
+        el('div', { class: 'v5-footer-col' },
+          el('h4', {}, '工具'),
+          el('a', { href: '#/studio' }, 'AI Studio'),
+          el('a', { href: '#/library' }, '资产库'),
+        ),
+        el('div', { class: 'v5-footer-col' },
+          el('h4', {}, '关于'),
+          el('a', { href: '#/tech' }, '技术研究'),
+        ),
+      ),
+    ),
+    el('div', { class: 'v5-footer-legal' },
+      el('span', {}, '琼剧数字手办为非商业文化展示用途 · 模型与贴图版权归原作者所有'),
+      el('span', {}, 'Three.js r186 · glTF Transform · 本地渲染'),
+    ),
+  );
+
+  const shell = el('div', { class: 'v5-shell' }, topbar, outlet, footer);
+  return { shell, outlet, nav, topbar, footer };
+}
+
+// 依据当前路由路径更新导航高亮
+export function syncNavActive(nav, pattern) {
+  const links = [...nav.querySelectorAll('.v5-nav-link')];
+  for (const a of links) {
+    const m = a.getAttribute('data-match');
+    const on = pattern && (m === pattern || (m !== '/' && pattern.startsWith(m)));
+    if (on) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  }
+}

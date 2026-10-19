@@ -8,6 +8,10 @@ import { BY_ID, CATALOG, FIGURINES, figurineOrdinal } from './models/catalog.js'
 import { buildLibraryEntries, libraryEntryToCatalog } from './models/library.js';
 import { buildSidebar } from './ui/sidebar.js';
 import { buildPipelinePanel } from './ui/pipeline.js';
+import { buildV5Shell, syncNavActive } from './ui/shell.js';
+import { startRouter, registerRoute, setNotFound, onNavigate, navigate } from './core/router.js';
+import { v5State } from './ui/feedback.js';
+import { createHomePage } from './pages/home.js';
 import { buildInspector } from './ui/inspector.js';
 import { setupChrome } from './ui/chrome.js';
 import { importFiles } from './loaders/registry.js';
@@ -216,7 +220,12 @@ function boot() {
     viewer.applyStoredView(s);
     viewState.touch();
 
-    try { history.replaceState(null, '', '#' + entry.id); } catch { /* file:// may refuse */ }
+    // V3 行为：把展品写进 URL hash 以便分享。V5 引入 hash 路由后此写法会
+    // 破坏路由（#sheng 会覆盖 #/gallery），故 V5 模式下跳过——分享链接由
+    // V5 路由的 /gallery?work=<id> 承担。
+    if (!document.getElementById('v5Outlet')) {
+      try { history.replaceState(null, '', '#' + entry.id); } catch { /* file:// may refuse */ }
+    }
     return true;
   }
 
@@ -347,6 +356,51 @@ function boot() {
 
   select(first.id).then((ok) => resolveReady(ok));
 
+  // --------------------------------------------------------- V5 shell ------
+  // #app 作为常驻的「展厅图层」直接移入外壳；路由切换只改 hidden，
+  // canvas 永不 detach，WebGL 上下文不会被回收。
+  const existingApp = document.getElementById('app');
+  const { shell: v5ShellNode, outlet, nav } = buildV5Shell({ version: 'V5' });
+  document.body.append(v5ShellNode);
+  v5ShellNode.insertBefore(existingApp, outlet);
+  // 展厅层初始隐藏：路由首次激活 gallery 时由 router 显示。
+  // 不隐藏的话，首帧 #app（未入 router 缓存）会盖住首页。
+  existingApp.hidden = true;
+
+  registerRoute('/',
+    () => createHomePage({ catalog: CATALOG, version: '3.0.0' }),
+    { title: () => 'FORMA V5 · 琼剧数字五相' });
+
+  registerRoute('/gallery',
+    () => ({
+      node: existingApp,
+      enter: ({ query }) => {
+        const want = query?.work;
+        if (want && BY_ID.has(want) && current.entry?.id !== want) select(want);
+      },
+    }),
+    { title: () => 'FORMA V5 · 数字展厅' });
+
+  setNotFound(() => v5State({
+    tone: 'empty',
+    title: '页面不存在',
+    desc: '该地址尚未实装或拼写有误。',
+    actionLabel: '返回首页',
+    onAction: () => navigate('/'),
+  }));
+
+  // 兼容 V3 时代的分享链接（#sheng 等单段锚点）：重定向到展厅并选中该展品。
+  // 必须最后注册，避免抢占具名路由。
+  registerRoute('/:legacyId', ({ params }) => {
+    const id = params.legacyId;
+    if (BY_ID.has(id)) navigate(`/gallery?work=${encodeURIComponent(id)}`, { replace: true });
+    else navigate('/', { replace: true });
+    return { node: el('div', { hidden: true }) }; // 立即被重定向，节点只是占位
+  });
+
+  startRouter({ outlet });
+  onNavigate(({ pattern }) => syncNavActive(nav, pattern));
+
   // Automation surface. Everything the test harness needs to assert real
   // rendering happens against this object - no mocking, no shortcuts.
   window.__FORMA = {
@@ -382,6 +436,8 @@ function boot() {
       get connected() { return pipeline.connected; },
       get selectedAsset() { return pipeline.selectedAsset; },
     },
+    // V5 路由（供测试与调试驱动页面切换）。
+    v5: { navigate, version: 'V5' },
   };
 
   return ready;

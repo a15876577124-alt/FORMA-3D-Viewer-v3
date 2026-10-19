@@ -4,6 +4,45 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased] — FORMA V5 Ultimate AI 3D Creation Platform (v5)
+
+开发分支 `feature/forma-v5-experience`（基于 `feature/ai-asset-pipeline@0141480`）。
+目标：国际数字艺术工作室级视觉 + 完整专业 AI 3D 创作平台。
+
+### Added — M1 品牌视觉系统与页面架构（2026-10-20）
+
+- `styles/tokens.css`：V5 设计系统（香槟金/暖象牙/琼剧红/玉石青色阶、serif 排版、
+  间距与动效 scale、z 层、reduced-motion 适配）；纯增量 `--v5-*` 命名空间，
+  不覆盖 V3 既有变量，零回归风险
+- `styles/v5.css`：品牌外壳（topbar/nav/footer/自绘几何脸谱 logo）、按钮/卡片/
+  徽标/指标卡组件、加载/骨架/空态/错误态/Toast、路由图层与响应式断点
+- `src/core/router.js`：hash 路由。**常驻图层模式**——页面挂载后保留 DOM，
+  切换只改 hidden，Three.js canvas 永不 detach（WebGL 上下文安全）；
+  支持路径参数、LRU 缓存上限、unmount/enter 生命周期、旧锚点兼容重定向
+- `src/ui/feedback.js`：v5Toast/v5Loading/v5Skeleton/v5State/v5AsyncBox 统一反馈组件
+- `src/ui/shell.js`：V5 外壳（品牌标记、导航、页脚）；导航只列已实装路由
+- `src/pages/home.js`：首页版式（hero serif 标题「琼剧/五相」、真实指标条、
+  展品索引、能力入口）；所有数据来自真实工程，未实装功能不放入口
+- `tools/shot.mjs`：**可复用视觉验收工具**——headless Edge(SwiftShader WebGL) +
+  自动起服 + 桌面/移动/宽屏多视口截图 + 客观像素分析（luma/nonBg/直方图熵）+
+  模型加载等待与全部页面错误捕获
+- 首页深链接：`#/gallery?work=<id>` 直达展厅并选中展品（真实功能）
+
+### Fixed — M1
+
+- `src/main.js`：V3 `select()` 会把展品写入 URL hash（`#sheng`），与 V5 hash
+  路由冲突导致路由被劫持——V5 模式下跳过该写入；并注册 `/:legacyId` 兼容
+  旧分享链接重定向
+- 首帧 `#app` 未入路由缓存时盖住首页——挂载后立即 hidden
+- `src/materials/override.js`：模型切换瞬间 `collectMaterials` 对 null traverse
+  抛 pageerror——防御性判空
+
+### Verified — M1
+
+- headless 真实渲染截图：首页（桌面 1440 / 移动 390）+ 展厅深链接
+  `?work=jing-red` 正确选中净角·红谱（49,178 tris 与 ground truth 一致）
+- pipeline / proxy 测试组通过，无回归
+
 ## [Unreleased] — AI Asset Pipeline (v4)
 
 开发分支 `feature/ai-asset-pipeline`。目标：从 3D 展示器升级为

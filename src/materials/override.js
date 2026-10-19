@@ -17,7 +17,8 @@ export const MATERIAL_PRESETS = {
 
 function collectMaterials(root) {
   const set = new Set();
-  root.traverse((o) => {
+  // 模型切换瞬间 root 可能尚未就绪，防御性判空避免 pageerror。
+  root?.traverse?.((o) => {
     if (!o.isMesh) return;
     const mats = Array.isArray(o.material) ? o.material : (o.material ? [o.material] : []);
     mats.forEach(m => set.add(m));

@@ -1,0 +1,138 @@
+/* ============================================================================
+   FORMA V5 — Design Tokens
+   International Digital Art Studio × Cinematic Museum × Premium Creative Software
+
+   增量层：不覆盖 V3 既有变量（避免破坏已验收的三栏视觉），
+   新增 --v5-* 命名空间的完整设计系统，由 V5 外壳与新页面使用。
+   ========================================================================== */
+
+:root {
+  /* ---------- 色阶：冷调近黑基底（画廊墙面） ---------- */
+  --v5-bg-void:    #07080a;
+  --v5-bg-base:    #0a0c0f;
+  --v5-bg-surface: #101318;
+  --v5-bg-raised:  #151922;
+  --v5-bg-overlay: #1b2028;
+  --v5-bg-inset:   #060709;
+
+  /* ---------- 品牌色：香槟金 / 暖象牙 / 琼剧红 / 玉石青 ---------- */
+  --v5-gold-100: #f4e9d4;
+  --v5-gold-200: #e6d3ad;
+  --v5-gold-300: #d9c4a0;   /* 主香槟金 */
+  --v5-gold-400: #c2a77c;
+  --v5-gold-500: #9d8354;
+  --v5-gold-600: #6f5c3c;
+
+  --v5-ivory-100: #faf7f1;
+  --v5-ivory-200: #f2ede4;   /* 暖象牙：强调文字 */
+  --v5-ivory-300: #ddd6c8;
+
+  --v5-qiong-400: #c85a45;   /* 琼剧红：净角脸谱 */
+  --v5-qiong-500: #a8412f;
+  --v5-qiong-600: #7d2d20;
+
+  --v5-jade-300: #8fb3a6;    /* 玉石青：次要点缀 */
+  --v5-jade-500: #4f7566;
+
+  --v5-indigo-300: #7d8fb8;  /* 生角袍服蓝 */
+  --v5-indigo-500: #44567c;
+
+  /* ---------- 语义色 ---------- */
+  --v5-ok:   #74bd97;
+  --v5-warn: #d9a751;
+  --v5-err:  #d4705c;
+  --v5-info: #7d9fc4;
+
+  /* ---------- 文本 ---------- */
+  --v5-tx-hi:    #f2ede4;   /* 标题 / 关键值 */
+  --v5-tx:       #c8cbd0;   /* 正文 */
+  --v5-tx-lo:    #8b9098;   /* 次级 */
+  --v5-tx-mute:  #62676f;   /* 提示 / 禁用 */
+
+  /* ---------- 描边 ---------- */
+  --v5-line:      rgba(242, 237, 228, .09);
+  --v5-line-2:    rgba(242, 237, 228, .14);
+  --v5-line-gold: rgba(217, 196, 160, .28);
+  --v5-line-warm: rgba(217, 196, 160, .12);
+
+  /* ---------- 排版 ---------- */
+  --v5-ff-display: "Optima", "Palatino Linotype", "Songti SC", "Noto Serif SC", Georgia, serif;
+  --v5-ff-sans: "Inter", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --v5-ff-mono: "SF Mono", "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  /* 字阶：display / headline / title / body / caption / micro */
+  --v5-fs-display: clamp(2.6rem, 6.2vw, 5.4rem);
+  --v5-fs-h1:      clamp(1.9rem, 3.4vw, 2.9rem);
+  --v5-fs-h2:      clamp(1.35rem, 2.1vw, 1.75rem);
+  --v5-fs-h3:      1.075rem;
+  --v5-fs-body:    .875rem;
+  --v5-fs-sm:      .8125rem;
+  --v5-fs-xs:      .75rem;
+  --v5-fs-micro:   .6875rem;
+
+  --v5-lh-tight:  1.08;
+  --v5-lh-snug:   1.28;
+  --v5-lh-body:   1.62;
+
+  --v5-tracking-wide:  .14em;
+  --v5-tracking-wider: .22em;
+
+  /* ---------- 间距 scale (4px base) ---------- */
+  --v5-sp-1: 4px;
+  --v5-sp-2: 8px;
+  --v5-sp-3: 12px;
+  --v5-sp-4: 16px;
+  --v5-sp-5: 24px;
+  --v5-sp-6: 32px;
+  --v5-sp-7: 48px;
+  --v5-sp-8: 64px;
+  --v5-sp-9: 96px;
+  --v5-sp-10: 128px;
+
+  /* ---------- 圆角 ---------- */
+  --v5-r-xs: 4px;
+  --v5-r-sm: 7px;
+  --v5-r-md: 11px;
+  --v5-r-lg: 16px;
+  --v5-r-xl: 24px;
+  --v5-r-pill: 999px;
+
+  /* ---------- 动效 ---------- */
+  --v5-ease-out:   cubic-bezier(.22, .61, .36, 1);
+  --v5-ease-in-out: cubic-bezier(.65, .05, .36, 1);
+  --v5-ease-expo:  cubic-bezier(.16, 1, .3, 1);
+  --v5-dur-1: .14s;
+  --v5-dur-2: .24s;
+  --v5-dur-3: .38s;
+  --v5-dur-4: .62s;
+  --v5-dur-5: 1.1s;
+
+  /* ---------- 层级阴影（克制，仅用于浮层） ---------- */
+  --v5-shadow-1: 0 2px 10px rgba(0, 0, 0, .42);
+  --v5-shadow-2: 0 10px 34px rgba(0, 0, 0, .52);
+  --v5-shadow-3: 0 26px 70px rgba(0, 0, 0, .62);
+
+  /* ---------- 布局 ---------- */
+  --v5-topbar-h: 62px;
+  --v5-maxw: 1560px;
+  --v5-gutter: clamp(16px, 3.2vw, 44px);
+
+  /* ---------- z 层 ---------- */
+  --v5-z-scene: 1;
+  --v5-z-content: 10;
+  --v5-z-topbar: 60;
+  --v5-z-panel: 80;
+  --v5-z-toast: 120;
+  --v5-z-modal: 150;
+}
+
+/* ---------- 全局降低动效偏好 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --v5-dur-1: .01ms;
+    --v5-dur-2: .01ms;
+    --v5-dur-3: .01ms;
+    --v5-dur-4: .01ms;
+    --v5-dur-5: .01ms;
+  }
+}
