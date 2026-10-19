@@ -1,16 +1,31 @@
-# TASK_STATE — FORMA AI 3D Asset Pipeline 开发状态
+# TASK_STATE — FORMA V5 Ultimate AI 3D Creation Platform 开发状态
 
 > 断点续作文件。每次会话开始先读这里；每完成一个里程碑立即更新。
-> 更新时间：2026-10-16 22:27 (UTC+8)
+> 更新时间：2026-10-20 05:50 (UTC+8)
 
-## 当前状态
+## 当前状态（V5 第一轮）
 
-- **分支**：`feature/ai-asset-pipeline`（基于 `main` @ `0b7c3d0`，基线标签 `v3.0.0-baseline`）
-- **远程同步**：✅ 分支已推送并跟踪 `origin/feature/ai-asset-pipeline`（2026-10-16 15:12）
-- **当前里程碑**：M0 ✅ / M0.5 ✅ / M1 ✅ / M2 ✅ / M3 ✅ / M4 ✅ / M5 ✅ / **M6 ✅ 完成**
-- **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级到 flash）
-- **npm test 基线**：pipeline 50/50、agent 36/36、ops 63/63、batch 19/19、proxy 5/5 = **173 断言全通过**；render/ui/import/extended 组受阻（浏览器），走 CDP 方案
-- **远程同步**：✅ 远程 `feature/ai-asset-pipeline` = `62ea92c` = 本地 HEAD；Pages 在线 HTTP 200（main 分支，v3 展示器）
+- **分支**：`feature/forma-v5-experience`（基于 `feature/ai-asset-pipeline` @ `0141480`）
+- **上游分支**：`feature/ai-asset-pipeline` = `0141480`（173 断言 + 同步修复，已推送远程）
+- **当前里程碑**：M0 工程审计 ✅ 完成 → 下一 M1 品牌视觉系统
+- **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级）
+- **npm test 基线**：pipeline 50、agent 36、ops 63、batch 19、proxy 5 = 173 断言全通过
+- **五手办完好**：sha256 前 8 位 6ce3cb51/640e77d3/2290c617/390a8b5b/1c5a7822 与 assetId 一致
+
+## ✅ V5-M0 重大发现：浏览器阻塞已解除（2026-10-20 05:40 验证）
+
+此前的「测试浏览器无法启动」阻塞**不复存在**（环境已恢复，与 10-15 日正常时一致）：
+- `msedge.exe` 可启动；`--headless=new` + `--enable-unsafe-swiftshader` + `--use-angle=swiftshader` 下 **WebGL 2.0 可用**（ANGLE/SwiftShader 软件渲染）
+- headless + puppeteer-core 22.15.0 打开真实站点：`__FORMA.ready` 通过、`select('sheng')` 后 ~5s 加载完成、`modelTris=47512`/`modelVerts=26951` 与 ground truth 精确一致、**零控制台错误**
+- 真实截图 `test-out/v5-render-probe/sheng-hero.png`（1440×900）：生角手办/头饰/脸谱/展台阴影/三栏 UI 全部真实呈现；像素分析 nonBg=21.4%、luma σ=53（有内容有层次）
+- 坑：`info` 字段形状是 `{modelTris, modelVerts, renderTriangles, memory...}`（不是 tris/verts）；`select()` 返回 boolean 非 Promise；`file://` 协议 headless 下不可用，必须走 `http://127.0.0.1`
+- **结论：V5 全部视觉验收（截图审查、桌面/移动端、Before/After、性能回归）均可自动化闭环**
+- SwiftShader 为软件渲染：复杂后期场景耗时上升，探针/测试需给足超时（页面级 90s+）
+
+## 旧状态存档（V3/Pipeline 阶段，2026-10-16）
+
+- Pipeline 阶段里程碑 M0–M6 全部完成（详见 git log 与 CHANGELOG）
+- 远程 `feature/ai-asset-pipeline` 已同步；Pages（main 分支）仍为 v3 展示器，HTTP 200
 
 ## ✅ M0.5 LLM Spike 结论（2026-10-16 15:30）
 
@@ -23,7 +38,10 @@
 - 凭据形态：`backend/publicConfig.json`（公开配置，可入仓库）；长期密钥只进 `backend/.env`（已 gitignore）
 - Spike 脚本：`tools/llm-spike.mjs`
 
-## 🔴 阻塞：测试浏览器无法启动（2026-10-16 14:29 发现）
+## 🟢 已解除：测试浏览器无法启动（2026-10-16 发现 → 2026-10-20 解除）
+
+> **2026-10-20 更新**：环境自行恢复，headless Edge + WebGL 2.0（SwiftShader）完整可用，
+> 真实站点渲染与截图验证通过（见上方 V5-M0 节）。以下排查记录存档。
 
 **现象**：Puppeteer 启动 Edge 报 `Failed to launch the browser process!`；npm test 的 render 组失败，其余组通过。
 
