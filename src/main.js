@@ -393,6 +393,19 @@ function boot() {
     ({ params }) => createWorkPage({ params, catalog: CATALOG }),
     { title: (p) => `FORMA V5 · ${BY_ID.get(p?.id)?.name || '作品'}` });
 
+  // AI Studio：同一展厅图层切到管线工作模式，进入时自动连接本地后端
+  registerRoute('/studio',
+    () => ({
+      node: existingApp,
+      enter: () => {
+        try {
+          setMode('pipeline');
+          if (!pipeline.connected) pipeline.connect();
+        } catch (e) { console.warn('[studio] enter:', e); }
+      },
+    }),
+    { title: () => 'FORMA V5 · AI Studio' });
+
   setNotFound(() => v5State({
     tone: 'empty',
     title: '页面不存在',

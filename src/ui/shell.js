@@ -15,6 +15,8 @@ const BRAND_MARK = `
 export const NAV_ITEMS = [
   { to: '/', label: '首页', match: '/' },
   { to: '/gallery', label: '数字展厅', match: '/gallery' },
+  { to: '/work/sheng', label: '作品', match: '/work' },
+  { to: '/studio', label: 'AI Studio', match: '/studio' },
 ];
 
 export function buildV5Shell({ version = 'V5' } = {}) {
