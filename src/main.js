@@ -356,6 +356,13 @@ function boot() {
 
   select(first.id).then((ok) => resolveReady(ok));
 
+  // 视角预设（右栏「相机与环境」分组）：正/右/背/左/顶
+  $('viewPresets')?.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-yaw]');
+    if (!b) return;
+    viewer.setViewPreset(Number(b.dataset.yaw), Number(b.dataset.pitch));
+  });
+
   // --------------------------------------------------------- V5 shell ------
   // #app 作为常驻的「展厅图层」直接移入外壳；路由切换只改 hidden，
   // canvas 永不 detach，WebGL 上下文不会被回收。
@@ -412,7 +419,7 @@ function boot() {
     catalog: CATALOG.map((c) => ({ id: c.id, name: c.name, group: c.group, file: c.file })),
     ready,
     select,
-    actions: { toggle, capture, resetView, setImmersive, step, importFiles: doImport },
+    actions: { toggle, capture, resetView, setImmersive, step, importFiles: doImport, viewPreset: (y, p) => viewer.setViewPreset(y, p) },
     get current() { return current.entry; },
     get info() { return viewer.info; },
     renderNow: () => viewer.render(),

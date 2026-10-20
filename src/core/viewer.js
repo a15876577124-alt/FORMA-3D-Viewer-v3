@@ -325,6 +325,21 @@ export class Viewer {
   setShadowCatcher(on) { this.stage.setCatcher(on); }
   setAutoRotate(on) { this.controls.autoRotate = !!on; }
   setAutoRotateSpeed(v) { this.controls.autoRotateSpeed = 1.2 * v; }
+
+  // 视角预设：yaw/pitch（度）。yaw 0 = 正面（+z），pitch 90 = 顶视。
+  // 保持当前距离，仅改方位——不破坏用户已调好的取景。
+  setViewPreset(yawDeg = 0, pitchDeg = 0) {
+    const c = this.controls;
+    const r = c.getDistance();
+    const phi = THREE.MathUtils.clamp(
+      Math.PI / 2 - THREE.MathUtils.degToRad(pitchDeg), 0.08, Math.PI - 0.08,
+    );
+    const sph = new THREE.Spherical(r, phi, THREE.MathUtils.degToRad(yawDeg));
+    c.object.position.setFromSpherical(sph).add(c.target);
+    c.update();
+    this.onStateChange?.();
+    this.render();
+  }
   setEnvIntensity(v) { this.environment.setIntensity(v); }
 
   setPost(state) {
