@@ -24,6 +24,31 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
   node.innerHTML = `<summary>AI 管线 <span class="sect-tag" id="pipelineStatus">未连接</span></summary>`;
   const body = el('div', { class: 'sect-body', id: 'pipelineBody' });
 
+  // ---------- 工作流步骤指引（全部由面板真实状态驱动，不虚构进度） ----------
+  const STEPS = ['连接后端', '选择资产', '配置算子', '执行处理', '对比导出'];
+  const stepEls = STEPS.map((s) => el('span', { class: 'p-step' }, s));
+  const stepsBox = el('div', { class: 'p-steps' }, ...stepEls);
+  const stepHint = el('p', { class: 'p-step-hint' }, '');
+
+  function updateSteps() {
+    const checkedCount = opsBox.querySelectorAll('input:checked').length;
+    const executed = !!(state.lastRun && state.lastRun.dryRun !== true);
+    const done = [state.connected, !!state.selectedAsset, checkedCount > 0, executed, executed];
+    let active = done.findIndex((d) => !d);
+    if (active === -1) active = STEPS.length - 1;
+    stepEls.forEach((sEl, i) => {
+      sEl.className = 'p-step' + (i < active ? ' done' : i === active ? ' active' : '');
+    });
+    const hints = [
+      '点击下方「连接后端」以启用资产处理功能。',
+      '在「资产」下拉中选择要处理的模型。',
+      '勾选需要的处理算子（带 ⚠ 的会改变外观，执行前需确认）。',
+      executed ? '处理已完成，可在下方查看结果并导出。' : '点击「执行处理」开始（建议先勾选「仅预览」看效果）。',
+      '使用下方滑条对比前后效果，满意后「加入展厅」或导出。',
+    ];
+    stepHint.textContent = hints[active];
+  }
+
   // 连接区
   const connectBtn = el('button', { class: 'ghost-btn', type: 'button' }, '连接后端');
   const connectRow = el('div', { class: 'field' },
@@ -56,6 +81,7 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
   const publishBtn = el('button', { class: 'ghost-btn', type: 'button' }, '加入展厅');
 
   body.append(
+    stepsBox, stepHint,
     connectRow, connectBtn,
     el('hr', {}),
     assetRow, opsBox, runBtn, dryCheck,
@@ -65,6 +91,10 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
     compareBox, publishBtn,
   );
   node.append(body);
+
+  // 状态变化点刷新步骤指引
+  opsBox.addEventListener('change', updateSteps);
+  assetSel.addEventListener('change', updateSteps);
 
   const status = (text, tone) => {
     const s = $('pipelineStatus');
@@ -83,6 +113,8 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
         pipelineApi.assets(),
       ]);
       state.connected = true;
+      updateSteps();
+      connectBtn.textContent = '重新连接 / 刷新资产';
       state.ops = opsRes.ops || [];
       state.tools = toolsRes.tools || [];
       state.models = modelsRes.models || [];
@@ -118,7 +150,7 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
     }
     if (state.assets.length === 0) toast('工作区暂无资产，请先通过导入或批量处理生成', 'warn');
   }
-  assetSel.addEventListener('change', () => { state.selectedAsset = assetSel.value || null; });
+  assetSel.addEventListener('change', () => { state.selectedAsset = assetSel.value || null; updateSteps(); });
 
   // ---------- 算子列表 ----------
   function renderOps() {
@@ -155,6 +187,7 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
       } else {
         toast(`完成 v${res.version} · 后验 ${res.verify?.pass ? '通过' : '失败'}`, res.verify?.pass ? 'ok' : 'err', 6000);
         state.lastRun = res;
+        updateSteps();
         if (res.verify?.pass) showCompare();
       }
       setProgress(null);

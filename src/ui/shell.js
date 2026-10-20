@@ -67,16 +67,27 @@ export function buildV5Shell({ version = 'V5' } = {}) {
           el('h4', {}, '浏览'),
           el('a', { href: '#/gallery' }, '数字展厅'),
           el('a', { href: '#/work/sheng' }, '作品详情'),
-          el('a', { href: '#/compare' }, '对比实验室'),
         ),
         el('div', { class: 'v5-footer-col' },
           el('h4', {}, '工具'),
           el('a', { href: '#/studio' }, 'AI Studio'),
-          el('a', { href: '#/library' }, '资产库'),
         ),
         el('div', { class: 'v5-footer-col' },
-          el('h4', {}, '关于'),
-          el('a', { href: '#/tech' }, '技术研究'),
+          el('h4', {}, '联系'),
+          el('a', { href: 'mailto:haorongli09@outlook.com', class: 'v5-contact-mail' }, 'haorongli09@outlook.com'),
+          el('a', { href: 'mailto:haorongli09@gmail.com', class: 'v5-contact-mail' }, 'haorongli09@gmail.com'),
+          el('button', {
+            class: 'v5-btn v5-btn-ghost v5-copy-mail', type: 'button',
+            onclick: async (e) => {
+              try {
+                await navigator.clipboard.writeText('haorongli09@outlook.com');
+                const b = e.currentTarget;
+                const old = b.textContent;
+                b.textContent = '已复制 ✓';
+                setTimeout(() => { b.textContent = old; }, 1600);
+              } catch { /* 剪贴板不可用（非安全上下文）时静默 */ }
+            },
+          }, '复制邮箱地址'),
         ),
       ),
     ),

@@ -623,3 +623,61 @@
   .v5-work-layout { grid-template-columns: 1fr; }
   .v5-work-stage { min-height: 340px; }
 }
+
+/* ============================================================================
+   V5.1 可读性修复：原生控件暗色渲染 + 下拉选项对比度（WCAG AA）
+   Windows Edge 的下拉弹层默认亮色背景，继承的浅色文字会不可读。
+   ========================================================================== */
+:root { color-scheme: dark; }
+
+select option, select optgroup {
+  background-color: #151a21;
+  color: #eceae7;
+}
+select option:checked { background-color: #232a35; color: #ffffff; }
+select:focus-visible { outline: 2px solid var(--v5-gold-300); outline-offset: 1px; }
+select:disabled { color: var(--v5-tx-mute); background: rgba(255, 255, 255, .02); cursor: not-allowed; }
+
+/* 输入类控件统一焦点可见性 */
+input[type="range"]:focus-visible,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--v5-gold-300);
+  outline-offset: 2px;
+}
+input:disabled { opacity: .45; cursor: not-allowed; }
+
+/* 页脚联系方式 */
+.v5-footer-contact { min-width: 210px; }
+.v5-contact-mail {
+  font-family: var(--v5-ff-mono);
+  font-size: var(--v5-fs-xs);
+  word-break: break-all;
+}
+.v5-copy-mail { padding: 5px 10px; font-size: var(--v5-fs-xs); align-self: flex-start; }
+
+/* ---------- AI Studio 工作流步骤指引 ---------- */
+.p-steps {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-bottom: 8px;
+}
+.p-step {
+  flex: 1 1 auto;
+  text-align: center;
+  font-size: 10.5px;
+  padding: 5px 4px;
+  color: var(--tx-3);
+  background: rgba(255, 255, 255, .025);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  white-space: nowrap;
+}
+.p-step.done { color: var(--ok); border-color: rgba(111, 191, 154, .3); background: rgba(111, 191, 154, .06); }
+.p-step.done::before { content: "✓ "; }
+.p-step.active { color: var(--tx-0); border-color: rgba(205, 217, 223, .35); background: rgba(205, 217, 223, .1); }
+.p-step.active::before { content: "▸ "; }
+.p-step-hint {
+  font-size: 11px; color: var(--tx-2); margin: 0 0 10px;
+  line-height: 1.5;
+}
