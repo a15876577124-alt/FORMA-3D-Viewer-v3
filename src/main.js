@@ -12,6 +12,7 @@ import { buildV5Shell, syncNavActive } from './ui/shell.js';
 import { startRouter, registerRoute, setNotFound, onNavigate, navigate } from './core/router.js';
 import { v5State } from './ui/feedback.js';
 import { createHomePage } from './pages/home.js';
+import { createWorkPage } from './pages/work.js';
 import { buildInspector } from './ui/inspector.js';
 import { setupChrome } from './ui/chrome.js';
 import { importFiles } from './loaders/registry.js';
@@ -387,6 +388,10 @@ function boot() {
       },
     }),
     { title: () => 'FORMA V5 · 数字展厅' });
+
+  registerRoute('/work/:id',
+    ({ params }) => createWorkPage({ params, catalog: CATALOG }),
+    { title: (p) => `FORMA V5 · ${BY_ID.get(p?.id)?.name || '作品'}` });
 
   setNotFound(() => v5State({
     tone: 'empty',
