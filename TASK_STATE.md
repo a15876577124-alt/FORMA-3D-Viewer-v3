@@ -7,10 +7,39 @@
 
 - **分支**：`feature/forma-v5-experience`（基于 `feature/ai-asset-pipeline` @ `0141480`）
 - **上游分支**：`feature/ai-asset-pipeline` = `0141480`（173 断言 + 同步修复，已推送远程）
-- **当前里程碑**：M0 工程审计 ✅ 完成 → 下一 M1 品牌视觉系统
+- **当前里程碑**：M0 ✅ / M1 ✅（7cd693c）/ **M2 进行中**（a: hero 3D ✅ 8b7d9a8；b: 视角预设 ✅ 5ed8bab；c: RoomEnvironment ✅ 0e52858 + 9e6e0c9）→ 下一 M2d 展厅导览/移动端 → M3 详情页
+- **远程同步**：8b7d9a8 已推送；5ed8bab/0e52858/9e6e0c9 待推送（沙箱网络 502/schannel 抖动，恢复后 `git push` 即可）
 - **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级）
 - **npm test 基线**：pipeline 50、agent 36、ops 63、batch 19、proxy 5 = 173 断言全通过
 - **五手办完好**：sha256 前 8 位 6ce3cb51/640e77d3/2290c617/390a8b5b/1c5a7822 与 assetId 一致
+
+### V5 已建立的关键设施（M1–M2c）
+- **V5 设计系统**：styles/tokens.css（--v5-* 命名空间）+ styles/v5.css（外壳/组件/反馈）
+- **hash 路由**（src/core/router.js）：常驻图层模式（canvas 永不 detach）、LRU 缓存、
+  `enter/unmount` 生命周期、`/:legacyId` 兼容旧锚点、`#/gallery?work=<id>` 深链接
+- **视觉验收工具**（tools/shot.mjs）：headless Edge + SwiftShader WebGL、多视口、
+  像素分析、`MSYS_NO_PATHCONV=1` 必须加（否则 --route=/ 被 Git Bash 转成路径）
+- **Hero3D**（src/pages/home3d.js）：独立渲染器、postprocessing 6.39.5（vendor 化、
+  Zlib）、底对齐归一化、视口外暂停、完整 dispose
+- **viewer 升级**：setViewPreset(yaw,pitch)（保持距离）、scene.environment=
+  RoomEnvironment（激活 V3 既有「环境反射」滑杆——勿再新增独立 env 滑杆，
+  会与 override.js snapshot 机制冲突）
+- **首页**（src/pages/home.js）：hero 3D + 真实指标 + 展品索引 + 能力入口
+  （未实装页面不放入口）；`__FORMA.v5.navigate` / `__FORMA.actions.viewPreset`
+
+### V5 已知坑（M1–M2c 踩过）
+- V3 `select()` 曾写 `history.replaceState('#sheng')` 劫持 hash 路由（已修复：V5 下跳过）
+- `__FORMA.info` 形状 = `{modelTris, modelVerts, renderTriangles, memory...}`
+- `select()` 返回 boolean 非 Promise；waitModel 等 `info.modelTris > 0`
+- headless 下 `file://` 不可用，必须 http://；`networkidle2` 永不空闲，用 `domcontentloaded`
+- 后台服务器用 run_in_background（nohup 会被回收）；shot.mjs 自带 spawn serve
+- Poly Haven 下载超时（沙箱网络白名单外），HDRI 用 RoomEnvironment 替代
+
+### 下一步（M2d → M3）
+1. M2d：展厅导览模式（上一件/下一件键位与按钮）、移动端展厅适配验收、性能自适应
+2. M3：五手办详情页 `#/work/:id`（热点注释、真实技术参数、Before/After 入口）
+3. M4：Asset Studio 升级（Inspector/Material/Geometry/Texture Lab 接现有算子）
+4. 每步：shot.mjs 截图 → 审查 → commit → push（网络恢复后先推积压 3 提交）
 
 ## ✅ V5-M0 重大发现：浏览器阻塞已解除（2026-10-20 05:40 验证）
 
