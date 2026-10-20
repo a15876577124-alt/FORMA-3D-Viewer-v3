@@ -51,9 +51,13 @@ function evictCache() {
     const oldest = keys.shift();
     if (oldest === currentKey) { keys.push(oldest); continue; }
     const m = mounted.get(oldest);
+    // 节点可能被其他路由复用（gallery/studio 共用 existingApp），
+    // 此时只解除引用，不销毁实例/移除节点
+    const stillUsed = [...mounted.entries()].some(([k, x]) => k !== oldest && x.node === m.node);
+    mounted.delete(oldest);
+    if (stillUsed) continue;
     try { m.instance?.unmount?.(); } catch { /* 忽略 */ }
     m.node.remove();
-    mounted.delete(oldest);
   }
 }
 
@@ -82,17 +86,24 @@ async function render() {
     const node = instance?.nodeType ? instance : instance?.node;
     if (!node) { console.error('[router] factory returned no node for', path); return; }
     node.classList?.add('v5-layer');
-    layer = { node, instance, pattern, params };
+    // 节点复用：展厅与工作室共用 existingApp，重复 append 会造成
+    // DOM 移动与状态丢失，故已挂载时复用原 layer
+    layer = [...mounted.values()].find((m) => m.node === node)
+      || (() => { const l = { node, instance, pattern, params }; outlet.append(node); return l; })();
+    layer.ctx = { params, query, path };
     mounted.set(cacheKey, layer);
-    outlet.append(node);
     evictCache();
   }
 
-  // 图层切换：全部隐藏，仅显示当前
-  for (const [k, m] of mounted) m.node.hidden = (k !== cacheKey);
+  // 图层切换：按 DOM 节点去重计算可见性。
+  // 若逐图层赋值 hidden，同一节点被多个路由复用时后一次会覆盖前一次，
+  // 导致该节点最终被隐藏（展厅/工作室共用 existingApp 的空白根因）。
+  for (const m of mounted.values()) m.node.hidden = (m.node !== layer.node);
   currentKey = cacheKey;
 
-  try { layer.instance?.enter?.({ params, query, path }); } catch (e) { console.warn('[router] enter failed:', e); }
+  try { layer.instance?.enter?.(layer.ctx); } catch (e) { console.warn('[router] enter failed:', e); }
+  // 图层由隐藏恢复显示后补一帧：canvas 在 hidden 期间尺寸为 0，需显式重绘
+  try { layer.instance?.refresh?.(); } catch { /* 可选钩子，忽略 */ }
 
   document.title = entry?.meta?.title
     ? entry.meta.title(params)

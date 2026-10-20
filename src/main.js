@@ -383,8 +383,13 @@ function boot() {
     () => ({
       node: existingApp,
       enter: ({ query }) => {
+        setMode('gallery');
         const want = query?.work;
         if (want && BY_ID.has(want) && current.entry?.id !== want) select(want);
+      },
+      // 从隐藏恢复显示：canvas 在 hidden 期间尺寸为 0，需重算并补帧
+      refresh: () => {
+        try { window.dispatchEvent(new Event('resize')); viewer.render(); } catch { /* ignore */ }
       },
     }),
     { title: () => 'FORMA V5 · 数字展厅' });
@@ -402,6 +407,9 @@ function boot() {
           setMode('pipeline');
           if (!pipeline.connected) pipeline.connect();
         } catch (e) { console.warn('[studio] enter:', e); }
+      },
+      refresh: () => {
+        try { window.dispatchEvent(new Event('resize')); viewer.render(); } catch { /* ignore */ }
       },
     }),
     { title: () => 'FORMA V5 · AI Studio' });
