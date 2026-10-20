@@ -7,10 +7,9 @@
 
 - **分支**：`feature/forma-v5-experience`（基于 `feature/ai-asset-pipeline` @ `0141480`）
 - **上游分支**：`feature/ai-asset-pipeline` = `0141480`（173 断言 + 同步修复，已推送远程）
-- **当前里程碑**：M0 ✅ / M1 ✅（7cd693c）/ **M2 进行中**（a: hero 3D ✅ 8b7d9a8；b: 视角预设 ✅ 5ed8bab；c: RoomEnvironment ✅ 0e52858 + 9e6e0c9）→ 下一 M2d 展厅导览/移动端 → M3 详情页
-- **远程同步**：8b7d9a8 已推送；5ed8bab/0e52858/9e6e0c9 待推送（沙箱网络 502/schannel 抖动，恢复后 `git push` 即可）
-- **主力模型**：`deepseek-v4-pro`（用户指定，禁止自动降级）
-- **npm test 基线**：pipeline 50、agent 36、ops 63、batch 19、proxy 5 = 173 断言全通过
+- **当前里程碑**：M0 ✅ / M1 ✅ / M2 ✅（a: hero 3D、b: 视角预设、c: RoomEnvironment）/ **M3a 详情页 ✅ / M4a /studio 路由 ✅** → 下一 M3b Before/After 对比区 → M4b Asset Lab 深化 → M5/M6/M7
+- **远程同步**：✅ 本地 = 远程 = `1e06a02`（全部已推送）
+- **测试基线**：173 断言（pipeline 50/agent 36/ops 63/batch 19/proxy 5）全通过，零回归（2026-10-20 16:55 验证）
 - **五手办完好**：sha256 前 8 位 6ce3cb51/640e77d3/2290c617/390a8b5b/1c5a7822 与 assetId 一致
 
 ### V5 已建立的关键设施（M1–M2c）
