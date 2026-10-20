@@ -1,7 +1,9 @@
-// FORMA V5 — 电影化首页（M1：版式骨架；M2：补真实 3D 主体与滚动叙事）
+// FORMA V5 — 电影化首页
+// M2：hero 加入真实 3D 手办主体（独立渲染器，见 home3d.js）。
 // 原则：首页所有文案与数据取自真实工程信息，不虚构测试数据。
 import { el } from '../utils/dom.js';
 import { v5Stat } from '../core/router.js';
+import { createHero3D } from './home3d.js';
 
 // 五件展品的真实分组语义（与 catalog 一致，非虚构）
 const SERIES = [
@@ -12,11 +14,13 @@ const SERIES = [
   { id: 'jing-white', role: '净角 · 白谱', line: '白多疑诈 · 鼻窝三瓦' },
 ];
 
-export function createHomePage({ catalog = [], version = '3.0.0' } = {}) {
+export function createHomePage({ catalog = [], version = '3.0.0', quality = 'high' } = {}) {
   const figurines = catalog.filter((c) => c.group === 'figurines');
 
-  // ---- Hero ----
+  // ---- Hero（3D 主体铺满右侧，文字层在左）----
+  const heroStage = el('div', { class: 'v5-hero-3d', 'aria-hidden': 'true' });
   const hero = el('section', { class: 'v5-hero' },
+    heroStage,
     el('div', { class: 'v5-container v5-hero-inner' },
       el('p', { class: 'v5-eyebrow' }, 'Qiong Opera · Digital Figurines'),
       el('h1', { class: 'v5-display v5-hero-title' },
@@ -87,5 +91,19 @@ export function createHomePage({ catalog = [], version = '3.0.0' } = {}) {
   );
 
   const node = el('div', { class: 'v5-home' }, hero, seriesSection, laneSection);
-  return { node };
+
+  // 3D 主体：挂载后启动；unmount 完整释放（renderer/geo/textures/composer）
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const q = quality === 'auto'
+    ? (navigator.hardwareConcurrency >= 6 ? 'high' : 'low')
+    : quality;
+  const hero3d = createHero3D({ container: heroStage, quality: q, reducedMotion: reduced });
+
+  return {
+    node,
+    unmount() {
+      try { hero3d.dispose(); } catch (e) { console.warn('[home] hero3d dispose:', e); }
+    },
+    hero3d,
+  };
 }

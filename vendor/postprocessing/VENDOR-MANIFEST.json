@@ -1,0 +1,20 @@
+{
+  "name": "postprocessing",
+  "version": "6.39.5",
+  "license": "Zlib",
+  "author": "Raoul van Rüschen (pmndrs)",
+  "source": "https://github.com/pmndrs/postprocessing",
+  "added": "2026-10-20",
+  "purpose": "首页电影化后期：轻量 Bloom / 效果链（EffectComposer）",
+  "files": {
+    "build/postprocessing.esm.js": {
+      "from": "node:postprocessing build/index.js",
+      "bytes": 634880,
+      "peer": "three (由 importmap 提供，bundle 内 from \"three\")"
+    }
+  },
+  "usage": {
+    "importmap": "postprocessing -> ./vendor/postprocessing/build/postprocessing.esm.js",
+    "usedBy": ["src/pages/home3d.js"]
+  }
+}
