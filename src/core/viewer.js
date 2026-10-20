@@ -2,6 +2,7 @@
 // parameter that affects how an exhibit is presented.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 import { Environment, BACKDROPS } from '../lighting/environment.js';
 import { Lighting, LIGHT_PRESETS } from '../lighting/studio.js';
@@ -56,6 +57,16 @@ export class Viewer {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.02, 220);
     this.camera.position.set(0, 1.2, 4);
+
+    // 环境照明：three 官方 RoomEnvironment（影棚灯箱）经 PMREM 处理，
+    // 为 PBR 材质提供真实反射与漫射。强度由既有「材质 → 环境反射」滑杆
+    // （envMapIntensity）管理——V3 的滑杆在无 environment 时无效，现在生效。
+    {
+      const pmrem = new THREE.PMREMGenerator(this.renderer);
+      this._roomEnv = new RoomEnvironment();
+      this.scene.environment = pmrem.fromScene(this._roomEnv, 0.04).texture;
+      this._envPmrem = pmrem;
+    }
 
     this.controls = new OrbitControls(this.camera, canvas);
     this.controls.enableDamping = true;
