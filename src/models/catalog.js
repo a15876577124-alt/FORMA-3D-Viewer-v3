@@ -5,7 +5,7 @@
 // No invented design story, no invented cultural background, no invented results.
 //
 // Source of truth for the figurines:
-//   D:\琼韵新生\...\3D模型v5_OBJ\0X_XXX\{*.obj, material.mtl, tripo_material_<uuid>.png}
+//   D:\Qiong Opera Reimagined\...\3D模型v5_OBJ\0X_XXX\{*.obj, material.mtl, tripo_material_<uuid>.png}
 // converted to GLB by trimesh, then repaired by tools/fix-glb.mjs.
 
 export const FIGURINES = [

@@ -46,7 +46,9 @@
 - `render/extended/ui/import` 这些依赖 3D 图层的浏览器验收组**必须落在 `#/gallery`**
 - compare-ui 必须显式挑 `.glb` 资产——workspace 里混入 FBX 会破坏 glTF 算子链
 - `tests/run.mjs` 才跑 vendor 检查；单组回归 `--only=<group>` 不会覆盖它
-- `import` 组两条 OBJ 用例依赖仓库外素材 `D:\琼韵新生\...`，缺失时按 SKIP 处理，
+- `import` 组两条 OBJ 用例依赖仓库外素材
+  `D:\Qiong Opera Reimagined\_Coze_Drive_3D模型生成项目_...\3D模型v5_OBJ\01_生角`
+  （原 `D:\琼韵新生\...`，2026-10-21 用户改名），缺失时按 SKIP 处理，
   可用 `--objDir=<路径>` / `FORMA_OBJ_DIR` 覆盖
 
 ## 当前状态（V5 第一轮）

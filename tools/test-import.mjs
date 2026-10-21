@@ -22,7 +22,7 @@ const BASE = String(get('base', process.env.FORMA_BASE || 'http://127.0.0.1:5173
 // 原始 OBJ 素材不在仓库内（体积大且不入库），路径可用 --objDir= / FORMA_OBJ_DIR 覆盖。
 // 目录不可用时，依赖它的两条用例按 SKIP 处理并在报告里写明，而不是误报为回归。
 const OBJ_DIR = String(get('objDir', process.env.FORMA_OBJ_DIR
-  || 'D:\\琼韵新生\\_Coze_Drive_3D模型生成项目_琼剧Q版玩偶_琼剧Q版玩偶_OBJ模型\\3D模型v5_OBJ\\01_生角'));
+  || 'D:\\Qiong Opera Reimagined\\_Coze_Drive_3D模型生成项目_琼剧Q版玩偶_琼剧Q版玩偶_OBJ模型\\3D模型v5_OBJ\\01_生角'));
 let objAssets = null;
 try {
   const files = fs.readdirSync(OBJ_DIR);
