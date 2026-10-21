@@ -2,23 +2,14 @@
 import { pipelineApi } from '../net/api.js';
 import { CompareRig } from '../core/compare.js';
 import { el, $, toast, setProgress } from '../utils/dom.js';
-
-const OPS_META = {
-  weld: { label: '焊接顶点', appearance: false, note: '合并重复顶点' },
-  dedup: { label: '去重', appearance: false, note: '合并重复 accessor/材质' },
-  prune: { label: '清理未用', appearance: false, note: '移除未引用的数据', qiong: true },
-  simplify: { label: '减面', appearance: true, note: '降低三角形数（高风险）' },
-  quantize: { label: '量化', appearance: true, note: '压缩顶点精度' },
-  genNormals: { label: '生成法线', appearance: true, note: '修复平滑着色' },
-  fixMaterials: { label: '修复材质', appearance: true, note: '金属度/粗糙度归零' },
-  setSampler: { label: '采样器', appearance: false, note: '三线性 + mipmap' },
-  textureResize: { label: '缩放贴图', appearance: true, note: '缩小贴图（高风险）' },
-  textureCompress: { label: '压缩贴图', appearance: true, note: 'WebP/JPEG 有损（高风险）' },
-  convert: { label: '转换格式', appearance: true, note: 'glb/gltf/obj' },
-};
+import { buildOpParamEditor, defaultParams } from './opParams.js';
 
 export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary }) {
-  const state = { connected: false, assets: [], ops: [], tools: [], models: [], selectedAsset: null, lastRun: null, rig: null, confirmToken: null };
+  const state = {
+    connected: false, assets: [], ops: [], tools: [], models: [], presets: [],
+    selectedAsset: null, lastRun: null, rig: null, confirmToken: null,
+    paramValues: {},
+  };
 
   const node = el('details', { class: 'sect', id: 'pipelineSect' });
   node.innerHTML = `<summary>AI 管线 <span class="sect-tag" id="pipelineStatus">未连接</span></summary>`;
@@ -60,8 +51,13 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
   const assetSel = el('select', { id: 'pipelineAssetSel', class: 'p-select' });
   const assetRow = el('div', { class: 'field' }, el('label', {}, '资产'), assetSel);
 
-  // 算子区（动态生成 checkbox）
+  // 算子区（动态生成 checkbox + 真实参数控件）
   const opsBox = el('div', { id: 'pipelineOps', class: 'p-ops' });
+
+  // 处理预设（来自后端，与 CLI 共用同一份声明）
+  const presetSel = el('select', { id: 'pipelinePresetSel', class: 'p-select' });
+  presetSel.append(el('option', { value: '' }, '自定义（手动配置）'));
+  const presetRow = el('div', { class: 'field' }, el('label', {}, '预设'), presetSel);
 
   // AI 区
   const aiBtn = el('button', { class: 'ghost-btn', type: 'button' }, '运行 AI 分析');
@@ -84,7 +80,7 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
     stepsBox, stepHint,
     connectRow, connectBtn,
     el('hr', {}),
-    assetRow, opsBox, runBtn, dryCheck,
+    assetRow, presetRow, opsBox, runBtn, dryCheck,
     el('hr', {}),
     aiBtn, aiLog,
     el('hr', {}),
@@ -105,12 +101,14 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
   async function connect() {
     setProgress(2, '连接后端…');
     try {
-      const [health, opsRes, toolsRes, modelsRes, assetsRes] = await Promise.all([
+      const [health, opsRes, toolsRes, modelsRes, assetsRes, presetsRes] = await Promise.all([
         pipelineApi.health(),
         pipelineApi.ops(),
         pipelineApi.agentTools(),
         pipelineApi.models(),
         pipelineApi.assets(),
+        // 预设属于增强能力：缺失不应阻断整个面板连接
+        pipelineApi.presets().catch(() => ({ presets: [] })),
       ]);
       state.connected = true;
       updateSteps();
@@ -119,6 +117,16 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
       state.tools = toolsRes.tools || [];
       state.models = modelsRes.models || [];
       state.assets = assetsRes.assets || [];
+      state.presets = presetsRes.presets || [];
+      // 重建选项（重复连接时避免累积重复项）
+      presetSel.innerHTML = '';
+      presetSel.append(el('option', { value: '' }, '自定义（手动配置）'));
+      for (const p of state.presets) {
+        presetSel.append(el('option', { value: p.id }, p.label));
+      }
+      presetSel.onchange = () => {
+        if (presetSel.value) applyPreset(presetSel.value);
+      };
       $('pipelineConn').textContent = `已连接 · ${state.assets.length} 资产`;
       status('已连接', 'ok');
       renderOps();
@@ -153,22 +161,53 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
   assetSel.addEventListener('change', () => { state.selectedAsset = assetSel.value || null; updateSteps(); });
 
   // ---------- 算子列表 ----------
+  let paramEditor = null;
+
   function renderOps() {
     opsBox.innerHTML = '';
+    paramEditor = buildOpParamEditor({
+      ops: state.ops,
+      values: state.paramValues,
+      onChange: (v) => { state.paramValues = v; },
+    });
+
     for (const op of state.ops) {
-      const meta = OPS_META[op.name] || { label: op.name, appearance: op.appearance, note: '' };
-      const risky = op.appearance === true || meta.qiong;
+      const risky = op.appearance === true;
+      const cb = el('input', { type: 'checkbox', value: op.name });
       const label = el('label', { class: 'check' },
-        el('input', { type: 'checkbox', value: op.name, 'data-appearance': String(op.appearance === true) }),
-        el('span', {}, meta.label),
+        cb,
+        el('span', {}, op.label || op.name),
         risky ? el('em', { class: 'p-risk', title: '会改变外观，需人工确认' }, ' ⚠') : null,
       );
-      opsBox.append(label);
+      cb.addEventListener('change', () => { paramEditor?.setVisible(op.name, cb.checked); updateSteps(); });
+
+      const row = el('div', { class: 'p-op-row' }, label);
+      const group = paramEditor.node.querySelector(`[data-op="${op.name}"]`);
+      if (group) row.append(group);
+      opsBox.append(row);
     }
   }
 
   function selectedOps() {
-    return [...opsBox.querySelectorAll('input:checked')].map((c) => ({ op: c.value, params: {} }));
+    const values = paramEditor ? paramEditor.getValues() : {};
+    return [...opsBox.querySelectorAll('input:checked')]
+      .map((c) => ({ op: c.value, params: values[c.value] || {} }));
+  }
+
+  // 应用预设：勾选算子 + 写入参数（预设来自后端声明，界面不自行捏造）
+  function applyPreset(id) {
+    const preset = (state.presets || []).find((p) => p.id === id);
+    if (!preset) return;
+    const next = {};
+    for (const { op, params } of preset.ops) next[op] = { ...(params || {}) };
+    paramEditor?.setValues(next);
+    for (const cb of opsBox.querySelectorAll('input[type="checkbox"]')) {
+      const want = preset.ops.some((o) => o.op === cb.value);
+      cb.checked = want;
+      paramEditor?.setVisible(cb.value, want);
+    }
+    updateSteps();
+    toast(`已应用预设：${preset.label}`, 'ok', 3000);
   }
 
   // ---------- 执行处理 ----------

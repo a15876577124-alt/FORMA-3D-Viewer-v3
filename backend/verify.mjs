@@ -55,6 +55,19 @@ const TEXTURE_PRESERVING = new Set(['weld', 'join', 'genNormals', 'fixMaterials'
 
 const near = (a, b, eps = 1e-6) => Math.abs(a - b) < eps;
 
+// 不同算子对顶点位置引入的合理漂移上限。
+// weld 会按容差移动顶点；quantize 会按位数量化位置 —— 二者都会让包围盒
+// 出现亚百分比级变化，这属于正常结果，不算「几何漂移」。
+function boundsSlack(opName, params, size) {
+  const base = 1e-4;
+  if (opName === 'weld') return base + (params.epsilon ?? 0);
+  if (opName === 'quantize') {
+    const bits = params.quantizePosition ?? 14;
+    return base + (Math.max(...size) / 2 ** bits) * 2;
+  }
+  return base;
+}
+
 export async function verifyPair({ beforePath, afterPath, opName, params = {} }) {
   const beforeBuf = fs.readFileSync(beforePath);
   const afterBuf = fs.readFileSync(afterPath);
@@ -143,7 +156,8 @@ export async function verifyPair({ beforePath, afterPath, opName, params = {} })
   // 6. 边界盒（几何语义保持算子：尺寸不漂移）
   if (SEMANTIC_PRESERVING.has(opName) && beforeReport?.bounds && afterReport?.bounds) {
     const bb = beforeReport.bounds.size, ba = afterReport.bounds.size;
-    const same = bb.every((v, i) => near(v, ba[i], 1e-4));
+    const slack = boundsSlack(opName, params, bb);
+    const same = bb.every((v, i) => near(v, ba[i], slack));
     checks.push({ name: 'bounds.size', ok: same, detail: `${bb.map((v) => v.toFixed(4)).join('x')} vs ${ba.map((v) => v.toFixed(4)).join('x')}` });
   }
 

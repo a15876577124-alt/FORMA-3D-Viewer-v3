@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertSafeId, PIPELINE_OUT_ROOT } from './paths.mjs';
-import { runOps } from './ops/index.mjs';
+import { runOps, validateSchema } from './ops/index.mjs';
 import { assessPolicy } from './policy.mjs';
 import { generateConfirmToken, verifyConfirmToken } from './gate.mjs';
 import { verifyPair } from './verify.mjs';
@@ -40,6 +40,17 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
   const meta = readMeta(id);
   const inPath = originalPath(meta);
   if (!fs.existsSync(inPath)) throw new PipelineError('原始文件缺失', 500);
+
+  // 参数前置校验：dryRun 预览阶段同样校验，让用户立刻看到非法参数，
+  // 而不是等到真实执行（可能已写盘）才报错。
+  for (const o of ops || []) {
+    if (!o || typeof o.op !== 'string') throw new PipelineError('算子项必须包含 op 字段', 400);
+    try {
+      validateSchema(o.op, o.params || {});
+    } catch (e) {
+      throw new PipelineError(e.message, 400);
+    }
+  }
 
   const policy = assessPolicy(meta.name, id, ops);
 

@@ -32,6 +32,7 @@ export const pipelineApi = {
   run: (id, ops, confirmToken, dryRun) => request(`/assets/${encodeURIComponent(id)}/run`, { method: 'POST', body: { ops, confirmToken, dryRun } }),
   ops: () => request('/ops'),
   capabilities: () => request('/ops/capabilities'),
+  presets: () => request('/presets'),
   agentTools: () => request('/agent/tools'),
   agentRun: (payload) => request('/agent/run', { method: 'POST', body: payload }),
   agentRuns: () => request('/agent/runs'),

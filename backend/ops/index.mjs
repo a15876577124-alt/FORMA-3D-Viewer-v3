@@ -7,6 +7,7 @@ import { containerOps } from './container.mjs';
 import { convertOps } from './convert.mjs';
 import { textureOps } from './textureOps.mjs';
 import { detectCapabilities } from './capabilities.mjs';
+import { OP_SCHEMA, validateSchema, withDefaults } from './schema.mjs';
 
 export class OpError extends Error {
   constructor(message, status = 400) { super(message); this.name = 'OpError'; this.status = status; }
@@ -28,36 +29,25 @@ const CAPABILITY_REQUIRED = {
 };
 
 export function listOps() {
-  return Object.entries(OPS).map(([name, o]) => ({ name, appearance: o.appearance, params: o.params ?? {} }));
+  return Object.entries(OPS).map(([name, o]) => {
+    const meta = OP_SCHEMA[name] || {};
+    return {
+      name,
+      label: meta.label || name,
+      group: meta.group || 'geometry',
+      desc: meta.desc || '',
+      appearance: o.appearance === true,
+      params: meta.params ?? {},
+    };
+  });
 }
 
-// 校验算子参数（类型与范围）——真实校验，非法参数直接拒绝。
+export { OP_SCHEMA, getOpParams, withDefaults, validateSchema } from './schema.mjs';
+
+// 校验算子参数：声明驱动（类型/范围/枚举）+ 补全默认值 + 拒绝未知键。
+// 与 schema.mjs 单一真源保持一致，绝不静默忽略非法参数。
 function validateParams(name, params) {
-  const p = params || {};
-  if (typeof p !== 'object' || Array.isArray(p)) throw new OpError(`算子 ${name} 参数必须是对象`);
-  switch (name) {
-    case 'weld':
-      if (p.epsilon !== undefined && (typeof p.epsilon !== 'number' || p.epsilon < 0)) throw new OpError('weld.epsilon 必须为非负数');
-      break;
-    case 'simplify':
-      if (p.ratio !== undefined && (typeof p.ratio !== 'number' || p.ratio <= 0 || p.ratio > 1)) throw new OpError('simplify.ratio 必须在 (0,1]');
-      break;
-    case 'textureResize':
-      if (p.maxSize !== undefined && (!Number.isInteger(p.maxSize) || p.maxSize < 16)) throw new OpError('textureResize.maxSize 必须为 >=16 的整数');
-      break;
-    case 'genNormals':
-      if (p.hardAngle !== undefined && (typeof p.hardAngle !== 'number' || p.hardAngle <= 0 || p.hardAngle > 180)) throw new OpError('genNormals.hardAngle 必须在 (0,180]');
-      break;
-    case 'convert':
-      if (!['glb', 'gltf', 'obj', 'fbx'].includes(p.to)) throw new OpError('convert.to 必须是 glb/gltf/obj/fbx');
-      break;
-    case 'fixMaterials':
-      if (p.metallicFactor !== undefined && (typeof p.metallicFactor !== 'number' || p.metallicFactor < 0 || p.metallicFactor > 1)) throw new OpError('fixMaterials.metallicFactor 必须在 [0,1]');
-      break;
-    default:
-      break;
-  }
-  return p;
+  return withDefaults(name, validateSchema(name, params ?? {}));
 }
 
 // 链式执行一组算子。inPath 是原始文件；outDir 是版本目录；返回 { outPath, results }。

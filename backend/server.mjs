@@ -20,6 +20,7 @@ import { TOOLS } from './agent/tools.mjs';
 import { runAssetPipeline, makeAgentCtx } from './runPipeline.mjs';
 import { listOps } from './ops/index.mjs';
 import { detectCapabilities } from './ops/capabilities.mjs';
+import { PIPELINE_PRESETS, validatePresets } from './ops/presets.mjs';
 import { runBatch } from './batch.mjs';
 import { listLibrary, publishAsset, deleteLibraryFile, listPublished } from './library.mjs';
 
@@ -270,6 +271,12 @@ route('GET', '/api/agent/runs', async () => {
 route('GET', '/api/ops', async () => ({ ops: listOps() }));
 
 route('GET', '/api/ops/capabilities', async () => ({ capabilities: await detectCapabilities() }));
+
+// 可复用处理预设（UI 与 CLI 共用 backend/ops/presets.mjs）
+route('GET', '/api/presets', async () => {
+  const errors = validatePresets();
+  return { presets: PIPELINE_PRESETS, selfCheck: { ok: errors.length === 0, errors } };
+});
 
 route('POST', '/api/assets/:id/run', async (req, params) => {
   const body = await readJson(req);

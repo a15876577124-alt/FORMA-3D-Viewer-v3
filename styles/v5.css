@@ -681,3 +681,35 @@ input:disabled { opacity: .45; cursor: not-allowed; }
   font-size: 11px; color: var(--tx-2); margin: 0 0 10px;
   line-height: 1.5;
 }
+
+/* ---------- 算子真实参数控件 ---------- */
+.p-params { display: flex; flex-direction: column; gap: 10px; margin: 6px 0; }
+.p-param-group {
+  padding: 8px 10px;
+  background: rgba(242, 237, 228, .03);
+  border: 1px solid var(--v5-line);
+  border-radius: var(--v5-r-sm);
+}
+.p-param-group[hidden] { display: none !important; }
+.p-param-group h5 {
+  margin: 0 0 6px;
+  font-size: var(--v5-fs-xs);
+  font-weight: 500;
+  color: var(--v5-gold-300);
+  font-family: var(--v5-ff-mono);
+  letter-spacing: .06em;
+}
+.p-param { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
+.p-param > span { font-size: var(--v5-fs-xs); color: var(--v5-tx-hi); }
+.p-num {
+  padding: 5px 8px;
+  font-family: var(--v5-ff-num);
+  font-size: var(--v5-fs-sm);
+  color: var(--v5-tx-hi);
+  background: var(--v5-bg-2);
+  border: 1px solid var(--v5-line);
+  border-radius: var(--v5-r-sm);
+}
+.p-hint { font-size: var(--v5-fs-micro); color: var(--v5-tx-mute); font-style: normal; line-height: 1.45; }
+.p-op-row { display: flex; flex-direction: column; gap: 2px; }
+.p-op-row > .check { margin-bottom: 0; }
