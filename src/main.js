@@ -376,7 +376,13 @@ function boot() {
   existingApp.hidden = true;
 
   registerRoute('/',
-    () => createHomePage({ catalog: CATALOG, version: '3.0.0' }),
+    () => createHomePage({
+      catalog: CATALOG,
+      version: '3.0.0',
+      appState,
+      // 启动台「导入模型」走与侧栏同一条真实导入链路
+      onImportFiles: (files) => doImport(files),
+    }),
     { title: () => 'FORMA V5 · 琼剧数字五相' });
 
   registerRoute('/gallery',
