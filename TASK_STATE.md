@@ -1,15 +1,62 @@
 # TASK_STATE — FORMA V5 Ultimate AI 3D Creation Platform 开发状态
 
 > 断点续作文件。每次会话开始先读这里；每完成一个里程碑立即更新。
-> 更新时间：2026-10-20 05:50 (UTC+8)
+> 更新时间：2026-10-21 23:01 (UTC+8)
+
+## 当前状态（V5.1 第三轮）
+
+- **分支**：`feature/forma-v5-experience`（本地 ahead 5：`c19fb79` → `5f42166`，未推送）
+- **本轮完成**：V5.1 任务二 ✅ / 任务六 ✅ / 任务七 ✅（详见下方「V5.1 已完成」）
+- **测试基线（2026-10-21 23:00 全量验证）**：`node tests/run.mjs` **16/16 组全绿**
+  vendor 24 文件 / vendorscan 10 / assets / pipeline 50 / agent 36 / ops 63 /
+  opparams 44 / batch 20 / compare 29 / fbxtex 58 / proxy 5 / server / render 56 /
+  ui / import 10(+2 skip) / extended 6
+- **浏览器验收补充**：home-deck 7/7、route-test 19/19、compare-ui 11、fbxtex-ui 8
+- **下一轮起点**：V5.1 剩余任务（若有）→ M5 演示交付物 / Pages 验证 → 合并 main
+
+### V5.1 已完成（第三轮）
+
+| 任务 | 内容 | 关键文件 |
+|------|------|----------|
+| 任务七 | Before/After **真实**双模型对比（此前是占位壳） | `backend/runPipeline.mjs` 回传 before/after 相对路径；`backend/server.mjs` 新增 `/api/file/<rel>`（目录+扩展名白名单、resolve/realpath 防穿越、走路径段而非 query 以保 gltf 相对引用）；`src/core/compare.js` CompareRig 挂真实模型；`tools/compare-ui-test.mjs` 11 断言（47,512→19,003 tris 真实差异） |
+| 任务六 | FBX 贴图内嵌/外部/缺失三态检测 + 内嵌提取 | `backend/fbxTree.mjs`（自研 Kaydara 节点树 parse/serialize，修复 EndOffset=0 与 footer 保留）、`backend/fbxTextures.mjs`、`backend/analyze.mjs` 三态诊断、`GET /api/assets/:id/textures` + `POST .../extract-textures`、`tools/make-fbx-texture-samples.mjs` |
+| 任务二 | 首页改为软件启动台 | `src/pages/home.js` 2×2 启动卡（展厅/AI Studio/导入/资产库）、`src/state/appState.js` 作零请求状态源、`styles/v5.css` `.v5-launch-*`、`tools/home-deck-test.mjs` 7 断言 |
+
+### V5.1 本轮修掉的真实 bug
+
+1. **确认门死循环**：`sendError` 把 `needConfirm/token` 只塞进 `error` 对象，前端 `e.data?.needConfirm`
+   恒为 undefined → 所有外观算子在 UI 上连续 409 无法执行。改为顶层回传
+   `needConfirm/token/riskyOps/reasons`，UI 提示带具体原因。
+2. **路由图层化遗留验收失败**（4 组）：V5 把 3D 展厅做成常驻图层后，只有 `#/gallery`
+   激活时 `#app` 才可见；默认落地页变成启动台后，`extended/render/ui/import` 全部失效
+   （render 组 canvas 恒 1×1，5 件展品像素断言 0/5）。统一改为落地 `#/gallery` 并等待图层可见。
+3. **vendor 扫描器误判**：`IMPORT_RE` 把字符串字面量 `'import'`（启动卡 key、`/assets/import`
+   端点）当模块说明符，且 `postprocessing` 被判为未 vendored。改为语句锚定 + 支持动态
+   import，允许清单从 `index.html` 的 importmap 读取；新增 `tools/vendor-scan-selftest.mjs`
+   （10 条正负样本）接入 `tests/run.mjs`。
+4. **跨组污染**：`batch` 断言同 assetId 的**历史**版本都含 weld，而 ops/opparams 组会留下
+   simplify 算子链版本 → 改为只断言本组这次批量真正产出的版本。
+
+### V5.1 新增的坑（下一轮直接看这里）
+
+- `/api/file/<rel>` 必须走**路径段**而非 query，否则 .gltf 的 .bin / 贴图相对引用解析不到
+- FBX 二进制节点树：`EndOffset=0` 表示到文件尾；尾部 footer 必须原样保留，否则 three
+  FBXLoader 报 `Cannot read properties of undefined (reading 'parents')`
+- three FBXLoader 在 Node 下会丢内嵌贴图，所以三态检测走自研 `fbxTree.mjs` 而非 loader
+- `render/extended/ui/import` 这些依赖 3D 图层的浏览器验收组**必须落在 `#/gallery`**
+- compare-ui 必须显式挑 `.glb` 资产——workspace 里混入 FBX 会破坏 glTF 算子链
+- `tests/run.mjs` 才跑 vendor 检查；单组回归 `--only=<group>` 不会覆盖它
+- `import` 组两条 OBJ 用例依赖仓库外素材 `D:\琼韵新生\...`，缺失时按 SKIP 处理，
+  可用 `--objDir=<路径>` / `FORMA_OBJ_DIR` 覆盖
 
 ## 当前状态（V5 第一轮）
 
 - **分支**：`feature/forma-v5-experience`（基于 `feature/ai-asset-pipeline` @ `0141480`）
 - **上游分支**：`feature/ai-asset-pipeline` = `0141480`（173 断言 + 同步修复，已推送远程）
 - **当前里程碑**：M0 ✅ / M1 ✅ / M2 ✅（a: hero 3D、b: 视角预设、c: RoomEnvironment）/ **M3a 详情页 ✅ / M4a /studio 路由 ✅** → 下一 M3b Before/After 对比区 → M4b Asset Lab 深化 → M5/M6/M7
-- **远程同步**：✅ 本地 = 远程 = `1e06a02`（全部已推送）
-- **测试基线**：173 断言（pipeline 50/agent 36/ops 63/batch 19/proxy 5）全通过，零回归（2026-10-20 16:55 验证）
+- **远程同步**：⬜ 本地 ahead 5（`edb3951`…`5f42166` 未推送）；远程停在 `1e06a02`
+- **测试基线**：见上方「V5.1 第三轮」——全量 16/16 组（2026-10-21 23:00 验证）。
+  旧基线 173 断言（pipeline 50/agent 36/ops 63/batch 19/proxy 5）已被新基线覆盖
 - **五手办完好**：sha256 前 8 位 6ce3cb51/640e77d3/2290c617/390a8b5b/1c5a7822 与 assetId 一致
 
 ### V5 已建立的关键设施（M1–M2c）
