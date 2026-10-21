@@ -46,43 +46,42 @@ try {
   page.on('pageerror', (e) => errors.push(String(e.message)));
   await page.goto(`http://127.0.0.1:${FE_PORT}/#/studio`, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 120000 });
-  await page.evaluate(() => window.__FORMA.pipeline.connect());
-  await page.waitForFunction(() => document.getElementById('pipelineStatus')?.textContent.includes('已连接'), { timeout: 60000 });
+  // AI Studio 进入即自动探测后端
+  await page.waitForFunction(() => document.getElementById('stConnText')?.textContent.includes('已连接'), { timeout: 60000 });
 
-  // 选中该 FBX 资产
+  // 选中该 FBX 资产，并切到 Texture Lab
   await page.evaluate((id) => {
-    const sel = document.getElementById('pipelineAssetSel');
-    sel.value = id;
-    sel.dispatchEvent(new Event('change', { bubbles: true }));
+    window.__FORMA.studio.core.selectAsset(id);
+    [...document.querySelectorAll('.st-tab')].find((t) => t.textContent.includes('Texture'))?.click();
   }, assetId);
   await page.waitForFunction(
-    () => !document.getElementById('pipelineTex')?.hidden
-      && document.querySelectorAll('#pipelineTex .p-tex-row').length > 0,
+    // 只数后端 FBX 解析出来的那一段（上方还有「当前载入的贴图」实时段）
+    () => document.querySelectorAll('#stTexFbx .st-tex-row').length > 0,
     { timeout: 30000 },
   );
 
-  const rows = await page.evaluate(() => [...document.querySelectorAll('#pipelineTex .p-tex-row')].map((r) => ({
-    badge: r.querySelector('.p-tex-badge')?.textContent,
-    cls: r.querySelector('.p-tex-badge')?.className,
-    name: r.querySelector('.p-tex-name')?.textContent,
+  const rows = await page.evaluate(() => [...document.querySelectorAll('#stTexFbx .st-tex-row')].map((r) => ({
+    badge: r.querySelector('.st-tex-badge')?.textContent,
+    cls: r.querySelector('.st-tex-badge')?.className,
+    name: r.querySelector('.st-tex-name')?.textContent,
   })));
   ok('贴图区列出 3 条', rows.length === 3, JSON.stringify(rows));
-  ok('内嵌贴图有「内嵌」标记', rows.some((r) => r.badge === '内嵌' && /embedded/.test(r.cls)), JSON.stringify(rows));
+  ok('内嵌贴图有「内嵌」标记', rows.some((r) => r.badge === '内嵌' && /is-emb/.test(r.cls)), JSON.stringify(rows));
   ok('未随行贴图标记为「缺失」', rows.filter((r) => r.badge === '缺失').length === 2, JSON.stringify(rows));
-  ok('缺失项给出交付警告', await page.evaluate(() => [...document.querySelectorAll('#pipelineTex .p-hint, #pipelineTex .p-tex-meta')].some((n) => /缺失|白模/.test(n.textContent || ''))));
+  ok('缺失项给出交付警告', await page.evaluate(() => [...document.querySelectorAll('#stTexFbx .st-hint, #stTexFbx .st-tex-dim')].some((n) => /缺失|白模/.test(n.textContent || ''))));
 
-  // 一键提取
+  // 一键提取（真实调用后端提取内嵌贴图）
   const btnText = await page.evaluate(() => {
-    const b = [...document.querySelectorAll('#pipelineTex button')][0];
+    const b = document.getElementById('stTexExtract');
     return { text: b?.textContent, disabled: b?.disabled };
   });
-  ok('提取按钮显示内嵌数量', /提取内嵌贴图（1）/.test(btnText.text || ''), JSON.stringify(btnText));
-  await page.evaluate(() => [...document.querySelectorAll('#pipelineTex button')][0].click());
+  ok('提取按钮可用（检测到内嵌贴图）', btnText.disabled === false, JSON.stringify(btnText));
+  await page.evaluate(() => document.getElementById('stTexExtract').click());
   await page.waitForFunction(
-    () => document.querySelector('#pipelineTex .p-tex-out a')?.href?.includes('/api/file/'),
+    () => document.querySelector('#studioRail .st-tex-out a')?.href?.includes('/api/file/'),
     { timeout: 30000 },
   );
-  const href = await page.evaluate(() => document.querySelector('#pipelineTex .p-tex-out a')?.getAttribute('href'));
+  const href = await page.evaluate(() => document.querySelector('#studioRail .st-tex-out a')?.getAttribute('href'));
   const dl = await fetch(`http://127.0.0.1:${FE_PORT}${href}`);
   const buf = Buffer.from(await dl.arrayBuffer());
   ok('提取产物可真实下载', dl.status === 200 && buf.length > 0, `${dl.status} ${buf.length}`);

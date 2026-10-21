@@ -121,7 +121,7 @@ export function buildInspector(ctx) {
     ui.contactAO?.set(s.light.contactAO);
     ui.shadow?.set(s.light.shadow);
     setSegActive($('lightModes'), s.light.mode);
-    $('lightTag').textContent = { studio: '影棚', cool: '冷调', warm: '暖调', dramatic: '戏剧' }[s.light.mode] || s.light.mode;
+    $('lightTag').textContent = { studio: '影棚', cool: '冷调', warm: '暖调', dramatic: '戏剧', gallery: '展厅' }[s.light.mode] || s.light.mode;
   }
 
   ui.key = bindRange('lightKey', 'lightKeyValue', (v) => { st().light.key = v; save(); applyLight(); }, hex2);

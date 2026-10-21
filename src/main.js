@@ -7,7 +7,8 @@ import { AppState } from './state/appState.js';
 import { BY_ID, CATALOG, FIGURINES, figurineOrdinal } from './models/catalog.js';
 import { buildLibraryEntries, libraryEntryToCatalog } from './models/library.js';
 import { buildSidebar } from './ui/sidebar.js';
-import { buildPipelinePanel } from './ui/pipeline.js';
+import { buildGalleryMode } from './ui/gallery.js';
+import { buildStudio } from './studio/ui.js';
 import { buildV5Shell, syncNavActive } from './ui/shell.js';
 import { startRouter, registerRoute, setNotFound, onNavigate, navigate } from './core/router.js';
 import { v5State } from './ui/feedback.js';
@@ -56,6 +57,9 @@ function boot() {
   const extra = new Map();          // imported entries, keyed by id
   const libraryMap = new Map();     // published library entries, keyed by 'lib:' id
   const current = { entry: null };
+  // 观展模式 / AI Studio 在下方构建；这里先占位，供早于它们执行的钩子安全访问。
+  let gallery = null;
+  let studio = null;
 
   // Rehydrate library entries persisted in appState.
   for (const entry of buildLibraryEntries(appState.get().library)) {
@@ -130,6 +134,8 @@ function boot() {
           sidebar.addImported(imported, (id) => select(id));
         }
         adoptImported(imported);
+        // 本地预览条目进 Studio 资源树（明确标注「未上传后端」）
+        try { studio?.tree?.setLocalEntries([...extra.values()].map((e) => ({ id: e.id, name: e.name, format: e.format || 'model' }))); } catch { /* ignore */ }
       },
     });
   }
@@ -171,6 +177,11 @@ function boot() {
 
     $('immName').textContent = entry.name;
     $('immRoman').textContent = entry.sub || '';
+
+    // 观展信息卡：跟随当前展品刷新（同一份真实数据，不做二次估算）
+    try { gallery?.syncInfo(entry); } catch { /* 面板尚未构建 */ }
+    // AI Studio 的实时面板（材质/几何/贴图）依赖当前载入的模型
+    try { studio?.refreshViewerPanels(); } catch { /* 同上 */ }
     $('immIndex').textContent = ord
       ? `${pad2(ord.index + 1)} / ${pad2(ord.total)}`
       : (entry.group === 'demos' ? 'TECHNICAL DEMO' : 'IMPORTED');
@@ -237,21 +248,25 @@ function boot() {
     viewState.touch();
   };
 
-  // ---------------------------------------------------------- pipeline -----
-  // Pipeline 面板：惰性连接后端（启动零请求），挂到右栏最上方。
-  const pipeline = buildPipelinePanel({
+  // ------------------------------------------------------------ Gallery --
+  // Gallery 观展模式：右栏策展化 + 高级控制台抽屉 + 隐藏生产工具。
+  gallery = buildGalleryMode({ viewer, capture, resetView });
+  // ------------------------------------------------------------- Studio --
+  // AI Studio 是独立的工作区（顶部工具条 / 左侧资源树 / 中央视口 / 右侧 Lab 坞 /
+  // 底部任务 Dock），与 Gallery 共用同一个 Viewer 与同一份 DOM，不重复初始化 WebGL。
+  studio = buildStudio({
     viewer,
     appState,
     onPublish: (url, assetId) => {
-      const file = url.split('/').pop();
+      const file = String(url).split('/').pop();
       const item = { id: assetId, name: assetId, url, version: 1 };
       const entry = libraryEntryToCatalog(item);
       libraryMap.set(entry.id, entry);
       appState.addLibraryEntry(item);
       sidebar.addLibraryEntry(entry, (id) => select(id));
-      toast('已加入展厅 · ' + file, 'ok');
+      toast('已发布到展厅资产库 · ' + file, 'ok');
     },
-    // 连接后端后，把已发布的产物登记进左栏「资产库」组（按文件名去重，不重复添加）。
+    // 连接后端后，把已发布的产物登记进左栏「资产库」组（按文件名去重）
     onSyncLibrary: (files, assets) => {
       let added = 0;
       for (const f of files) {
@@ -260,7 +275,7 @@ function boot() {
         if (!m) continue;
         const [, assetId, ver] = m;
         const id = `${assetId}-v${ver}`;
-        if (libraryMap.has('lib:' + id)) continue; // 已登记，跳过
+        if (libraryMap.has('lib:' + id)) continue;
         const src = (assets || []).find((a) => a.id === assetId);
         const item = {
           id,
@@ -278,30 +293,25 @@ function boot() {
       }
       return added;
     },
+    // 本地预览条目（拖进来但还没上传到后端）——在资源树里单列，不与后端资产混淆
+    getLocalEntries: () => [...extra.values()].map((e) => ({ id: e.id, name: e.name, format: e.format || 'model' })),
+    onPreview: (id) => select(id),
   });
-  const inspectorBody = $('inspectorBody') || document.querySelector('#inspector .inspector-body');
-  if (inspectorBody && inspectorBody.firstChild) inspectorBody.insertBefore(pipeline.node, inspectorBody.firstChild);
-  else if (inspectorBody) inspectorBody.append(pipeline.node);
 
-  // 顶栏模式切换按钮（动态插入，不新增静态 DOM）
-  const pipelineBtn = el('button', { class: 'tool-btn', type: 'button', id: 'pipelineBtn', title: 'AI 管线工作模式' }, '管线');
-  pipelineBtn.addEventListener('click', () => {
-    const next = appState.getMode() === 'pipeline' ? 'gallery' : 'pipeline';
-    appState.setMode(next);
-    document.body.classList.toggle('mode-pipeline', next === 'pipeline');
-    pipeline.node.open = next === 'pipeline';
-    pipelineBtn.classList.toggle('active', next === 'pipeline');
-    if (next === 'pipeline' && !pipeline.connected) toast('进入管线模式：点击面板「连接后端」开始', 'ok', 5000);
-  });
-  const tools = $('topbarTools') || document.querySelector('.topbar-tools');
-  if (tools) tools.append(pipelineBtn);
-
+  // V5 之前挂在右栏顶部的「AI 管线」折叠面板已由 Studio 的五个区域取代，
+  // 这里不再构建，保证生产入口只有一个。
   function setMode(mode) {
-    appState.setMode(mode);
-    document.body.classList.toggle('mode-pipeline', mode === 'pipeline');
-    pipeline.node.open = mode === 'pipeline';
-    pipelineBtn.classList.toggle('active', mode === 'pipeline');
-    return appState.getMode();
+    const next = mode === 'pipeline' ? 'studio' : 'gallery';
+    appState.setMode(next === 'studio' ? 'pipeline' : 'gallery');
+    if (next === 'studio') {
+      gallery.leave();
+      studio?.enter();
+    } else {
+      studio?.leave();
+      gallery.enter();
+      if (current.entry) gallery.syncInfo(current.entry);
+    }
+    return next;
   }
 
   // ------------------------------------------------------------ shortcuts --
@@ -357,6 +367,9 @@ function boot() {
 
   select(first.id).then((ok) => resolveReady(ok));
 
+  // 默认站在观展一侧：路由未接管前也保持 Gallery 视觉语言
+  document.body.classList.add('mode-gallery');
+
   // 视角预设（右栏「相机与环境」分组）：正/右/背/左/顶
   $('viewPresets')?.addEventListener('click', (e) => {
     const b = e.target.closest('button[data-yaw]');
@@ -385,40 +398,44 @@ function boot() {
     }),
     { title: () => 'FORMA V5 · 琼剧数字五相' });
 
-  registerRoute('/gallery',
-    () => ({
-      node: existingApp,
-      enter: ({ query }) => {
-        setMode('gallery');
-        const want = query?.work;
-        if (want && BY_ID.has(want) && current.entry?.id !== want) select(want);
-      },
-      // 从隐藏恢复显示：canvas 在 hidden 期间尺寸为 0，需重算并补帧
-      refresh: () => {
-        try { window.dispatchEvent(new Event('resize')); viewer.render(); } catch { /* ignore */ }
-      },
-    }),
-    { title: () => 'FORMA V5 · 数字展厅' });
+  // Gallery / Studio 是「模式」而非一次性页面：实例只构建一次并复用，
+  // 否则 ?work=<id> 这类不同 cacheKey 会各自再建一份观展面板（重复 DOM）。
+  const galleryLayer = {
+    node: existingApp,
+    enter: ({ query }) => {
+      studio?.leave();
+      gallery.enter();
+      const want = query?.work;
+      if (want && BY_ID.has(want) && current.entry?.id !== want) select(want);
+      if (current.entry) gallery.syncInfo(current.entry);
+    },
+    // 从隐藏恢复显示：canvas 在 hidden 期间尺寸为 0，需重算并补帧
+    refresh: () => {
+      try { window.dispatchEvent(new Event('resize')); viewer.render(); } catch { /* ignore */ }
+    },
+  };
+
+  registerRoute('/gallery', () => galleryLayer, { title: () => 'FORMA V5 · 数字展厅' });
 
   registerRoute('/work/:id',
     ({ params }) => createWorkPage({ params, catalog: CATALOG }),
     { title: (p) => `FORMA V5 · ${BY_ID.get(p?.id)?.name || '作品'}` });
 
-  // AI Studio：同一展厅图层切到管线工作模式，进入时自动连接本地后端
-  registerRoute('/studio',
-    () => ({
-      node: existingApp,
-      enter: () => {
-        try {
-          setMode('pipeline');
-          if (!pipeline.connected) pipeline.connect();
-        } catch (e) { console.warn('[studio] enter:', e); }
-      },
-      refresh: () => {
-        try { window.dispatchEvent(new Event('resize')); viewer.render(); } catch { /* ignore */ }
-      },
-    }),
-    { title: () => 'FORMA V5 · AI Studio' });
+  // AI Studio：独立工作区（左右Tool容器 + 底部任务 Dock）。
+  // 与 Gallery 共用常驻的 3D 图层，进入时只切换模式与面板，不重建 Viewer。
+  const studioLayer = {
+    node: existingApp,
+    enter: () => {
+      gallery.leave();
+      studio?.enter();
+    },
+    refresh: () => {
+      try { window.dispatchEvent(new Event('resize')); viewer.render(); } catch { /* ignore */ }
+      studio?.refreshViewerPanels();
+    },
+  };
+
+  registerRoute('/studio', () => studioLayer, { title: () => 'FORMA V5 · AI Studio' });
 
   setNotFound(() => v5State({
     tone: 'empty',
@@ -467,21 +484,40 @@ function boot() {
       },
       entries: () => [...libraryMap.values()],
     },
-    // Pipeline 工作模式（惰性，不发启动请求）。
-    pipeline: {
-      setMode,
-      getMode: () => appState.getMode(),
-      connect: () => pipeline.connect(),
-      get connected() { return pipeline.connected; },
-      get selectedAsset() { return pipeline.selectedAsset; },
-      // Before/After 真实双模型对比（供测试与调试驱动）
-      showCompare: () => pipeline.showCompare(),
-      exitCompare: () => pipeline.exitCompare(),
-      get rig() { return pipeline.rig; },
-      get lastRun() { return pipeline.lastRun; },
+    // AI Studio：五区工作区（进入路由自动探测后端；也可手动触发）
+    studio: {
+      enter: () => studio?.enter(),
+      leave: () => studio?.leave(),
+      get active() { return !!studio?.isActive; },
+      get core() { return studio?.core || null; },
+      // 兼容旧管线 API（部分脚本用 async connect 等待连接结果）
+      connect: async () => { await studio?.core?.connect(); return !!studio?.core?.state.connected; },
+      get connected() { return studio?.core?.state.status === 'online'; },
+      get selectedAsset() { return studio?.core?.state.selectedAsset || null; },
+      selectAsset: (id) => studio?.core?.selectAsset(id),
+      analyze: () => studio?.core?.analyze(),
+      run: (opts) => studio?.core?.run(opts),
+      runAgent: (opts) => studio?.core?.runAgent(opts),
+      runBatch: (ids, ops) => studio?.core?.runBatch(ids, ops),
+      // Before/After 真实双模型对比（真实加载 before/after 两个模型）
+      showCompare: () => studio?.core?.showCompare(),
+      exitCompare: () => studio?.core?.exitCompare(),
+      setSplit: (v) => studio?.core?.setCompareSplit(v),
+      publish: (v) => studio?.core?.publish(v),
+      exportAs: (to) => studio?.core?.exportAs(to),
+      get rig() { return studio?.core?.state.rig || null; },
+      get lastRun() { return studio?.core?.state.lastRun || null; },
+      get state() { return studio?.core?.state || null; },
     },
     // V5 路由（供测试与调试驱动页面切换）。
     v5: { navigate, version: 'V5' },
+    // Gallery 观展模式（供测试驱动；生产入口由路由负责）
+    gallery: {
+      enter: () => gallery?.enter(),
+      leave: () => gallery?.leave(),
+      syncInfo: (entry) => gallery?.syncInfo(entry || current.entry),
+      get drawerOpen() { return !!(gallery?.drawer && !gallery.drawer.hidden); },
+    },
   };
 
   return ready;

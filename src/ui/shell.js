@@ -94,6 +94,7 @@ export function buildV5Shell({ version = 'V5' } = {}) {
     el('div', { class: 'v5-footer-legal' },
       el('span', {}, '琼剧数字手办为非商业文化展示用途 · 模型与贴图版权归原作者所有'),
       el('span', {}, 'Three.js r186 · glTF Transform · 本地渲染'),
+      el('span', { class: 'v5-footer-scope' }, '观展功能无需后端；分析 / 处理 / AI / 导出需本地完整版'),
     ),
   );
 

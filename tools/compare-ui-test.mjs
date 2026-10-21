@@ -64,52 +64,44 @@ try {
   page.on('pageerror', (e) => errors.push(String(e.message)));
   await page.goto(`http://127.0.0.1:${FE_PORT}/#/studio`, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 120000 });
-  await page.evaluate(() => window.__FORMA.pipeline.connect());
-  await page.waitForFunction(() => document.getElementById('pipelineStatus')?.textContent.includes('已连接'), { timeout: 60000 });
+  // AI Studio：进入路由即自动探测后端，这里等状态条变为「已连接」
+  await page.waitForFunction(() => document.getElementById('stConnText')?.textContent.includes('已连接'), { timeout: 60000 });
+  ok('Studio 自动连接后端', true);
 
   // 1. 选资产 + 只勾选 simplify（会真实减面，保证前后模型可区分）
   await page.evaluate((id) => {
-    const sel = document.getElementById('pipelineAssetSel');
-    sel.value = id;
-    sel.dispatchEvent(new Event('change', { bubbles: true }));
-    for (const b of document.querySelectorAll('#pipelineOps input[type="checkbox"]')) {
-      const want = b.value === 'simplify';
-      if (b.checked !== want) b.click();
-    }
-    const g = document.querySelector('#pipelineOps [data-op="simplify"]');
-    const num = g?.querySelector('input[type="number"]');
-    if (num) { num.value = '0.4'; num.dispatchEvent(new Event('input', { bubbles: true })); }
-    document.getElementById('pipelineDry').checked = false;
+    const core = window.__FORMA.studio.core;
+    core.selectAsset(id);
+    for (const op of core.state.ops) core.setOpEnabled(op.name, op.name === 'simplify');
+    core.setOpParams('simplify', { ratio: 0.4 });
+    document.getElementById('stDryRun').checked = false;
+    document.getElementById('stRunBtn').click();
   }, glbAsset.id);
-  await new Promise((r) => setTimeout(r, 400));
+  await new Promise((r) => setTimeout(r, 2500));
 
   // 2. 执行（simplify 属外观算子：首次点击走确认门，第二次真实执行）
-  const clickRun = () => page.evaluate(() => {
-    [...document.querySelectorAll('#pipelineSect button')].find((b) => b.textContent.includes('执行处理')).click();
-  });
-  await clickRun();
-  await new Promise((r) => setTimeout(r, 2500));
-  await clickRun();
+  // simplify 属外观算子：首次点击走确认门，第二次点击才真实执行
+  await page.evaluate(() => document.getElementById('stRunBtn').click());
   await page.waitForFunction(
-    () => !document.getElementById('pipelineCompare')?.hidden,
+    () => !document.getElementById('stCompareBar')?.hidden,
     { timeout: 60000 },
   );
-  ok('执行后对比区自动出现', true);
+  ok('执行后视口对比条自动出现', true);
 
   // 3. 等待真实载入完成（统计行从「正在载入」变为真实数值）
   await page.waitForFunction(
     () => {
-      const t = document.querySelector('.p-compare-stats')?.textContent || '';
-      return !t.includes('正在载入') && t.includes('→');
+      const r = window.__FORMA.studio.lastRun;
+      return !!(r && r.before && r.after && r.after.tris > 0);
     },
     { timeout: 90000 },
   );
-  const statsText = await page.evaluate(() => document.querySelector('.p-compare-stats')?.textContent || '');
-  ok('统计行显示真实前后差值', /三角面/.test(statsText) && /→/.test(statsText), statsText.slice(0, 160));
+  const statsText = await page.evaluate(() => JSON.stringify(window.__FORMA.studio.lastRun?.after || {}));
+  ok('后端返回真实的前后指标', /tris/.test(statsText), statsText.slice(0, 160));
 
   // 4. 两个模型真的都在场景里，且几何不同（证明不是同一个模型画两次）
   const rig = await page.evaluate(() => {
-    const r = window.__FORMA.pipeline.rig;
+    const r = window.__FORMA.studio.rig;
     if (!r || !r.groupA || !r.groupB) return null;
     const tris = (g) => {
       let t = 0;
@@ -130,13 +122,13 @@ try {
 
   // 5. 滑条真实改变裁剪位置
   const moved = await page.evaluate(async () => {
-    const r0 = window.__FORMA.pipeline.rig;
+    const r0 = window.__FORMA.studio.rig;
     const before = r0.planeA.constant;
-    const s = document.getElementById('pipelineSplit');
+    const s = document.getElementById('stSplit');
     s.value = '0.15';
     s.dispatchEvent(new Event('input', { bubbles: true }));
     await new Promise((r) => setTimeout(r, 120));
-    const r = window.__FORMA.pipeline.rig;
+    const r = window.__FORMA.studio.rig;
     return { split: r.split, before, after: r.planeA.constant, cB: r.planeB.constant };
   });
   ok('滑条改变裁剪面位置', Math.abs(moved.split - 0.15) < 1e-6 && moved.after !== moved.before, JSON.stringify(moved));
@@ -146,11 +138,11 @@ try {
 
   // 6. 退出对比：清理干净，恢复原模型显示
   const cleaned = await page.evaluate(async () => {
-    [...document.querySelectorAll('#pipelineSect button')].find((b) => b.textContent.includes('退出对比')).click();
+    document.getElementById('stCompareClose').click();
     await new Promise((r) => setTimeout(r, 300));
     return {
-      rig: !!window.__FORMA.pipeline.rig,
-      hidden: document.getElementById('pipelineCompare')?.hidden,
+      rig: !!window.__FORMA.studio.rig,
+      hidden: document.getElementById('stCompareBar')?.hidden,
       clipping: window.__FORMA.viewer.renderer.localClippingEnabled,
       modelVisible: window.__FORMA.viewer.modelRoot?.visible,
     };

@@ -28,6 +28,15 @@ export const LIGHT_PRESETS = {
     rim: { color: 0xffc98a, intensity: 1.2, pos: [-1.6, 2.0, -2.6] },
     hemi: 0.3,
   },
+  // 美术馆布光：主光略高偏前（塑形），补光压低（保暗部层次），
+  // 轮廓光用暖金（与香槟金品牌色同源）把主体从暗背景里剥离出来。
+  gallery: {
+    label: '展厅',
+    key: { color: 0xfff6e8, intensity: 2.45, pos: [2.3, 3.9, 2.0] },
+    fill: { color: 0xcfd8e2, intensity: 0.38, pos: [-3.2, 1.5, 1.6] },
+    rim: { color: 0xffd9a0, intensity: 1.55, pos: [-1.2, 2.6, -3.1] },
+    hemi: 0.2,
+  },
   dramatic: {
     label: '戏剧',
     key: { color: 0xffffff, intensity: 3.2, pos: [3.2, 2.6, 1.2] },

@@ -10,9 +10,15 @@ function mat(opts) { return new THREE.MeshStandardMaterial(opts); }
 function aetherCore() {
   const g = new THREE.Group();
 
-  const shell = mat({ color: 0x22303c, metalness: 0.92, roughness: 0.18, envMapIntensity: 1.2 });
-  const shell2 = mat({ color: 0x8fa6b4, metalness: 1.0, roughness: 0.12 });
-  const shell3 = mat({ color: 0xc9d8e0, metalness: 1.0, roughness: 0.06 });
+  // 层次：外壳（暗金属）→ 中层（哑光合金）→ 内核（自发光但不溢出）
+  // 之前内核用 toneMapped:false 的高亮 BasicMaterial，配合辉光会整片烧白、
+  // 把三层结构糊成一团；改为受色调映射约束的自发光材质，保留层次与细节。
+  const shell = mat({ color: 0x1c2730, metalness: 0.86, roughness: 0.34, envMapIntensity: 0.85 });
+  const shell2 = mat({ color: 0x6f8494, metalness: 0.72, roughness: 0.28, envMapIntensity: 0.8 });
+  const shell3 = new THREE.MeshStandardMaterial({
+    color: 0x24455c, metalness: 0.2, roughness: 0.42,
+    emissive: new THREE.Color(0x3d7fa8), emissiveIntensity: 0.62, envMapIntensity: 0.6,
+  });
 
   g.add(new THREE.Mesh(new THREE.SphereGeometry(0.86, 96, 64), shell));
   const mid = new THREE.Mesh(new THREE.SphereGeometry(0.66, 72, 48), shell2);
@@ -20,14 +26,14 @@ function aetherCore() {
   const core = new THREE.Mesh(new THREE.SphereGeometry(0.44, 64, 40), shell3);
   g.add(core);
 
-  const ring = mat({ color: 0xd6e2e8, metalness: 1, roughness: 0.14 });
+  const ring = mat({ color: 0xa8b8c2, metalness: 0.92, roughness: 0.24, envMapIntensity: 0.75 });
   for (let i = 0; i < 3; i++) {
     const t = new THREE.Mesh(new THREE.TorusGeometry(1.02 + i * 0.11, 0.024, 20, 220), ring);
     t.rotation.set(Math.PI / 2 + i * 0.55, i * 0.7, i * 0.35);
     g.add(t);
   }
 
-  const strut = mat({ color: 0x4a5a68, metalness: 0.85, roughness: 0.32 });
+  const strut = mat({ color: 0x44535f, metalness: 0.8, roughness: 0.38, envMapIntensity: 0.7 });
   for (let i = 0; i < 12; i++) {
     const a = (i / 12) * Math.PI * 2;
     const b = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.035, 0.3), strut);
@@ -36,10 +42,14 @@ function aetherCore() {
     g.add(b);
   }
 
-  const glow = new THREE.MeshBasicMaterial({ color: 0xbfe4ff, toneMapped: false });
+  // 发光点：受色调映射约束，保留「发光主体的层次」而不是纯白圆点
+  const glow = new THREE.MeshStandardMaterial({
+    color: 0x1d3b52, roughness: 0.5, metalness: 0,
+    emissive: new THREE.Color(0x5f9fc9), emissiveIntensity: 0.9, toneMapped: true,
+  });
   for (let i = 0; i < 7; i++) {
     const a = (i / 7) * Math.PI * 2;
-    const s = new THREE.Mesh(new THREE.SphereGeometry(0.032, 16, 12), glow);
+    const s = new THREE.Mesh(new THREE.SphereGeometry(0.03, 16, 12), glow);
     s.position.set(Math.cos(a) * 1.18, 0.42 + Math.sin(a * 3) * 0.2, Math.sin(a) * 1.18);
     g.add(s);
   }

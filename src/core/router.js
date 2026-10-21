@@ -57,7 +57,7 @@ function evictCache() {
     mounted.delete(oldest);
     if (stillUsed) continue;
     try { m.instance?.unmount?.(); } catch { /* 忽略 */ }
-    m.node.remove();
+    if (m.node.parentNode === outlet) m.node.remove();
   }
 }
 
@@ -86,11 +86,11 @@ async function render() {
     const node = instance?.nodeType ? instance : instance?.node;
     if (!node) { console.error('[router] factory returned no node for', path); return; }
     node.classList?.add('v5-layer');
-    // 节点复用：展厅与工作室共用 existingApp，重复 append 会造成
-    // DOM 移动与状态丢失，故已挂载时复用原 layer
-    layer = [...mounted.values()].find((m) => m.node === node)
-      || (() => { const l = { node, instance, pattern, params }; outlet.append(node); return l; })();
-    layer.ctx = { params, query, path };
+    // 每个路由都持有自己的 instance —— 即使节点被多个图层复用
+    // （Gallery 与 Studio 共用 #app），也必须各自保有自己的 enter/refresh，
+    // 否则切换后会错调到另一个模式的生命周期。
+    layer = { key: cacheKey, node, instance, pattern, params };
+    if (node.parentNode !== outlet) outlet.append(node);
     mounted.set(cacheKey, layer);
     evictCache();
   }
@@ -101,7 +101,9 @@ async function render() {
   for (const m of mounted.values()) m.node.hidden = (m.node !== layer.node);
   currentKey = cacheKey;
 
-  try { layer.instance?.enter?.(layer.ctx); } catch (e) { console.warn('[router] enter failed:', e); }
+  // 每次进入都刷新上下文：同一图层被再次激活时 query/params 可能是新的
+  layer.ctx = { params, query, path };
+  try { layer.instance?.enter?.(layer.ctx); } catch (e) { console.warn('[router] enter failed:', e?.message || e, 'route=' + String(pattern)); }
   // 图层由隐藏恢复显示后补一帧：canvas 在 hidden 期间尺寸为 0，需显式重绘
   try { layer.instance?.refresh?.(); } catch { /* 可选钩子，忽略 */ }
 

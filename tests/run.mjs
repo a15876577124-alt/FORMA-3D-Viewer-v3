@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
@@ -63,6 +63,7 @@ try {
   if (!only || only === 'ui') await check('ui', 'tools/test-ui.mjs');
   if (!only || only === 'import') await check('import', 'tools/test-import.mjs');
   if (!only || only === 'extended') await check('extended', 'tests/extended.test.mjs');
+  if (!only || only === 'workspaces') await check('workspaces', 'tools/workspace-smoke.mjs');
 } catch (error) {
   console.error(error.message); process.exitCode = 1;
 } finally {

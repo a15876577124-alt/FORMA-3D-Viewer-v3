@@ -76,7 +76,26 @@ t('切换: 第二次回到生角命中缓存（<3s）', async (ctx) => {
   if (dt > 3000) throw new Error('缓存切换耗时 ' + dt + 'ms');
 });
 
+// Gallery 下材质与后期属于「高级控制台」抽屉——先按真实用户路径打开它
+async function openAdvanced(ctx) {
+  if (await ctx.page.evaluate(() => document.getElementById('glDrawer')?.hidden !== false)) {
+    await click(ctx.page, '#glAdvanced');
+    await ctx.page.waitForFunction(() => document.getElementById('glDrawer')?.hidden === false, { timeout: 10000 });
+    await sleep(200);
+  }
+}
+
+// 抽屉是 fixed 覆盖层，会挡住右栏控件——用到右栏的用例前先收起它
+async function closeAdvanced(ctx) {
+  if (await ctx.page.evaluate(() => document.getElementById('glDrawer')?.hidden === false)) {
+    await click(ctx.page, '#glDrawerClose');
+    await ctx.page.waitForFunction(() => document.getElementById('glDrawer')?.hidden === true, { timeout: 10000 });
+    await sleep(150);
+  }
+}
+
 t('材质: 陶瓷预设真实生效（metalness≈0.02）', async (ctx) => {
+  await openAdvanced(ctx);
   await click(ctx.page, '#materialModes button[data-mode="ceramic"]');
   await sleep(120);
   const m = await ctx.page.evaluate(() => window.__FORMA.viewer.readMaterial());
@@ -105,6 +124,7 @@ t('材质: 回到原始档恢复基线（metalness=0）', async (ctx) => {
 });
 
 t('灯光: 冷调预设改变主光颜色', async (ctx) => {
+  await closeAdvanced(ctx);
   const before = await ctx.page.evaluate(() => window.__FORMA.viewer.lighting.key.color.getHexString());
   await click(ctx.page, '#lightModes button[data-mode="cool"]');
   await sleep(120);
@@ -116,6 +136,7 @@ t('灯光: 冷调预设改变主光颜色', async (ctx) => {
 });
 
 t('背景: 纯黑背景切换生效', async (ctx) => {
+  await closeAdvanced(ctx);
   await click(ctx.page, '#envModes button[data-mode="void"]');
   await sleep(120);
   const key = await ctx.page.evaluate(() => window.__FORMA.viewer.environment.backdropKey);
@@ -132,6 +153,7 @@ t('曝光: 滑杆直接改变渲染器曝光', async (ctx) => {
 });
 
 t('后期: 辉光开关激活 composer', async (ctx) => {
+  await openAdvanced(ctx);
   // 分区默认折叠，先展开（与真实用户操作一致）
   await ctx.page.$eval('#bloomToggle', (el) => { el.closest('details').open = true; });
   await click(ctx.page, '#bloomToggle');
@@ -212,6 +234,7 @@ t('截图: 导出 PNG 返回真实像素', async (ctx) => {
 });
 
 t('沉浸: 进入/退出并改变取景边距', async (ctx) => {
+  await closeAdvanced(ctx);
   await click(ctx.page, '#modeBtn');
   await sleep(600);
   let s = await ctx.page.evaluate(() => ({
