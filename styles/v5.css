@@ -714,6 +714,44 @@ input:disabled { opacity: .45; cursor: not-allowed; }
 .p-op-row { display: flex; flex-direction: column; gap: 2px; }
 .p-op-row > .check { margin-bottom: 0; }
 
+/* ---------- FBX 贴图检测（内嵌 / 外部 / 缺失） ---------- */
+.p-tex {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 10px;
+  background: rgba(242, 237, 228, .03);
+  border: 1px solid var(--v5-line);
+  border-radius: var(--v5-r-sm);
+}
+.p-tex[hidden] { display: none !important; }
+.p-tex-head {
+  font-size: var(--v5-fs-xs);
+  font-family: var(--v5-ff-mono);
+  letter-spacing: .08em;
+  color: var(--v5-gold-300);
+}
+.p-tex-list { display: flex; flex-direction: column; gap: 4px; }
+.p-tex-row {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: baseline;
+  gap: 4px 6px;
+  font-size: var(--v5-fs-xs);
+}
+.p-tex-badge {
+  justify-self: start;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: var(--v5-fs-micro);
+  border: 1px solid currentColor;
+}
+.p-tex-embedded { color: var(--ok); }
+.p-tex-external { color: var(--v5-gold-300); }
+.p-tex-missing { color: var(--v5-danger, #e0745f); }
+.p-tex-name { color: var(--v5-tx-hi); word-break: break-all; }
+.p-tex-meta { grid-column: 2; color: var(--v5-tx-mute); font-family: var(--v5-ff-num); }
+.p-tex-out { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+.p-tex-out a { color: var(--v5-gold-300); }
+
 /* ---------- Before/After 真实双模型对比 ---------- */
 .p-compare {
   display: flex; flex-direction: column; gap: 8px;

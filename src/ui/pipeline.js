@@ -82,6 +82,14 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
   const assetSel = el('select', { id: 'pipelineAssetSel', class: 'p-select' });
   const assetRow = el('div', { class: 'field' }, el('label', {}, '资产'), assetSel);
 
+  // FBX 贴图检测（内嵌 / 外部 / 缺失）+ 内嵌贴图提取
+  const texBox = el('div', { id: 'pipelineTex', class: 'p-tex', hidden: true });
+  const texHead = el('div', { class: 'p-tex-head' }, 'FBX 贴图检测');
+  const texList = el('div', { class: 'p-tex-list' });
+  const extractBtn = el('button', { class: 'ghost-btn', type: 'button' }, '提取内嵌贴图');
+  const texOut = el('div', { class: 'p-tex-out' }); // 提取产物链接（不随列表重建而丢失）
+  texBox.append(texHead, texList, extractBtn, texOut);
+
   // 算子区（动态生成 checkbox + 真实参数控件）
   const opsBox = el('div', { id: 'pipelineOps', class: 'p-ops' });
 
@@ -113,7 +121,7 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
     stepsBox, stepHint,
     connectRow, connectBtn,
     el('hr', {}),
-    assetRow, presetRow, opsBox, runBtn, dryCheck,
+    assetRow, texBox, presetRow, opsBox, runBtn, dryCheck,
     el('hr', {}),
     aiBtn, aiLog,
     el('hr', {}),
@@ -191,7 +199,77 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
     }
     if (state.assets.length === 0) toast('工作区暂无资产，请先通过导入或批量处理生成', 'warn');
   }
-  assetSel.addEventListener('change', () => { state.selectedAsset = assetSel.value || null; updateSteps(); });
+  assetSel.addEventListener('change', () => {
+    state.selectedAsset = assetSel.value || null;
+    updateSteps();
+    renderTextures();
+  });
+
+  // ---------- FBX 纹理检测（内嵌 / 外部 / 缺失）与内嵌贴图提取 ----------
+  const TEX_LABEL = { embedded: '内嵌', external: '外部', missing: '缺失' };
+  async function renderTextures() {
+    const asset = state.assets.find((a) => a.id === state.selectedAsset);
+    const isFbx = !!asset && String(asset.format).startsWith('fbx');
+    if (!isFbx || !state.connected) { texBox.hidden = true; return; }
+    texBox.hidden = false;
+    // 只重建列表内容——整块 innerHTML 清空会把 texList/extractBtn 从 DOM 上摘掉
+    texList.innerHTML = '';
+    texList.append(el('div', { class: 'p-hint' }, '检测中…'));
+    let list = [];
+    try {
+      const res = await pipelineApi.textures(asset.id);
+      list = res.textures || [];
+    } catch (e) {
+      texList.innerHTML = '';
+      texList.append(el('div', { class: 'p-hint' }, '检测失败：' + e.message));
+      return;
+    }
+    texList.innerHTML = '';
+    if (!list.length) {
+      texList.append(el('div', { class: 'p-hint' }, '该 FBX 未引用任何贴图。'));
+      extractBtn.disabled = true;
+      return;
+    }
+    for (const t of list) {
+      const badge = el('span', { class: `p-tex-badge p-tex-${t.source}` }, TEX_LABEL[t.source] || t.source);
+      const meta = t.source === 'embedded'
+        ? `${t.mime || '未知类型'}${t.width ? ` · ${t.width}×${t.height}` : ''} · ${fmtBytes(t.bytes)}`
+        : (t.source === 'external' ? `随文件提供 · ${fmtBytes(t.bytes)}` : '未随文件提供——导入后会白模');
+      texList.append(el('div', { class: 'p-tex-row' },
+        badge,
+        el('span', { class: 'p-tex-name', title: t.uri || '' }, t.uri || t.name),
+        el('span', { class: 'p-tex-meta' }, meta),
+      ));
+    }
+    const embeddedCount = list.filter((t) => t.source === 'embedded').length;
+    const missingCount = list.filter((t) => t.source === 'missing').length;
+    extractBtn.disabled = embeddedCount === 0;
+    extractBtn.textContent = embeddedCount ? `提取内嵌贴图（${embeddedCount}）` : '无内嵌贴图';
+    if (missingCount) {
+      texList.append(el('div', { class: 'p-hint' }, `⚠ ${missingCount} 张贴图缺失：请让导出方连同贴图一起交付。`));
+    }
+  }
+
+  async function extractTextures() {
+    if (!state.selectedAsset) return;
+    extractBtn.disabled = true;
+    try {
+      const res = await pipelineApi.extractTextures(state.selectedAsset);
+      texOut.innerHTML = '';
+      for (const f of res.files || []) {
+        texOut.append(el('div', {},
+          el('a', { href: f.url, target: '_blank', rel: 'noreferrer' }, f.name),
+          el('span', { class: 'p-tex-meta' }, ` ${fmtBytes(f.bytes)}${f.width ? ` · ${f.width}×${f.height}` : ''}`),
+        ));
+      }
+      toast(`已提取 ${res.count} 张内嵌贴图`, 'ok', 5000);
+    } catch (e) {
+      toast('提取失败：' + e.message, 'err', 8000);
+    } finally {
+      renderTextures();
+    }
+  }
+  extractBtn.addEventListener('click', extractTextures);
 
   // ---------- 算子列表 ----------
   let paramEditor = null;

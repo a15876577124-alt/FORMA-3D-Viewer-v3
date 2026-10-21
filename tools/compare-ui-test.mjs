@@ -39,14 +39,18 @@ const failures = [];
 const rawPath = path.join(ROOT, 'assets', 'raw', 'sheng.glb');
 const health = await fetch(`http://127.0.0.1:${BE_PORT}/api/health`).then((r) => r.json()).catch(() => null);
 if (!health?.ok) { console.error('后端未启动'); process.exit(1); }
+// 必须挑一个 GLB：本组要走 glTF 算子链（FBX 不支持减面），workspace 里可能还有别
+// 的测试留下的 FBX/其他格式资产，不能随手取第一个。
+const glbName = 'compare-probe.glb';
 let assets = await fetch(`http://127.0.0.1:${BE_PORT}/api/assets`).then((r) => r.json()).catch(() => ({ assets: [] }));
-if (!assets.assets?.length) {
+if (!assets.assets?.some((a) => a.name.endsWith('.glb'))) {
   await fetch(`http://127.0.0.1:${BE_PORT}/api/assets/import`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: 'compare-probe.glb', dataBase64: fs.readFileSync(rawPath).toString('base64') }),
+    body: JSON.stringify({ name: glbName, dataBase64: fs.readFileSync(rawPath).toString('base64') }),
   });
   assets = await fetch(`http://127.0.0.1:${BE_PORT}/api/assets`).then((r) => r.json());
 }
+const glbAsset = assets.assets.find((a) => a.name.endsWith('.glb'));
 
 const browser = await puppeteer.launch({
   executablePath: EDGE,
@@ -64,9 +68,9 @@ try {
   await page.waitForFunction(() => document.getElementById('pipelineStatus')?.textContent.includes('已连接'), { timeout: 60000 });
 
   // 1. 选资产 + 只勾选 simplify（会真实减面，保证前后模型可区分）
-  await page.evaluate(() => {
+  await page.evaluate((id) => {
     const sel = document.getElementById('pipelineAssetSel');
-    sel.value = sel.options[1]?.value || sel.options[0]?.value || '';
+    sel.value = id;
     sel.dispatchEvent(new Event('change', { bubbles: true }));
     for (const b of document.querySelectorAll('#pipelineOps input[type="checkbox"]')) {
       const want = b.value === 'simplify';
@@ -76,7 +80,7 @@ try {
     const num = g?.querySelector('input[type="number"]');
     if (num) { num.value = '0.4'; num.dispatchEvent(new Event('input', { bubbles: true })); }
     document.getElementById('pipelineDry').checked = false;
-  });
+  }, glbAsset.id);
   await new Promise((r) => setTimeout(r, 400));
 
   // 2. 执行（simplify 属外观算子：首次点击走确认门，第二次真实执行）

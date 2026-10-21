@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
@@ -53,6 +53,7 @@ try {
   if (!only || only === 'opparams') await check('opparams', 'tests/opparams.test.mjs');
   if (!only || only === 'batch') await check('batch', 'tests/batch.test.mjs');
   if (!only || only === 'compare') await check('compare', 'tests/compare.test.mjs');
+  if (!only || only === 'fbxtex') await check('fbxtex', 'tests/fbxtex.test.mjs');
   if (!only || only === 'proxy') await check('proxy', 'tests/proxy.test.mjs');
   if (!only || only === 'server') await check('server', 'tests/server.test.mjs');
   if (!only || ['render', 'shots'].includes(only)) await check('render', 'tools/test-render.mjs', only === 'shots' ? ['--photos'] : []);

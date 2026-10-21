@@ -23,6 +23,7 @@ import { detectCapabilities } from './ops/capabilities.mjs';
 import { PIPELINE_PRESETS, validatePresets } from './ops/presets.mjs';
 import { runBatch } from './batch.mjs';
 import { listLibrary, publishAsset, deleteLibraryFile, listPublished } from './library.mjs';
+import { detectFbxTextures, extractEmbeddedTextures } from './fbxTextures.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WORKSPACE = path.join(ROOT, 'backend', 'workspace');
@@ -150,7 +151,8 @@ async function analyzeAsset(id) {
   if (!meta) throw new PathError(`资产不存在: ${id}`);
   const original = path.join(WORKSPACE, meta.originalRelPath);
   const buf = fs.readFileSync(original);
-  const report = await analyzeBuffer(meta.name, buf, meta.format);
+  // baseDir 传原文件所在目录：FBX 外部贴图引用要相对它解析，才能真实判定「缺失」
+  const report = await analyzeBuffer(meta.name, buf, meta.format, { baseDir: path.dirname(original) });
   fs.writeFileSync(path.join(assetDir(id), 'report.json'), JSON.stringify(report, null, 2));
   return report;
 }
@@ -217,6 +219,41 @@ route('GET', '/api/assets/:id/report', async (req, params) => {
   const p = path.join(assetDir(params.id), 'report.json');
   if (!fs.existsSync(p)) throw new PathError(`报告不存在: ${params.id}`);
   return { asset: readMeta(params.id), report: JSON.parse(fs.readFileSync(p, 'utf8')) };
+});
+
+// ---------- FBX 纹理：检测结果 + 内嵌贴图提取 ----------
+
+route('GET', '/api/assets/:id/textures', async (req, params) => {
+  const meta = readMeta(assertSafeId(params.id));
+  if (!meta) throw new PathError(`资产不存在: ${params.id}`);
+  const original = path.join(WORKSPACE, meta.originalRelPath);
+  const buf = fs.readFileSync(original);
+  const list = detectFbxTextures(buf, { baseDir: path.dirname(original) });
+  return { assetId: meta.id, format: meta.format, textures: list };
+});
+
+// 把 FBX 内嵌的贴图导出成文件（产物写在资产目录下，原始素材只读不动）
+route('POST', '/api/assets/:id/extract-textures', async (req, params) => {
+  const id = assertSafeId(params.id);
+  const meta = readMeta(id);
+  if (!meta) throw new PathError(`资产不存在: ${id}`);
+  if (meta.format !== 'fbx-binary' && meta.format !== 'fbx-ascii') {
+    throw new ValidationError(`仅 FBX 支持贴图提取（当前 ${meta.format}）`);
+  }
+  const original = path.join(WORKSPACE, meta.originalRelPath);
+  const outDir = path.join(assetDir(id), 'textures');
+  const written = extractEmbeddedTextures(fs.readFileSync(original), outDir);
+  return {
+    assetId: id,
+    count: written.length,
+    files: written.map((f) => ({
+      name: f.name, source: f.source, uri: f.uri,
+      bytes: f.bytes, sha256: f.sha256, mime: f.mime, width: f.width, height: f.height,
+      // 相对项目根，可直接交给 /api/file 服务（前端可预览/下载）
+      relPath: path.relative(ROOT, f.path).split(path.sep).join('/'),
+      url: `/api/file/${path.relative(ROOT, f.path).split(path.sep).join('/')}`,
+    })),
+  };
 });
 
 // ---------- AI Agent ----------

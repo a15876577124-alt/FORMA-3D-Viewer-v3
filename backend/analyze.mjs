@@ -5,6 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { parseGLB, readAccessor } from '../tools/glbkit.mjs';
 import { sniffImageSize, isPowerOfTwo } from './texture-sniff.mjs';
+import { detectFbxTextures } from './fbxTextures.mjs';
 
 const COMPONENT_TYPE_NAMES = {
   5120: 'i8', 5121: 'u8', 5122: 'i16', 5123: 'u16', 5125: 'u32', 5126: 'f32',
@@ -276,7 +277,7 @@ function stripBom(s) { return s.charCodeAt(0) === 0xfeff ? s.slice(1) : s; }
 
 // ---------- OBJ / FBX（three.js loaders，隔离依赖） ----------
 
-async function analyzeObjOrFbx(name, buf, format) {
+async function analyzeObjOrFbx(name, buf, format, baseDir = null) {
   const { OBJLoader } = await import('three/examples/jsm/loaders/OBJLoader.js');
   const { FBXLoader } = await import('three/examples/jsm/loaders/FBXLoader.js');
   const THREE = await import('three');
@@ -355,6 +356,24 @@ async function analyzeObjOrFbx(name, buf, format) {
   const animClips = object.animations || [];
   const hasBounds = bounds.min.every(Number.isFinite);
 
+  // FBX 纹理三态检测：three 的 FBXLoader 在 Node 下拿不到 blob URL，内嵌贴图会被
+  // 静默丢弃（报告恒为 0 张）。这里直接读 FBX 节点树，把「内嵌 / 外部 / 缺失」
+  // 逐条判出来——导出方忘打包贴图是 FBX 交付最常见的线上白模原因。
+  let texList = [];
+  if (format === 'fbx') {
+    const dir = baseDir || (path.dirname(name) === '.' ? null : path.dirname(name));
+    texList = detectFbxTextures(buf, { baseDir: dir });
+    for (const t of texList) {
+      if (t.source === 'missing') {
+        issues.push({ severity: 'error', code: 'fbx-texture-missing', message: `贴图 ${t.uri || t.name} 未随文件提供（外部引用找不到）——导入/发布后会白模`, target: `texture:${t.index}` });
+      } else if (t.source === 'external') {
+        issues.push({ severity: 'warn', code: 'fbx-texture-external', message: `贴图 ${t.uri || t.name} 是外部引用（未内嵌）——交付时必须同目录一起打包`, target: `texture:${t.index}` });
+      } else {
+        issues.push({ severity: 'info', code: 'fbx-texture-embedded', message: `贴图 ${t.uri || t.name} 已内嵌（${t.bytes} B，${t.mime || '未知类型'}${t.width ? `，${t.width}x${t.height}` : ''}）`, target: `texture:${t.index}` });
+      }
+    }
+  }
+
   return {
     schema: 1,
     file: { name: path.basename(name), bytes: buf.length, sha256: sha256(buf), format },
@@ -362,14 +381,18 @@ async function analyzeObjOrFbx(name, buf, format) {
     stats: {
       meshes: meshes.length, primitives: meshes.length,
       verts: totalVerts, tris: totalTris,
-      materials: totalMaterials, textures: 0,
+      materials: totalMaterials, textures: texList.length,
       animations: animClips.length, skins: meshes.filter((m) => m.skinned).length,
       cameras: 0, nodes: meshes.length,
     },
     bounds: hasBounds ? { min: bounds.min, max: bounds.max, size: bounds.min.map((v, i) => bounds.max[i] - v), source: 'scan' } : null,
     meshes,
     materials: [...materialSet].map((n, i) => ({ index: i, name: n, alphaMode: 'OPAQUE', doubleSided: false, metallicFactor: null, roughnessFactor: null, baseColorFactor: null, emissiveFactor: null, textureSlots: { baseColor: null, metallicRoughness: null, normal: null, occlusion: null, emissive: null } })),
-    textures: [],
+    textures: texList.map((t) => ({
+      index: t.index, name: t.name, uri: t.uri, source: t.source,
+      mime: t.mime, bytes: t.bytes, sha256: t.sha256, width: t.width, height: t.height,
+      external: t.source !== 'embedded' ? { resolved: !!t.resolvedPath } : null,
+    })),
     animations: animClips.map((c, i) => ({ index: i, name: c.name || `animation-${i}`, channels: c.tracks?.length ?? 0, samplers: 0 })),
     issues,
   };
@@ -378,13 +401,13 @@ async function analyzeObjOrFbx(name, buf, format) {
 // ---------- 入口 ----------
 
 // 分析一个 Buffer。kind 来自 validateFile 的 format。
-export async function analyzeBuffer(name, buf, kind) {
+export async function analyzeBuffer(name, buf, kind, opts = {}) {
   const t0 = Date.now();
   let report;
   if (kind === 'glb' || kind === 'gltf') {
     report = analyzeGltfLike(name, buf, kind);
   } else if (kind === 'obj' || kind === 'fbx-binary' || kind === 'fbx-ascii') {
-    report = await analyzeObjOrFbx(name, buf, kind === 'obj' ? 'obj' : 'fbx');
+    report = await analyzeObjOrFbx(name, buf, kind === 'obj' ? 'obj' : 'fbx', opts.baseDir ?? null);
     if (kind.startsWith('fbx')) report.file.format = kind;
   } else {
     throw new Error(`分析器不支持的类型: ${kind}`);
