@@ -5,6 +5,7 @@
 import { el } from '../utils/dom.js';
 import { v5Stat } from '../core/router.js';
 import { createHero3D } from './home3d.js';
+import { createContactBlock } from '../ui/contact.js';
 
 // 五件展品的真实分组语义（与 catalog 一致，非虚构）
 const SERIES = [
@@ -147,7 +148,14 @@ export function createHomePage({ catalog = [], version = '3.0.0', quality = 'hig
     ),
   );
 
-  const node = el('div', { class: 'v5-home' }, hero, seriesSection, laneSection);
+  // ---- 联系方式：位于功能展示之后、公共页脚之前，只占一小条 ----
+  const contactSection = createContactBlock({
+    variant: 'block',
+    title: '联系',
+    note: '关于展品授权、模型交付或本地完整版部署，都可以直接邮件联系。',
+  });
+
+  const node = el('div', { class: 'v5-home' }, hero, seriesSection, laneSection, contactSection);
 
   // 3D 主体：挂载后启动；unmount 完整释放（renderer/geo/textures/composer）
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

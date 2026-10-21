@@ -72,22 +72,11 @@ export function buildV5Shell({ version = 'V5' } = {}) {
           el('h4', {}, '工具'),
           el('a', { href: '#/studio' }, 'AI Studio'),
         ),
+        // 邮箱不在这里重复：首页与作品详情页各自有专区内，避免同页两份联系方式
         el('div', { class: 'v5-footer-col' },
           el('h4', {}, '联系'),
-          el('a', { href: 'mailto:haorongli09@outlook.com', class: 'v5-contact-mail' }, 'haorongli09@outlook.com'),
-          el('a', { href: 'mailto:haorongli09@gmail.com', class: 'v5-contact-mail' }, 'haorongli09@gmail.com'),
-          el('button', {
-            class: 'v5-btn v5-btn-ghost v5-copy-mail', type: 'button',
-            onclick: async (e) => {
-              try {
-                await navigator.clipboard.writeText('haorongli09@outlook.com');
-                const b = e.currentTarget;
-                const old = b.textContent;
-                b.textContent = '已复制 ✓';
-                setTimeout(() => { b.textContent = old; }, 1600);
-              } catch { /* 剪贴板不可用（非安全上下文）时静默 */ }
-            },
-          }, '复制邮箱地址'),
+          el('a', { href: '#/' }, '首页联系方式'),
+          el('a', { href: '#/work/sheng' }, '作品详情联系方式'),
         ),
       ),
     ),

@@ -10,14 +10,59 @@
    ========================================================================== */
 
 /* ---------------- 1. 模式布局骨架 ---------------- */
-body.mode-gallery #app {
-  /* 观展：给主体更多横向空间，右栏收窄成「策展信息栏」 */
-  grid-template-columns: var(--sidebar-w) minmax(0, 1fr) 300px;
+/* ---------- 应用态外壳：Gallery / Studio 占满视口，不产生整页滚动 ----------
+   #app 原本是 height:100dvh，而外壳上方还有 V5 顶栏，两者相加会超出一屏，
+   导致底部 Dock 被挤到视口之外（拖到底就找不回来）。这里让外壳严格等于
+   视口高度，#app 吃掉剩余空间——Dock 的 bottom 永远落在屏幕内。 */
+body.mode-gallery .v5-shell, body.mode-studio .v5-shell { height: 100dvh; min-height: 0; overflow: hidden; }
+body.mode-gallery .v5-page, body.mode-studio .v5-page { flex: 1 1 auto; min-height: 0; }
+/* #app 用百分比吃满剩余高度（而不是 100dvh），链条上每一级都有确定高度，
+   .viewport 的 height:100% 才不会退化成「按 canvas 固有尺寸撑高」。 */
+body.mode-gallery #app, body.mode-studio #app { height: 100%; min-height: 0; }
+body.mode-gallery .v5-footer, body.mode-studio .v5-footer { display: none; }
+
+/* ---------- 可调整分栏：宽度/高度全部由 CSS 变量承载 ---------- */
+#app {
+  position: relative;
+  /* 兜底值：布局模块初始化后会被真实（并已 clamp 过的）数值覆盖 */
+  --st-sidebar: 300px;
+  --st-inspector: 372px;
+  --st-dock-h: 252px;
+  /* 栅格列宽直接引用变量——拖拽只改变量，不重排 DOM、不碰 canvas */
+  grid-template-columns: var(--st-sidebar) minmax(0, 1fr) var(--st-inspector);
 }
-body.mode-studio #app {
-  /* 生产：左右两侧都是工具容器，主体保持最大可用像素 */
-  grid-template-columns: 296px minmax(0, 1fr) 372px;
+body.mode-gallery #app { /* 观展：默认值更窄，具体数值由布局模块写入 */ --st-inspector: 320px; }
+
+/* 拖拽中：锁定光标并禁止选中，避免拖出文本选区 */
+body.st-resizing-x, body.st-resizing-x * { cursor: col-resize !important; user-select: none !important; }
+body.st-resizing-y, body.st-resizing-y * { cursor: row-resize !important; user-select: none !important; }
+
+/* ---------- 纵向手柄（改左右面板宽度） ---------- */
+.st-handle { position: relative; flex: none; background: transparent; border: 0; z-index: 30; }
+.st-handle-x { position: absolute; top: 0; bottom: 0; width: 11px; cursor: col-resize; }
+#stHandleLeft { left: var(--st-sidebar); margin-left: -5px; }
+#stHandleRight { right: var(--st-inspector); margin-right: -5px; }
+.st-handle-x::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 5px; width: 1px;
+  background: var(--v5-line); transition: background .16s var(--v5-ease-out);
 }
+.st-handle-x:hover::after, .st-handle-x.is-dragging::after, .st-handle-x:focus-visible::after {
+  background: var(--v5-gold-400); box-shadow: 0 0 0 1px rgba(217, 196, 160, .25);
+}
+.st-handle-x:focus-visible { outline: none; }
+
+/* ---------- 横向手柄（改底部任务区高度） ---------- */
+.st-handle-y { height: 12px; cursor: row-resize; display: grid; place-items: center; }
+.st-handle-y::after {
+  content: ''; width: 46px; height: 3px; border-radius: 2px;
+  background: var(--v5-line-2); transition: background .16s var(--v5-ease-out), width .16s var(--v5-ease-out);
+}
+.st-handle-y:hover::after, .st-handle-y.is-dragging::after, .st-handle-y:focus-visible::after {
+  background: var(--v5-gold-400); width: 84px;
+}
+.st-handle-y:focus-visible { outline: none; }
+/* Gallery 没有底部任务区：手柄不占位 */
+body.mode-gallery .st-handle-y { display: none; }
 
 /* Gallery 下彻底隐藏生产工具（AI 管线由 Studio 独占） */
 body.mode-gallery #studioToolbar,
@@ -47,6 +92,8 @@ body.mode-studio .viewport-shell { flex: 1 1 auto; min-height: 0; }
   body.mode-studio #studioRail { display: none !important; }
 }
 @media (max-width: 780px) {
+  /* 触控窄屏不提供拖拽分栏：面板改为抽屉/折叠，避免误触与拖不动 */
+  .st-handle-x { display: none !important; }
   body.mode-studio #app { grid-template-columns: minmax(0, 1fr); }
   body.mode-studio #studioTree { position: absolute; inset: 0 auto 0 0; width: 86vw; max-width: 320px; z-index: 40; background: var(--v5-bg-surface); box-shadow: var(--v5-shadow-2); }
   body.mode-studio #studioDock { max-height: 42vh; }
@@ -265,10 +312,12 @@ body.mode-studio .viewport-shell { flex: 1 1 auto; min-height: 0; }
 
 /* ---------- 底部 Dock ---------- */
 .st-dock {
-  flex: none; display: flex; flex-direction: column; max-height: 40vh; min-height: 126px;
+  flex: none; display: flex; flex-direction: column;
+  /* 高度由布局变量控制；min-height 只保留折叠后的头部，不再写死展开尺寸 */
+  height: var(--st-dock-h); min-height: 40px; max-height: 100%;
   border-top: 1px solid var(--v5-line-2); background: linear-gradient(180deg, var(--v5-bg-surface), var(--v5-bg-inset));
 }
-.st-dock.is-collapsed { max-height: 38px; min-height: 38px; }
+.st-dock.is-collapsed .st-dock-stack { display: none; }
 .st-dock.is-collapsed .st-dock-stack { display: none; }
 .st-dock-head { flex: none; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--v5-line); }
 .st-dock-tabs { display: flex; gap: 2px; }
@@ -395,6 +444,30 @@ body.mode-gallery .inspector-body > details.sect { border-bottom: 1px solid var(
 body.mode-gallery .group.is-demos { opacity: .72; border-top: 1px dashed var(--v5-line); padding-top: 10px; }
 body.mode-gallery .group.is-demos .group-title { color: var(--v5-tx-lo); }
 body.mode-gallery .group.is-exhibits .group-title { color: var(--v5-gold-200); }
+
+/* ---------- Gallery 辅助信息栏折叠 ---------- */
+body.gl-rail-hidden #app { grid-template-columns: var(--st-sidebar) minmax(0, 1fr) 0px; }
+body.gl-rail-hidden .inspector { display: none; }
+body.gl-rail-hidden #stHandleRight { display: none; }
+
+.gl-rail-btn {
+  margin-left: auto; width: 24px; height: 24px; display: grid; place-items: center;
+  cursor: pointer; border: 1px solid var(--v5-line-2); border-radius: var(--v5-r-xs);
+  background: var(--v5-bg-overlay); color: var(--v5-tx-lo); font-size: 13px; line-height: 1;
+}
+.gl-rail-btn:hover { color: var(--v5-gold-200); border-color: var(--v5-line-gold); }
+body.mode-studio .gl-rail-btn { display: none; }
+
+/* 收起后的展开入口：常驻视口右上角，保证随时能把信息栏拉回来 */
+.gl-rail-restore {
+  position: absolute; top: 14px; right: 14px; z-index: 8; display: none;
+  align-items: center; gap: 7px; cursor: pointer;
+  padding: 7px 11px; border-radius: var(--v5-r-pill);
+  border: 1px solid var(--v5-line-gold); background: rgba(10, 12, 15, .82); backdrop-filter: blur(8px);
+  color: var(--v5-gold-200); font: 500 11px/1 var(--v5-ff-sans);
+}
+body.gl-rail-hidden .gl-rail-restore { display: inline-flex; }
+.gl-rail-restore:hover { background: rgba(217, 196, 160, .18); color: var(--v5-gold-100); }
 
 /* ---------- 高级控制台抽屉 ---------- */
 .gl-drawer {

@@ -2,7 +2,7 @@
 // 导入 / 分析 / AI 优化 / 批处理 / 对比 / 导出 + 后端连接状态（含引导与重试）。
 import { el } from '../utils/dom.js';
 
-export function createStudioToolbar({ core, toast, compareUI, getBatchIds }) {
+export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onResetLayout }) {
   const node = el('header', { class: 'st-toolbar', id: 'studioToolbar' });
 
   const fileInput = el('input', {
@@ -46,7 +46,8 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds }) {
   compareBtn.hidden = true;
 
   const groupLeft = el('div', { class: 'st-tb-group' }, importBtn, analyzeBtn, aiBtn, batchBtnTop);
-  const groupRight = el('div', { class: 'st-tb-group' }, compareBtn, exitCompareBtn, exportBtn);
+  const layoutBtn = act('stLayoutReset', '布局', '恢复默认工作区布局（面板宽度与底部任务区高度）', () => onResetLayout?.());
+  const groupRight = el('div', { class: 'st-tb-group' }, compareBtn, exitCompareBtn, exportBtn, layoutBtn);
 
   fileInput.addEventListener('change', async () => {
     const files = [...(fileInput.files || [])];

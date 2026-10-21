@@ -10,6 +10,7 @@ import { createAssetTree } from './tree.js';
 import { createLabs } from './panes.js';
 import { createDock } from './dock.js';
 import { createStudioToolbar } from './toolbar.js';
+import { createLayout } from './layout.js';
 
 export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLocalEntries, onPreview }) {
   const workspace = document.querySelector('main.workspace') || $('workspace');
@@ -31,14 +32,78 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
     core, toast,
     compareUI: () => ui,
     getBatchIds: () => tree.getBatchIds(),
+    onResetLayout: () => { layout.reset(); dock.node.classList.remove('is-collapsed'); const c = dock.node.querySelector('#stDockCollapse'); if (c) c.textContent = '▾'; toast?.('已恢复默认布局', 'ok', 2200); },
   });
   const labs = createLabs({ viewer, core, toast });
   const dock = createDock({ core, toast, getBatchIds: () => tree.getBatchIds() });
 
   workspace.insertBefore(toolbar.node, workspace.firstChild);
+
+  // ---------------------------------------------------------- 可拖拽布局 --
+  const appRoot = document.getElementById('app');
+  const layout = createLayout({ app: appRoot, workspace, viewer, onChange: () => { /* 尺寸由 CSS 变量承载 */ } });
+
+  // 左：资源树宽度 / 右：Inspector 宽度（绝对定位，不参与 #app 的栅格分列）
+  const handleLeft = layout.makeHandle('x', '调整左侧资源树宽度');
+  const handleRight = layout.makeHandle('x', '调整右侧工具面板宽度');
+  // 底：任务 Dock 高度（正常文档流，位于视口与 Dock 之间）
+  const handleBottom = layout.makeHandle('y', '调整底部任务区高度');
+  handleLeft.id = 'stHandleLeft';
+  handleRight.id = 'stHandleRight';
+  handleBottom.id = 'stHandleBottom';
+  appRoot?.append(handleLeft, handleRight);
+
+  layout.attachHandle(handleLeft, {
+    axis: 'x', dir: 1,
+    get: () => layout.current.sidebar,
+    set: (v) => { layout.current.sidebar = v; },
+    min: () => Math.min(layout.LIMITS.sidebarMin, layout.current.sidebar),
+    max: () => Math.max(layout.LIMITS.sidebarMin, Math.min(layout.LIMITS.sidebarMax,
+      (appRoot?.getBoundingClientRect().width || window.innerWidth) - layout.LIMITS.viewportMinW - layout.current.inspector)),
+  });
+  layout.attachHandle(handleRight, {
+    axis: 'x', dir: -1,
+    get: () => layout.current.inspector,
+    set: (v) => { layout.current.inspector = v; },
+    min: () => Math.min(layout.LIMITS.inspectorMin, layout.current.inspector),
+    max: () => Math.max(layout.LIMITS.inspectorMin, Math.min(layout.LIMITS.inspectorMax,
+      (appRoot?.getBoundingClientRect().width || window.innerWidth) - layout.LIMITS.viewportMinW - layout.current.sidebar)),
+  });
+  layout.attachHandle(handleBottom, {
+    axis: 'y', dir: -1,
+    get: () => layout.current.dockH,
+    set: (v) => { layout.current.dockH = v; layout.current.dockCollapsed = false; },
+    min: () => layout.LIMITS.dockMin,
+    max: () => {
+      // 以「当前视口高度还能让出多少」为准，保证中央视口永远 ≥ viewportMinH
+      const vp = document.querySelector('.viewport')?.getBoundingClientRect().height || 0;
+      const cur = layout.current.dockCollapsed ? layout.LIMITS.collapsedH : layout.current.dockH;
+      return Math.max(layout.LIMITS.dockMin, cur + Math.max(0, vp - layout.LIMITS.viewportMinH));
+    },
+  });
+
+  workspace.append(handleBottom);
   workspace.append(dock.node);
   sidebar.append(tree.node);
   inspectorBody.append(labs.node);
+
+  // Dock 折叠 / 展开：交给布局系统，保证折叠后展开入口（头部）始终可见
+  const dockCollapse = dock.node.querySelector('#stDockCollapse');
+  dockCollapse?.addEventListener('click', () => {
+    const collapsed = layout.toggleDock();
+    dock.node.classList.toggle('is-collapsed', collapsed);
+    dockCollapse.textContent = collapsed ? '▴' : '▾';
+  });
+
+  // 窗口尺寸 / 浏览器缩放变化：重新收敛所有保存值，避免恢复出界旧布局
+  const reflow = () => {
+    layout.reflow();
+    dock.node.classList.toggle('is-collapsed', !!layout.current.dockCollapsed);
+    const c = dock.node.querySelector('#stDockCollapse');
+    if (c) c.textContent = layout.current.dockCollapsed ? '▴' : '▾';
+  };
+  window.addEventListener('resize', reflow);
+  window.addEventListener('orientationchange', () => setTimeout(reflow, 120));
 
   // V5.1 之前的「AI 管线」折叠面板已被 Studio 的五个真实区域取代，
   // 这里把它整块下线（而不是隐藏后留个空壳），保证生产入口只有一处。
@@ -147,11 +212,12 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
 
   let active = false;
   return {
-    core, toolbar, tree, labs, dock,
+    core, toolbar, tree, labs, dock, layout, reflow,
     // 进入 / 离开 Studio 的生命周期：只切换模式类与面板可见性，
     // 不改动 canvas 的挂载位置，也不销毁 Viewer。
     async enter() {
       active = true;
+      layout.setMode('studio');
       document.body.classList.add('mode-studio');
       document.body.classList.remove('mode-gallery');
       toolbar.node.hidden = false;
@@ -166,6 +232,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
     },
     leave() {
       active = false;
+      layout.setMode('gallery');
       document.body.classList.remove('mode-studio');
       document.body.classList.add('mode-gallery');
       toolbar.node.hidden = true;

@@ -2,6 +2,7 @@
 // 数据原则：3D 是真实手办资产；技术参数优先取本地后端真实分析报告，
 // 后端不可达时明确标注降级，绝不虚构数值。
 import { el } from '../utils/dom.js';
+import { createContactBlock } from '../ui/contact.js';
 import { createMiniViewer } from '../core/miniViewer.js';
 
 const CULTURE = {
@@ -92,6 +93,7 @@ export function createWorkPage({ params, catalog = [] } = {}) {
         el('a', { class: 'v5-work-navlink', href: `#/work/${prevId}` }, `‹ ${prevId}`),
         el('a', { class: 'v5-work-navlink', href: `#/work/${nextId}` }, `${nextId} ›`),
       ),
+      createContactBlock({ variant: 'inline', title: '联系与授权咨询' }),
     ),
   );
 

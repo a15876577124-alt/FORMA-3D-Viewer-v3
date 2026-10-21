@@ -842,3 +842,46 @@ input:disabled { opacity: .45; cursor: not-allowed; }
 .p-cs-arrow { color: var(--v5-tx-mute); text-align: center; }
 .p-cs-after { color: var(--v5-tx-hi); text-align: right; }
 .p-cs-delta { color: var(--v5-gold-300); text-align: right; min-width: 62px; }
+
+/* ============================================================================
+   联系方式模块（首页区块 / 作品详情紧凑条）
+   深色底 + 香槟金描边，只占一小条，不做个人简介式大版面
+   ========================================================================== */
+.v5-contact { padding: var(--v5-sp-6) 0 var(--v5-sp-7); }
+.v5-contact-inner {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: var(--v5-sp-4) var(--v5-sp-6);
+  padding: var(--v5-sp-5) 0 0;
+  border-top: 1px solid var(--v5-line-gold);
+}
+.v5-contact-head { min-width: 0; }
+.v5-contact-title {
+  margin: 6px 0 0; font: 400 clamp(1.1rem, 1.7vw, 1.45rem)/1.2 var(--v5-ff-display);
+  color: var(--v5-ivory-200);
+}
+.v5-contact-list { display: flex; flex-direction: column; gap: 8px; }
+.v5-contact-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.v5-contact-mail {
+  font: 400 13.5px/1.4 var(--v5-ff-mono); color: var(--v5-gold-200);
+  text-decoration: none; padding: 6px 10px; border-radius: var(--v5-r-sm);
+  border: 1px solid var(--v5-line-gold); background: rgba(217, 196, 160, .07);
+  transition: background .18s var(--v5-ease-out), color .18s var(--v5-ease-out);
+}
+.v5-contact-mail:hover { background: rgba(217, 196, 160, .18); color: var(--v5-gold-100); }
+.v5-contact-copy {
+  cursor: pointer; font: 500 11px/1 var(--v5-ff-sans); color: var(--v5-tx-lo);
+  padding: 6px 10px; border-radius: var(--v5-r-sm);
+  border: 1px solid var(--v5-line-2); background: var(--v5-bg-overlay);
+}
+.v5-contact-copy:hover { color: var(--v5-tx-hi); border-color: rgba(242, 237, 228, .28); }
+.v5-contact-note { flex: 1 1 240px; margin: 0; font-size: var(--v5-fs-xs); line-height: 1.6; color: var(--v5-tx-lo); }
+
+/* 详情页紧凑条：不抢技术参数的视觉重心 */
+.v5-contact-inline { padding: var(--v5-sp-5) 0 var(--v5-sp-6); }
+.v5-contact-inline .v5-contact-inner { padding-top: var(--v5-sp-4); }
+
+@media (max-width: 640px) {
+  .v5-contact-inner { flex-direction: column; align-items: stretch; }
+  .v5-contact-list { width: 100%; }
+  .v5-contact-mail { flex: 1 1 auto; word-break: break-all; }
+}

@@ -250,7 +250,14 @@ function boot() {
 
   // ------------------------------------------------------------ Gallery --
   // Gallery 观展模式：右栏策展化 + 高级控制台抽屉 + 隐藏生产工具。
-  gallery = buildGalleryMode({ viewer, capture, resetView });
+  gallery = buildGalleryMode({
+    viewer, capture, resetView,
+    // Gallery 的辅助信息栏折叠走同一套布局系统（状态按模式分别保存）
+    onToggleRail: () => {
+      const hidden = studio?.layout?.toggleRail();
+      toast(hidden ? '已收起右侧信息栏' : '已展开右侧信息栏', 'ok', 2000);
+    },
+  });
   // ------------------------------------------------------------- Studio --
   // AI Studio 是独立的工作区（顶部工具条 / 左侧资源树 / 中央视口 / 右侧 Lab 坞 /
   // 底部任务 Dock），与 Gallery 共用同一个 Viewer 与同一份 DOM，不重复初始化 WebGL。
@@ -511,6 +518,16 @@ function boot() {
     },
     // V5 路由（供测试与调试驱动页面切换）。
     v5: { navigate, version: 'V5' },
+    // 工作区布局（供测试驱动；生产入口是拖拽手柄与工具栏「布局」按钮）
+    layout: {
+      read: () => studio?.layout?.read?.() || null,
+      reset: () => studio?.layout?.reset?.(),
+      toggleDock: () => studio?.layout?.toggleDock?.(),
+      toggleRail: () => studio?.layout?.toggleRail?.(),
+      reflow: () => studio?.reflow?.(),
+      get defaults() { return studio?.layout?.DEFAULTS || null; },
+      get limits() { return studio?.layout?.LIMITS || null; },
+    },
     // Gallery 观展模式（供测试驱动；生产入口由路由负责）
     gallery: {
       enter: () => gallery?.enter(),

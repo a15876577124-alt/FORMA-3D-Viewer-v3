@@ -14,7 +14,7 @@ function summaryOf(details) {
   return details.querySelector('summary');
 }
 
-export function buildGalleryMode({ viewer, capture, resetView }) {
+export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
   const inspectorBody = document.querySelector('.inspector-body');
   const inspectorTitle = document.querySelector('.inspector-title');
   if (!inspectorBody) return { enter() { }, leave() { } };
@@ -99,6 +99,22 @@ export function buildGalleryMode({ viewer, capture, resetView }) {
     document.body.classList.toggle('gl-drawer-open', !drawer.hidden);
   });
   drawer.addEventListener('click', (e) => { if (e.target === drawer) closeDrawer(); });
+
+  // ---- 辅助信息栏折叠（Gallery 专属：观展时可以把右栏整个收起来）----
+  const railToggle = el('button', { class: 'gl-rail-btn', type: 'button', id: 'glRailToggle', title: '收起右侧信息栏' },
+    el('span', { 'aria-hidden': 'true' }, '›'),
+  );
+  const inspectorHead = document.querySelector('.inspector-head');
+  inspectorHead?.append(railToggle);
+  railToggle.addEventListener('click', () => onToggleRail?.());
+
+  // 展开入口必须常驻在视口里：收起后右栏宽度为 0，按钮不能放在右栏内
+  const railRestore = el('button', { class: 'gl-rail-restore', type: 'button', id: 'glRailRestore', title: '展开右侧信息栏' },
+    el('span', { 'aria-hidden': 'true' }, '‹'), el('span', {}, '信息栏'),
+  );
+  const viewportEl = document.querySelector('.viewport');
+  viewportEl?.append(railRestore);
+  railRestore.addEventListener('click', () => onToggleRail?.());
 
   // ---- 侧栏策展：正式作品 vs Technical Demos ----
   const figurines = document.querySelector('.group[data-group="figurines"]');
