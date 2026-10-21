@@ -51,6 +51,45 @@
   （原 `D:\琼韵新生\...`，2026-10-21 用户改名），缺失时按 SKIP 处理，
   可用 `--objDir=<路径>` / `FORMA_OBJ_DIR` 覆盖
 
+## 当前状态（V5.2 Gallery / AI Studio 差异化重构，2026-10-22 03:55）
+
+- **分支**：`feature/forma-v5-experience`
+- **本轮完成**：Gallery 观展模式 + AI Studio 五区工作区 + 工作流闭环（`2ad304e`）
+- **测试基线**：`node tests/run.mjs` **17/17 组全绿**（新增 `workspaces` 组 21 断言）
+  vendor / vendorscan / assets / pipeline 50 / agent 36 / ops 63 / opparams 44 /
+  batch 20 / compare 29 / fbxtex 58 / proxy 5 / server / render 56 / ui 26 /
+  import 12 / extended 6 / workspaces 21
+- **浏览器补充验收**：compare-ui 12/12、fbxtex-ui 8/8、home-deck 7/7、route-test 19/19
+- **下一轮**：继续 V5 高级功能计划（详见下方里程碑清单），合并 main 前需用户确认
+
+### V5.2 架构要点（下一轮直接看这里）
+
+- **两种模式共用一套渲染**：单一 `Viewer` / 单一 canvas / 单一 WebGL 上下文。
+  差异全部来自 `body.mode-gallery` / `body.mode-studio` 与各自的面板容器。
+- **Gallery**：`src/ui/gallery.js`。右栏只留观展项；材质 + 后期搬进
+  `#glDrawer`（高级控制台抽屉，同一个 DOM 节点搬家，功能不复制）。
+  生产工具在 Gallery 下 `display:none`。新增「展厅」布光预设（美术馆三点光）。
+- **Studio**：`src/studio/`（core 无 DOM + tree / panes / dock / toolbar / ui）。
+  五区：顶部工具条 / 左资源树 / 中央视口 / 右 Lab 坞 / 底部任务 Dock。
+- **路由坑（已修，勿回退）**：
+  1. 复用同一 DOM 节点时**不能**丢弃新路由的 instance——此前 `#/studio`
+     会错调 Gallery 的 `enter()`（本次重构才暴露）。
+  2. 每次进入都要刷新 `layer.ctx`，否则 `enter({query})` 解构出 undefined。
+  3. Gallery/Studio 必须用**单例图层对象**注册，否则 `?work=<id>` 这类
+     不同 cacheKey 会各自再建一份面板（重复 DOM）。
+- **抽屉是 fixed 覆盖层**：会挡住右栏与顶栏右侧控件，真实点击类验收
+  （tools/test-ui.mjs）用到了 `closeAdvanced()` 先收起。
+- **依赖 3D 图层的浏览器验收组**（render / ui / import / extended）必须落在
+  `#/gallery`，否则 `#app` 隐藏、canvas 恒 1×1。
+
+### V5 已完成（V5.1 第三轮）
+
+| 任务 | 内容 | 关键文件 |
+|------|------|----------|
+| 任务七 | Before/After **真实**双模型对比（此前是占位壳） | `backend/runPipeline.mjs` 回传 before/after 路径；`backend/server.mjs` 新增 `/api/file/<rel>`；`src/core/compare.js`；`tools/compare-ui-test.mjs` |
+| 任务六 | FBX 贴图内嵌/外部/缺失三态检测 + 内嵌提取 | `backend/fbxTree.mjs`、`backend/fbxTextures.mjs`、`backend/analyze.mjs`、`GET /api/assets/:id/textures`、`POST .../extract-textures` |
+| 任务二 | 首页改为软件启动台 | `src/pages/home.js`、`src/state/appState.js`、`styles/v5.css`、tools/home-deck-test.mjs |
+
 ## 当前状态（V5 第一轮）
 
 - **分支**：`feature/forma-v5-experience`（基于 `feature/ai-asset-pipeline` @ `0141480`）
