@@ -82,6 +82,23 @@
 - **依赖 3D 图层的浏览器验收组**（render / ui / import / extended）必须落在
   `#/gallery`，否则 `#app` 隐藏、canvas 恒 1×1。
 
+### V5.3（2026-10-22 04:30）：联系方式 + 可调整工作区
+
+- **联系方式**：`src/ui/contact.js` 一处定义、首页（区块）与作品详情页（紧凑条）复用；
+  公共页脚已移除邮箱列，避免同页重复。复制有 execCommand 真实回退。
+- **可调整工作区**：`src/studio/layout.js` + `styles/studio.css`
+  - 三个手柄（左树宽 / 右工具面板宽 / 底 Dock 高），Pointer Events 一套代码覆盖鼠标与触控
+  - 尺寸只写 CSS 变量 `--st-sidebar / --st-inspector / --st-dock-h`，栅格列宽引用变量
+  - 安全边界：dock 上限按视口剩余空间实时算，中央视口恒 ≥ 240px；拖到极限仍可拖回
+  - 双击手柄恢复默认、Dock 折叠只留 40px 头部（展开入口常驻）、键盘方向键/Home/End/Enter
+  - localStorage 按 gallery/studio 分别保存，窗口与缩放变化时重新 clamp
+  - Gallery：可拖/折叠右侧辅助栏，不显示底部任务区；窄屏（≤780px）隐藏手柄用折叠
+- **修掉的真实缺陷**：`#app` 原写死 `height:100dvh`，与 V5 顶栏相加超出一屏，
+  会把底部 Dock 挤出屏幕。改为百分比高度链（shell→page→#app 每级都有确定高度），
+  否则 `.viewport { height:100% }` 会退化成按 canvas 固有尺寸撑高。
+- **验收**：新增 `tools/layout-ui-test.mjs` 42 断言（真实鼠标/键盘事件驱动）；
+  全量 `node tests/run.mjs` **18/18 组**通过。
+
 ### V5 已完成（V5.1 第三轮）
 
 | 任务 | 内容 | 关键文件 |
