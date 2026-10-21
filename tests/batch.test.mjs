@@ -82,7 +82,12 @@ const lib = listLibrary();
 const own = lib.entries.filter((e) => assetIds.includes(e.assetId));
 check('listLibrary 含 5 资产', own.length >= 5, String(own.length));
 check('每个资产有版本', own.every((e) => e.versions.length >= 1));
-check('版本含 ops 清单', own.every((e) => e.versions.every((v) => v.ops.includes('weld'))), JSON.stringify(own.map((e) => e.versions[0].ops)));
+// 同一 assetId 可能已被其它测试组（ops/opparams/…）跑出别的算子链版本，
+// 因此只断言本组这一次批量真正产出的版本，历史版本不属于本组断言范围。
+const ownVersions = new Set(report.results.map((r) => `${r.assetId}@${r.version}`));
+const ownVersionList = own.flatMap((e) => e.versions.filter((v) => ownVersions.has(`${e.assetId}@${v.version}`)));
+check('本组产出的版本都在库里', ownVersionList.length === assetIds.length, String(ownVersionList.length));
+check('版本含 ops 清单', ownVersionList.length > 0 && ownVersionList.every((v) => v.ops.includes('weld')), JSON.stringify(ownVersionList.map((v) => v.ops)));
 
 // ---------- 5. 路径限制 ----------
 console.log('[5] 路径限制');

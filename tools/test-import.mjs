@@ -11,7 +11,6 @@ import { fileURLToPath } from 'node:url';
 import { launchBrowser } from './browser-test.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OBJ_DIR = 'D:\\琼韵新生\\_Coze_Drive_3D模型生成项目_琼剧Q版玩偶_琼剧Q版玩偶_OBJ模型\\3D模型v5_OBJ\\01_生角';
 
 const argv = process.argv.slice(2);
 const get = (name, fallback) => {
@@ -19,6 +18,21 @@ const get = (name, fallback) => {
   return hit ? hit.split('=')[1] : fallback;
 };
 const BASE = String(get('base', process.env.FORMA_BASE || 'http://127.0.0.1:5173'));
+
+// 原始 OBJ 素材不在仓库内（体积大且不入库），路径可用 --objDir= / FORMA_OBJ_DIR 覆盖。
+// 目录不可用时，依赖它的两条用例按 SKIP 处理并在报告里写明，而不是误报为回归。
+const OBJ_DIR = String(get('objDir', process.env.FORMA_OBJ_DIR
+  || 'D:\\琼韵新生\\_Coze_Drive_3D模型生成项目_琼剧Q版玩偶_琼剧Q版玩偶_OBJ模型\\3D模型v5_OBJ\\01_生角'));
+let objAssets = null;
+try {
+  const files = fs.readdirSync(OBJ_DIR);
+  const obj = files.find((f) => /\.obj$/i.test(f));
+  const png = files.find((f) => /\.png$/i.test(f));
+  if (obj && png) {
+    const mtl = files.find((f) => /\.mtl$/i.test(f));
+    objAssets = { obj: path.join(OBJ_DIR, obj), mtl: mtl ? path.join(OBJ_DIR, mtl) : null, png: path.join(OBJ_DIR, png) };
+  }
+} catch { /* 素材目录不可用 */ }
 const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'import-' + new Date().toISOString().replace(/[:.]/g, '-')));
 fs.mkdirSync(OUT, { recursive: true });
 const scratch = [];
@@ -43,7 +57,8 @@ function stage(name, ...sources) {
 }
 
 const results = [];
-const t = (name, fn) => results.push({ name, fn });
+// needsObj: true 的用例依赖仓库外的原始 OBJ 素材；素材不可用时跳过（不计失败）。
+const t = (name, fn, opts = {}) => results.push({ name, fn, ...opts });
 
 async function upload(page, files) {
   const input = await page.$('#fileInput');
@@ -57,11 +72,10 @@ async function waitImported(page, ms = 120000) {
 }
 
 t('导入: 原始 OBJ + MTL + PNG 全链路', async (ctx) => {
-  const obj = path.join(OBJ_DIR, '01_生角.obj');
-  const mtl = path.join(OBJ_DIR, 'material.mtl');
-  const png = fs.readdirSync(OBJ_DIR).find((f) => /\.png$/i.test(f));
-  if (!fs.existsSync(obj) || !png) throw new Error('源 OBJ 文件缺失');
-  await upload(ctx.page, [obj, mtl, path.join(OBJ_DIR, png)]);
+  const obj = objAssets.obj;
+  const files = [obj, objAssets.png];
+  if (objAssets.mtl) files.push(objAssets.mtl);
+  await upload(ctx.page, files);
   await waitImported(ctx.page);
   const s = await ctx.page.evaluate(() => ({
     id: window.__FORMA.current.id,
@@ -77,16 +91,14 @@ t('导入: 原始 OBJ + MTL + PNG 全链路', async (ctx) => {
   // imported group appears in the sidebar
   const cards = await ctx.page.evaluate(() => document.querySelectorAll('.group[data-group="imported"] .asset').length);
   if (cards < 1) throw new Error('侧栏没有出现导入分组');
-});
+}, { needsObj: true });
 
 t('导入: OBJ 缺少 MTL 时给出明确警告且仍显示几何', async (ctx) => {
-  const obj = path.join(OBJ_DIR, '01_生角.obj');
-  const png = path.join(OBJ_DIR, fs.readdirSync(OBJ_DIR).find((f) => /\.png$/i.test(f)));
-  await upload(ctx.page, [obj, png]);
+  await upload(ctx.page, [objAssets.obj, objAssets.png]);
   await waitImported(ctx.page);
   const toast = await ctx.page.evaluate(() => document.getElementById('toastWrap').innerText);
   if (!/\.mtl|MTL/i.test(toast)) throw new Error('缺少 MTL 警告，实际 toast: ' + toast.slice(0, 120));
-});
+}, { needsObj: true });
 
 t('导入: GLB 走 File 分支（本项目的 sheng.glb）', async (ctx) => {
   const glb = path.join(ROOT, 'assets', 'models', 'sheng.glb');
@@ -240,14 +252,25 @@ t('收尾: 全程无页面异常', async (ctx) => {
   page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
   page.on('pageerror', (e) => pageErrors.push(String(e.message || e)));
 
-  await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  // 导入验收需要 3D 图层可见（V5 路由图层化：仅 #/gallery 激活时才显示 #app）
+  await page.goto(BASE + '/index.html#/gallery', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.waitForFunction(() => {
+    const a = document.getElementById('app');
+    return !!a && !a.hidden && a.offsetParent !== null;
+  }, { timeout: 30000 });
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 90000 });
   await page.evaluate(() => window.__FORMA.ready);
   await sleep(400);
 
   const ctx = { page, consoleErrors, pageErrors };
   let failed = 0;
-  for (const { name, fn } of results) {
+  const skipped = [];
+  for (const { name, fn, needsObj } of results) {
+    if (needsObj && !objAssets) {
+      skipped.push(name);
+      console.log(`[SKIP] ${name}\n       原始 OBJ 素材不可用：${OBJ_DIR}`);
+      continue;
+    }
     try {
       await fn(ctx);
       console.log(`[PASS] ${name}`);
@@ -256,10 +279,10 @@ t('收尾: 全程无页面异常', async (ctx) => {
       console.log(`[FAIL] ${name}\n       ${e.message}`);
     }
   }
-  console.log(`\n导入测试: ${results.length - failed}/${results.length} 通过`);
+  console.log(`\n导入测试: ${results.length - failed - skipped.length}/${results.length} 通过${skipped.length ? `，${skipped.length} 条跳过（缺原始 OBJ 素材）` : ''}`);
   if (consoleErrors.length) console.log('（控制台错误 ' + consoleErrors.length + ' 条，导入场景中 4xx 资源与解析报错属预期，详见报告）');
   fs.writeFileSync(path.join(OUT, 'import-report.json'),
-    JSON.stringify({ passed: results.length - failed, total: results.length, consoleErrors, pageErrors }, null, 2));
+    JSON.stringify({ passed: results.length - failed - skipped.length, total: results.length, skipped, objDir: OBJ_DIR, objDirAvailable: !!objAssets, consoleErrors, pageErrors }, null, 2));
   await browser.close();
   process.exit(failed ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(1); });

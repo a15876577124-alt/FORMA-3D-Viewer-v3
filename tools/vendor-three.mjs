@@ -41,17 +41,40 @@ function jsmToVendor(rel) {
   return rel.replace(/^examples\/jsm\//, 'addons/');
 }
 
-const IMPORT_RE = /(?:^|[\s;{}()])(?:import|export)[\s\S]*?from\s*['"]([^'"]+)['"]|import\s*['"]([^'"]+)['"]/g;
+// Statement-anchored: `import` / `export` must sit at a statement boundary so a
+// string literal such as `key: 'import'` (a launch-deck id) or `'/assets/import'`
+// (an endpoint path) can never be mistaken for a module specifier. The span up to
+// `from` may not cross a `;`, and dynamic `import('...')` is captured too.
+const IMPORT_RE = /(?:^|[\s;{}()=,])(?:import|export)\b[^;]*?\bfrom\s*['"]([^'"]+)['"]|(?:^|[\s;{}()=,])import\s*\(\s*['"]([^'"]+)['"]\s*\)|(?:^|[\s;{}()=,])import\s+['"]([^'"]+)['"]/g;
 
-function scanSpecifiers(code) {
+export function scanSpecifiers(code) {
   const out = new Set();
   IMPORT_RE.lastIndex = 0;
   let m;
   while ((m = IMPORT_RE.exec(code))) {
-    const s = m[1] || m[2];
+    const s = m[1] || m[2] || m[3];
     if (s) out.add(s);
   }
   return [...out];
+}
+
+// index.html 的 importmap 是「哪些裸说明符可离线解析」的唯一真源。
+// vendor/three 之外的其它离线包（如 postprocessing）只要在 importmap 里登记，就算合法。
+async function readImportMapBare() {
+  const fallback = ['three', 'three/', 'three/addons/'];
+  let html;
+  try { html = await fs.readFile(path.join(ROOT, 'index.html'), 'utf8'); } catch { return fallback; }
+  const block = html.match(/<script[^>]+type\s*=\s*["']importmap["'][^>]*>([\s\S]*?)<\/script>/i);
+  if (!block) return fallback;
+  try {
+    const imports = (JSON.parse(block[1]) || {}).imports || {};
+    const keys = Object.keys(imports);
+    return keys.length ? keys : fallback;
+  } catch { return fallback; }
+}
+
+function makeBareAllowed(list) {
+  return (spec) => list.some((k) => spec === k || (k.endsWith('/') && spec.startsWith(k)));
 }
 
 async function resolveClosure(pkgRoot) {
@@ -167,10 +190,11 @@ export async function check() {
   };
   let srcFiles = [];
   try { srcFiles = await walk(SRC); } catch { /* src may not exist yet */ }
+  const bareAllowed = makeBareAllowed(await readImportMapBare());
   for (const f of srcFiles) {
     const code = await fs.readFile(f, 'utf8');
     for (const spec of scanSpecifiers(code)) {
-      if (!spec.startsWith('.') && spec !== 'three' && !spec.startsWith('three/')) {
+      if (!spec.startsWith('.') && !bareAllowed(spec)) {
         problems.push(`src imports non-vendored specifier "${spec}" in ${path.relative(ROOT, f)}`);
       }
       if (spec.startsWith('three/addons/')) {

@@ -184,7 +184,13 @@ function verdict(id, info, px) {
   page.on('pageerror', (e) => pageErrors.push(String(e && e.message ? e.message : e)));
   page.on('requestfailed', (r) => pageErrors.push(`request failed: ${r.url()} (${r.failure()?.errorText})`));
 
-  await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  // 像素级渲染验收必须落在展厅路由：V5 路由图层化后，默认落地页是启动台，
+  // 3D 图层（#app）处于隐藏态，canvas 会是 1x1，取不到任何像素。
+  await page.goto(BASE + '/index.html#/gallery', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.waitForFunction(() => {
+    const a = document.getElementById('app');
+    return !!a && !a.hidden && a.offsetParent !== null;
+  }, { timeout: 30000 });
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 60000 });
   // Awaiting the page-side readiness promise covers first model load + first frame.
   const firstOk = await page.evaluate(() => window.__FORMA.ready);

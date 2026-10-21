@@ -318,7 +318,12 @@ t('收尾: 控制台无错误', async (ctx) => {
   page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
   page.on('pageerror', (e) => pageErrors.push(String(e.message || e)));
 
-  await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  // UI 交互验收需要 3D 图层可见（V5 路由图层化：仅 #/gallery 激活时才显示 #app）
+  await page.goto(BASE + '/index.html#/gallery', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.waitForFunction(() => {
+    const a = document.getElementById('app');
+    return !!a && !a.hidden && a.offsetParent !== null;
+  }, { timeout: 30000 });
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 90000 });
   await page.evaluate(() => window.__FORMA.ready);
   await sleep(500);

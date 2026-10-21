@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
@@ -43,10 +43,13 @@ try {
     server.once('exit', (code) => { clearTimeout(timer); reject(new Error('本地服务器提前退出：' + code + '\n' + log)); });
   });
   console.log('测试地址：' + env.FORMA_BASE);
-  if (!only) {
+  if (!only || only === 'vendor') {
     await check('vendor', 'tools/vendor-three.mjs', ['--check']);
-    await check('assets', 'tools/verify-glb.mjs');
+    // 扫描器自身的正负样本：防止把字符串字面量 'import' 误判为模块说明符，
+    // 也防止漏掉真实裸导入（漏判会让未 vendored 的依赖溜进离线包）。
+    await check('vendorscan', 'tools/vendor-scan-selftest.mjs');
   }
+  if (!only) await check('assets', 'tools/verify-glb.mjs');
   if (!only || only === 'pipeline') await check('pipeline', 'tests/pipeline.test.mjs');
   if (!only || only === 'agent') await check('agent', 'tests/agent.test.mjs');
   if (!only || only === 'ops') await check('ops', 'tests/ops.test.mjs');

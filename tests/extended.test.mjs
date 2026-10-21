@@ -30,6 +30,14 @@ try {
   // DOMContentLoaded - wait for readiness instead of assuming nav timing.
   await page.waitForFunction(() => window.__FORMA && window.__FORMA.ready, { timeout: 60000 });
   assert.equal(await page.evaluate(async () => await window.__FORMA.ready), true);
+  // V5 路由图层化后，3D 展厅层（#app，内含 #fileInput / #stage / #animationPanel）
+  // 只在 #/gallery 激活时才可见；首页是独立启动台节点。本组需要与这些 DOM 做真实
+  // 交互（点按钮、拖鼠标、截图），因此先切到展厅路由并等待图层真正显示。
+  await page.evaluate(() => { if (location.hash !== '#/gallery') location.hash = '#/gallery'; });
+  await page.waitForFunction(() => {
+    const app = document.getElementById('app');
+    return !!app && !app.hidden && app.offsetParent !== null;
+  }, { timeout: 30000 });
   await check('外部 glTF + bin + PNG 真实导入', async () => {
     // Derive disposable external files from an existing real mesh. Original bytes stay untouched.
     const glb = fs.readFileSync(path.join(ROOT, 'assets/models/sheng.glb'));
