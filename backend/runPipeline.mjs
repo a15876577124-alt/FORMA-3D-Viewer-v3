@@ -100,11 +100,15 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
   fs.writeFileSync(path.join(dir, 'verify.json'), JSON.stringify(verify, null, 2));
   fs.writeFileSync(path.join(dir, 'CHANGE.txt'), results.map((r) => `[${r.op}] ${(r.changes || []).join('; ') || '(无变更)'}`).join('\n'));
 
+  // Before/After 3D 对比需要拿到两端的真实文件路径（相对项目根，供 /api/file 安全服务）
+  const rel = (p) => path.relative(ROOT, p).split(path.sep).join('/');
   return {
     assetId: id,
     version,
     outPath: path.relative(ROOT, outPath),
     outDir: path.relative(ROOT, dir),
+    beforePath: rel(inPath),
+    afterPath: rel(outPath),
     before: { verts: beforeReport.stats.verts, tris: beforeReport.stats.tris, bytes: beforeReport.file.bytes, sha256: beforeReport.file.sha256 },
     after: { verts: afterReport.stats.verts, tris: afterReport.stats.tris, bytes: afterReport.file.bytes, sha256: afterReport.file.sha256 },
     results,

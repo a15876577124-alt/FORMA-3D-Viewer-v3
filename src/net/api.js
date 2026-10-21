@@ -22,6 +22,11 @@ async function request(path, { method = 'GET', body } = {}) {
   return json;
 }
 
+// 项目内产物/原始文件的可服务 URL（后端 /api/file/<rel> 做了目录白名单与扩展名白名单）
+export function fileUrl(relPath) {
+  return BASE + '/file/' + String(relPath).split('/').map(encodeURIComponent).join('/');
+}
+
 export const pipelineApi = {
   health: () => request('/health'),
   models: () => request('/models'),

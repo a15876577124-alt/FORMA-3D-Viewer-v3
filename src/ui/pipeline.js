@@ -1,8 +1,39 @@
 // Pipeline 工作模式面板：惰性连接后端（启动零请求），集成资产/AI 分析/算子/对比/发布。
-import { pipelineApi } from '../net/api.js';
+import { pipelineApi, fileUrl } from '../net/api.js';
 import { CompareRig } from '../core/compare.js';
+import { loadGLTF, loadOBJ, loadFBX } from '../loaders/importers.js';
 import { el, $, toast, setProgress } from '../utils/dom.js';
 import { buildOpParamEditor, defaultParams } from './opParams.js';
+
+// 从后端可服务 URL 载入模型。glTF 直接走 URL（相对 .bin/贴图能被正确解析）；
+// OBJ/FBX 的 importer 只接受 File，故先取回字节再包成 File，语义完全一致。
+async function loadModelFromUrl(url, name) {
+  const ext = (String(name).split('.').pop() || '').toLowerCase();
+  if (ext === 'glb' || ext === 'gltf') {
+    const res = await loadGLTF(url);
+    return res.root;
+  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`载入失败 ${name}（HTTP ${res.status}）`);
+  const blob = await res.blob();
+  const file = new File([blob], name);
+  if (ext === 'obj') return (await loadOBJ(file, [file])).root;
+  if (ext === 'fbx') return (await loadFBX(file, [file])).root;
+  throw new Error(`暂不支持对比该格式：.${ext}`);
+}
+
+function fmtBytes(n) {
+  if (!Number.isFinite(n)) return '-';
+  if (n < 1024) return n + ' B';
+  if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+  return (n / 1024 / 1024).toFixed(2) + ' MB';
+}
+
+function delta(a, b) {
+  const d = b - a;
+  if (!Number.isFinite(d) || d === 0) return '±0';
+  return (d > 0 ? '+' : '') + d.toLocaleString('en-US');
+}
 
 export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary }) {
   const state = {
@@ -67,11 +98,13 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
   const runBtn = el('button', { class: 'chip-solid', type: 'button' }, '执行处理');
   const dryCheck = el('label', { class: 'check' }, el('input', { type: 'checkbox', id: 'pipelineDry' }), el('span', {}, '仅预览（dryRun）'));
 
-  // 对比区
+  // 对比区（Before/After 真实双模型：同场景同相机 + 裁剪面滑动对比）
   const compareBox = el('div', { id: 'pipelineCompare', class: 'p-compare', hidden: true });
   const splitInput = el('input', { type: 'range', min: '0', max: '1', step: '0.01', value: '0.5', id: 'pipelineSplit' });
   const compareLabel = el('div', { class: 'p-compare-label' }, el('span', {}, 'Before'), el('span', {}, 'After'));
-  compareBox.append(compareLabel, splitInput);
+  const compareStats = el('div', { class: 'p-compare-stats' });
+  const exitCompareBtn = el('button', { class: 'ghost-btn', type: 'button' }, '退出对比');
+  compareBox.append(compareLabel, splitInput, compareStats, exitCompareBtn);
 
   // 发布区
   const publishBtn = el('button', { class: 'ghost-btn', type: 'button' }, '加入展厅');
@@ -234,7 +267,8 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
       setProgress(null);
       if (e.status === 409 && e.data?.needConfirm) {
         state.confirmToken = e.data.token;
-        toast('该操作会改变外观，请再次点击「执行处理」确认', 'warn', 6000);
+        const why = (e.data.reasons || []).slice(0, 2).join('；');
+        toast(`需确认${why ? '：' + why : ''} —— 请再次点击「执行处理」`, 'warn', 8000);
       } else {
         toast('处理失败：' + e.message, 'err', 8000);
       }
@@ -266,13 +300,69 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
     aiLog.append(el('div', { class: 'p-log-summary' }, summary));
   }
 
-  // ---------- Before/After 对比 ----------
+  // ---------- Before/After 真实双模型对比 ----------
+  // 载入 before（原始）与 after（本次产物）两个真实模型，交给 CompareRig 在同一
+  // 场景同相机下做裁剪面滑动对比；统计行显示真实的前后差值。
   async function showCompare() {
-    if (!state.lastRun) return;
-    // 简化：对比需要加载 before/after 两个模型；此处提示 + 占位（完整加载由 M6 演示脚本驱动）
+    const run = state.lastRun;
+    if (!run || !run.beforePath || !run.afterPath) {
+      toast('本次运行没有可对比的产物路径', 'warn', 5000);
+      return;
+    }
     compareBox.hidden = false;
-    toast('对比功能：请在演示脚本中加载 before/after 模型', 'warn', 5000);
+    compareStats.textContent = '正在载入 Before / After 模型…';
+    setProgress(2, '载入对比模型…');
+    try {
+      if (state.rig) state.rig.dispose();
+      const [rootA, rootB] = await Promise.all([
+        loadModelFromUrl(fileUrl(run.beforePath), run.beforePath.split('/').pop()),
+        loadModelFromUrl(fileUrl(run.afterPath), run.afterPath.split('/').pop()),
+      ]);
+      state.rig = new CompareRig(viewer);
+      state.rig.load(rootA, rootB);
+      state.rig.setSplit(Number(splitInput.value));
+      renderCompareStats(run);
+      toast('已载入前后模型，拖动滑条对比', 'ok', 4000);
+    } catch (e) {
+      compareStats.textContent = '对比载入失败：' + e.message;
+      toast('对比载入失败：' + e.message, 'err', 8000);
+    } finally {
+      setProgress(null);
+    }
   }
+
+  function renderCompareStats(run) {
+    const b = run.before || {}; const a = run.after || {};
+    compareStats.innerHTML = '';
+    const rows = [
+      ['顶点', b.verts, a.verts],
+      ['三角面', b.tris, a.tris],
+      ['体积', b.bytes, a.bytes],
+    ];
+    for (const [label, bv, av] of rows) {
+      const isBytes = label === '体积';
+      const fmt = isBytes ? fmtBytes : (v) => (Number.isFinite(v) ? v.toLocaleString('en-US') : '-');
+      let d = '-';
+      if (Number.isFinite(av) && Number.isFinite(bv)) {
+        const diff = av - bv;
+        d = diff === 0 ? '±0' : (diff > 0 ? '+' : '−') + (isBytes ? fmtBytes(Math.abs(diff)) : Math.abs(diff).toLocaleString('en-US'));
+      }
+      compareStats.append(el('div', { class: 'p-compare-row' },
+        el('span', { class: 'p-cs-label' }, label),
+        el('span', { class: 'p-cs-before' }, fmt(bv)),
+        el('span', { class: 'p-cs-arrow' }, '→'),
+        el('span', { class: 'p-cs-after' }, fmt(av)),
+        el('span', { class: 'p-cs-delta' }, d),
+      ));
+    }
+  }
+
+  function exitCompare() {
+    if (state.rig) { state.rig.dispose(); state.rig = null; }
+    compareBox.hidden = true;
+  }
+
+  exitCompareBtn.addEventListener('click', exitCompare);
   splitInput.addEventListener('input', () => { if (state.rig) state.rig.setSplit(Number(splitInput.value)); });
 
   // ---------- 发布 ----------
@@ -299,7 +389,11 @@ export function buildPipelinePanel({ viewer, appState, onPublish, onSyncLibrary 
     runPipeline,
     runAgent,
     publish,
+    showCompare,
+    exitCompare,
     CompareRig,
+    get rig() { return state.rig; },
+    get lastRun() { return state.lastRun; },
     get selectedAsset() { return state.selectedAsset; },
     get connected() { return state.connected; },
   };

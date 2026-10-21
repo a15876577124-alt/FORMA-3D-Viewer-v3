@@ -77,9 +77,12 @@ check('资产库含 5 个发布文件', published.files.filter((f) => f.file.inc
 // ---------- 4. 资产库列表 ----------
 console.log('[4] 资产库列表');
 const lib = listLibrary();
-check('listLibrary 含 5 资产', lib.entries.length >= 5, String(lib.entries.length));
-check('每个资产有版本', lib.entries.every((e) => e.versions.length >= 1));
-check('版本含 ops 清单', lib.entries.every((e) => e.versions[0].ops.includes('weld')));
+// 只断言本组刚处理过的 5 个手办——pipeline-out 里可能还留有其他测试产生的资产，
+// 断言不该依赖与本组无关的全局状态（否则会互相污染）。
+const own = lib.entries.filter((e) => assetIds.includes(e.assetId));
+check('listLibrary 含 5 资产', own.length >= 5, String(own.length));
+check('每个资产有版本', own.every((e) => e.versions.length >= 1));
+check('版本含 ops 清单', own.every((e) => e.versions.every((v) => v.ops.includes('weld'))), JSON.stringify(own.map((e) => e.versions[0].ops)));
 
 // ---------- 5. 路径限制 ----------
 console.log('[5] 路径限制');

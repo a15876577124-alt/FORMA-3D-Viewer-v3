@@ -468,6 +468,11 @@ function boot() {
       connect: () => pipeline.connect(),
       get connected() { return pipeline.connected; },
       get selectedAsset() { return pipeline.selectedAsset; },
+      // Before/After 真实双模型对比（供测试与调试驱动）
+      showCompare: () => pipeline.showCompare(),
+      exitCompare: () => pipeline.exitCompare(),
+      get rig() { return pipeline.rig; },
+      get lastRun() { return pipeline.lastRun; },
     },
     // V5 路由（供测试与调试驱动页面切换）。
     v5: { navigate, version: 'V5' },

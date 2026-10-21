@@ -52,6 +52,13 @@ function send(res, status, obj, extraHeaders = {}) {
 function sendError(res, err) {
   const status = err.status || 500;
   const payload = { error: { message: err.message || String(err), code: err.name || 'internal_error' } };
+  // 确认门（409）必须把 needConfirm/token 带到响应体顶层——前端靠它二次提交。
+  // 之前只塞进 error 对象，前端读 data.needConfirm 恒为 undefined，
+  // 导致「再次点击确认」永远拿不到 token，确认流程死循环。
+  if (err.needConfirm) payload.needConfirm = err.needConfirm;
+  if (err.token) payload.token = err.token;
+  if (err.riskyOps) payload.riskyOps = err.riskyOps;
+  if (err.reasons) payload.reasons = err.reasons;
   if (process.env.FORMA_BACKEND_DEBUG === '1' && err.stack) payload.error.stack = err.stack.split('\n').slice(0, 6);
   send(res, status, payload);
 }
@@ -313,6 +320,47 @@ route('DELETE', '/api/library/:file', async (req, params) => {
   return deleteLibraryFile(params.file);
 });
 
+// ---------- 产物/原始文件安全服务（Before/After 3D 对比用） ----------
+// 只允许读取项目内两个目录：backend/workspace（导入资产原文）与 pipeline-out（产物）。
+// 路径穿越防护：resolve + realpath 后必须仍在白名单根内；扩展名白名单；禁读目录。
+
+const FILE_SERVE_ROOTS = [
+  path.join(ROOT, 'backend', 'workspace'),
+  path.join(ROOT, 'pipeline-out'),
+  path.join(ROOT, 'assets'),
+];
+
+const FILE_SERVE_EXT = new Set(['.glb', '.gltf', '.bin', '.obj', '.mtl', '.fbx', '.png', '.jpg', '.jpeg', '.webp', '.ktx2', '.bmp']);
+
+const MIME = {
+  '.glb': 'model/gltf-binary', '.gltf': 'model/gltf+json', '.bin': 'application/octet-stream',
+  '.obj': 'text/plain', '.mtl': 'text/plain', '.fbx': 'application/octet-stream',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp',
+  '.ktx2': 'image/ktx2', '.bmp': 'image/bmp',
+};
+
+function resolveServableFile(relPath) {
+  const abs = path.resolve(ROOT, relPath);
+  const real = fs.existsSync(abs) ? fs.realpathSync(abs) : abs;
+  const ok = FILE_SERVE_ROOTS.some((base) => real === base || real.startsWith(base + path.sep));
+  if (!ok) throw new PathError('路径不在可服务范围内');
+  const ext = path.extname(real).toLowerCase();
+  if (!FILE_SERVE_EXT.has(ext)) throw new PathError('该文件类型不可服务');
+  if (!fs.existsSync(real) || !fs.statSync(real).isFile()) throw new PathError('文件不存在');
+  return { real, ext };
+}
+
+function serveFile(res, relPath) {
+  const { real, ext } = resolveServableFile(relPath);
+  const buf = fs.readFileSync(real);
+  res.writeHead(200, {
+    'Content-Type': MIME[ext] || 'application/octet-stream',
+    'Content-Length': buf.length,
+    'Cache-Control': 'no-store',
+  });
+  res.end(buf);
+}
+
 // ---------- 服务器 ----------
 
 const server = http.createServer(async (req, res) => {
@@ -321,6 +369,17 @@ const server = http.createServer(async (req, res) => {
 
   const url = new URL(req.url, `http://${HOST}:${PORT}`);
   const pathname = decodeURIComponent(url.pathname);
+
+  // /api/file/<相对路径> —— 走路径段而非 query，使 .gltf 的相对引用（.bin/贴图）
+  // 能被 three.js 按 URL 规则正确解析到同一目录下。
+  if (req.method === 'GET' && pathname.startsWith('/api/file/')) {
+    try {
+      serveFile(res, pathname.slice('/api/file/'.length));
+    } catch (err) {
+      sendError(res, err);
+    }
+    return;
+  }
 
   for (const r of routes) {
     if (r.method !== req.method) continue;
