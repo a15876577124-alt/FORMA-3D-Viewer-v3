@@ -1,5 +1,7 @@
 # FORMA 处理算子与后验
 
+> 2026-10-23 Codex 核验：GLB 核心算子与真实前后对比可运行，但完整格式互转/版本导出尚未完成。`runAssetPipeline` 导出 GLTF 的后验仍错误沿用输入格式，会返回 500；GLTF 导出结构与多文件发布也有缺口。详情见 [CODEX-AUDIT.md](CODEX-AUDIT.md) P1-02/03/04/05/10。以下算法描述不是全面格式兼容承诺。
+
 ## 算子清单
 
 | 算子 | 实现 | 外观影响 | 说明 |
@@ -16,7 +18,7 @@
 | `textureReport` | 自研 | 否 | 只读贴图尺寸/字节报告 |
 | `textureResize` | sharp | **是** | 缩放贴图（compact 重建 BIN） |
 | `textureCompress` | sharp | **是** | WebP/JPEG 有损压缩 |
-| `convert` | 自研 | **是** | glb ↔ gltf ↔ obj（FBX 只进不出） |
+| `convert` | 自研 | **是** | 当前有效输入主要为 GLB；GLTF/OBJ 输出存在已知缺陷，FBX 无导出实现 |
 
 \* 琼剧手办命中 `prune`/`join` 等仍强制确认（红线见 `docs/SECURITY.md`）。
 
@@ -51,4 +53,4 @@ pipeline-out/<assetId>-v<N>/
   CHANGE.txt           # 变更摘要
 ```
 
-版本号 `<N>` 递增，**永不覆盖**已有版本。
+版本号 `<N>` 递增，通过排他 mkdir 在异步处理前保留目录，避免并发覆盖。失败任务的目录保留、不复用；失败状态展示尚待完善。

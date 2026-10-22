@@ -1,0 +1,452 @@
+{
+  "auditDate": "2026-10-23",
+  "timezone": "Asia/Shanghai",
+  "branch": "feature/codex-v5-audit",
+  "handoffSha": "eeb7b3231d329cd3a8b05a0a7d9648fd3e708177",
+  "codeSha": "91f3ff050e042c5578837e3b252f457ed760a6b9",
+  "remoteMain": "0b7c3d00ae47ac7fe385dbfa8dc8868f93d1e14a",
+  "pushed": false,
+  "environment": {
+    "os": "Windows NT 10.0.26300.0",
+    "node": "24.22.0",
+    "npm": "11.19.1",
+    "edge": "155.0.4283.62"
+  },
+  "baseline": {
+    "generatedAt": "2026-10-22T16:22:20.874Z",
+    "results": [
+      {
+        "name": "vendor",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "vendorscan",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "assets",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "release",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "pipeline",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "agent",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ops",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "opparams",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "batch",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "proxy",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "server",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "render",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "import",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "extended",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "workspaces",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "layout",
+        "code": 0,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "reportedChecks": 706,
+    "report": "test-out/codex-audit-20261023/baseline/test-out/suite-2026-10-22T16-20-34-146Z/suite-report.json"
+  },
+  "finalSuite": {
+    "generatedAt": "2026-10-22T22:28:05.021Z",
+    "results": [
+      {
+        "name": "vendor",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "vendorscan",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "assets",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "release",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "pipeline",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "agent",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "audit",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ops",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "opparams",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "batch",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare-ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex-ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "proxy",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "server",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "render",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "import",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "extended",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "workspaces",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "layout",
+        "code": 0,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "reportedChecks": 735,
+    "counts": {
+      "vendorscan": 10,
+      "assets": 200,
+      "release": 16,
+      "pipeline": 50,
+      "agent": 36,
+      "audit": 7,
+      "ops": 64,
+      "opparams": 44,
+      "batch": 20,
+      "compare": 29,
+      "fbxtex": 58,
+      "compare-ui": 13,
+      "fbxtex-ui": 8,
+      "proxy": 5,
+      "server": 7,
+      "render": 56,
+      "ui": 26,
+      "import": 12,
+      "extended": 6,
+      "workspaces": 21,
+      "layout": 47
+    },
+    "countNote": "Group-reported checks; audit counts 7 node:test cases, each with multiple assertions. Vendor file/module counts excluded.",
+    "report": "test-out/suite-2026-10-22T22-26-02-792Z/suite-report.json",
+    "reportSha256": "8baeb4cc946e3d2cfa1fcd229e8789307a29f73e7d65f855461fc8195a63dcaf"
+  },
+  "webgl": {
+    "api": "webgl2",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "summary": {
+      "exhibitsPassed": 5,
+      "exhibitsTotal": 5,
+      "checksPassed": 56,
+      "checksTotal": 56
+    },
+    "memory": {
+      "before": {
+        "geometries": 20,
+        "textures": 10,
+        "programs": 15,
+        "triangles": 95804,
+        "calls": 11
+      },
+      "afterFirstCycle": {
+        "geometries": 24,
+        "textures": 14,
+        "programs": 15,
+        "triangles": 94658,
+        "calls": 11
+      },
+      "afterSecondCycle": {
+        "geometries": 24,
+        "textures": 14,
+        "programs": 15,
+        "triangles": 94658,
+        "calls": 11
+      },
+      "bounded": true
+    },
+    "console": {
+      "errors": [],
+      "warnings": [],
+      "pageErrors": []
+    },
+    "report": "test-out/suite-2026-10-22T22-26-02-792Z/render/render-report.json"
+  },
+  "staticRelease": {
+    "files": 83,
+    "bytes": 30100215,
+    "byKind": {
+      "html-link": 5,
+      "runtime-asset": 10,
+      "entry": 2,
+      "module": 66
+    }
+  },
+  "startupAndUI": {
+    "front": 56798,
+    "back": 56799,
+    "checks": [
+      "FORMA.bat launches both services with custom ports and working proxy",
+      "frontend HTTP 200",
+      "backend import works",
+      "JSON import accepts valid model payload exceeding old 8 MiB request limit",
+      "cloud model outage preserves local Studio availability",
+      "Asset Inspector displays true triangle count",
+      "Agent parsed tool arguments populate editable operation draft",
+      "comparison slider accepts zero endpoint",
+      "no uncaught page exceptions"
+    ],
+    "observations": {
+      "selectedAssetViewport": {
+        "asset": "audit-dan-640e77d3",
+        "analysis": {
+          "meshes": 1,
+          "primitives": 1,
+          "verts": 28662,
+          "tris": 46828,
+          "materials": 1,
+          "textures": 1,
+          "animations": 0,
+          "skins": 0,
+          "cameras": 0,
+          "nodes": 2
+        },
+        "currentExhibit": "sheng",
+        "inspector": "重新分析文件名称audit-dan.glb格式GLB体积5.34 MBSHA256640e77d372730493…几何统计网格1图元1顶点28,662三角面46,828材质1贴图1动画0蒙皮0边界盒（米）最小-0.051, -0.150, -0.111最大0.051, 0.150, 0.111尺寸0.102 × 0.300 × 0.222来源accessor异常与提示（1）警告网格 tripo_mesh_1655be57-196d-4a77-b872-d40e3f2902a3 缺少法线（NORMAL）——光照与后处理质量受限mesh:0生成器：https://github.com/mikedh/trimesh"
+      },
+      "galleryMobile": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "rail": {
+          "left": 350.0512390136719,
+          "right": 693.23876953125,
+          "width": 343.1875305175781
+        }
+      },
+      "gltfExport": {
+        "status": 500,
+        "error": {
+          "message": "bad magic 0x6373227b (expected glTF)",
+          "code": "Error"
+        }
+      },
+      "concurrentVersions": [
+        {
+          "status": 200,
+          "version": 2,
+          "outDir": "pipeline-out\\audit-dan-640e77d3-v2"
+        },
+        {
+          "status": 200,
+          "version": 3,
+          "outDir": "pipeline-out\\audit-dan-640e77d3-v3"
+        }
+      ],
+      "untrustedOriginDryRunStatus": 200
+    },
+    "report": "test-out/suite-2026-10-22T17-31-02-468Z/takeover-ui/report.json",
+    "note": "Same production code as final suite; final suite subsequently added a stronger comparison parameter assertion only."
+  },
+  "liveAgent": {
+    "modelCount": 34,
+    "workbuddyEnvCount": 0,
+    "privateEnvPresent": false,
+    "model": "deepseek-v4-pro",
+    "protocol": "native",
+    "dryRun": true,
+    "rounds": 2,
+    "toolStats": {
+      "analyze_asset": 1,
+      "finish": 1
+    },
+    "nativeChunks": 10,
+    "errors": [],
+    "totalMs": 5545,
+    "report": "test-out/codex-audit-20261023/live-agent-result.json",
+    "input": "Synthetic report only; no user model sent"
+  },
+  "protection": {
+    "protected-assets": {
+      "files": 12,
+      "allUnchanged": true,
+      "changed": []
+    },
+    "runtime-assets": {
+      "files": 30,
+      "allUnchanged": true,
+      "changed": []
+    },
+    "architectureUnchanged": true,
+    "privateEnvExists": false
+  },
+  "credentialScan": {
+    "scope": "tracked working-tree text files excluding vendor; not exhaustive Git-history credential audit",
+    "filesScanned": 155,
+    "privateCredentialPatterns": [],
+    "trackedEnvFiles": []
+  },
+  "dependencyAudit": {
+    "all": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 7,
+      "critical": 0,
+      "total": 7
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "upgraded": false
+  },
+  "limitations": [
+    "Real phones not tested",
+    "Complex production FBX not certified",
+    "256 MiB stress and long-run stability not tested",
+    "Public Pages deployment not end-to-end verified",
+    "No exhaustive Git-history secret scan",
+    "UI completion is not implied by green tests"
+  ],
+  "windowsArchive": {
+    "allFiles": 43,
+    "protectedFiles": 33,
+    "protectedByteIdentical": true,
+    "otherFilesWithLineEndingChanges": [
+      "test-assets\\gltf-package\\sheng.gltf",
+      "test-assets\\llm-chunks\\deepseek-v4-pro-native.jsonl",
+      "test-assets\\llm-chunks\\glm-5.3-flash-native.jsonl",
+      "test-assets\\llm-chunks\\kimi-k2.7-native.jsonl"
+    ]
+  }
+}

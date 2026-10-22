@@ -1,3 +1,45 @@
+# TASK_STATE — FORMA V5
+
+更新时间：2026-10-23（Asia/Shanghai）。当前阶段：**Codex 安全接管与独立审计完成，待按 P1 清单进入下一轮迭代**。
+
+## 当前工程状态
+
+- 本地目录：`D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3`。
+- 分支：`feature/codex-v5-audit`，基线 `eeb7b3231d329cd3a8b05a0a7d9648fd3e708177`。
+- 修复提交：`1be3f46`（安全/资产/测试）、`91f3ff0`（启动/Studio）。文档与摘要随其后提交；未推送、未合并 main。
+- 唯一应保留的既有工作区差异：`docs/ARCHITECTURE.md` 格式改动，接手前就存在；不要覆盖或代为提交。
+- 本次未创建替代项目、未升级依赖、未替换已能运行的 WorkBuddy 云服务。
+
+## 验收记录
+
+- npm ci 成功；Node 24.22.0 / npm 11.19.1 / Windows / Edge 155.0.4283.62。
+- 原始测试逻辑独立隔离复现 19/19，706 项报告检查。
+- 修复后 npm test 22/22，735 项报告检查；额外 9 项本地启动/界面/故障降级场景通过。
+- npm run release:verify：83 文件、30,100,215 字节；实际打包加载验证通过。
+- NVIDIA RTX 4060 Laptop 硬件 WebGL2，5/5 展品、56/56 渲染检查。
+- WorkBuddy 真实 LLM：34 模型可列举，deepseek-v4-pro 2 轮工具调用成功；合成报告，无用户模型上传。
+- 原始/展示资产 12 文件、既有运行期资产 30 文件和既有 ARCHITECTURE 改动字节不变。
+
+## 已完成修复
+
+测试全量隔离和批处理清理范围；并发版本目录排他创建；Agent await/dryRun/错误回灌与 ID 校验；GLTF/FBX 引用范围和静态私有目录限制；打包拒绝删除已有目录；Windows vendor/FBX 字节保护；非法 URL 400；导入 JSON 上限；npm start/自定义代理；模型服务故障不阻断本地工作；分析报告层级/Agent parsed 字段/滑条 0；真实 compare/fbxtex UI 纳入安全浏览器测试。
+
+## 后续优先级
+
+1. 资产选择→视口→编辑→版本→导出统一同一身份，修复 GLTF 导出 500 和资源包缺失。
+2. 手机 Gallery 右栏被裁、Studio 工具栏拥挤；补可见性而非仅 scrollWidth 断言。
+3. 量化/压缩扩展、法线/尺度/中文/stride/sparse fixtures 与视觉后验。
+4. Agent 多步骤版本串接、确认恢复、取消/超时和成功验证。
+5. Origin/Host 请求限制与大文件资源预算；Puppeteer 开发依赖 7 项 high 告警的兼容升级。
+
+详见 [docs/CODEX-AUDIT.md](docs/CODEX-AUDIT.md)、[docs/CODEX-HANDOFF.md](docs/CODEX-HANDOFF.md)、[KNOWN-ISSUES.md](KNOWN-ISSUES.md)。完整日志/截图在 test-out，精确路径在 [审计摘要](docs/audit/2026-10-23-results.json)。历史 WorkBuddy 状态见交付 SHA 和 CHANGELOG。
+
+---
+
+## 历史交接资料（2026-10-22，仅供追溯）
+
+> 以下保留交付 SHA 的原文与历史状态，不作为当前验收结论。当前分支、测试、限制和下一步以上方及 CODEX-AUDIT.md 为准；不要依旧文执行原始资产重生成或覆盖已有本地文件。
+
 # TASK_STATE — FORMA V5 Ultimate AI 3D Creation Platform 开发状态
 
 > 断点续作文件。每次会话开始先读这里；每完成一个里程碑立即更新。

@@ -1,3 +1,79 @@
+# CODEX-HANDOFF — FORMA V5 当前交接说明
+
+更新时间：2026-10-23（UTC+8）。Codex 已完成本地接管、独立复现、必要修复和技术审计。完整证据与优先级见 [CODEX-AUDIT.md](CODEX-AUDIT.md)，机器可读摘要见 [audit/2026-10-23-results.json](audit/2026-10-23-results.json)。旧 WorkBuddy 交接原文仍可通过 Git 交付 SHA 查阅。
+
+## 工程与 Git
+
+- 现有工程：`D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3`。
+- GitHub：[a15876577124-alt/FORMA-3D-Viewer-v3](https://github.com/a15876577124-alt/FORMA-3D-Viewer-v3)。
+- WorkBuddy 交付：`feature/forma-v5-experience` / `eeb7b3231d329cd3a8b05a0a7d9648fd3e708177`；本地初始 HEAD 与远程 API 一致。
+- Codex 分支：`feature/codex-v5-audit`。修复提交 `1be3f46`（资产保护/安全/测试）、`91f3ff0`（启动/Studio）；文档提交见 `git log`。未推送，未修改 main。
+- **接手前已有 `docs/ARCHITECTURE.md` 未提交格式改动，已原样保留且未纳入 Codex 提交。** 工作区仍有这一项差异是有意保留，不要执行 reset/checkout 覆盖它。
+
+## 可复现运行
+
+本次验证：Windows、Node 24.22.0、npm 11.19.1、Edge 155.0.4283.62。依赖最低 Node >=20.9.0；其他 Node 版本尚未逐一验收。
+
+```powershell
+npm ci
+npm start                    # 调用既有 tools/launch.mjs，前后端一起启动
+# Windows 也可双击 FORMA.bat
+npm run serve                # 仅静态前端
+npm run pipeline:serve       # 仅后端
+npm test                     # 隔离工程完整套件
+npm run release:verify
+```
+
+默认前端 `127.0.0.1:5173`，后端 `127.0.0.1:8787`，前端同源 `/api` 代理。可设 `PORT`、`FORMA_BACKEND_PORT`；launcher 会传递对应代理地址。自动化可设 `FORMA_NO_OPEN=1`。测试浏览器路径变量是 **FORMA_BROWSER**，不是旧文档所写的 FORMA_EDGE。
+
+`npm test` 将已跟踪工作文件逐字节复制到 `test-out/suite-*/project`，复用 node_modules junction；所有导入、处理、发布、删除都发生于隔离副本。新增文件需先 git add 才会进入快照。不要直接运行会写资产的旧测试脚本指向真实工作区。完整证据保留在 test-out，不自动批量清理。
+
+```powershell
+node tests/run.mjs --only=audit
+node tests/run.mjs --only=ops
+node tests/run.mjs --only=compare-ui
+node tests/run.mjs --only=fbxtex-ui
+```
+
+静态包：`npm run release:pack` 只允许新建 dist；已有目录会拒绝覆盖。再次打包可用 `node tools/static-release.mjs --pack=test-out/site-<唯一名称>`，自行评审后选择要发布的产物。静态包仅展厅，不含本地后端。不得把仓库根目录用作公共静态站点源，发布应使用闭包产物。
+
+## 测试结论与限制
+
+- 原始逻辑隔离复现：19/19 组，706 项报告检查。
+- 修复后 npm test：22/22 组，735 项报告检查；没有屏蔽用例，另有 9 项接管场景检查。
+- release:verify：83 文件 / 30,100,215 字节；独立静态包实际加载五模型通过。
+- Edge WebGL2 使用 NVIDIA RTX 4060 Laptop / ANGLE Direct3D11；5/5 模型、56/56 渲染检查通过；两轮切换 GPU 对象计数稳定。
+- FBX 三态与 PNG 提取、真实减面前后模型、布局拖拽/键盘/刷新持久化均独立运行。
+- 已知移动端裁切、资产视口不同步、导出缺陷不能被测试绿灯掩盖。真机、复杂生产 FBX、256 MiB 压力与 Pages 线上回归未验收。
+
+## 关键架构事实
+
+前端为原生 ESM + importmap，无 React/打包器；Three r186 与 postprocessing 已 vendored。Gallery/Studio 共享主 Viewer，但作品详情 miniViewer 另建上下文，因此不是“全站只有一个 WebGL”。后端原生 Node HTTP；分析、策略/确认、算子执行、后验、版本库分层存在。
+
+真实处理输出：`pipeline-out/<assetId>-vN`；版本号通过原子 mkdir 保留，失败目录不复用。资产原文在 `backend/workspace/assets/<id>/original/`；公共展示原文/派生展示模型分别在 assets/raw、assets/models。
+
+Studio 尚未统一所选后端资产与当前 viewer.modelRoot；Material Lab 是运行时编辑，未持久化为版本。GLTF/OBJ/FBX 的展示导入能力不等于后端格式互转能力。完整修正与代码定位见审计报告，不要继续沿用旧“全流程完成”表述。
+
+## WorkBuddy 与凭据
+
+现有 SDK 可以在本机安装、运行，无须 WorkBuddy 桌面会话。清除 WORKBUDDY_* 环境变量、无 backend/.env 时，既有应用配置下列出 34 个模型，真实 deepseek-v4-pro Agent 完成 2 轮工具调用。测试仅发送合成报告。
+
+云端应用额度/授权仍是依赖。publishableKey 使用 WorkBuddy 专有头与路径；尚没有通用 OpenAI-compatible 适配器。保持当前服务，下一轮在 backend/llm.mjs/agent/llmStream.mjs 增加可选传输适配与契约测试。新私人 API key 仅放后端环境或未跟踪 .env，不写源码、公开配置或 Git。
+
+## 下一步与资产保护
+
+优先：资产身份一致性和版本导出 → 移动端可见性 → 格式/视觉后验 → 可恢复 Agent → 请求来源与任务资源限制。先逐项小步修复，重大重构另行进入正式迭代。
+
+保护 assets/raw、外部 OBJ/MTL/PNG、真实工作区/发布资产、backend/.env、其他凭据和 Git 历史。模型优化必须输出新版本。本轮 12 个原始/展示文件及 30 个既有运行期文件哈希均保持一致。
+
+npm audit：开发依赖链 7 项 high，生产依赖 0；未自动升级。跨主版本 Puppeteer 升级须单独完成 Edge/CDP 和全套兼容测试。
+
+---
+
+## 历史交接资料（2026-10-22，仅供追溯）
+
+> 以下保留交付 SHA 的原文与历史状态，不作为当前验收结论。当前分支、测试、限制和下一步以上方及 CODEX-AUDIT.md 为准；不要依旧文执行原始资产重生成或覆盖已有本地文件。
+
 # CODEX-HANDOFF — FORMA V5 工程交接说明
 
 > 面向接手的 **Codex**（或任何后来者）：这是唯一一份「按当前代码事实写成」的交接文档。

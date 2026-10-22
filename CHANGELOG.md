@@ -4,7 +4,16 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased] — V5.4 工程交接与静态发布（2026-10-22）
+## [2026-10-23 Audit] — Codex 安全接管
+
+- 从交付 `eeb7b3231d329cd3a8b05a0a7d9648fd3e708177` 创建 `feature/codex-v5-audit`，保留既有 ARCHITECTURE 未提交格式改动。
+- `1be3f46`：隔离测试、唯一测试资产、并发版本原子分配、Agent await/dryRun/错误回灌、路径安全、静态私有目录限制、安全打包、Windows 字节保护与真实 Edge UI 验收。
+- `91f3ff0`：npm start 启动完整版，自定义端口代理、Node >=20.9.0、模型服务降级、报告解包、Agent 参数字段与对比分割端点。
+- 原始 19/19 组、706 项报告检查独立复现；最终 22/22 组、735 项报告检查，9 项接管场景通过。release:verify 83 文件 / 30,100,215 字节。
+- WorkBuddy SDK 实际安装与真实两轮工具调用成功，未替换服务或升级依赖。已记录未解决的 P1 工作流、安全、视觉问题。
+- 更新 CODEX-HANDOFF、TASK_STATE、README、KNOWN-ISSUES、PIPELINE、安全说明；新增 CODEX-AUDIT 与可追溯 JSON 摘要。
+
+## [Historical handoff] — V5.4 工程交接与静态发布（2026-10-22）
 
 交接基线：`feature/forma-v5-experience`。本版不含新功能，只做「可交付、可接手、可复现发布」。
 
