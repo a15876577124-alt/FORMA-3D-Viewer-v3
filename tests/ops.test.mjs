@@ -133,6 +133,13 @@ for (const { op, params } of singleOps) {
 // ---------- 4. 确认门 ----------
 console.log('[4] 确认门');
 {
+  const assetDir = path.join(ROOT, 'backend', 'workspace', 'assets', 'sheng-6ce3cb51');
+  fs.mkdirSync(path.join(assetDir, 'original'), { recursive: true });
+  if (!fs.existsSync(path.join(assetDir, 'original', 'file.glb'))) fs.copyFileSync(RAW, path.join(assetDir, 'original', 'file.glb'));
+  if (!fs.existsSync(path.join(assetDir, 'meta.json'))) fs.writeFileSync(path.join(assetDir, 'meta.json'), JSON.stringify({ id: 'sheng-6ce3cb51', name: 'sheng.glb', format: 'glb' }));
+}
+
+{
   const policy = assessPolicy('sheng.glb', 'sheng-6ce3cb51', [{ op: 'genNormals' }, { op: 'fixMaterials' }]);
   check('appearance 算子需确认', policy.required === true && policy.riskyOps.includes('genNormals'));
   const policy2 = assessPolicy('sheng.glb', 'sheng-6ce3cb51', [{ op: 'prune' }]);
@@ -164,13 +171,14 @@ console.log('[5] 链式执行与原始素材保护');
 // ---------- 6. runAssetPipeline 端到端（dryRun + 真实） ----------
 console.log('[6] runAssetPipeline 端到端');
 {
-  // 需要 workspace 资产；用 runAssetPipeline 依赖 backend/workspace 已存在的 sheng-6ce3cb51
   // dryRun
   const dry = await runAssetPipeline({ assetId: 'sheng-6ce3cb51', ops: [{ op: 'weld' }], dryRun: true });
   check('dryRun 返回 wouldApply', dry.dryRun === true && dry.wouldApply.length === 1);
 
   // 真实执行（weld 是 appearance=false，无需确认）
   const real = await runAssetPipeline({ assetId: 'sheng-6ce3cb51', ops: [{ op: 'weld' }] });
+  const concurrent = await Promise.all([1, 2].map(() => runAssetPipeline({ assetId: 'sheng-6ce3cb51', ops: [{ op: 'weld' }] })));
+  check('并发处理分配独立版本目录', new Set(concurrent.map(r => r.outDir)).size === 2);
   check('真实执行返回版本号', real.version >= 1);
   check('真实执行有 after 指标', real.after && real.after.tris === before.stats.tris);
   check('真实执行有 verify 结果', real.verify && typeof real.verify.pass === 'boolean');

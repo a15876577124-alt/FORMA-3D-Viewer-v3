@@ -93,8 +93,8 @@ async function readBody(req, limitBytes = MAX_FILE_BYTES + 1024 * 1024) {
   });
 }
 
-async function readJson(req) {
-  const raw = await readBody(req, 8 * 1024 * 1024);
+async function readJson(req, limit = 8 * 1024 * 1024) {
+  const raw = await readBody(req, limit);
   if (!raw.length) return {};
   try { return JSON.parse(raw.toString('utf8')); }
   catch { throw new ValidationError('请求体不是合法 JSON'); }
@@ -191,7 +191,7 @@ route('GET', '/api/models', async () => {
 });
 
 route('POST', '/api/assets/import', async (req) => {
-  const body = await readJson(req);
+  const body = await readJson(req, Math.ceil(MAX_FILE_BYTES / 3) * 4 + 1024 * 1024);
   const name = body?.name;
   const data = body?.dataBase64;
   if (typeof name !== 'string' || typeof data !== 'string') {
@@ -404,8 +404,9 @@ const server = http.createServer(async (req, res) => {
   applyCors(req, res);
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
-  const url = new URL(req.url, `http://${HOST}:${PORT}`);
-  const pathname = decodeURIComponent(url.pathname);
+  let pathname;
+  try { pathname = decodeURIComponent(new URL(req.url, `http://${HOST}:${PORT}`).pathname); }
+  catch { send(res, 400, { error: { message: '非法 URL', code: 'bad_url' } }); return; }
 
   // /api/file/<相对路径> —— 走路径段而非 query，使 .gltf 的相对引用（.bin/贴图）
   // 能被 three.js 按 URL 规则正确解析到同一目录下。

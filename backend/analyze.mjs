@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { safeResolveExisting } from './paths.mjs';
 import { parseGLB, readAccessor } from '../tools/glbkit.mjs';
 import { sniffImageSize, isPowerOfTwo } from './texture-sniff.mjs';
 import { detectFbxTextures } from './fbxTextures.mjs';
@@ -38,7 +39,7 @@ function gltfTextureEntries(gltf, bin, baseDir) {
     } else if (uri && baseDir) {
       // 外部贴图文件：真实读取
       try {
-        const p = path.resolve(baseDir, decodeURIComponent(uri));
+        const p = safeResolveExisting(baseDir, decodeURIComponent(uri));
         if (fs.existsSync(p) && fs.statSync(p).size < 64 * 1024 * 1024) {
           bytes = fs.readFileSync(p);
           const ext = path.extname(p).toLowerCase();
@@ -99,7 +100,7 @@ function gltfBoundsFromAccessor(acc) {
   return null;
 }
 
-function analyzeGltfLike(name, buf, format) {
+function analyzeGltfLike(name, buf, format, baseDir = path.dirname(name)) {
   let gltf, bin;
   if (format === 'glb') {
     ({ json: gltf, bin } = parseGLB(buf));
@@ -113,7 +114,7 @@ function analyzeGltfLike(name, buf, format) {
         if (m) gltf.buffers[i] = { ...b, __bytes: Buffer.from(m[1], 'base64') };
       } else if (b.uri) {
         try {
-          const p = path.resolve(path.dirname(name), decodeURIComponent(b.uri));
+          const p = safeResolveExisting(baseDir, decodeURIComponent(b.uri));
           if (fs.existsSync(p)) gltf.buffers[i] = { ...b, __bytes: fs.readFileSync(p) };
         } catch { /* 忽略不可读外部 buffer */ }
       }
@@ -208,7 +209,7 @@ function analyzeGltfLike(name, buf, format) {
   });
 
   const materials = gltfMaterialEntries(gltf);
-  const textures = gltfTextureEntries(gltf, bin, path.dirname(name));
+  const textures = gltfTextureEntries(gltf, bin, baseDir);
 
   // 诊断：贴图问题
   for (const t of textures) {
@@ -405,7 +406,7 @@ export async function analyzeBuffer(name, buf, kind, opts = {}) {
   const t0 = Date.now();
   let report;
   if (kind === 'glb' || kind === 'gltf') {
-    report = analyzeGltfLike(name, buf, kind);
+    report = analyzeGltfLike(name, buf, kind, opts.baseDir);
   } else if (kind === 'obj' || kind === 'fbx-binary' || kind === 'fbx-ascii') {
     report = await analyzeObjOrFbx(name, buf, kind === 'obj' ? 'obj' : 'fbx', opts.baseDir ?? null);
     if (kind.startsWith('fbx')) report.file.format = kind;

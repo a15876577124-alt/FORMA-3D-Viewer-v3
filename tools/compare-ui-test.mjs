@@ -1,13 +1,14 @@
 // 交互验证（真实浏览器）：执行处理 → 前端真实载入 before/after 两个模型 →
 // CompareRig 同场景挂载 → 裁剪面滑动生效 → 统计行显示真实前后差值 → 退出对比清理干净。
-import puppeteer from 'puppeteer-core';
+import { launchBrowser } from './browser-test.mjs';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+const OUT = process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'compare-ui-' + Date.now());
+fs.mkdirSync(OUT, { recursive: true });
 const BE_PORT = 5398;
 const FE_PORT = 5402;
 
@@ -52,11 +53,7 @@ if (!assets.assets?.some((a) => a.name.endsWith('.glb'))) {
 }
 const glbAsset = assets.assets.find((a) => a.name.endsWith('.glb'));
 
-const browser = await puppeteer.launch({
-  executablePath: EDGE,
-  headless: 'new',
-  args: ['--no-sandbox', '--enable-unsafe-swiftshader', '--use-angle=swiftshader', '--use-gl=angle'],
-});
+const browser = await launchBrowser();
 try {
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 900 });
@@ -73,7 +70,9 @@ try {
     const core = window.__FORMA.studio.core;
     core.selectAsset(id);
     for (const op of core.state.ops) core.setOpEnabled(op.name, op.name === 'simplify');
-    core.setOpParams('simplify', { ratio: 0.4 });
+    const ratio = document.querySelector('[data-op="simplify"] #op-ratio');
+    ratio.value = '0.4';
+    ratio.dispatchEvent(new Event('input', { bubbles: true }));
     document.getElementById('stDryRun').checked = false;
     document.getElementById('stRunBtn').click();
   }, glbAsset.id);
@@ -92,12 +91,14 @@ try {
   await page.waitForFunction(
     () => {
       const r = window.__FORMA.studio.lastRun;
-      return !!(r && r.before && r.after && r.after.tris > 0);
+      return !!(r && r.before && r.after && r.after.tris > 0 && window.__FORMA.studio.rig?.groupA && window.__FORMA.studio.rig?.groupB);
     },
     { timeout: 90000 },
   );
   const statsText = await page.evaluate(() => JSON.stringify(window.__FORMA.studio.lastRun?.after || {}));
   ok('后端返回真实的前后指标', /tris/.test(statsText), statsText.slice(0, 160));
+
+  ok('界面参数 0.4 真实进入算子执行结果', await page.evaluate(() => window.__FORMA.studio.lastRun.results.find(r => r.op === 'simplify')?.params.ratio === 0.4));
 
   // 4. 两个模型真的都在场景里，且几何不同（证明不是同一个模型画两次）
   const rig = await page.evaluate(() => {
@@ -134,7 +135,7 @@ try {
   ok('滑条改变裁剪面位置', Math.abs(moved.split - 0.15) < 1e-6 && moved.after !== moved.before, JSON.stringify(moved));
   ok('两侧裁剪面互为反向', Math.abs(moved.after + moved.cB) < 1e-6, JSON.stringify(moved));
 
-  await page.screenshot({ path: 'docs/demo/frames/v51-compare-real.png' });
+  await page.screenshot({ path: path.join(OUT, 'compare.png') });
 
   // 6. 退出对比：清理干净，恢复原模型显示
   const cleaned = await page.evaluate(async () => {

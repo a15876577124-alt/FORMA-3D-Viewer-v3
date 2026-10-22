@@ -1,13 +1,14 @@
 // 交互验证（真实浏览器）：选中 FBX 资产 → 面板列出贴图三态 → 一键提取内嵌贴图
 // → 产物链接可真实下载。断言全部来自页面真实 DOM 与真实 HTTP 响应。
-import puppeteer from 'puppeteer-core';
+import { launchBrowser } from './browser-test.mjs';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+const OUT = process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'fbx-textures-ui-' + Date.now());
+fs.mkdirSync(OUT, { recursive: true });
 const BE_PORT = 5396, FE_PORT = 5404;
 
 const kids = [];
@@ -35,10 +36,7 @@ const imp = await fetch(`http://127.0.0.1:${BE_PORT}/api/assets/import`, {
 const assetId = imp?.asset?.id;
 if (!assetId) throw new Error('导入失败：' + JSON.stringify(imp).slice(0, 200));
 
-const browser = await puppeteer.launch({
-  executablePath: EDGE, headless: 'new',
-  args: ['--no-sandbox', '--enable-unsafe-swiftshader', '--use-angle=swiftshader', '--use-gl=angle'],
-});
+const browser = await launchBrowser();
 try {
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 900 });
@@ -87,7 +85,7 @@ try {
   ok('提取产物可真实下载', dl.status === 200 && buf.length > 0, `${dl.status} ${buf.length}`);
   ok('下载内容是真实 PNG', buf[0] === 0x89 && buf[1] === 0x50, buf.subarray(0, 4).toString('hex'));
 
-  await page.screenshot({ path: 'docs/demo/frames/v51-fbx-textures.png' });
+  await page.screenshot({ path: path.join(OUT, 'fbx-textures.png') });
   ok('无页面级错误', errors.length === 0, errors.slice(0, 3).join(' | '));
 } finally {
   await browser.close();

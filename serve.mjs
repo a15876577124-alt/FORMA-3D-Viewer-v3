@@ -40,6 +40,16 @@ const server = createServer(async (req, res) => {
     if (relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) {
       res.writeHead(403).end('403 Forbidden'); return;
     }
+    const parts = relative.split(path.sep);
+    if (parts.some((p) => p.startsWith('.')) || ['backend', 'node_modules', 'pipeline-out', 'test-out'].includes(parts[0].toLowerCase())) {
+      res.writeHead(403).end('403 Forbidden'); return;
+    }
+    const real = await fs.realpath(resolved).catch(() => null);
+    if (real) {
+      const realRelative = path.relative(ROOT, real);
+      const realParts = realRelative.split(path.sep);
+      if (realRelative === '..' || realRelative.startsWith('..' + path.sep) || path.isAbsolute(realRelative) || realParts.some((p) => p.startsWith('.')) || ['backend', 'node_modules', 'pipeline-out', 'test-out'].includes(realParts[0].toLowerCase())) { res.writeHead(403).end('403 Forbidden'); return; }
+    }
     const stat = await fs.stat(resolved).catch(() => null);
     if (!stat || !stat.isFile()) { res.writeHead(404).end('404 Not Found'); return; }
     const headers = {

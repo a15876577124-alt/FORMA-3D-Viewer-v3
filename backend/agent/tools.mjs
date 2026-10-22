@@ -2,6 +2,7 @@
 // handler 通过 ctx 注入依赖（读 workspace / 调算子层），便于离线测试与 M3 接线。
 import fs from 'node:fs';
 import path from 'node:path';
+import { assertSafeId } from '../paths.mjs';
 
 // 8 工具定义。mutating 表示是否改变磁盘；confirm 表示是否需要确认门（auto=算子层判定）。
 export const TOOLS = [
@@ -115,7 +116,7 @@ export const TOOLS = [
     name: 'export_asset',
     description: '导出产物为指定格式（glb/gltf/obj）。',
     parameters: { type: 'object', properties: { assetId: { type: 'string' }, version: { type: 'number' }, to: { type: 'string' } }, required: ['assetId', 'to'] },
-    mutating: false, confirm: 'auto',
+    mutating: true, confirm: 'auto',
     handler: (ctx, args) => {
       if (typeof ctx.exportAsset !== 'function') return { status: 'not-available', note: '导出未接线（M3）' };
       return ctx.exportAsset(args);
@@ -148,11 +149,14 @@ export function toPromptSpec() {
 }
 
 // 派发一个工具调用。ctx 由 agent 注入（assetsDir / runOp / verify / compare / exportAsset）。
-export function dispatchTool(ctx, name, args) {
+export async function dispatchTool(ctx, name, args) {
   const tool = getTool(name);
   if (!tool) return { ok: false, error: `未知工具: ${name}` };
   try {
-    const result = tool.handler(ctx, args);
+    if (args?.assetId !== undefined) assertSafeId(args.assetId);
+    if (args?.version !== undefined && (!Number.isInteger(args.version) || args.version < 1)) throw new Error('version 必须是正整数');
+    if (ctx.dryRun && tool.mutating) return { ok: true, name, args, result: { status: 'wouldApply', ...args } };
+    const result = await tool.handler(ctx, args);
     return { ok: true, name, args, result };
   } catch (e) {
     return { ok: false, name, args, error: e.message };

@@ -75,17 +75,17 @@ console.log('[4] 派发');
     issues: [{ severity: 'warn', code: 'texture-oversized', message: 'x' }],
   }));
   const ctx = { assetsDir: tmpWs };
-  const r1 = dispatchTool(ctx, 'list_assets', {});
+  const r1 = await dispatchTool(ctx, 'list_assets', {});
   check('list_assets 真实返回', r1.ok && r1.result.assets.length === 1 && r1.result.assets[0].id === assetId);
-  const r2 = dispatchTool(ctx, 'analyze_asset', { assetId });
+  const r2 = await dispatchTool(ctx, 'analyze_asset', { assetId });
   check('analyze_asset 返回摘要', r2.ok && r2.result.stats.tris === 3000 && r2.result.textures[0].width === 8192);
-  const r3 = dispatchTool(ctx, 'propose_ops', { ops: [{ op: 'textureResize', reason: '大贴图', risk: '外观' }] });
+  const r3 = await dispatchTool(ctx, 'propose_ops', { ops: [{ op: 'textureResize', reason: '大贴图', risk: '外观' }] });
   check('propose_ops 回显不改写', r3.ok && r3.result.proposed[0].op === 'textureResize' && r3.result.count === 1);
-  const r4 = dispatchTool(ctx, 'nope', {});
+  const r4 = await dispatchTool(ctx, 'nope', {});
   check('未知工具报错', r4.ok === false && /未知工具/.test(r4.error));
-  const r5 = dispatchTool(ctx, 'run_op', { assetId, op: 'weld' });
+  const r5 = await dispatchTool(ctx, 'run_op', { assetId, op: 'weld' });
   check('run_op 未接线返回 wouldApply（dryRun 语义）', r5.ok && r5.result.status === 'wouldApply');
-  const r6 = dispatchTool(ctx, 'finish', { summary: 'done', appliedOps: ['weld'] });
+  const r6 = await dispatchTool(ctx, 'finish', { summary: 'done', appliedOps: ['weld'] });
   check('finish 返回总结', r6.ok && r6.result.summary === 'done');
   fs.rmSync(tmpWs, { recursive: true, force: true });
 }

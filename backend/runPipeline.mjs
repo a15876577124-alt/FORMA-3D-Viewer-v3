@@ -30,9 +30,16 @@ function originalPath(meta) {
 // 下一个版本目录（不覆盖已有）
 function nextVersionDir(assetId) {
   fs.mkdirSync(PIPELINE_OUT_ROOT, { recursive: true });
-  let n = 1;
-  while (fs.existsSync(path.join(PIPELINE_OUT_ROOT, `${assetId}-v${n}`))) n++;
-  return { version: n, dir: path.join(PIPELINE_OUT_ROOT, `${assetId}-v${n}`) };
+  for (let n = 1; ; n++) {
+    const dir = path.join(PIPELINE_OUT_ROOT, `${assetId}-v${n}`);
+    try {
+      // Reserve before the first await; mkdir is exclusive across processes too.
+      fs.mkdirSync(dir);
+      return { version: n, dir };
+    } catch (e) {
+      if (e.code !== 'EEXIST') throw e;
+    }
+  }
 }
 
 export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = false }) {

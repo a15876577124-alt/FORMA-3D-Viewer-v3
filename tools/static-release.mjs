@@ -230,7 +230,10 @@ if (PACK && !problems.length) {
     console.error('--pack 目标不能是仓库根目录');
     process.exit(1);
   }
-  fs.rmSync(dest, { recursive: true, force: true });
+  const packRel = path.relative(ROOT, dest);
+  const inTestOutput = packRel.startsWith('test-out' + path.sep);
+  if (packRel !== 'dist' && !inTestOutput) throw new Error('--pack 只允许 dist 或 test-out 内的目录');
+  if (fs.existsSync(dest)) throw new Error('打包目录已存在，请选择一个新目录；不会删除已有文件');
   for (const r of rows) {
     const to = path.join(dest, r.path);
     fs.mkdirSync(path.dirname(to), { recursive: true });

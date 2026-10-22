@@ -1,0 +1,3 @@
+# Preserve vendored hashes and FBX fixture bytes on Windows checkouts and archives.
+vendor/** -text
+*.fbx -text

@@ -10,6 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { safeResolveExisting } from './paths.mjs';
 import { parseTree, findAll, readVersion } from './fbxTree.mjs';
 
 export function isBinaryFbx(buf) {
@@ -130,7 +131,9 @@ export function detectFbxTexturesDetailed(buf, { baseDir = null } = {}) {
     if (bytes) source = 'embedded';
     else if (uri) {
       // 外部引用：按 FBX 所在目录解析一次；找不到即判 missing（不猜测、不回退）
-      const cand = baseDir ? path.resolve(baseDir, uri) : null;
+      let cand = null;
+      try { cand = baseDir ? safeResolveExisting(baseDir, uri) : null; }
+      catch { /* 不读取资产目录以外的引用，按缺失贴图报告。 */ }
       if (cand && fs.existsSync(cand) && fs.statSync(cand).isFile()) { source = 'external'; resolvedPath = cand; }
     }
     const sniffed = bytes ? sniffImageMime(bytes) : null;

@@ -7,6 +7,7 @@ import crypto from 'node:crypto';
 import { streamLLM } from './llmStream.mjs';
 import { toNativeTools, toPromptSpec, dispatchTool } from './tools.mjs';
 import { DEFAULT_AGENT_MODEL } from '../llm.mjs';
+import { assertSafeId } from '../paths.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -49,6 +50,7 @@ export async function runAgent({
   maxRounds = 8, maxToolCalls = 24, wallClockMs = 180000, dryRun = true,
   onEvent = () => {}, llmFn, ctx = {},
 }) {
+  assertSafeId(assetId);
   if (process.env.FORMA_LLM_OFFLINE === '1') {
     throw new AgentError('LLM 离线（FORMA_LLM_OFFLINE=1），无法生成 AI 决策', 503);
   }
@@ -58,7 +60,7 @@ export async function runAgent({
 
   const assetsDir = ctx.assetsDir || path.join(ROOT, 'backend', 'workspace', 'assets');
   const toolCtx = {
-    assetsDir,
+    assetsDir, dryRun,
     runOp: ctx.runOp, verify: ctx.verify, compare: ctx.compare, exportAsset: ctx.exportAsset,
   };
 
@@ -114,6 +116,7 @@ export async function runAgent({
     if (calls.length === 0) {
       // 无工具调用：视为最终答案
       log.finish = { summary: (res.content || '').trim(), appliedOps: [] };
+      log.rounds.push(roundRec);
       break;
     }
 
@@ -128,9 +131,10 @@ export async function runAgent({
     }
 
     for (const call of calls) {
+      if (totalToolCalls >= maxToolCalls || log.finish) break;
       totalToolCalls++;
       const t1 = Date.now();
-      const disp = dispatchTool(toolCtx, call.name, call.arguments);
+      const disp = await dispatchTool(toolCtx, call.name, call.arguments);
       const rec = {
         id: call.id, name: call.name,
         argsText: call.argumentsRaw || JSON.stringify(call.arguments),
@@ -146,11 +150,13 @@ export async function runAgent({
         log.finish = disp.result;
       }
 
+      // 工具失败也回灌结构化结果，不能序列化 undefined 令主循环崩溃。
+      const toolResult = disp.ok ? disp.result : { error: disp.error };
       // 回灌 tool 结果
       if (proto === 'prompt') {
-        messages.push({ role: 'user', content: `工具 ${call.name} 返回：${JSON.stringify(disp.result).slice(0, 2000)}` });
+        messages.push({ role: 'user', content: `工具 ${call.name} 返回：${JSON.stringify(toolResult).slice(0, 2000)}` });
       } else {
-        messages.push({ role: 'tool', tool_call_id: call.id, content: JSON.stringify(disp.result).slice(0, 4000) });
+        messages.push({ role: 'tool', tool_call_id: call.id, content: JSON.stringify(toolResult).slice(0, 4000) });
       }
 
       onEvent({ type: 'tool', runId, round, tool: call.name, ok: disp.ok, ms: rec.ms });

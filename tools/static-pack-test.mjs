@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'static-pack-' + Date.now()));
-const PACK = path.join(OUT, 'site');
+const PACK = path.join(ROOT, 'test-out', 'static-site-' + Date.now());
 const PORT = Number(process.env.FORMA_STATIC_PACK_PORT || 5433);
 fs.mkdirSync(OUT, { recursive: true });
 

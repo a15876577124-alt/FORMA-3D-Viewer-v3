@@ -26,9 +26,11 @@ for (const n of names) rawHashes[n] = crypto.createHash('sha256').update(fs.read
 
 // ---------- 准备 workspace 资产（导入 5 手办） ----------
 const assetIds = [];
+const publishedFiles = [];
+const testId = crypto.randomBytes(4).toString('hex');
 for (const n of names) {
   const glb = fs.readFileSync(path.join(RAW_DIR, n + '.glb'));
-  const id = `${n}-${crypto.createHash('sha256').update(glb).digest('hex').slice(0, 8)}`;
+  const id = `test-${testId}-${n}-${crypto.createHash('sha256').update(glb).digest('hex').slice(0, 8)}`;
   const dir = path.join(ASSETS_DIR, id);
   fs.mkdirSync(path.join(dir, 'original'), { recursive: true });
   const orig = path.join(dir, 'original', 'file.glb');
@@ -69,6 +71,7 @@ console.log('[3] 发布到资产库');
 for (let i = 0; i < assetIds.length; i++) {
   const version = report.results[i].version;
   const pub = await publishAsset({ assetId: assetIds[i], version });
+  publishedFiles.push(pub.file);
   check(`${names[i]} 发布成功`, fs.existsSync(path.join(LIB, pub.file)), pub.file);
 }
 const published = listPublished();
@@ -95,7 +98,7 @@ let delErr = null;
 try { await deleteLibraryFile('../../etc/passwd'); } catch (e) { delErr = e; }
 check('删除越界文件被拒', delErr !== null, delErr?.message);
 const beforeCount = listPublished().files.length;
-await deleteLibraryFile(published.files[0].file);
+await deleteLibraryFile(publishedFiles[0]);
 check('删除库内文件成功', listPublished().files.length === beforeCount - 1);
 
 // ---------- 清理测试产物 ----------
@@ -103,9 +106,7 @@ for (const id of assetIds) {
   fs.rmSync(path.join(ASSETS_DIR, id), { recursive: true, force: true });
 }
 // 清理本次发布的 library 文件与 pipeline-out 版本
-for (const f of fs.readdirSync(LIB)) {
-  if (assetIds.some((id) => f.startsWith(id))) fs.rmSync(path.join(LIB, f), { force: true });
-}
+for (const file of publishedFiles) fs.rmSync(path.join(LIB, file), { force: true });
 
 console.log(`\n=== batch: ${pass} passed, ${fail} failed ===`);
 if (fail > 0) console.log('失败项：' + failures.join(', '));

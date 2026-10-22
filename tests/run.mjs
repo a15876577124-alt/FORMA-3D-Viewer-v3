@@ -2,16 +2,37 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
 fs.mkdirSync(out, { recursive: true });
+// Tests import, process, publish and delete assets. Run a byte-for-byte snapshot
+// of tracked working files so these operations can never touch the user's data.
+if (process.env.FORMA_TEST_ISOLATED_ROOT !== ROOT) {
+  const snapshot = path.join(out, 'project');
+  fs.mkdirSync(snapshot);
+  const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8' }).split('\0').filter(Boolean);
+  for (const file of tracked) {
+    const target = path.join(snapshot, file);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.copyFileSync(path.join(ROOT, file), target);
+  }
+  fs.symlinkSync(path.join(ROOT, 'node_modules'), path.join(snapshot, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
+  const gitDir = execFileSync('git', ['rev-parse', '--absolute-git-dir'], { cwd: ROOT, encoding: 'utf8' }).trim();
+  console.log('隔离测试工程：' + snapshot);
+  const child = spawn(process.execPath, ['tests/run.mjs', ...args], {
+    cwd: snapshot, stdio: 'inherit',
+    env: { ...process.env, FORMA_TEST_ISOLATED_ROOT: snapshot, FORMA_TEST_OUTPUT_DIR: out, GIT_DIR: gitDir, GIT_WORK_TREE: snapshot },
+  });
+  const code = await new Promise((resolve, reject) => { child.once('error', reject); child.once('exit', resolve); });
+  process.exit(code ?? 1);
+}
 const env = { ...process.env, FORMA_TEST_HEADED: args.includes('--gpu') ? '1' : '0' };
 let server;
 const results = [];
@@ -54,11 +75,14 @@ try {
   if (!only || only === 'release') await check('release', 'tools/static-pack-test.mjs');
   if (!only || only === 'pipeline') await check('pipeline', 'tests/pipeline.test.mjs');
   if (!only || only === 'agent') await check('agent', 'tests/agent.test.mjs');
+  if (!only || only === 'audit') await check('audit', 'tests/audit.test.mjs');
   if (!only || only === 'ops') await check('ops', 'tests/ops.test.mjs');
   if (!only || only === 'opparams') await check('opparams', 'tests/opparams.test.mjs');
   if (!only || only === 'batch') await check('batch', 'tests/batch.test.mjs');
   if (!only || only === 'compare') await check('compare', 'tests/compare.test.mjs');
   if (!only || only === 'fbxtex') await check('fbxtex', 'tests/fbxtex.test.mjs');
+  if (!only || only === 'compare-ui') await check('compare-ui', 'tools/compare-ui-test.mjs');
+  if (!only || only === 'fbxtex-ui') await check('fbxtex-ui', 'tools/fbxtex-ui-test.mjs');
   if (!only || only === 'proxy') await check('proxy', 'tests/proxy.test.mjs');
   if (!only || only === 'server') await check('server', 'tests/server.test.mjs');
   if (!only || ['render', 'shots'].includes(only)) await check('render', 'tools/test-render.mjs', only === 'shots' ? ['--photos'] : []);
