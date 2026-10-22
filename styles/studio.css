@@ -76,16 +76,15 @@ body.mode-gallery #pipelineSect { display: none !important; }
 body.mode-studio .topbar,
 body.mode-studio .bottombar,
 body.mode-studio .gl-card,
-body.mode-studio .gl-actions,
-/* 左栏在 Studio 下只保留资源树：Gallery 的作品列表/导入区/引擎行整体让位，
-   否则两套内容叠在一列里互相撑高，资源树一展开就会盖住拖拽手柄 */
-body.mode-studio .sidebar-body,
-body.mode-studio .sidebar-foot { display: none !important; }
+body.mode-studio .gl-actions { display: none !important; }
 
-/* 资源树接管整个左栏并自行滚动（不在 .sidebar 上滚，避免双滚动条） */
-body.mode-studio .sidebar { overflow: hidden; }
-body.mode-studio #studioTree { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
-body.mode-studio #studioTree .st-list { max-height: none; }
+/* 左栏 = 作品列表 + 资源树，作为一整栏滚动（用户要求：内容不删，整栏可滑）
+   滚动容器唯一是 .sidebar：studio-body 取自然高度不再抢占 flex:1，
+   资源树也不自带内部滚动，展开多少内容整栏就多长，由整栏统一滚。 */
+body.mode-studio .sidebar { overflow-y: auto; overflow-x: hidden; }
+body.mode-studio .sidebar-body { flex: none; overflow: visible; }
+body.mode-studio #studioTree { flex: none; min-height: 0; overflow: visible; }
+body.mode-studio #studioTree .st-list { max-height: none; overflow: visible; }
 body.mode-studio #glDrawer { display: none !important; }
 
 /* Studio 主体改成纵向五区：工具条 / 视口 / Dock */

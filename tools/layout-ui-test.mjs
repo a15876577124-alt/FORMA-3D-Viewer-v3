@@ -334,23 +334,26 @@ try {
     for (const head of document.querySelectorAll('#studioTree .st-sect-head')) {
       if (head.getAttribute('aria-expanded') !== 'true') head.click();
     }
-    const tree = document.getElementById('studioTree');
-    tree.scrollTop = 0;
+    const sb = document.querySelector('.sidebar');
+    sb.scrollTop = 0;
     const handle = document.getElementById('stHandleLeft');
     const r = handle.getBoundingClientRect();
     // 手柄中心点上，最顶层元素必须是手柄自己（而不是被资源树内容盖住）
     const top = document.elementFromPoint(r.x + r.width / 2, Math.min(window.innerHeight - 4, Math.max(2, r.y + r.height / 2)));
     return {
-      galleryBodyHidden: getComputedStyle(document.querySelector('.sidebar-body')).display === 'none',
-      footHidden: getComputedStyle(document.querySelector('.sidebar-foot')).display === 'none',
-      treeScrolls: tree.scrollHeight >= tree.clientHeight,
-      sidebarNoOverflow: (() => { const sb = document.querySelector('.sidebar'); return sb.scrollHeight <= sb.clientHeight + 1; })(),
+      galleryListVisible: getComputedStyle(document.querySelector('.sidebar-body')).display !== 'none',
+      footVisible: getComputedStyle(document.querySelector('.sidebar-foot')).display !== 'none',
+      treeVisible: getComputedStyle(document.getElementById('studioTree')).display !== 'none',
+      // 整栏滚动：唯一滚动容器是 .sidebar，展开后内容超出即整栏可滑
+      wholeColumnScrolls: sb.scrollHeight > sb.clientHeight,
+      sidebarOverflowY: getComputedStyle(sb).overflowY,
       handleOnTop: handle === top || handle.contains(top),
-      galleryListVisible: getComputedStyle(document.querySelector('.sidebar-body')).display,
     };
   });
-  ok('Studio 左栏只显示资源树（Gallery 列表让位）', sidebarState.galleryBodyHidden && sidebarState.footHidden, JSON.stringify(sidebarState));
-  ok('资源树全部展开后整栏不溢出', sidebarState.treeScrolls && sidebarState.sidebarNoOverflow, JSON.stringify(sidebarState));
+  ok('Studio 左栏 = 作品列表 + 资源树（内容不删）',
+    sidebarState.galleryListVisible && sidebarState.footVisible && sidebarState.treeVisible, JSON.stringify(sidebarState));
+  ok('展开后整栏可滚动（唯一滚动容器是侧栏）',
+    sidebarState.wholeColumnScrolls && sidebarState.sidebarOverflowY === 'auto', JSON.stringify(sidebarState));
   ok('手柄压在内容之上（随时可抓取）', sidebarState.handleOnTop, JSON.stringify(sidebarState));
 
   // 展开状态下真实拖一次左边界
@@ -359,15 +362,15 @@ try {
   const expAfter = await sizes();
   ok('资源树展开状态下手柄仍可拖动', expAfter.tree.w > expBefore.tree.w + 40, `${expBefore.tree.w} → ${expAfter.tree.w}`);
 
-  // Gallery 模式作品列表必须恢复
+  // Gallery 模式：左栏回到纯作品列表（资源树隐藏）
   await page.evaluate(() => { location.hash = '#/gallery'; });
   await page.waitForFunction('document.body.classList.contains("mode-gallery")', { timeout: 30000 });
   await sleep(800);
   const galBack = await page.evaluate(() => ({
     body: getComputedStyle(document.querySelector('.sidebar-body')).display,
-    tree: getComputedStyle(document.getElementById('studioTree')).display,
+    sidebarScroll: getComputedStyle(document.querySelector('.sidebar')).overflowY,
   }));
-  ok('回到 Gallery 作品列表恢复显示', galBack.body !== 'none' && galBack.tree === 'none', JSON.stringify(galBack));
+  ok('回到 Gallery 左栏恢复观展布局', galBack.body !== 'none', JSON.stringify(galBack));
 
   ok('无页面级错误', errors.length === 0, errors.slice(0, 3).join(' | '));
 } catch (e) {
