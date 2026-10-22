@@ -82,6 +82,9 @@ body.mode-studio .gl-actions { display: none !important; }
    滚动容器唯一是 .sidebar：studio-body 取自然高度不再抢占 flex:1，
    资源树也不自带内部滚动，展开多少内容整栏就多长，由整栏统一滚。 */
 body.mode-studio .sidebar { overflow-y: auto; overflow-x: hidden; }
+/* 滚轮即可滚动：不显示这条侧边滚动条（Firefox 用 scrollbar-width，Chromium 隐藏伪元素） */
+body.mode-studio .sidebar { scrollbar-width: none; }
+body.mode-studio .sidebar::-webkit-scrollbar { width: 0; height: 0; display: none; }
 body.mode-studio .sidebar-body { flex: none; overflow: visible; }
 body.mode-studio #studioTree { flex: none; min-height: 0; overflow: visible; }
 body.mode-studio #studioTree .st-list { max-height: none; overflow: visible; }
