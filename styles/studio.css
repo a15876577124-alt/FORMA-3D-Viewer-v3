@@ -38,7 +38,7 @@ body.st-resizing-x, body.st-resizing-x * { cursor: col-resize !important; user-s
 body.st-resizing-y, body.st-resizing-y * { cursor: row-resize !important; user-select: none !important; }
 
 /* ---------- 纵向手柄（改左右面板宽度） ---------- */
-.st-handle { position: relative; flex: none; background: transparent; border: 0; z-index: 30; }
+.st-handle { position: relative; flex: none; background: transparent; border: 0; z-index: 45; }
 .st-handle-x { position: absolute; top: 0; bottom: 0; width: 11px; cursor: col-resize; }
 #stHandleLeft { left: var(--st-sidebar); margin-left: -5px; }
 #stHandleRight { right: var(--st-inspector); margin-right: -5px; }
@@ -76,7 +76,16 @@ body.mode-gallery #pipelineSect { display: none !important; }
 body.mode-studio .topbar,
 body.mode-studio .bottombar,
 body.mode-studio .gl-card,
-body.mode-studio .gl-actions { display: none !important; }
+body.mode-studio .gl-actions,
+/* 左栏在 Studio 下只保留资源树：Gallery 的作品列表/导入区/引擎行整体让位，
+   否则两套内容叠在一列里互相撑高，资源树一展开就会盖住拖拽手柄 */
+body.mode-studio .sidebar-body,
+body.mode-studio .sidebar-foot { display: none !important; }
+
+/* 资源树接管整个左栏并自行滚动（不在 .sidebar 上滚，避免双滚动条） */
+body.mode-studio .sidebar { overflow: hidden; }
+body.mode-studio #studioTree { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+body.mode-studio #studioTree .st-list { max-height: none; }
 body.mode-studio #glDrawer { display: none !important; }
 
 /* Studio 主体改成纵向五区：工具条 / 视口 / Dock */
