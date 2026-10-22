@@ -1,0 +1,514 @@
+{
+  "note": "FORMA 公开展厅静态发布清单。由 tools/static-release.mjs 生成，勿手工编辑。",
+  "entry": "index.html",
+  "totals": {
+    "files": 83,
+    "bytes": 30099590,
+    "byKind": {
+      "html-link": 5,
+      "runtime-asset": 10,
+      "entry": 2,
+      "module": 66
+    }
+  },
+  "files": [
+    {
+      "path": "assets/favicon.svg",
+      "kind": "html-link",
+      "bytes": 508,
+      "sha256": "11437546eea6f1d0"
+    },
+    {
+      "path": "assets/models/dan.glb",
+      "kind": "runtime-asset",
+      "bytes": 5941880,
+      "sha256": "ae34dce38bf8acc0"
+    },
+    {
+      "path": "assets/models/jing-red.glb",
+      "kind": "runtime-asset",
+      "bytes": 6209212,
+      "sha256": "d26c16e25cc6defa"
+    },
+    {
+      "path": "assets/models/jing-white.glb",
+      "kind": "runtime-asset",
+      "bytes": 4148076,
+      "sha256": "2a30c1ae95850ec0"
+    },
+    {
+      "path": "assets/models/jing-yellow.glb",
+      "kind": "runtime-asset",
+      "bytes": 4496104,
+      "sha256": "988b12c331b27e01"
+    },
+    {
+      "path": "assets/models/sheng.glb",
+      "kind": "runtime-asset",
+      "bytes": 4138144,
+      "sha256": "b59fd81f14ebda8c"
+    },
+    {
+      "path": "assets/thumbs/dan.png",
+      "kind": "runtime-asset",
+      "bytes": 318975,
+      "sha256": "828e01cf2ad95330"
+    },
+    {
+      "path": "assets/thumbs/jing-red.png",
+      "kind": "runtime-asset",
+      "bytes": 307008,
+      "sha256": "07171e499e2e340f"
+    },
+    {
+      "path": "assets/thumbs/jing-white.png",
+      "kind": "runtime-asset",
+      "bytes": 287538,
+      "sha256": "46792b6deb319e5f"
+    },
+    {
+      "path": "assets/thumbs/jing-yellow.png",
+      "kind": "runtime-asset",
+      "bytes": 284731,
+      "sha256": "38ac775f01f58283"
+    },
+    {
+      "path": "assets/thumbs/sheng.png",
+      "kind": "runtime-asset",
+      "bytes": 288474,
+      "sha256": "dd9a5f6afa19104a"
+    },
+    {
+      "path": "index.html",
+      "kind": "entry",
+      "bytes": 20057,
+      "sha256": "dceaaa91f36dcec0"
+    },
+    {
+      "path": "src/core/capabilities.js",
+      "kind": "module",
+      "bytes": 1854,
+      "sha256": "42b64fc86b158f68"
+    },
+    {
+      "path": "src/core/compare.js",
+      "kind": "module",
+      "bytes": 2673,
+      "sha256": "db2d2b5a58da93b6"
+    },
+    {
+      "path": "src/core/miniViewer.js",
+      "kind": "module",
+      "bytes": 5333,
+      "sha256": "10d42d032f4abe6f"
+    },
+    {
+      "path": "src/core/router.js",
+      "kind": "module",
+      "bytes": 5813,
+      "sha256": "c200af5747f37acf"
+    },
+    {
+      "path": "src/core/viewer.js",
+      "kind": "module",
+      "bytes": 17705,
+      "sha256": "a625da39614f318e"
+    },
+    {
+      "path": "src/lighting/environment.js",
+      "kind": "module",
+      "bytes": 3283,
+      "sha256": "0b87c20e6014d5f6"
+    },
+    {
+      "path": "src/lighting/studio.js",
+      "kind": "module",
+      "bytes": 6175,
+      "sha256": "85c882dd0f7efc87"
+    },
+    {
+      "path": "src/loaders/errors.js",
+      "kind": "module",
+      "bytes": 4270,
+      "sha256": "9e7c6b608f8c27e7"
+    },
+    {
+      "path": "src/loaders/importers.js",
+      "kind": "module",
+      "bytes": 10697,
+      "sha256": "dc8a1baa4a3bacc3"
+    },
+    {
+      "path": "src/loaders/normals.js",
+      "kind": "module",
+      "bytes": 4174,
+      "sha256": "4e5817b19f03db34"
+    },
+    {
+      "path": "src/loaders/registry.js",
+      "kind": "module",
+      "bytes": 4429,
+      "sha256": "4cd32dfdd70c3a63"
+    },
+    {
+      "path": "src/main.js",
+      "kind": "entry",
+      "bytes": 22179,
+      "sha256": "bc6b1940a7e2c10e"
+    },
+    {
+      "path": "src/materials/override.js",
+      "kind": "module",
+      "bytes": 6549,
+      "sha256": "c4497008d1e6c4bb"
+    },
+    {
+      "path": "src/models/catalog.js",
+      "kind": "module",
+      "bytes": 4479,
+      "sha256": "50a64dea348c09af"
+    },
+    {
+      "path": "src/models/library.js",
+      "kind": "module",
+      "bytes": 885,
+      "sha256": "8b136cabf57513a7"
+    },
+    {
+      "path": "src/models/place.js",
+      "kind": "module",
+      "bytes": 4613,
+      "sha256": "f8c847595d0e7ed6"
+    },
+    {
+      "path": "src/models/procedural.js",
+      "kind": "module",
+      "bytes": 4950,
+      "sha256": "65fa1f1491c75b9f"
+    },
+    {
+      "path": "src/net/api.js",
+      "kind": "module",
+      "bytes": 2613,
+      "sha256": "106e09ccaa81a91a"
+    },
+    {
+      "path": "src/pages/home.js",
+      "kind": "module",
+      "bytes": 8961,
+      "sha256": "2be3b1be562c1cd5"
+    },
+    {
+      "path": "src/pages/home3d.js",
+      "kind": "module",
+      "bytes": 7005,
+      "sha256": "b886fcf52d5bd4a9"
+    },
+    {
+      "path": "src/pages/work.js",
+      "kind": "module",
+      "bytes": 6766,
+      "sha256": "cf06ffc521e5ecaa"
+    },
+    {
+      "path": "src/post/composer.js",
+      "kind": "module",
+      "bytes": 2940,
+      "sha256": "396b473874c3f1fb"
+    },
+    {
+      "path": "src/stage/ground.js",
+      "kind": "module",
+      "bytes": 4958,
+      "sha256": "24b4b7f1ec3a3a0b"
+    },
+    {
+      "path": "src/state/appState.js",
+      "kind": "module",
+      "bytes": 1537,
+      "sha256": "527b58358c5029d1"
+    },
+    {
+      "path": "src/state/viewState.js",
+      "kind": "module",
+      "bytes": 3120,
+      "sha256": "2f2644ba3ec2579e"
+    },
+    {
+      "path": "src/studio/core.js",
+      "kind": "module",
+      "bytes": 20803,
+      "sha256": "18b164cc969d0949"
+    },
+    {
+      "path": "src/studio/dock.js",
+      "kind": "module",
+      "bytes": 11956,
+      "sha256": "95d87f2a134a21d5"
+    },
+    {
+      "path": "src/studio/layout.js",
+      "kind": "module",
+      "bytes": 10347,
+      "sha256": "39e5b341bd74e4bb"
+    },
+    {
+      "path": "src/studio/panes.js",
+      "kind": "module",
+      "bytes": 24100,
+      "sha256": "fac482ffedcf4c5e"
+    },
+    {
+      "path": "src/studio/toolbar.js",
+      "kind": "module",
+      "bytes": 4173,
+      "sha256": "988077d6f5ae40a6"
+    },
+    {
+      "path": "src/studio/tree.js",
+      "kind": "module",
+      "bytes": 7748,
+      "sha256": "3ef3300e221957e5"
+    },
+    {
+      "path": "src/studio/ui.js",
+      "kind": "module",
+      "bytes": 10551,
+      "sha256": "1059ba8928650272"
+    },
+    {
+      "path": "src/ui/chrome.js",
+      "kind": "module",
+      "bytes": 5816,
+      "sha256": "9e363e9ad8638cf3"
+    },
+    {
+      "path": "src/ui/contact.js",
+      "kind": "module",
+      "bytes": 2734,
+      "sha256": "498d5886fe1d1c96"
+    },
+    {
+      "path": "src/ui/feedback.js",
+      "kind": "module",
+      "bytes": 5306,
+      "sha256": "e810384e8a98063e"
+    },
+    {
+      "path": "src/ui/gallery.js",
+      "kind": "module",
+      "bytes": 8691,
+      "sha256": "cde40331e4c5367f"
+    },
+    {
+      "path": "src/ui/inspector.js",
+      "kind": "module",
+      "bytes": 11022,
+      "sha256": "cb3f3bf1dda4dd71"
+    },
+    {
+      "path": "src/ui/opParams.js",
+      "kind": "module",
+      "bytes": 4526,
+      "sha256": "c960489f82c7cc68"
+    },
+    {
+      "path": "src/ui/shell.js",
+      "kind": "module",
+      "bytes": 4830,
+      "sha256": "5b819c21da5fc826"
+    },
+    {
+      "path": "src/ui/sidebar.js",
+      "kind": "module",
+      "bytes": 7880,
+      "sha256": "012d6c322ceb52fe"
+    },
+    {
+      "path": "src/utils/dispose.js",
+      "kind": "module",
+      "bytes": 2925,
+      "sha256": "f293269ee4ac918a"
+    },
+    {
+      "path": "src/utils/dom.js",
+      "kind": "module",
+      "bytes": 3548,
+      "sha256": "09042b250de7dfd8"
+    },
+    {
+      "path": "src/utils/storage.js",
+      "kind": "module",
+      "bytes": 1347,
+      "sha256": "fcafcbd3ba7f1c35"
+    },
+    {
+      "path": "styles.css",
+      "kind": "html-link",
+      "bytes": 28043,
+      "sha256": "1d98bc8d373f9102"
+    },
+    {
+      "path": "styles/studio.css",
+      "kind": "html-link",
+      "bytes": 32243,
+      "sha256": "23e88d1a679bab43"
+    },
+    {
+      "path": "styles/tokens.css",
+      "kind": "html-link",
+      "bytes": 4203,
+      "sha256": "3b67b7c8109bc4de"
+    },
+    {
+      "path": "styles/v5.css",
+      "kind": "html-link",
+      "bytes": 30062,
+      "sha256": "99064fe8326aed15"
+    },
+    {
+      "path": "vendor/postprocessing/build/postprocessing.esm.js",
+      "kind": "module",
+      "bytes": 634535,
+      "sha256": "b1111c2a755e2f05"
+    },
+    {
+      "path": "vendor/three/addons/controls/OrbitControls.js",
+      "kind": "module",
+      "bytes": 40755,
+      "sha256": "3d79d07ecb686b4e"
+    },
+    {
+      "path": "vendor/three/addons/curves/NURBSCurve.js",
+      "kind": "module",
+      "bytes": 3888,
+      "sha256": "bef2607618a77784"
+    },
+    {
+      "path": "vendor/three/addons/curves/NURBSUtils.js",
+      "kind": "module",
+      "bytes": 10802,
+      "sha256": "c6bd7c4137d58509"
+    },
+    {
+      "path": "vendor/three/addons/environments/RoomEnvironment.js",
+      "kind": "module",
+      "bytes": 4960,
+      "sha256": "55f466192cc84298"
+    },
+    {
+      "path": "vendor/three/addons/libs/fflate.module.js",
+      "kind": "module",
+      "bytes": 89384,
+      "sha256": "209a4412eb48ce60"
+    },
+    {
+      "path": "vendor/three/addons/loaders/FBXLoader.js",
+      "kind": "module",
+      "bytes": 113372,
+      "sha256": "7fb8586158a2cf98"
+    },
+    {
+      "path": "vendor/three/addons/loaders/GLTFLoader.js",
+      "kind": "module",
+      "bytes": 117570,
+      "sha256": "131c0f78c01d1936"
+    },
+    {
+      "path": "vendor/three/addons/loaders/MTLLoader.js",
+      "kind": "module",
+      "bytes": 11356,
+      "sha256": "f1f8f0c6fcfa0967"
+    },
+    {
+      "path": "vendor/three/addons/loaders/OBJLoader.js",
+      "kind": "module",
+      "bytes": 22916,
+      "sha256": "86c8384e269b75a2"
+    },
+    {
+      "path": "vendor/three/addons/postprocessing/EffectComposer.js",
+      "kind": "module",
+      "bytes": 8501,
+      "sha256": "4e079a5886152d7e"
+    },
+    {
+      "path": "vendor/three/addons/postprocessing/MaskPass.js",
+      "kind": "module",
+      "bytes": 4694,
+      "sha256": "7cd08eee9d5d6f55"
+    },
+    {
+      "path": "vendor/three/addons/postprocessing/OutputPass.js",
+      "kind": "module",
+      "bytes": 4184,
+      "sha256": "02e4a261af34de71"
+    },
+    {
+      "path": "vendor/three/addons/postprocessing/Pass.js",
+      "kind": "module",
+      "bytes": 4218,
+      "sha256": "444b409c235ead98"
+    },
+    {
+      "path": "vendor/three/addons/postprocessing/RenderPass.js",
+      "kind": "module",
+      "bytes": 4280,
+      "sha256": "817f6c3cdcd0fd41"
+    },
+    {
+      "path": "vendor/three/addons/postprocessing/ShaderPass.js",
+      "kind": "module",
+      "bytes": 3228,
+      "sha256": "e2500a5913b26bbf"
+    },
+    {
+      "path": "vendor/three/addons/postprocessing/UnrealBloomPass.js",
+      "kind": "module",
+      "bytes": 15397,
+      "sha256": "ba8f2fcadfa65883"
+    },
+    {
+      "path": "vendor/three/addons/shaders/CopyShader.js",
+      "kind": "module",
+      "bytes": 729,
+      "sha256": "a33057d5ac91c433"
+    },
+    {
+      "path": "vendor/three/addons/shaders/LuminosityHighPassShader.js",
+      "kind": "module",
+      "bytes": 1291,
+      "sha256": "5044f780b6e6cf86"
+    },
+    {
+      "path": "vendor/three/addons/shaders/OutputShader.js",
+      "kind": "module",
+      "bytes": 1876,
+      "sha256": "353479f77a8d7e26"
+    },
+    {
+      "path": "vendor/three/addons/utils/BufferGeometryUtils.js",
+      "kind": "module",
+      "bytes": 37712,
+      "sha256": "9fb63427ce6641fa"
+    },
+    {
+      "path": "vendor/three/addons/utils/SkeletonUtils.js",
+      "kind": "module",
+      "bytes": 11535,
+      "sha256": "b1632a703206c3d8"
+    },
+    {
+      "path": "vendor/three/build/three.core.js",
+      "kind": "module",
+      "bytes": 1458113,
+      "sha256": "9edde002b066a9a0"
+    },
+    {
+      "path": "vendor/three/build/three.module.js",
+      "kind": "module",
+      "bytes": 662772,
+      "sha256": "9052042d676cb0fd"
+    }
+  ]
+}

@@ -28,3 +28,9 @@ assets/library/
 
 # Demo capture frames (large, regenerable via docs/demo/README.md)
 docs/demo/frames/
+
+# ---- Static release (v5.4) ----
+
+# Reproducible Pages bundle built by `npm run release:pack` (tools/static-release.mjs).
+# It is a copy of already-tracked files, so committing it would only duplicate ~29 MB.
+dist/

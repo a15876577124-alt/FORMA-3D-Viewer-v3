@@ -1,8 +1,57 @@
 # 已知问题与验证状态
 
-更新于 2026-10-16。以下结果来自实际执行，保留验证范围的限制。
+更新于 2026-10-22（V5.4 交接）。以下结果来自实际执行，保留验证范围的限制。
+完整的架构级问题清单与优先级见 [docs/CODEX-HANDOFF.md](docs/CODEX-HANDOFF.md) E / G 节。
 
-## 本轮已修复
+## V5 阶段的新增限制（2026-10-22）
+
+### 功能缺口
+
+1. **Material Lab 无撤销栈**（`src/studio/panes.js`）：材质微调直接写 THREE 属性，只有「还原快照」一个粗粒度回退。
+2. **Geometry Lab 只读**：逐网格统计可看，但不能只对选中网格跑算子（算子作用于整份资产）。
+3. **Before/After 只对比几何**（`src/core/compare.js`）：换贴图分辨率这类差异看不出来。
+4. **版本管理是线性列表**：`pipeline-out/<name>-vN` 只增不减，没有删除 / 任意两版对比 / 回滚 UI。
+5. **资产库条目无缩略图**：`src/models/library.js` 里 `thumb: null`，展厅显示 ★ 占位。
+6. **批量不支持逐资产不同算子**，也不能中途取消。
+
+### 已知缺陷 / 易踩坑
+
+1. 布局状态类必须打在 `document.body`（打在 `#app` 上 CSS 不生效）。
+2. 高度链不能写死 `100dvh`：会让底部 Dock 被顶出屏幕，且 `.viewport{height:100%}` 会退化成按 canvas 固有尺寸撑高。
+3. Studio 左栏唯一滚动容器是 `.sidebar`；资源树不内部滚动（否则会盖住拖拽手柄）。滚动条按用户要求隐藏，滚轮仍可用。
+4. 确认门响应体字段（`needConfirm/token/riskyOps/reasons`）必须在**顶层**，塞进 `error` 会让确认流程死循环。
+5. `import` 组两条用例依赖仓库外素材 `D:\Qiong Opera Reimagined\...\3D模型v5_OBJ\`，缺失时 SKIP 而非 FAIL。
+
+### 性能
+
+1. 五个 GLB 合计约 25 MB（贴图 2048² 内嵌），首次进 Gallery 串行加载，移动网络体验差。
+2. 单 WebGL 上下文是设计取舍：切换零重建，但无法并排展示两个展品。
+3. SwiftShader 下全量测试约 3 分钟。
+4. `pipeline-out/` 当前本机 **1.9 GB**，无清理策略。
+
+### 仍未验证
+
+- 真实手机（iOS Safari / Android Chrome 真机）：只在桌面模拟移动视口验证。
+- 复杂生产 FBX（多动画层 / BlendShape / 非均匀骨骼缩放 / 特殊材质）。
+- LLM 真实调用的稳定性：`agent` 组用 `fakeLlm` 离线回放，真实模型只做过人工验证。
+- GitHub Pages 线上回归：静态包本地已验证（`release` 组），但未自动化访问线上 URL。
+- 高并发批量：`concurrency: 2`，未做压力测试。
+
+### FBX 与纹理兼容性
+
+- 只解析 Kaydara FBX Binary 与 ASCII；加密/压缩变体不支持。
+- 内嵌贴图只认 `Video.Content`（base64）；外部贴图按 FBX 同目录解析一次，找不到即判 `missing`。
+- **FBX 只进不出**：`convert` 拒绝 FBX 输出（无可靠 Node 端写出器）。
+- 贴图 MIME 靠字节嗅探，只认 PNG / JPEG / WebP；TGA / DDS / PSD 判为未知。
+
+### 发布与部署
+
+- **Pages 目前部署自 `main` 根目录，线上仍是 V3**。V5 在 `feature/forma-v5-experience`；不合并或部署 `dist/` 就不会上线。
+- 不要用 Git LFS 发 Pages（会读到指针文件）。
+- `docs/demo/frames/`（11 MB 截图）未入库，文档不要引用这些路径。
+- 不要再往仓库塞 `assets/variants/`（165 MB 派生件，可由 `tools/fix-glb.mjs` 重生成）。
+
+## 早期阶段已修复（2026-10-16）
 
 1. `npm test`、`test:gpu`、`shots` 原来指向缺失的 `tests/run.mjs`。已增加统一入口，自动启动独立端口的服务器、运行真实测试并关闭服务器。
 2. GLB Range 请求原来在写入 200 响应头后再次写入 206，导致 Node 进程退出。已改为确定最终状态后只写一次头部，同时支持后缀范围、416、HEAD，并处理非法 URL 与目录边界。

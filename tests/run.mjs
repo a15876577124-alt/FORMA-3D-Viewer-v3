@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
@@ -50,6 +50,8 @@ try {
     await check('vendorscan', 'tools/vendor-scan-selftest.mjs');
   }
   if (!only) await check('assets', 'tools/verify-glb.mjs');
+  // 发布一致性：静态包必须只依赖已跟踪文件，且真的能独立启动（不是只看清单）。
+  if (!only || only === 'release') await check('release', 'tools/static-pack-test.mjs');
   if (!only || only === 'pipeline') await check('pipeline', 'tests/pipeline.test.mjs');
   if (!only || only === 'agent') await check('agent', 'tests/agent.test.mjs');
   if (!only || only === 'ops') await check('ops', 'tests/ops.test.mjs');

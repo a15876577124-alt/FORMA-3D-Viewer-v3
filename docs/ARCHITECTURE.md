@@ -46,8 +46,10 @@
 | `backend/policy.mjs` `gate.mjs` | 琼剧红线 + HMAC 确认门 |
 | `backend/batch.mjs` `library.mjs` | 批量处理 + 资产库 |
 | `src/net/api.js` | 前端 API 客户端 |
-| `src/ui/pipeline.js` | Pipeline 工作模式面板 |
+| `src/studio/` | AI Studio 五区工作区（core 无 DOM + tree/panes/dock/toolbar/ui/layout）。**V5.2 起取代已删除的 `src/ui/pipeline.js`** |
+| `src/ui/gallery.js` | Gallery 观展图层（信息卡 / 动作条 / 高级抽屉 / 可折叠右栏） |
 | `src/core/compare.js` | Before/After 对比 |
-| `tools/` | CLI 工具（spike/op-demo/batch-demo）+ 测试辅助 |
+| `tools/` | CLI 工具（spike/op-demo/batch-demo）+ 测试辅助 + `static-release.mjs`（静态发布清单） |
 
-详见 `docs/PIPELINE.md`（算子+后验）与 `docs/SECURITY.md`（安全）。
+详见 `docs/PIPELINE.md`（算子+后验）、`docs/SECURITY.md`（安全）与
+`docs/CODEX-HANDOFF.md`（V5 交接说明与已知问题）。

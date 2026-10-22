@@ -26,7 +26,10 @@
     "op:demo": "node tools/op-demo.mjs",
     "test:batch": "node tests/run.mjs --only=batch",
     "batch:demo": "node tools/batch-demo.mjs",
-    "test:proxy": "node tests/run.mjs --only=proxy"
+    "test:proxy": "node tests/run.mjs --only=proxy",
+    "release:verify": "node tools/static-release.mjs",
+    "release:pack": "node tools/static-release.mjs --pack=dist",
+    "test:release": "node tests/run.mjs --only=release"
   },
   "devDependencies": {
     "puppeteer-core": "^22.15.0"

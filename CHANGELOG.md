@@ -4,6 +4,45 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased] — V5.4 工程交接与静态发布（2026-10-22）
+
+交接基线：`feature/forma-v5-experience`。本版不含新功能，只做「可交付、可接手、可复现发布」。
+
+### Added
+
+- `tools/static-release.mjs`：静态发布清单与打包。
+  - 从 `index.html` + 动态注入的 `./src/main.js` 出发，递归解析 ES Module（含多行 import、
+    动态 `import()`、`new URL(..., import.meta.url)`）与 CSS `@import`/`url()`，经 importmap
+    解析裸说明符，再补上 catalog 里运行时加载的 `./assets/*.glb` 与缩略图。
+  - **硬校验**：闭包里每个文件必须存在、必须被 `git` 跟踪、且不得落在
+    `assets/library/`、`pipeline-out/`、`backend/`、`test-out/`、`assets/variants/`、`test-assets/`。
+  - 产出 `docs/STATIC-MANIFEST.json`（83 文件 / 30,099,590 字节，含每个文件的 sha256 前 16 位）；
+    `--pack=<dir>` 复制成可上传 Pages 的静态包，并写 `STATIC-BUILD.json` 标明后端不在包内。
+- `tools/static-pack-test.mjs`（测试组 `release`，16 断言）：真打包 → 复制 `serve.mjs` →
+  起服务器 → 真浏览器加载。验证五件手办在**纯静态包**里逐一加载成功（三角形数与 ground truth
+  一致）、canvas 非 1×1、`#/studio` 如实显示「后端未运行」、零 404、零 pageerror。
+- `docs/CODEX-HANDOFF.md`：A 基本信息 / B 架构 / C 运行 / D 已完成 / E 未完成与已知问题 /
+  F 特殊技术注意事项 / G 下一阶段建议。
+- npm scripts：`release:verify`、`release:pack`、`test:release`。
+
+### Changed
+
+- `.gitignore`：新增 `dist/`（`release:pack` 的产物是已跟踪文件的副本，入库只会重复约 29 MB）。
+- `README.md`：改为 V5 视角——两种工作形态（Gallery / Studio）、一键启动两条路径、
+  19 组测试基线、静态发布命令、目录表补齐 `src/studio` `src/pages` `styles/`。
+- `TASK_STATE.md`：新增「V5.4 工程交接」当前状态与「发布边界（勿破）」。
+- `KNOWN-ISSUES.md`：补 V5 阶段的已知限制与真实验证范围。
+- `docs/ARCHITECTURE.md`：删掉对已删除文件 `src/ui/pipeline.js` 的引用，改指向 `src/studio/`
+  与 `src/ui/gallery.js`，并链接交接文档。
+
+### Verified
+
+- 全量 `node tests/run.mjs`：**19/19 组全绿，约 706 条断言**（新增 `release` 组）。
+- `tools/launch.mjs` 一键启动实测：后端 8899 + 前端 5277 + `/api` 反代 + `src/main.js` 全 200。
+- 五个 GLB 内嵌 1 张贴图 + 1 个 buffer（无外部贴图依赖）；`assets/raw/` 五个 sha256 与
+  `INDEX.json` 完全一致。
+- 仓库无 `.env`、无已跟踪的密钥；`backend/publicConfig.json` 仅含设计上公开的 publishableKey。
+
 ## [Unreleased] — FORMA V5 Ultimate AI 3D Creation Platform (v5)
 
 开发分支 `feature/forma-v5-experience`（基于 `feature/ai-asset-pipeline@0141480`）。

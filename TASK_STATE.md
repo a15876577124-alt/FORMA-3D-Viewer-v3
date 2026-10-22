@@ -1,11 +1,36 @@
 # TASK_STATE — FORMA V5 Ultimate AI 3D Creation Platform 开发状态
 
 > 断点续作文件。每次会话开始先读这里；每完成一个里程碑立即更新。
-> 更新时间：2026-10-21 23:01 (UTC+8)
+> **当前阶段：已移交 Codex（2026-10-22）——WorkBuddy 不再继续修改本目录。**
+> 更新时间：2026-10-22 15:40 (UTC+8)
 
-## 当前状态（V5.1 第三轮）
+## 当前状态（V5.4 工程交接，2026-10-22）
 
-- **分支**：`feature/forma-v5-experience`（本地 ahead 5：`c19fb79` → `5f42166`，未推送）
+- **分支**：`feature/forma-v5-experience`（与 `origin` 同步；未合并 `main`，未 force push）
+- **代码基线**：`665eff6`（V5.3 收尾）；交接文档与发布校验在其后一个提交
+- **本轮完成**：
+  1. 静态发布清单与可复现打包：新增 `tools/static-release.mjs`（依赖闭包校验 + `docs/STATIC-MANIFEST.json` + `--pack` 打包）与 `tools/static-pack-test.mjs`（真打包 + 真浏览器加载）
+  2. `.gitignore` 增补 `dist/`；`package.json` 增补 `release:verify` / `release:pack` / `test:release`
+  3. 新增 `docs/CODEX-HANDOFF.md`（A–G 七部分）；修正 `docs/ARCHITECTURE.md` 里已删除的 `src/ui/pipeline.js` 引用
+  4. README / TASK_STATE / CHANGELOG / KNOWN-ISSUES 对齐 V5
+- **测试基线（2026-10-22 15:31 全量实测）**：`node tests/run.mjs` **19/19 组全绿，约 706 条断言**
+  vendor 24 文件 / vendorscan 10 / assets 200 / release 16 / pipeline 50 / agent 36 /
+  ops 63 / opparams 44 / batch 20 / compare 29 / fbxtex 58 / proxy 5 / server 7 /
+  render 56（5/5 展品）/ ui 26 / import 12 / extended 6 / workspaces 21 / layout 47
+- **静态包**：83 文件 / 30,099,590 字节（约 29 MB），五展品全部可加载，零 404
+- **启动验证**：`tools/launch.mjs` 实测后端 8899 + 前端 5277 + `/api` 反代 + `main.js` 全 200
+- **下一轮起点**：交给 Codex。优先级见 `docs/CODEX-HANDOFF.md` G 节（P0 = 决定 Pages 发布路径并做线上回归）
+
+### V5.4 新增的发布边界（勿破）
+
+- 公开展厅只能引用**仓库内已跟踪文件**。`assets/library/`、`pipeline-out/`、`backend/workspace/`、
+  `assets/variants/`、`test-assets/` 出现在静态闭包里即视为失败（`tools/static-release.mjs` 会报错）。
+- 静态包必须能独立启动：`#/gallery?work=<id>` 能加载五件手办，`#/studio` 如实显示「后端未运行」。
+- 不要用 Git LFS 发 Pages（会读到指针文件）。
+
+## 历史：V5.1 第三轮（2026-10-21 23:01）
+
+- **分支**：`feature/forma-v5-experience`（当时本地 ahead 5 未推送，现已全部推送）
 - **本轮完成**：V5.1 任务二 ✅ / 任务六 ✅ / 任务七 ✅（详见下方「V5.1 已完成」）
 - **测试基线（2026-10-21 23:00 全量验证）**：`node tests/run.mjs` **16/16 组全绿**
   vendor 24 文件 / vendorscan 10 / assets / pipeline 50 / agent 36 / ops 63 /

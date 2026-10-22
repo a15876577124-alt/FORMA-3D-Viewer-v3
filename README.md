@@ -1,18 +1,29 @@
-# FORMA 3D — 琼剧数字手办展厅（V3）+ AI 资产管线
+# FORMA 3D — 琼剧数字手办展厅（V5）+ AI 资产管线
 
 一个实时三维展示器，用于陈列五件琼剧角色数字手办（生角、旦角·完整头饰、净角·红谱 / 黄谱 / 白谱），支持专业影棚布光、材质与后期调整、多格式模型导入、逐展品参数持久化、沉浸模式与截图导出。
 
-**V4 新增（开发分支 `feature/ai-asset-pipeline`）**：升级为 **AI 3D 资产分析 / 修复 / 优化 / 转换 / 管理 / 发布平台**——真实导入 → 分析 → AI 建议 → 处理 → Before/After 对比 → 导出可交付资产。详见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+**V5 新增（开发分支 `feature/forma-v5-experience`）**：产品级双形态——
+
+- **Gallery 数字展厅**：观展优先。大视口 + 观展信息卡 + 动作条（最佳视角 / 展厅布光 / 导出 PNG），专业材质与后期收进「高级控制台」抽屉，生产工具在观展模式下不出现。
+- **AI Studio 专业工作区**：五区布局（顶部工具条 / 左资源树 / 中央视口 / 右 Lab 坞 / 底部任务 Dock），打通「导入 → 分析 → AI 建议 → 选算子 → 执行 → 后验 → 3D 对比 → 导出/发布」闭环。
+- **可调整工作区**：左右面板宽度、底部 Dock 高度全部可拖拽（也支持键盘与双击复位），布局按 Gallery / Studio 分别记忆。
+- 两者共用**同一个 Viewer / 同一个 WebGL 上下文**，切换零重建。
+
+> **接手开发的请先读 [docs/CODEX-HANDOFF.md](docs/CODEX-HANDOFF.md)** —— 那里有架构、已知问题、测试基线与下一步优先级。
+
+**V4 新增（分支 `feature/ai-asset-pipeline`，已并入 V5）**：升级为 **AI 3D 资产分析 / 修复 / 优化 / 转换 / 管理 / 发布平台**——真实导入 → 分析 → AI 建议 → 处理 → Before/After 对比 → 导出可交付资产。详见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
 渲染内核为 **three.js r186**，全部依赖已本地化到 `vendor/`，**完全离线可用**——不需要 CDN，不需要联网，只需要一个静态文件服务器（浏览器对 ES Module 的 `file://` 限制，这是唯一的前置条件）。
 
-**在线演示**：<https://a15876577124-alt.github.io/FORMA-3D-Viewer-v3/>（GitHub Pages，与仓库 `main` 分支同步）
+**在线演示**：<https://a15876577124-alt.github.io/FORMA-3D-Viewer-v3/> —— GitHub Pages 部署自 `main` 分支根目录，**当前线上仍是 V3 版本**；V5 在 `feature/forma-v5-experience`，合并或部署 `dist/` 后才会更新。
 
 ---
 
 ## 快速开始
 
-**Windows：双击 `启动展厅.bat`** —— 自动启动本地服务器并打开浏览器，关闭那个黑色窗口即停止服务器。
+**Windows 完整版：双击 `FORMA.bat`** —— 同时启动 AI 管线后端（8787）与展厅前端（5173），健康检查通过后自动打开 AI Studio；关闭那个黑色窗口即停止全部服务。
+
+**只看展厅：双击 `启动展厅.bat`** —— 只启动静态前端，无 AI 功能。
 
 或手动启动：
 
@@ -31,14 +42,14 @@ npm run pipeline:serve   # 启动后端（仅监听 127.0.0.1:8787）
 node serve.mjs           # 启动展厅（/api 自动反代到后端）
 ```
 
-浏览器打开后点顶栏「管线」进入工作模式，点面板「连接后端」。CLI 演示：
+浏览器打开后进入顶栏「AI Studio」→ 左侧资源树 → 顶部「连接后端」。CLI 演示：
 
 ```bash
 npm run op:demo -- --asset=assets/raw/sheng.glb --ops=weld,genNormals,fixMaterials
 npm run batch:demo       # 5 手办批量处理 + 发布到资产库
 ```
 
-测试：`npm run test:pipeline` / `test:agent` / `test:ops` / `test:batch` / `test:proxy`（无浏览器，共 173 断言）。浏览器渲染验收见 [docs/demo/README.md](docs/demo/README.md)。
+测试：`npm test` 一次跑完 **19 组、约 706 条断言**（自带服务器，无需手动启动）。单组：`npm run test:pipeline` / `test:agent` / `test:ops` / `test:batch` / `test:proxy` / `test:release`。浏览器渲染验收见 [docs/demo/README.md](docs/demo/README.md)。
 
 ## 展品
 
@@ -55,6 +66,10 @@ npm run batch:demo       # 5 手办批量处理 + 发布到资产库
 **第二组 · Technical Demos（程序化几何演示，非建模作品）**：Aether Core / Flux Sculpture / Prism Array —— 用 three.js 内置几何体拼出来的渲染能力演示，默认折叠，不与手办混排。
 
 ## 功能
+
+**两个工作形态**：`#/gallery` 观展（信息卡 / 动作条 / 可折叠右栏 / 高级控制台抽屉）与 `#/studio` 生产（五区工作区 + 可拖拽布局）。首页是启动台，`#/work/:id` 是作品详情页；三者共用同一个 Viewer 与同一个 WebGL 上下文。
+
+**AI Studio**：连接本地后端 → 资产树 → 分析报告 / Material Lab / Geometry Lab / Texture Lab / Export Manager → 算子执行（确认门）→ 结果验证 → Before/After 3D 对比 → 导出或发布。
 
 **展示**：左侧分组列表、平滑切换、拖拽/滚轮/触控旋转缩放、自动旋转（速度可调）、一键回最佳视角、键盘 `←/→` 切换 / `Space` 自动旋转 / `R` 重置视角 / `I` 沉浸 / `F` 全屏；操作说明由右上角帮助按钮打开。
 
@@ -92,14 +107,23 @@ node tools/make-thumbs.mjs      # 用渲染器自身生成缩略图
 
 ## 测试
 
-统一入口会自动启动独立本地服务器，使用系统分配的空闲端口，顺序执行依赖、资产、HTTP、真实渲染、交互、导入和扩展检查，并在结束时停止服务器：
+统一入口会自动启动独立本地服务器，使用系统分配的空闲端口，顺序执行依赖、资产、发布包、HTTP、真实渲染、交互、导入和扩展检查，并在结束时停止服务器：
 
 ```bash
-npm test                         # 完整回归，无需手动启动服务器
+npm test                         # 完整回归 19 组，无需手动启动服务器
 npm test -- --only=server         # HTTP 与模型 Range 请求
 npm test -- --only=extended       # 外部 glTF、Maya 蒙皮动画、拖动与移动取景
+npm test -- --only=layout         # 可调整工作区 47 断言（真实指针/键盘事件）
 npm run test:gpu                  # 使用有头浏览器查看测试
 npm run shots                     # 导出五个展品的实际渲染图
+```
+
+**静态发布一致性**（V5 新增）：公开展厅只允许依赖仓库内已跟踪文件。`assets/library/` 与 `pipeline-out/` 是运行期产物，**不入库、也不被公开页面引用**。
+
+```bash
+npm run release:verify            # 校验依赖闭包 + 写 docs/STATIC-MANIFEST.json（秒级）
+npm run release:pack              # 生成 dist/，可直接作为 Pages 站点根目录（约 29 MB）
+npm run test:release              # 真打包 + 真浏览器加载五件手办 + 零 404（16 断言）
 ```
 
 浏览器测试保持 Chromium 沙盒启用，使用默认图形后端；本机 headless Edge 已实测使用 RTX 4060。可用 `FORMA_BROWSER` 指定已安装的 Edge/Chrome。缺少浏览器或 WebGL2 时明确失败，不自动安装浏览器或降低安全设置。
@@ -119,23 +143,29 @@ node tools/test-ab.mjs --study=hardedge   # 硬边阈值扫描实验
 ## 目录
 
 ```
-assets/raw/        原始 GLB（从 V2 提取，只读）
+assets/raw/        原始 GLB（从 V2 提取，只读，sha256 见 INDEX.json）
 assets/models/     修复后 GLB（运行时加载的版本）
 assets/thumbs/     渲染器自产缩略图
-docs/              法线修复研究、对照图与数据
-src/core/          渲染中枢、能力探测
-src/lighting/      影棚灯光、离线 IBL
+assets/library/    ★ 已发布产物（后端运行期写入，gitignore，不参与公开站点）
+backend/           本地 AI 管线（127.0.0.1:8787，agent / ops / 分析 / 确认门）
+docs/              CODEX-HANDOFF（交接）· ARCHITECTURE · PIPELINE · SECURITY · 法线研究
+pipeline-out/      ★ 算子输出（gitignore，1.9 GB 量级，可再生）
+src/core/          渲染中枢（viewer / router / compare / 能力探测）
+src/lighting/      影棚灯光（含「展厅」美术馆预设）、离线 IBL
 src/loaders/       GLTF/OBJ/FBX 导入、法线修复、错误文案
 src/models/        展品目录、归一化取景、程序化几何
+src/pages/         首页启动台、作品详情页
 src/post/          后期合成器
 src/stage/         地面接触阴影 / 展台 / 网格
-src/state/         逐展品参数持久化
-src/ui/            侧栏 / 检查器 / 顶栏
+src/state/         逐展品参数持久化 + 应用级状态
+src/studio/        AI Studio：core（无 DOM 内核）/ ui / layout / tree / panes / dock / toolbar
+src/ui/            Gallery 图层、外壳、侧栏、检查器、联系方式、反馈组件
 src/utils/         dispose、DOM、storage
+styles/            tokens（V5 设计系统）/ v5（外壳组件）/ studio（Gallery + Studio 布局）
 tests/             tests/run.mjs 统一入口 + 扩展测试 + A/B 对照页
-test-assets/       导入测试用的真实样例（glTF 拆包 / FBX 蒙皮动画）
-tools/             资产管线与浏览器自动化测试
-vendor/            本地化的 three.js r186（完全离线）
+test-assets/       导入测试用的真实样例（glTF 拆包 / FBX 蒙皮动画 / LLM 分片）
+tools/             资产管线、浏览器验收、静态发布（static-release / static-pack-test）
+vendor/            本地化的 three.js r186 + postprocessing 6.39.5（完全离线）
 ```
 
 ## 已知未验证项
