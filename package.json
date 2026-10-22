@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "serve": "node serve.mjs",
-    "start": "node serve.mjs",
+    "start": "node tools/launch.mjs",
     "vendor": "node tools/vendor-three.mjs",
     "vendor:check": "node tools/vendor-three.mjs --check",
     "assets:extract": "node tools/extract-glb.mjs",
@@ -35,7 +35,7 @@
     "puppeteer-core": "^22.15.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.9.0"
   },
   "dependencies": {
     "@gltf-transform/core": "^4.5.1",

@@ -42,7 +42,7 @@ export function fmtDelta(a, b, fmt = (v) => (Number.isFinite(v) ? v.toLocaleStri
 export const OFFLINE_GUIDE = {
   title: '本地后端未运行',
   lines: [
-    'npm run start          # 同时启动前端与 Pipeline 后端（推荐）',
+    'npm start              # 同时启动前端与 Pipeline 后端（推荐）',
     'npm run pipeline:serve # 只启动后端（127.0.0.1:8787）',
   ],
   note: 'AI Studio 的分析、算子处理、AI Agent、批处理与导出都依赖本地后端。GitHub Pages 静态展示版只提供数字展厅与观展功能——处理类能力请在本地完整版（FORMA.bat / npm run start）中使用。',
@@ -54,6 +54,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   const state = {
     status: 'unknown',        // unknown | connecting | online | offline
     lastError: null,
+    modelError: null,
     health: null,
     ops: [], tools: [], models: [], assets: [], presets: [], capabilities: null,
     selectedAsset: null,
@@ -84,7 +85,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
         pipelineApi.health(),
         pipelineApi.ops(),
         pipelineApi.agentTools(),
-        pipelineApi.models(),
+        pipelineApi.models().catch((e) => ({ models: [], error: String(e?.message || e) })),
         pipelineApi.assets(),
         pipelineApi.capabilities().catch(() => ({ capabilities: null })),
         pipelineApi.presets().catch(() => ({ presets: [] })),
@@ -93,12 +94,14 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       state.ops = opsRes.ops || [];
       state.tools = toolsRes.tools || [];
       state.models = modelsRes.models || [];
+      state.modelError = modelsRes.error || null;
       state.assets = assetsRes.assets || [];
       state.capabilities = capsRes.capabilities || null;
       state.presets = presetsRes.presets || [];
       state.status = 'online';
       emit('online', { assets: state.assets.length, models: (state.models || []).length });
       emit('assets', state.assets);
+      if (state.modelError) emit('log', { tone: 'warn', text: 'AI 模型服务暂不可用，本地分析与处理仍可使用：' + state.modelError });
       try {
         const pub = await pipelineApi.libraryPublished();
         const added = onSyncLibrary ? (onSyncLibrary(pub.files || [], state.assets) || 0) : 0;
@@ -174,7 +177,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     emit('progress', { busy: true, text: '分析中…' });
     try {
       const rep = await pipelineApi.analyze(state.selectedAsset);
-      state.analysis = rep;
+      state.analysis = rep.report || rep;
       emit('analyze', rep);
       return rep;
     } catch (e) {
@@ -313,7 +316,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       try { appState?.addRecentRun?.(res.runId); } catch { /* 可选 */ }
       emit('agent', res);
       emit('history', state.history);
-      emit('log', { tone: 'ok', text: `AI 分析完成 · ${res.log?.model || 'LLM'} · ${res.log?.rounds?.length || 0} 轮` });
+      emit('log', { tone: res.log?.errors?.length ? 'err' : 'ok', text: res.log?.errors?.length ? 'AI 分析未完成：' + res.log.errors.join('；') : `AI 分析完成 · ${res.log?.model || 'LLM'} · ${res.log?.rounds?.length || 0} 轮` });
       return res;
     } catch (e) {
       emit('log', { tone: 'err', text: 'AI 分析失败：' + (e?.message || e) });
@@ -333,7 +336,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     for (const round of log.rounds || []) {
       for (const call of round.toolCalls || []) {
         if (call.name !== 'run_op' && call.name !== 'propose_ops') continue;
-        let args = call.arguments;
+        let args = call.parsed ?? call.arguments;
         if (typeof args === 'string') { try { args = JSON.parse(args); } catch { args = null; } }
         const ops = Array.isArray(args?.ops) ? args.ops : (args?.op ? [args] : []);
         for (const o of ops) if (o?.op && known.has(o.op)) { seen.add(o.op); if (o.params) setOpParams(o.op, o.params); }
@@ -384,7 +387,8 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   function setCompareSplit(v) {
-    state.compareSplit = Number(v) || 0.5;
+    const value = Number(v);
+    state.compareSplit = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0.5;
     try { state.rig?.setSplit(state.compareSplit); } catch { /* rig 未就绪 */ }
   }
 

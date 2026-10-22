@@ -6,9 +6,10 @@ export class ApiError extends Error {
   constructor(message, status, data) { super(message); this.name = 'ApiError'; this.status = status; this.data = data; }
 }
 
-async function request(path, { method = 'GET', body } = {}) {
+async function request(path, { method = 'GET', body, timeoutMs } = {}) {
   const res = await fetch(BASE + path, {
     method,
+    signal: timeoutMs ? AbortSignal.timeout(timeoutMs) : undefined,
     headers: body ? { 'Content-Type': 'application/json' } : {},
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -29,7 +30,7 @@ export function fileUrl(relPath) {
 
 export const pipelineApi = {
   health: () => request('/health'),
-  models: () => request('/models'),
+  models: () => request('/models', { timeoutMs: 10000 }),
   assets: () => request('/assets'),
   importAsset: (name, dataBase64) => request('/assets/import', { method: 'POST', body: { name, dataBase64 } }),
   analyze: (id) => request(`/assets/${encodeURIComponent(id)}/analyze`, { method: 'POST' }),

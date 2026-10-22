@@ -94,7 +94,7 @@ if (await portInUse(FRONT_PORT)) {
   say(`⚠ 端口 ${FRONT_PORT} 已被占用——前端可能已在运行，直接打开浏览器。`);
 } else {
   say(`• 启动前端服务 :${FRONT_PORT} …`);
-  start('前端', ['serve.mjs'], { PORT: String(FRONT_PORT) });
+  start('前端', ['serve.mjs'], { PORT: String(FRONT_PORT), FORMA_BACKEND: `http://127.0.0.1:${BACKEND_PORT}` });
   await new Promise((r) => setTimeout(r, 1200));
 }
 
@@ -103,7 +103,7 @@ say(`\n✓ 启动完成：${url}`);
 say('  浏览器将自动打开；关闭本窗口或按 Ctrl+C 即停止全部服务。\n');
 
 // 打开默认浏览器（Windows）
-if (process.platform === 'win32') {
+if (process.platform === 'win32' && process.env.FORMA_NO_OPEN !== '1') {
   spawn('cmd', ['/c', 'start', '', url], { detached: true, stdio: 'ignore' }).unref();
 }
 

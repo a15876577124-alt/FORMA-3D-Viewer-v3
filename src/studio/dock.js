@@ -142,7 +142,7 @@ export function createDock({ core, toast, getBatchIds }) {
       const calls = (r.toolCalls || []).map((t) => t.name).join(', ') || '(纯文本)';
       agent.append(el('div', { class: 'st-log-line' }, `轮 ${r.i}: ${calls} · ${r.llmMs}ms`));
       for (const t of r.toolCalls || []) {
-        let args = t.arguments;
+        let args = t.parsed ?? t.arguments;
         if (typeof args === 'string') { try { args = JSON.parse(args); } catch { /* 分片/容错后仍不可解析则原样显示 */ } }
         agent.append(el('div', { class: 'st-log-arg' }, `${t.name}(${args ? JSON.stringify(args).slice(0, 220) : ''})`));
       }
