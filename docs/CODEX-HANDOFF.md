@@ -15,7 +15,8 @@
 | GitHub | <https://github.com/a15876577124-alt/FORMA-3D-Viewer-v3> |
 | 开发分支 | `feature/forma-v5-experience` |
 | 代码基线 SHA | `665eff6`（V5.3 最后一个功能提交：隐藏左栏滚动条） |
-| 交接提交（HEAD） | 本文件所在提交。取法：`git log -1 --format=%H`。未合并 `main`，未 force push |
+| 交接提交 SHA | `ec88d87`（交接文档 + 静态发布校验入库的那个提交） |
+| 当前 HEAD | 交接提交本身或其后的文档修正提交（`git log -1 --format=%H`）；已推送且与 `origin/feature/forma-v5-experience` 一致 |
 | 本地工程绝对路径 | `D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3` |
 | 原始素材（仓库外） | `D:\Qiong Opera Reimagined\_Coze_Drive_3D模型生成项目_琼剧Q版玩偶_琼剧Q版玩偶_OBJ模型\3D模型v5_OBJ\` |
 | 备份 | `D:\FORMA-backups\2026-10-16\FORMA-v3-baseline-*.tar.gz`（208 MB，v3 基线） |
