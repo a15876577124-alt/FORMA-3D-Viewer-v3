@@ -483,11 +483,13 @@ body.gl-rail-hidden .gl-rail-restore { display: inline-flex; }
 /* ---------- 高级控制台抽屉 ---------- */
 .gl-drawer {
   position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw); z-index: var(--v5-z-panel);
+  left: auto; margin: 0; padding: 0; height: 100dvh; max-height: 100dvh; max-width: 100vw; color: var(--v5-tx); border: 0;
   display: flex; flex-direction: column;
   background: linear-gradient(180deg, var(--v5-bg-raised), var(--v5-bg-base));
   border-left: 1px solid var(--v5-line-gold); box-shadow: var(--v5-shadow-3);
   animation: glSlide .28s var(--v5-ease-expo) both;
 }
+.gl-drawer::backdrop { background: rgb(0 0 0 / .5); }
 @keyframes glSlide { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 .gl-drawer-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--v5-line); }
 .gl-drawer-head h3 { margin: 0; font: 400 18px/1.2 var(--v5-ff-display); color: var(--v5-ivory-200); flex: 1 1 auto; }

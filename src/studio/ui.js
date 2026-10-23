@@ -142,6 +142,12 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
       case 'material-draft':
         toolbar.node.classList.toggle('has-draft',!!payload);
         break;
+      case 'material-save': {
+        const save=document.getElementById('stMatSave');
+        if(save){save.disabled=payload==='saving';save.textContent=payload==='saving'?'正在保存…':payload==='confirm'?'确认保存材质版本':'保存为新版本';}
+        if(payload!=='confirm')dock.clearConfirm();
+        break;
+      }
       case 'connecting':
         toolbar.setStatus('connecting');
         break;
@@ -210,7 +216,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         toolbar.setCompareAvailable(!!payload);
         break;
       case 'confirm':
-        dock.showConfirm(payload.reasons || [], payload.action);
+        dock.showConfirm(payload.reasons || [], payload.action, payload);
         dock.activate('process');
         break;
       case 'progress':

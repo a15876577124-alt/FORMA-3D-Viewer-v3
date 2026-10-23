@@ -79,7 +79,7 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
     drawerBody.append(s);
   }
 
-  const drawer = el('aside', { class: 'gl-drawer', id: 'glDrawer', hidden: true, 'aria-label': '高级控制台' },
+  const drawer = el('dialog', { class: 'gl-drawer', id: 'glDrawer', hidden: true, 'aria-label': '高级控制台' },
     el('div', { class: 'gl-drawer-head' },
       el('h3', {}, '高级控制台'),
       el('span', { class: 'gl-drawer-tag' }, '材质 · 后期'),
@@ -92,13 +92,32 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
   );
   document.body.append(drawer);
 
-  const closeDrawer = () => { drawer.hidden = true; document.body.classList.remove('gl-drawer-open'); };
+  const trigger = actions.querySelector('#glAdvanced');
+  const closeDrawer = () => { drawer.close(); drawer.hidden = true; document.body.classList.remove('gl-drawer-open'); trigger.setAttribute('aria-expanded','false'); };
+  drawer.addEventListener('cancel', e => { e.preventDefault(); closeDrawer(); });
+  drawer.addEventListener('keydown', e => {
+    if(e.key!=='Tab')return;
+    const items=[...drawer.querySelectorAll('button, a[href], input, select, textarea, summary, [tabindex]')]
+      .filter(n=>!n.disabled && n.tabIndex>=0 && n.getClientRects().length);
+    const first=items[0],last=items.at(-1);
+    if(e.shiftKey && document.activeElement===first){e.preventDefault();last?.focus();}
+    else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first?.focus();}
+  });
+  trigger.setAttribute('aria-haspopup','dialog');
+  trigger.setAttribute('aria-controls','glDrawer');
+  trigger.setAttribute('aria-expanded','false');
   drawer.querySelector('#glDrawerClose').addEventListener('click', closeDrawer);
   actions.querySelector('#glAdvanced').addEventListener('click', () => {
-    drawer.hidden = !drawer.hidden;
-    document.body.classList.toggle('gl-drawer-open', !drawer.hidden);
+    drawer.hidden = false;
+    drawer.showModal();
+    drawer.querySelector('#glDrawerClose').focus();
+    trigger.setAttribute('aria-expanded','true');
+    document.body.classList.add('gl-drawer-open');
   });
-  drawer.addEventListener('click', (e) => { if (e.target === drawer) closeDrawer(); });
+  drawer.addEventListener('click', e => {
+    const r=drawer.getBoundingClientRect();
+    if(e.target===drawer && (e.clientX<r.left || e.clientX>r.right || e.clientY<r.top || e.clientY>r.bottom))closeDrawer();
+  });
 
   // ---- 辅助信息栏折叠（Gallery 专属：观展时可以把右栏整个收起来）----
   const railToggle = el('button', { class: 'gl-rail-btn', type: 'button', id: 'glRailToggle', title: '收起右侧信息栏' },

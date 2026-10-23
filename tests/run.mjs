@@ -7,7 +7,7 @@ import { spawn, execFileSync } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui', 'workflow', 'formats', 'agent-stability', 'agent-live', 'production-visual', 'art-repair', 'quality', 'providers', 'fbx-materials', 'local-security', 'geometry-semantics', 'performance', 'cdp', 'portfolio', 'portfolio-models'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui', 'workflow', 'formats', 'agent-stability', 'agent-live', 'production-visual', 'art-repair', 'quality', 'providers', 'fbx-materials', 'local-security', 'geometry-semantics', 'performance', 'cdp', 'portfolio', 'portfolio-models', 'design'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
@@ -79,6 +79,7 @@ try {
   if (!only || only === 'portfolio-models') await check('portfolio-models', 'tools/portfolio-model-test.mjs');
   if (!only || only === 'portfolio') await check('portfolio', 'tools/portfolio-ui-test.mjs');
   if (!only || only === 'quality') await check('quality', 'tools/quality-ui-test.mjs');
+  if (!only || only === 'design') await check('design', 'tools/design-ui-test.mjs');
   if (only === 'art-repair') await check('art-repair', 'tools/art-repair-test.mjs');
   if (only === 'agent-live') await check('agent-live', 'tools/agent-live-test.mjs');
   if (only === 'performance') await check('performance', 'tools/quality-performance.mjs');

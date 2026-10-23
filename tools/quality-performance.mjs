@@ -12,7 +12,7 @@ try{
  await page.setViewport({width:1440,height:1000});await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
  await page.evaluateOnNewDocument(()=>{window.heroDraws=0;for(const type of [WebGLRenderingContext,WebGL2RenderingContext])for(const method of ['drawElements','drawArrays','drawElementsInstanced','drawArraysInstanced']){const fn=type.prototype[method];if(!fn)continue;type.prototype[method]=function(...args){if(this.canvas.classList.contains('v5-hero-canvas'))window.heroDraws++;return fn.apply(this,args);};}});
  const startTime=Date.now();await page.goto(fe.url+'/#/',{waitUntil:'networkidle0'});
- await page.waitForFunction(()=>window.__FORMA?.info?.modelTris>0,{timeout:30000});report.measurements.homeReadyMs=Date.now()-startTime;
+ await page.waitForFunction(()=>document.querySelector('.v5-hero-3d')?.dataset.modelState==='ready',{timeout:30000});report.measurements.homeReadyMs=Date.now()-startTime;
  await page.screenshot({path:path.join(OUT,'home.png')});
  report.measurements.reducedMotionHero=await page.evaluate(async()=>{const from=heroDraws,begin=performance.now();for(let i=0;i<120;i++)await new Promise(requestAnimationFrame);return {draws:heroDraws-from,elapsedMs:performance.now()-begin};});
  const resources=await page.evaluate(()=>performance.getEntriesByType('resource').map(r=>({path:new URL(r.name).pathname,bytes:r.transferSize,duration:r.duration})));

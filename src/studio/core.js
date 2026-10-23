@@ -67,6 +67,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     opValues: {},             // { opName: params }
     enabledOps: new Set(),    // 勾选的算子名
     confirmToken: null,
+    materialSaveStatus: 'idle',
     analysis: null,           // 最近一次 analyze 报告
     textures: null,           // 最近一次贴图三态报告
     lastRun: null,
@@ -142,7 +143,16 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   let selectionTicket = 0;
   let compareTicket = 0;
   let materialDraft = null;
+  let pendingMaterialSave = null;
+  let materialSaving = false;
+  function setMaterialSaveStatus(status) { state.materialSaveStatus=status; emit('material-save',status); }
+  function cancelMaterialSave() {
+    if(pendingMaterialSave?.token===state.confirmToken)state.confirmToken=null;
+    pendingMaterialSave=null;
+    if(!materialSaving)setMaterialSaveStatus('idle');
+  }
   function setMaterialDraft(draft) {
+    cancelMaterialSave();
     materialDraft=draft;
     state.materialDirty=!!draft?.dirty;
     emit('material-draft',state.materialDirty);
@@ -293,7 +303,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   // ------------------------------------------------------------ 执行 ----
-  async function run({ dryRun = false, ops, materialSave = false } = {}) {
+  async function run({ dryRun = false, ops, materialSave = false, request = null } = {}) {
     if (!requireSelection(materialSave)) return null;
     if (!state.selectedAsset) { emit('log', { tone: 'warn', text: '请先选择资产' }); return null; }
     const list = ops || selectedOps();
@@ -301,7 +311,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     emit('progress', { busy: true, text: dryRun ? '预览中…' : '执行中…' });
     const ticket = selectionTicket;
     try {
-      const res = await pipelineApi.run(state.selectedAsset, list, state.confirmToken, dryRun, state.selectedVersion);
+      const res = await pipelineApi.run(request?.assetId ?? state.selectedAsset, list, request ? request.token : state.confirmToken, dryRun, request?.version ?? state.selectedVersion);
       if (ticket !== selectionTicket) { emit('log', {tone:'ok', text:'后台处理已完成：' + res.assetId}); return res; }
       state.confirmToken = null;
       if (res.dryRun) {
@@ -326,8 +336,14 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       if(ticket!==selectionTicket)return null;
       if (e?.status === 409 && e?.data?.needConfirm) {
         state.confirmToken = e.data.token;
-        emit('confirm', { reasons: e.data.reasons || [], riskyOps: e.data.riskyOps || [] });
-        emit('log', { tone: 'warn', text: `需确认${(e.data.reasons || []).length ? '：' + (e.data.reasons || []).slice(0, 2).join('；') : ''} —— 请再次点击「执行」` });
+        if(materialSave){
+          pendingMaterialSave=Object.freeze({...request,token:e.data.token});
+          setMaterialSaveStatus('confirm');
+        }
+        emit('confirm', { reasons: e.data.reasons || [], riskyOps: e.data.riskyOps || [],
+          action:materialSave?'确认保存材质版本':'执行',
+          confirm:materialSave?confirmMaterialSave:null, cancel:materialSave?cancelMaterialSave:null });
+        emit('log', { tone: 'warn', text: materialSave?'请确认保存材质版本；原始资产保持不变。':`需确认${(e.data.reasons || []).length ? '：' + (e.data.reasons || []).slice(0, 2).join('；') : ''} —— 请再次点击「执行」` });
       } else {
         emit('log', { tone: 'err', text: '处理失败：' + (e?.message || e) });
       }
@@ -591,11 +607,31 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   async function saveMaterial(mat) {
+    if(materialSaving)return null;
+    if(pendingMaterialSave)return confirmMaterialSave();
     if (!requireSelection(true) || !Number.isInteger(mat?.userData?.gltfMaterialIndex)) { emit('log',{tone:'warn',text:'请先选择 GLB/GLTF 版本的材质'});return null; }
     let belongs=false;viewer.modelRoot.traverse(o=>{if(o.isMesh&&(Array.isArray(o.material)?o.material:[o.material]).includes(mat))belongs=true;});
     if(!belongs){emit('log',{tone:'warn',text:'材质不属于当前版本，请重新选择'});return null;}
-    const ticket=selectionTicket;await exitCompare();if(ticket!==selectionTicket)return null;
-    return run({materialSave:true,ops:[{op:'setMaterial',params:{materialIndex:mat.userData.gltfMaterialIndex,metallicFactor:mat.metalness,roughnessFactor:mat.roughness,colorR:mat.color.r,colorG:mat.color.g,colorB:mat.color.b,opacity:mat.opacity,emissiveStrength:mat.emissiveIntensity ?? 1,alphaMode:mat.transparent?'BLEND':mat.alphaTest>0?'MASK':'OPAQUE',doubleSided:mat.side===2}}]});
+    const ops=Object.freeze([Object.freeze({op:'setMaterial',params:Object.freeze({materialIndex:mat.userData.gltfMaterialIndex,metallicFactor:mat.metalness,roughnessFactor:mat.roughness,colorR:mat.color.r,colorG:mat.color.g,colorB:mat.color.b,opacity:mat.opacity,emissiveStrength:mat.emissiveIntensity ?? 1,alphaMode:mat.transparent?'BLEND':mat.alphaTest>0?'MASK':'OPAQUE',doubleSided:mat.side===2})})]);
+    return performMaterialSave(Object.freeze({assetId:state.selectedAsset,version:state.selectedVersion,ticket:selectionTicket,ops,token:null}));
+  }
+
+  async function confirmMaterialSave() {
+    const request=pendingMaterialSave;
+    if(!request || materialSaving)return null;
+    if(request.ticket!==selectionTicket || request.assetId!==state.selectedAsset || request.version!==state.selectedVersion){cancelMaterialSave();return null;}
+    return performMaterialSave(request);
+  }
+  async function performMaterialSave(request) {
+    materialSaving=true;pendingMaterialSave=null;setMaterialSaveStatus('saving');
+    try{
+      await exitCompare();
+      if(request.ticket!==selectionTicket)return null;
+      return await run({materialSave:true,ops:request.ops,request});
+    }finally{
+      materialSaving=false;
+      if(state.materialSaveStatus==='saving')setMaterialSaveStatus('idle');
+    }
   }
 
   async function publish(version) {
@@ -658,6 +694,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     state,
     invalidateSelectionRequests() {
       selectionTicket++;
+      cancelMaterialSave();
       if(state.selectionStatus==='loading')state.selectionStatus='empty';
     },
     selectProvider,testAiConnection,
@@ -668,6 +705,6 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     analyze, detectTextures, extractTextures,
     run, runBatch, runAgent, cancelAgent, adoptAgentSuggestion,
     showCompare, compareVersions, exitCompare, setCompareSplit, compareStats,
-    importFile, importFiles, prepareGLB, saveMaterial, publish, exportAs, listVersions, toFileUrl,
+    importFile, importFiles, prepareGLB, saveMaterial, confirmMaterialSave, cancelMaterialSave, publish, exportAs, listVersions, toFileUrl,
   };
 }
