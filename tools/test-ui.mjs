@@ -124,7 +124,7 @@ t('材质: 回到原始档恢复基线（metalness=0）', async (ctx) => {
 });
 
 t('灯光: 冷调预设改变主光颜色', async (ctx) => {
-  await closeAdvanced(ctx);
+  await openAdvanced(ctx);
   const before = await ctx.page.evaluate(() => window.__FORMA.viewer.lighting.key.color.getHexString());
   await click(ctx.page, '#lightModes button[data-mode="cool"]');
   await sleep(120);
@@ -136,7 +136,7 @@ t('灯光: 冷调预设改变主光颜色', async (ctx) => {
 });
 
 t('背景: 纯黑背景切换生效', async (ctx) => {
-  await closeAdvanced(ctx);
+  await openAdvanced(ctx);
   await click(ctx.page, '#envModes button[data-mode="void"]');
   await sleep(120);
   const key = await ctx.page.evaluate(() => window.__FORMA.viewer.environment.backdropKey);
@@ -173,35 +173,38 @@ t('色调映射: Neutral 为默认', async (ctx) => {
 });
 
 t('显示: 线框开关真实叠加线框', async (ctx) => {
-  await click(ctx.page, '#wireframeQuick');
+  await openAdvanced(ctx);
+  await click(ctx.page, '#wireframe');
   await sleep(150);
   let w = await ctx.page.evaluate(() => window.__FORMA.info.wireframe);
   if (!w) throw new Error('线框未开启');
-  await click(ctx.page, '#wireframeQuick');
+  await click(ctx.page, '#wireframe');
   await sleep(150);
   w = await ctx.page.evaluate(() => window.__FORMA.info.wireframe);
   if (w) throw new Error('线框未关闭');
 });
 
 t('显示: 网格与展台开关', async (ctx) => {
-  await click(ctx.page, '#gridQuick');
+  await click(ctx.page, '#gridToggle');
   await sleep(100);
   let g = await ctx.page.evaluate(() => window.__FORMA.viewer.stage.grid.visible);
   if (g) throw new Error('网格未隐藏');
-  await click(ctx.page, '#gridQuick');
-  await click(ctx.page, '#plinthQuick');
+  await click(ctx.page, '#gridToggle');
+  await click(ctx.page, '#plinthToggle');
   await sleep(100);
   const p = await ctx.page.evaluate(() => window.__FORMA.viewer.stage.plinth.visible);
   if (p) throw new Error('展台未隐藏');
-  await click(ctx.page, '#plinthQuick');
+  await click(ctx.page, '#plinthToggle');
 });
 
 t('自动旋转: 开关与转速', async (ctx) => {
+  await closeAdvanced(ctx);
   await click(ctx.page, '#autoRotateBtn');
   await sleep(100);
   let r = await ctx.page.evaluate(() => window.__FORMA.viewer.controls.autoRotate);
   if (r) throw new Error('自动旋转未关闭');
   await click(ctx.page, '#autoRotateBtn');
+  await openAdvanced(ctx);
   await setRange(ctx.page, '#autoRotateSpeed', 2);
   await sleep(100);
   const sp = await ctx.page.evaluate(() => window.__FORMA.viewer.controls.autoRotateSpeed);
@@ -209,6 +212,7 @@ t('自动旋转: 开关与转速', async (ctx) => {
 });
 
 t('视角: 回到最佳视角按钮', async (ctx) => {
+  await closeAdvanced(ctx);
   // 自动旋转会持续改变 yaw，先关掉才能断言
   await ctx.page.$eval('#autoRotateBtn', (el) => { if (el.classList.contains('active')) el.click(); });
   await sleep(150);
@@ -218,7 +222,7 @@ t('视角: 回到最佳视角按钮', async (ctx) => {
     v.controls.target.x += 0.3;
     v.controls.update();
   });
-  await click(ctx.page, '#resetChip');
+  await click(ctx.page, '#glReset');
   await sleep(250);
   const cam = await ctx.page.evaluate(() => window.__FORMA.viewer.readCamera());
   const best = await ctx.page.evaluate(() => window.__FORMA.current.best);
@@ -307,19 +311,15 @@ t('帮助: 弹窗可开关', async (ctx) => {
   if (!hidden) throw new Error('帮助未关闭');
 });
 
-t('移动布局: 窄屏下出现作品下拉', async (ctx) => {
+t('移动布局: 窄屏作品选择条可以切换真实模型', async (ctx) => {
   await ctx.page.setViewport({ width: 420, height: 800, deviceScaleFactor: 1 });
   await sleep(500);
   const vis = await ctx.page.evaluate(() => {
-    const g = document.getElementById('mobileGallery');
-    return g && getComputedStyle(g).display !== 'none';
+    const g = document.querySelector('.gl-selection');
+    return g && g.getBoundingClientRect().width>300 && g.querySelectorAll('.asset').length===5;
   });
-  if (!vis) throw new Error('移动端下拉未显示');
-  await ctx.page.evaluate(() => {
-    const g = document.getElementById('mobileGallery');
-    g.value = 'jing-red';
-    g.dispatchEvent(new Event('change', { bubbles: true }));
-  });
+  if (!vis) throw new Error('移动端作品选择条未显示');
+  await click(ctx.page,'.gl-selection .asset[data-id="jing-red"]');
   await waitForId(ctx.page, 'jing-red');
   await ctx.page.setViewport({ width: 1400, height: 900, deviceScaleFactor: 1 });
   await sleep(400);

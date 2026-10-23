@@ -511,6 +511,7 @@ body.mode-gallery .gl-stage-controls { display:flex; flex-direction:column; flex
 .gl-selection .asset.selected { border-color:var(--v5-gold-300); background:rgb(217 196 160 / .04); }
 .gl-selection .asset-thumb { width:100%; height:76px; border:0; border-radius:0; background:transparent; }
 .gl-selection .asset-thumb img { object-fit:contain; }
+.gl-selection .asset-thumb:has(img) .asset-fallback { display:none; }
 .gl-selection .asset-name { font-size:12px; min-height:18px; }
 .gl-selection .asset-name em, .gl-selection .asset-sub, .gl-selection .asset-num { display:none; }
 .gl-secondary { display:flex; gap:8px; margin-bottom:16px; }
@@ -579,7 +580,7 @@ input[type="search"]::-webkit-search-cancel-button { filter: invert(1) opacity(.
 
 /* Production workspace: retain one visible asset picker and keep labels readable. */
 body.mode-studio .sidebar-body {flex:none;}
-body.mode-studio #studioTree {flex:none;overflow:visible;}
+body.mode-studio #studioTree {flex:none;overflow:visible;position:static;width:auto;max-width:none;box-shadow:none;}
 .st-toolbar {height:auto;min-height:50px;flex-wrap:wrap;padding:8px 12px;gap:8px;}
 .st-crumb {flex:1 1 100%;}
 .st-tb-group {flex-wrap:wrap;min-width:0;}

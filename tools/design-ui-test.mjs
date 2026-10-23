@@ -29,8 +29,8 @@ try{
   await page.waitForSelector('.v5-hero-3d[data-model-state="ready"]');
   check('H01 one primary Gallery action and secondary Studio',await page.$$eval('.v5-hero-actions a',es=>es.length===2&&es[0].getAttribute('href')==='#/gallery'&&es[1].getAttribute('href')==='#/studio'));
   check('H02 five cards link to their own detail',await page.$$eval('.v5-series-card',es=>es.length===5&&es.every((e,i)=>e.getAttribute('href')==='#/work/'+['sheng','dan','jing-red','jing-yellow','jing-white'][i])));
-  for(const width of [1440,768,390]){
-    await page.setViewport({width,height:1000});
+  for(const width of [1920,1440,1366,768,390]){
+    await page.setViewport({width,height:width===1366?768:1000});
     await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
     await page.waitForSelector('.v5-hero-3d[data-model-state="ready"]');
     check('H01 home fits '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -43,6 +43,9 @@ try{
     await page.goto(url+'/#/work/dan',{waitUntil:'networkidle0'});
     await page.waitForFunction(()=>document.querySelector('#v5Tech-dan')?.textContent.includes('真实解析'));
     await page.screenshot({path:path.join(OUT,'detail-'+width+'.png'),fullPage:true});
+    await page.mouse.move(width-25,300);await page.mouse.wheel({deltaY:6000});
+    await page.waitForFunction(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2);
+    check('detail footer reachable by wheel '+width,await page.evaluate(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2));
     await page.goto(url+'/#/',{waitUntil:'networkidle0'});
   }
   await page.setViewport({width:1440,height:1000});
@@ -121,6 +124,9 @@ try{
     await page.setViewport({width,height:900});
     check('S04 Studio fits '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     check('S04 asset and save status stay visible '+width,await page.$eval('.st-identity',e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight;}));
+    check('S04 primary tools are not covered '+width,await page.evaluate(()=>['stImportBtn','stAnalyzeBtn2','stExportBtn'].every(id=>{
+      const e=document.getElementById(id),r=e.getBoundingClientRect();return r.width>0&&e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));
+    })));
     await page.screenshot({path:path.join(OUT,'studio-'+width+'.png')});
     if(width===390){
       await page.click('#stToolsToggle');
@@ -158,6 +164,7 @@ try{
   }));
   await page.screenshot({path:path.join(OUT,'brand-v2-final.png')});
   await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
+  await page.waitForFunction(()=>{const e=document.querySelector('.v5-brand-motion-host');return !!e?.querySelector('img')&&!e.querySelector('svg');},{timeout:3000});
   check('brand preference changes restore real static artwork',await page.$eval('.v5-brand-motion-host',e=>!!e.querySelector('img')&&!e.querySelector('svg')));
   await page.keyboard.press('Escape');
   check('brand close restores its trigger focus',await page.evaluate(()=>document.activeElement.classList.contains('v5-brand-presentation')));

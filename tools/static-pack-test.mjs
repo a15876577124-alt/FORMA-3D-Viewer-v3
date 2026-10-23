@@ -87,6 +87,14 @@ try {
   await page.goto(`${BASE}/#/`, { waitUntil: 'networkidle0', timeout: 60000 });
   await page.waitForSelector('.v5-hero-3d[data-model-state="ready"]');
   ok('候选包首页真实 Hero 和五件缩略图可用', await page.$$eval('.v5-series-thumb',es=>es.length===5&&es.every(e=>e.complete&&e.naturalWidth>0)));
+  ok('候选包正式品牌 SVG 可用',await page.$eval('.v5-brand[data-brand-size="nav"] img',e=>e.complete&&e.naturalWidth>0));
+  await page.mouse.move(700,500);await page.mouse.wheel({deltaY:6000});
+  await page.waitForFunction(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2);
+  ok('候选包首页可滚动到页脚',await page.evaluate(()=>scrollY>0));
+  await page.click('.v5-brand-presentation');
+  await page.waitForFunction(()=>Number(document.querySelector('.v5-brand-motion-host')?.dataset.time)===3);
+  ok('候选包按需载入正式 V2 并停止',await page.$eval('.v5-brand-motion-host',e=>e.dataset.playing==='false'&&!!e.querySelector('svg')));
+  await page.keyboard.press('Escape');
   await page.goto(`${BASE}/#/work/dan`, { waitUntil: 'networkidle0', timeout: 60000 });
   await page.waitForFunction(()=>document.querySelector('#v5Tech-dan')?.textContent.includes('46,828'));
   ok('候选包详情加载真实旦角',await page.$eval('.v5-work-stage canvas',e=>e.width>100&&e.height>100));

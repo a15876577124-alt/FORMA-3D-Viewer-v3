@@ -94,7 +94,7 @@ try{
     const initial=await identity();check(fixture+' actual upload loads model and report',initial.stats.tris>0&&initial.id===initial.viewer.assetId);
     if(fixture.endsWith('.fbx')){
       check('FBX embedded images are bound to rendered materials',await page.evaluate(()=>{let maps=0;window.__FORMA.viewer.modelRoot.traverse(o=>{for(const m of (Array.isArray(o.material)?o.material:[o.material]).filter(Boolean))if(m.map?.image?.width>0)maps++;});return maps>0;}));
-      await page.click('#stPrepareGLB');await page.waitForFunction(()=>!!window.__FORMA.studio.state.confirmToken);
+      await page.click('#stMore summary');await page.click('#stPrepareGLB');await page.waitForFunction(()=>!!window.__FORMA.studio.state.confirmToken);
       check('FBX conversion shows channel packing and material risks before confirmation',await page.$eval('#stConfirm',e=>!e.hidden&&e.textContent.includes('5 张')&&e.textContent.includes('通道')));
       await page.click('#stPrepareGLB');
       await page.waitForFunction(()=>window.__FORMA.studio.state.selectedVersion>0&&window.__FORMA.studio.state.selectionStatus==='ready',{timeout:60000});

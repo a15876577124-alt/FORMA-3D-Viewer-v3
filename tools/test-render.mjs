@@ -142,6 +142,7 @@ function verdict(id, info, px) {
   add('triangles-rasterised', info.renderTriangles > 1000, info.renderTriangles, '> 1000');
   add('draw-calls', info.renderCalls >= 2, info.renderCalls, '>= 2');
   add('canvas-has-pixels', px.width > 100 && px.height > 100, `${px.width}x${px.height}`, '> 100x100');
+  add('reference-frame-size',px.width===768&&px.height===718,`${px.width}x${px.height}`,'768x718');
   add('pixel-variance', px.variance > 200, px.variance, '> 200');
   add('subject-coverage', px.coverage > 0.02 && px.coverage < 0.92, px.coverage, '0.02 - 0.92');
   add('not-blown-out', px.blownRatio < 0.06, px.blownRatio, '< 0.06');
@@ -194,6 +195,15 @@ function verdict(id, info, px) {
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 60000 });
   // Awaiting the page-side readiness promise covers first model load + first frame.
   const firstOk = await page.evaluate(() => window.__FORMA.ready);
+  // Colour ratios use the whole framebuffer. Preserve the measured RC1 reference
+  // dimensions (768x718) across UI layouts, without changing camera presets,
+  // authored materials, exposure or the existing thresholds. Production layout
+  // and default-size screenshots are verified independently by portfolio/design.
+  await page.evaluate(()=>{
+    const v=window.__FORMA.viewer;
+    v.viewport.style.cssText='position:fixed;left:0;top:0;width:768px;height:718px;z-index:10000';
+    v.renderer.setPixelRatio(1);v.applyResize();
+  });
 
   console.log(`首个展品就绪: ${firstOk ? '是' : '否'}`);
   await sleep(700);

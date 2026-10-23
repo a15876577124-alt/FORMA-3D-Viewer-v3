@@ -7,7 +7,7 @@
 //  · 程序化 Technical Demos 与五件正式作品在侧栏里明确分开
 import { $, $$, el, toast } from '../utils/dom.js';
 
-const ADV_TITLES = ['相机与环境', '灯光', '材质', '后期处理', '动画'];
+const ADV_TITLES = ['相机与环境', '灯光', '材质', '后期处理', '显示与动效', '动画'];
 
 function summaryOf(details) {
   return details.querySelector('summary');
@@ -201,6 +201,7 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
         place($('groupFigurines'),strip);
         place(document.querySelector('.vp-meta-tr'),caption);
         place($('autoRotateBtn'),actions,trigger);
+        place(document.querySelector('.inspector-foot'),drawerBody);
         adapt();
       }
       document.body.classList.add('mode-gallery');

@@ -78,11 +78,13 @@ try {
     return evidence;
   });
   await check('单动画剪辑可通过面板暂停和继续', async () => {
+    await page.click('#glAdvanced');
     await page.$eval('#animationPanel', (panel) => { const details = panel.closest('details'); if (!details.open) details.querySelector('summary').click(); });
     const button = await page.$('#animationPanel button:last-child');
     assert.ok(button); assert.match(await button.evaluate((node) => node.textContent), /暂停/);
     await button.click(); assert.equal(await page.evaluate(() => window.__FORMA.viewer.action.paused), true);
     await button.click(); assert.equal(await page.evaluate(() => window.__FORMA.viewer.action.paused), false);
+    await page.click('#glDrawerClose');
   });
   await page.evaluate(async () => { await window.__FORMA.select('dan'); window.__FORMA.viewer.controls.autoRotate = false; window.__FORMA.actions.resetView(); });
   await sleep(400);

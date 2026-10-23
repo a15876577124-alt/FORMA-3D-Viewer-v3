@@ -3,3 +3,4 @@ vendor/** -text
 *.fbx -text
 # Approved brand handoff scripts and SVGs must survive checkout byte-for-byte.
 assets/brand/** -text
+assets/brand/PROVENANCE.json text eol=lf

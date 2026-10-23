@@ -134,8 +134,8 @@ try {
   console.log('[5] 首页 → Gallery → Studio');
   await page.evaluate(() => { location.hash = '#/'; });
   await sleep(900);
-  const home = await page.evaluate(() => ({ layer: !!document.querySelector('.v5-home'), cards: document.querySelectorAll('.v5-launch').length }));
-  ok('首页启动台正常', home.layer && home.cards === 4, JSON.stringify(home));
+  const home = await page.evaluate(() => ({ layer: !!document.querySelector('.v5-home'), cards: document.querySelectorAll('.v5-series-card[href^="#/work/"]').length }));
+  ok('首页五件作品索引正常', home.layer && home.cards === 5, JSON.stringify(home));
   await page.evaluate(() => { location.hash = '#/gallery'; });
   await sleep(900);
   const back = await page.evaluate(() => ({ app: document.querySelector('#app')?.hidden, tris: window.__FORMA.info.modelTris }));
