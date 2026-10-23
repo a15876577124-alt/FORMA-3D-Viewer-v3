@@ -345,6 +345,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
           confirm:materialSave?confirmMaterialSave:null, cancel:materialSave?cancelMaterialSave:null });
         emit('log', { tone: 'warn', text: materialSave?'请确认保存材质版本；原始资产保持不变。':`需确认${(e.data.reasons || []).length ? '：' + (e.data.reasons || []).slice(0, 2).join('；') : ''} —— 请再次点击「执行」` });
       } else {
+        if(materialSave)setMaterialSaveStatus('error');
         emit('log', { tone: 'err', text: '处理失败：' + (e?.message || e) });
       }
       return null;
@@ -502,6 +503,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
 
   async function compareVersions(beforeVersion, afterVersion) {
     if (!requireSelection()) return null;
+    if(beforeVersion===afterVersion){emit('log',{tone:'warn',text:'请选择两个不同的版本进行比较'});return null;}
     const ticket=selectionTicket, id=state.selectedAsset;
     const [before,after]=await Promise.all([pipelineApi.source(id,beforeVersion),pipelineApi.source(id,afterVersion)]);
     if(ticket!==selectionTicket)return null;

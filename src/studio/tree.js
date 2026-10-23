@@ -140,7 +140,11 @@ export function createAssetTree({ core, onPreview, toast }) {
     to.value=String(core.state.selectedVersion);
     const compare=el('button',{class:'st-btn',type:'button',id:'stCompareVersions'},'比较所选版本');
     compare.addEventListener('click',()=>core.compareVersions(Number(from.value),Number(to.value)));
-    list.append(from,to,compare);
+    const reason=el('p',{class:'st-hint',id:'stCompareReason'},'请选择两个不同的版本');
+    const qualify=()=>{compare.disabled=!from.value||!to.value||from.value===to.value;reason.hidden=!compare.disabled;};
+    from.addEventListener('change',qualify);to.addEventListener('change',qualify);qualify();
+    list.append(el('label',{class:'st-version-field'},el('span',{},'Before · 处理前'),from),
+      el('label',{class:'st-version-field'},el('span',{},'After · 处理后'),to),compare,reason);
     for (const v of versions) {
       const label = v.version ? `v${v.version}` : 'Original';
       const ops = (v.kind ? v.kind + ' · ' : '') + ((v.ops || []).join(' → ') || '（无算子记录）') + (v.version ? ' · 来源 ' + (v.baseVersion ? 'v' + v.baseVersion : 'Original') : '');

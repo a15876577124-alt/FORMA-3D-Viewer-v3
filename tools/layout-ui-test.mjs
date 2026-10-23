@@ -203,6 +203,7 @@ const contact = await page.evaluate(() => {
   JSON.stringify({ before: beforeReload.layout, after: afterReload.layout }));
 
   // 9. 恢复默认布局按钮
+  await page.click('#stMore summary');
   await page.click('#stLayoutReset');
   await sleep(400);
   const afterReset = await sizes();

@@ -69,6 +69,13 @@ try{
   const input=await page.$('#studioFileInput');await input.uploadFile(path.join(ROOT,'test-assets/licensed/Avocado.glb'));
   await page.waitForFunction(()=>window.__FORMA.studio.state.selectionStatus==='ready');
   await page.click('.st-tab[data-pane="material"]');await page.click('#stMatList button');
+  await page.waitForSelector('#stCompareVersions');
+  check('S02 same-version comparison disabled with a reason',await page.$eval('#stCompareVersions',e=>e.disabled&&!document.querySelector('#stCompareReason').hidden));
+  check('S02 Before and After labels visible',await page.$$eval('.st-version-field',es=>es.length===2&&es.every(e=>e.textContent.includes(e.textContent.startsWith('Before')?'处理前':'处理后'))));
+  check('S03 numeric input preserves the raw value before editing',await page.evaluate(()=>{
+    let m;window.__FORMA.viewer.modelRoot.traverse(o=>{if(!m&&o.isMesh)m=Array.isArray(o.material)?o.material[0]:o.material;});
+    return Number(document.querySelector('[data-material-number="roughness"]').value)===m.roughness&&!window.__FORMA.studio.state.materialDirty;
+  }));
   await page.focus('[data-material-param="roughness"]');await page.keyboard.press('ArrowLeft');
   const requests=[];let abortNext=false;
   await page.setRequestInterception(true);
@@ -87,7 +94,7 @@ try{
   await page.focus('[data-material-param="roughness"]');await page.keyboard.press('ArrowLeft');
   check('S01 editing invalidates an earlier confirmation',await page.evaluate(()=>!window.__FORMA.studio.state.confirmToken&&!document.querySelector('#stConfirmMaterialSave')));
   abortNext=true;await page.click('#stMatSave');
-  await page.waitForFunction(()=>window.__FORMA.studio.state.materialSaveStatus==='idle');
+  await page.waitForFunction(()=>window.__FORMA.studio.state.materialSaveStatus==='error');
   check('S01 network failure retains dirty values',await page.evaluate(()=>window.__FORMA.studio.state.materialDirty&&window.__FORMA.studio.state.selectedVersion===0));
   const failedCount=requests.length;await new Promise(r=>setTimeout(r,400));
   check('S01 failed write is not automatically replayed',requests.length===failedCount);
@@ -104,6 +111,29 @@ try{
   check('S01 confirmation uses frozen material parameters',JSON.stringify(requests.at(-1).ops)===JSON.stringify(frozen.ops));
   check('S01 double click submits once',requests.length===failedCount+2);
   check('S01 real validated version clears draft',await page.evaluate(()=>!window.__FORMA.studio.state.materialDirty&&window.__FORMA.studio.state.lastRun?.verify.pass));
+  await page.evaluate(()=>window.__FORMA.studio.core.exitCompare());
+  for(const width of [1440,768,390]){
+    await page.setViewport({width,height:900});
+    check('S04 Studio fits '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    check('S04 asset and save status stay visible '+width,await page.$eval('.st-identity',e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight;}));
+    await page.screenshot({path:path.join(OUT,'studio-'+width+'.png')});
+    if(width===390){
+      await page.click('#stToolsToggle');
+      check('S04 properties opens alone',await page.evaluate(()=>document.querySelector('#inspector.open')&&!document.querySelector('#sidebar.st-mobile-open')));
+      await page.screenshot({path:path.join(OUT,'studio-properties-390.png')});
+      await page.keyboard.press('Escape');await page.click('#stAssetsToggle');
+      check('S04 assets opens alone',await page.evaluate(()=>document.querySelector('#sidebar.st-mobile-open')&&!document.querySelector('#inspector.open')));
+      await page.click('#stAssetsClose');
+    }
+  }
+  await page.setViewport({width:1440,height:900});
+  await page.click('#stMore summary');
+  check('S04 original low-frequency actions remain reachable',await page.$$eval('.st-more-menu button',es=>es.length===4&&es.every(e=>e.getBoundingClientRect().width>0)));
+  await page.keyboard.press('Escape');
+  await page.evaluate(()=>{location.hash='#/';});await page.waitForSelector('.v5-hero-3d[data-model-state="ready"]');
+  await page.mouse.move(700,500);await page.mouse.wheel({deltaY:6000});
+  await page.waitForFunction(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2);
+  check('public scrolling restored after Studio',await page.evaluate(()=>scrollY>0));
   check('no page exceptions',errors.length===0);
 }finally{
   await browser?.close();for(const p of children)p.kill();

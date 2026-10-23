@@ -174,23 +174,32 @@ function materialPane({ viewer, core }) {
 
     editBox.append(el('div', { class: 'st-subhead' }, selected.name));
     editBox.append(rows(
-      kv('类型', f.type), kv('名称', f.name),
+      kv('类型', f.type),
       kv('贴图槽', f.slots.length ? f.slots.map((s) => s.slot).join(', ') : '无'),
     ));
+    const sourceName=`网格：${selected.mesh.name || '未命名'}\n材质：${mat.name || '未命名'}`;
+    const copy=el('button',{class:'st-btn',type:'button'},'复制标识');
+    copy.addEventListener('click',()=>navigator.clipboard.writeText(sourceName).then(()=>{copy.textContent='已复制';}).catch(()=>{copy.textContent='复制失败';}));
+    editBox.append(el('details',{class:'st-material-source'},el('summary',{},'原始标识'),el('pre',{},sourceName),copy));
 
     const rangeRow = (label, key, min, max, step, apply) => {
-      const out = el('em', { class: 'st-num' }, String(Number(mat[key] ?? 0).toFixed(2)));
-      const input = el('input', { type: 'range', min: String(min), max: String(max), step: String(step), value: String(mat[key] ?? 0), class: 'st-range', 'data-material-param':key });
+      const out = el('input', {type:'number',min,max,step:'any',value:String(mat[key] ?? 0),class:'st-number','aria-label':label+'数值','data-material-number':key});
+      const input = el('input', { type: 'range', min: String(min), max: String(max), step: String(step), value: String(mat[key] ?? 0), class: 'st-range', 'data-material-param':key,'aria-label':label });
       input.addEventListener('input', () => {
         beginEdit(key);
         const v = parseFloat(input.value);
-        out.textContent = v.toFixed(2);
+        out.value = String(v);
         apply(v);
         syncDraft();
         viewer.render?.();
       });
+      out.addEventListener('input',()=>{
+        if(out.value===''||!out.checkValidity())return;
+        beginEdit(key);const v=Number(out.value);input.value=String(v);apply(v);syncDraft();viewer.render?.();
+      });
+      out.addEventListener('change',()=>{editKey=null;});
       input.addEventListener('change',()=>{editKey=null;});
-      return el('label', { class: 'st-field' }, el('span', {}, label), input, out);
+      return el('div', { class: 'st-field' }, el('span', {}, label), input, out);
     };
 
     if (mat.color) editBox.append(rangeRow('金属度', 'metalness', 0, 1, 0.01, (v) => { mat.metalness = v; mat.needsUpdate = true; }));
@@ -226,7 +235,9 @@ function materialPane({ viewer, core }) {
       const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
       mats.forEach((mat, mi) => {
         if (!mat) return;
-        const name = `${mesh.name || `Mesh ${idx}`}${mats.length > 1 ? ` [${mi}]` : ''}`;
+        const raw=mat.name||mesh.name||'';
+        const generated=!raw||/[a-f\d]{8}-[a-f\d-]{20,}/i.test(raw)||/^(?:tripo|mesh|material)(?:[_ .-].*)?$/i.test(raw);
+        const name=generated?`材质 ${String(idx+1).padStart(2,'0')}${mats.length>1?' · '+(mi+1):''}`:raw;
         const key = name + '|' + (mat.uuid || '');
         if (seen.has(key)) return;
         seen.add(key);

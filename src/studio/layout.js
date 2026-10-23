@@ -13,7 +13,7 @@ const KEY = 'forma3d.v5.layout';
 // 默认值（1440×900 左右的舒适值；保存前会被 clamp 到当前视口）
 export const DEFAULTS = { sidebar: 300, inspector: 372, dockH: 252, dockCollapsed: false, railHidden: false };
 // Gallery 观展优先：右栏更窄、默认不折叠；Studio 是生产区，右栏更宽
-const MODE_DEFAULTS = { gallery: { sidebar: 240, inspector: 280 }, studio: {} };
+const MODE_DEFAULTS = { gallery: { sidebar: 240, inspector: 280 }, studio: {sidebar:240,inspector:320} };
 
 // 安全边界：硬下限保证「拖不没」，比例上限保证「中央视口永远有可用空间」
 export const LIMITS = {

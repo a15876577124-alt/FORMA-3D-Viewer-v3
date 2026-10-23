@@ -141,10 +141,13 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
       case 'provider':dock.render('agent');break;
       case 'material-draft':
         toolbar.node.classList.toggle('has-draft',!!payload);
+        toolbar.syncSave();
         break;
       case 'material-save': {
+        toolbar.syncSave();
         const save=document.getElementById('stMatSave');
         if(save){save.disabled=payload==='saving';save.textContent=payload==='saving'?'正在保存…':payload==='confirm'?'确认保存材质版本':'保存为新版本';}
+        if(payload==='error'){const status=document.getElementById('stMatDraft');if(status)status.textContent='保存失败，修改已保留。检查任务日志后可手动重试。';}
         if(payload!=='confirm')dock.clearConfirm();
         break;
       }
@@ -264,6 +267,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
     },
     leave() {
       active = false;
+      toolbar.closePanels();
       core.invalidateSelectionRequests();
       empty.hidden=true;
       if(viewer.modelRoot)viewer.modelRoot.visible=true;

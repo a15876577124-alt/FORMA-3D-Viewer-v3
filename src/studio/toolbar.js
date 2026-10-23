@@ -46,9 +46,16 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
   exitCompareBtn.hidden = true;
   compareBtn.hidden = true;
 
-  const groupLeft = el('div', { class: 'st-tb-group' }, importBtn, prepareBtn, analyzeBtn, aiBtn, batchBtnTop);
+  const groupLeft = el('div', { class: 'st-tb-group' }, importBtn, analyzeBtn);
   const layoutBtn = act('stLayoutReset', '布局', '恢复默认工作区布局（面板宽度与底部任务区高度）', () => onResetLayout?.());
-  const groupRight = el('div', { class: 'st-tb-group' }, compareBtn, exitCompareBtn, exportBtn, layoutBtn);
+  const groupRight = el('div', { class: 'st-tb-group' }, compareBtn, exitCompareBtn, exportBtn);
+  const more=el('details',{class:'st-more',id:'stMore'},el('summary',{},'更多'),
+    el('div',{class:'st-more-menu'},prepareBtn,aiBtn,batchBtnTop,layoutBtn));
+  document.addEventListener('click',e=>{if(!more.contains(e.target))more.open=false;});
+  more.addEventListener('keydown',e=>{if(e.key==='Escape'){more.open=false;more.querySelector('summary').focus();}});
+  const saveState=el('span',{class:'st-save-state',id:'stSaveState',role:'status'},'尚未选择资产');
+  const saveBtn=act('stSaveTop','保存为新版本','保存当前材质草稿，保留原始版本',()=>document.getElementById('stMatSave')?.click(),'st-btn-primary');
+  const identity=el('div',{class:'st-identity'},crumb,saveState,saveBtn);
 
   fileInput.addEventListener('change', async () => {
     const files = [...(fileInput.files || [])];
@@ -58,11 +65,37 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
 
   statusPill.addEventListener('click', () => { core.connect(); });
 
-  const assetsBtn=act('stAssetsToggle','资产','展开或收起资源树',()=>{document.getElementById('sidebar').classList.toggle('st-mobile-open');});
-  const toolsBtn=act('stToolsToggle','工具','展开或收起资产工具',()=>{document.getElementById('inspector').classList.toggle('open');});
+  const assetsBtn=act('stAssetsToggle','资产','展开或收起资源树',()=>{
+    document.getElementById('inspector').classList.remove('open');toolsBtn.setAttribute('aria-expanded','false');
+    assetsBtn.setAttribute('aria-expanded',String(document.getElementById('sidebar').classList.toggle('st-mobile-open')));
+  });
+  const toolsBtn=act('stToolsToggle','属性','展开或收起资产工具',()=>{
+    document.getElementById('sidebar').classList.remove('st-mobile-open');assetsBtn.setAttribute('aria-expanded','false');
+    toolsBtn.setAttribute('aria-expanded',String(document.getElementById('inspector').classList.toggle('open')));
+  });
+  for(const [b,id] of [[assetsBtn,'sidebar'],[toolsBtn,'inspector']]){b.setAttribute('aria-controls',id);b.setAttribute('aria-expanded','false');}
+  const closeAssets=act('stAssetsClose','关闭资产','收起资源树',()=>{document.getElementById('sidebar').classList.remove('st-mobile-open');assetsBtn.setAttribute('aria-expanded','false');assetsBtn.focus();});
+  closeAssets.classList.add('st-mobile-assets');document.getElementById('sidebar').prepend(closeAssets);
+  function closePanels(){
+    document.getElementById('sidebar').classList.remove('st-mobile-open');document.getElementById('inspector').classList.remove('open');
+    assetsBtn.setAttribute('aria-expanded','false');toolsBtn.setAttribute('aria-expanded','false');more.open=false;
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Escape'||!document.body.classList.contains('mode-studio')||document.querySelector(':modal'))return;
+    const target=document.getElementById('sidebar').classList.contains('st-mobile-open')?assetsBtn:document.getElementById('inspector').classList.contains('open')?toolsBtn:null;
+    if(target){closePanels();target.focus();}
+  });
   assetsBtn.classList.add('st-mobile-assets');toolsBtn.classList.add('st-mobile-tools');
   groupRight.append(assetsBtn,toolsBtn);
-  node.append(crumb, el('span', { class: 'st-tb-spacer' }), groupLeft, groupRight, statusPill, fileInput);
+  node.append(identity,groupLeft,groupRight,more,statusPill,fileInput);
+
+  function syncSave(){
+    const s=core.state,status=s.materialSaveStatus;
+    saveState.textContent=status==='saving'?'正在保存…':status==='confirm'?'等待确认':status==='error'?'保存失败 · 草稿已保留':s.materialDirty?'未保存材质':s.selectionStatus==='ready'?'材质与版本一致':s.selectionStatus==='loading'?'正在载入…':'尚未选择资产';
+    saveState.dataset.state=status==='error'?'error':s.materialDirty?'dirty':'clean';
+    saveBtn.disabled=status==='saving'||!s.materialDirty||s.selectionStatus!=='ready';
+    saveBtn.textContent=status==='saving'?'正在保存…':status==='confirm'?'确认保存材质版本':'保存为新版本';
+  }
 
   function setStatus(status, detail) {
     statusPill.className = 'st-status is-' + status;
@@ -74,6 +107,7 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
   function setAsset(name) {
     const el2 = node.querySelector('#stAssetName');
     if (el2) el2.textContent = name || '未选择资产';
+    syncSave();
   }
 
   function setCompareAvailable(on) {
@@ -82,6 +116,7 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
   }
 
   setStatus('unknown');
+  syncSave();
 
-  return { node, setStatus, setAsset, setCompareAvailable, fileInput };
+  return { node, setStatus, setAsset, setCompareAvailable, syncSave, closePanels, fileInput };
 }

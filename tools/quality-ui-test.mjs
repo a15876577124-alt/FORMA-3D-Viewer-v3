@@ -113,6 +113,7 @@ try{
     await page.waitForFunction(()=>window.__FORMA.studio.state.selection?.format==='fbx'&&window.__FORMA.studio.state.selectionStatus==='ready');
     await page.screenshot({path:path.join(OUT,'fbx-before.png')});
     const camera=await page.evaluate(()=>{const v=window.__FORMA.viewer;return {position:v.camera.position.toArray(),target:v.controls.target.toArray()};});
+    await page.click('#stMore summary');
     await page.click('#stPrepareGLB');await page.waitForFunction(()=>window.__FORMA.studio.state.confirmToken);
     await page.click('#stPrepareGLB');await page.waitForFunction(()=>window.__FORMA.studio.state.selection?.format==='glb'&&window.__FORMA.studio.state.selectionStatus==='ready');
     const conversion=await page.evaluate(()=>window.__FORMA.studio.lastRun);
