@@ -34,6 +34,7 @@ try{
   let log=await page.evaluate(()=>window.__FORMA.studio.state.lastAgent.log);
   fs.writeFileSync(path.join(OUT,'live-agent.json'),JSON.stringify(log,null,2));
   check('real model returns native tool-call chunks',log.rawChunkSample.length>0&&log.model==='deepseek-v4-pro');
+  check('real run logs its provider configuration snapshot',log.provider==='workbuddy'&&typeof log.providerFingerprint==='string');
   check('real agent completes without failure',log.status==='complete'&&!log.errors.length);
   const results=log.rounds.flatMap(r=>r.toolCalls).filter(c=>c.name==='run_op').map(c=>c.result);
   check('two real operators pass post-verification',results.length>=2&&results.every(r=>r.verify?.pass));

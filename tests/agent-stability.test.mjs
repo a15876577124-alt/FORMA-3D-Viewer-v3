@@ -20,6 +20,10 @@ test('real operators chain and export explicit version; confirmation resumes exa
   const [one,two]=first.rounds[0].toolCalls.map(c=>c.result);
   assert.equal(two.beforePath,one.afterPath);assert.equal(two.baseVersion,one.version);
   assert.equal(first.currentVersion,two.version);
+  const endpoint=process.env.WORKBUDDY_CLOUD_ENDPOINT;process.env.WORKBUDDY_CLOUD_ENDPOINT='https://changed.invalid';
+  await assert.rejects(runAgent({assetId,resumeRunId:first.runId,confirmToken:first.confirmation.token,ctx:makeAgentCtx(),llmFn:fake([finish])}),/配置已改变/);
+  assert.ok(!fs.existsSync(path.join(path.dirname(first.logPath),first.runId+'.resumed')),'invalid provider resume must not consume confirmation');
+  if(endpoint===undefined)delete process.env.WORKBUDDY_CLOUD_ENDPOINT;else process.env.WORKBUDDY_CLOUD_ENDPOINT=endpoint;
   const second=await runAgent({assetId,resumeRunId:first.runId,confirmToken:first.confirmation.token,ctx:makeAgentCtx(),llmFn:fake([finish])});
   assert.equal(second.status,'complete');assert.equal(second.parentRunId,first.runId);
   const output=second.rounds[0].toolCalls[0].result;

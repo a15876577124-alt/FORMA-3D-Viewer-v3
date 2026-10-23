@@ -142,6 +142,18 @@ export function createDock({ core, toast, getBatchIds }) {
     const goal = el('input',{class:'st-select',id:'stAgentGoal',value:agentGoal,'aria-label':'AI 任务目标'});
     goal.addEventListener('input',()=>{agentGoal=goal.value;});
     const button=(id,label,action)=>{const b=el('button',{id,class:'st-btn',type:'button'},label);b.addEventListener('click',action);return b;};
+    const provider=el('select',{class:'st-select',id:'stProvider','aria-label':'新任务模型服务'});
+    for(const p of core.state.providers||[])provider.append(el('option',{value:p.id},p.label+(p.configured?'':' · 未配置')));
+    provider.value=core.state.provider||'workbuddy';provider.addEventListener('change',()=>core.selectProvider(provider.value));
+    const model=el('select',{class:'st-select',id:'stModel','aria-label':'新任务模型'});
+    for(const m of core.state.models||[])model.append(el('option',{value:m.id},m.name||m.id));
+    if(!model.children.length)model.append(el('option',{value:core.state.model||''},core.state.model||'没有可用模型'));
+    model.value=core.state.model||model.options[0]?.value||'';model.addEventListener('change',()=>{core.state.model=model.value;});
+    agent.append(el('div',{class:'st-agent-controls'},provider,model,button('stProviderTest','测试连接与工具',()=>core.testAiConnection())),
+      el('p',{class:'st-hint'},'服务与模型仅用于新任务；确认恢复沿用原任务服务。连接测试只发送合成文本。'));
+    if(core.state.modelError)agent.append(el('p',{class:'st-issue-msg'},core.state.modelError));
+    const connection=core.state.providerTest;
+    if(connection)agent.append(el('p',{class:'st-hint',id:'stProviderResult',role:'status'},connection.connected?'连接成功 · 原生工具已验证 · '+connection.model:connection.message||'未验证'));
     agent.append(el('div',{class:'st-agent-controls'},goal,
       button('stAgentPreview','仅分析',()=>core.runAgent({goal:agentGoal,dryRun:true})),
       button('stAgentExecute','执行 AI 任务',()=>core.runAgent({goal:agentGoal,dryRun:false})),
@@ -154,7 +166,7 @@ export function createDock({ core, toast, getBatchIds }) {
       agent.append(button('stAgentResume','确认并继续',()=>core.runAgent({resume:true})));
     }
     agent.append(el('p',{class:'st-hint'},'状态：'+log.status+' · 当前结果 v'+log.currentVersion+(log.dryRun?' · 仅分析，无资产写入':'')));
-    agent.append(el('div', { class: 'st-log-head' }, `模型 ${log.model || '—'} · ${(log.rounds || []).length} 轮 · ${log.totalMs || 0}ms · runId ${res.runId || '—'}`));
+    agent.append(el('div', { class: 'st-log-head' }, `${log.provider||'workbuddy'} · 模型 ${log.model || '—'} · ${(log.rounds || []).length} 轮 · ${log.totalMs || 0}ms · runId ${res.runId || '—'}`));
     for (const r of log.rounds || []) {
       const calls = (r.toolCalls || []).map((t) => t.name).join(', ') || '(纯文本)';
       agent.append(el('div', { class: 'st-log-line' }, `轮 ${r.i}: ${calls} · ${r.llmMs}ms`));

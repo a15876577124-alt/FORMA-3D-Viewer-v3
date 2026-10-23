@@ -15,6 +15,7 @@ import { safeJoin, assertSafeId, PathError } from './paths.mjs';
 import { validateFile, sanitizeName, ValidationError, MAX_FILE_BYTES } from './validate.mjs';
 import { analyzeBuffer } from './analyze.mjs';
 import { listModels, pickAgentModel } from './llm.mjs';
+import {providerSummaries,testProvider} from './providers/index.mjs';
 import { runAgent } from './agent/agent.mjs';
 import { TOOLS } from './agent/tools.mjs';
 import { importAsset } from './importAsset.mjs';
@@ -157,12 +158,15 @@ route('GET', '/api/health', async () => ({
   node: process.version,
 }));
 
-route('GET', '/api/models', async () => {
-  const models = await listModels();
+route('GET', '/api/ai/providers', async()=>providerSummaries());
+route('POST', '/api/ai/test', async(req)=>testProvider(await readJson(req)));
+route('GET', '/api/models', async (req) => {
+  const provider=new URL(req.url,'http://localhost').searchParams.get('provider')||undefined;
+  const models = await listModels({provider});
   return {
     models: models.map((m) => ({
       id: m.id, name: m.name ?? m.id,
-      supportsToolCall: m.supportsToolCall === true,
+      supportsToolCall: m.supportsToolCall ?? null,
       supportsImages: m.supportsImages === true,
       supportsReasoning: m.supportsReasoning === true,
       disabled: m.disabled === true,
@@ -266,7 +270,7 @@ route('POST', '/api/agent/run', async (req) => {
   if(activeAgents.has(requestId)) throw Object.assign(new Error('任务已经运行'),{status:409});
   const controller = new AbortController();activeAgents.set(requestId,controller);
   try {
-    const log = await runAgent({assetId,goal,model,maxRounds,dryRun,signal:controller.signal,
+    const log = await runAgent({assetId,goal,model,provider:body.provider,maxRounds,dryRun,signal:controller.signal,
       resumeRunId:body.resumeRunId,confirmToken:body.confirmToken,
       ctx:makeAgentCtx({baseVersion:source.version})});
     return {runId:log.runId,log};

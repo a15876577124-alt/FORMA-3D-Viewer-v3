@@ -138,6 +138,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
 
   function handle(type, payload) {
     switch (type) {
+      case 'provider':dock.render('agent');break;
       case 'material-draft':
         toolbar.node.classList.toggle('has-draft',!!payload);
         break;

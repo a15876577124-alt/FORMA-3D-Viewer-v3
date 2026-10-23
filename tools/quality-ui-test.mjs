@@ -106,6 +106,15 @@ try{
     const exported=await page.evaluate(()=>window.__FORMA.studio.state.lastExport);
     const reloaded=await checkFbxChannels(path.join(ROOT,exported.afterPath),path.join(ROOT,'test-assets/licensed/blender-embedded.fbx'));
     check('exported FBX-derived GLB preserves packed channel pixels',reloaded.pixelEquality);
+    await page.click('.st-dock-tab[data-pane="agent"]');
+    await page.select('#stProvider','compatible');
+    await page.waitForFunction(()=>window.__FORMA.studio.state.provider==='compatible'&&window.__FORMA.studio.state.modelError);
+    await page.click('#stProviderTest');
+    await page.waitForFunction(()=>window.__FORMA.studio.state.providerTest?.code==='provider_unconfigured');
+    check('unconfigured provider has explicit UI status',await page.$eval('#stProviderResult',e=>e.textContent.includes('未配置')));
+    await page.screenshot({path:path.join(OUT,'ai-provider-unconfigured.png')});
+    const ordinary=await page.evaluate(()=>window.__FORMA.studio.core.run({ops:[{op:'dedup',params:{}}]}));
+    check('ordinary asset processing works while AI is unconfigured',ordinary?.verify?.pass===true);
   }
   check('no page exceptions',errors.length===0);
   metrics.gpu=await page.evaluate(()=>{const gl=window.__FORMA.viewer.renderer.getContext();return gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL);});

@@ -30,7 +30,9 @@ export function fileUrl(relPath) {
 
 export const pipelineApi = {
   health: () => request('/health'),
-  models: () => request('/models', { timeoutMs: 10000 }),
+  models: provider => request('/models'+(provider?'?provider='+encodeURIComponent(provider):''), { timeoutMs: 15000 }),
+  providers:()=>request('/ai/providers'),
+  testProvider:body=>request('/ai/test',{method:'POST',body,timeoutMs:40000}),
   assets: () => request('/assets'),
   prepareGLB: (id, body) => request('/assets/' + encodeURIComponent(id) + '/prepare-glb', {method:'POST',body}),
   source: (id, version = 0) => request('/assets/' + encodeURIComponent(id) + '/versions/' + version),

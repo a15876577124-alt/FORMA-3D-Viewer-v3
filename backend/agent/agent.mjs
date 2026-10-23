@@ -8,6 +8,7 @@ import { streamLLM } from './llmStream.mjs';
 import { toNativeTools, toPromptSpec, dispatchTool, getTool } from './tools.mjs';
 import { DEFAULT_AGENT_MODEL } from '../llm.mjs';
 import { assertSafeId } from '../paths.mjs';
+import {createProvider} from '../providers/index.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -46,7 +47,7 @@ function isRepeat(lastTwo, name, argsRaw) {
 }
 
 export async function runAgent({
-  assetId, goal, model = DEFAULT_AGENT_MODEL, protocol = 'native',
+  assetId, goal, model, provider, protocol = 'native',
   maxRounds = 8, maxToolCalls = 24, wallClockMs = 180000, dryRun = true,
   onEvent = () => {}, llmFn, ctx = {}, signal, resumeRunId, confirmToken,
 }) {
@@ -60,19 +61,24 @@ export async function runAgent({
     assertSafeId(resumeRunId);
     previous = JSON.parse(fs.readFileSync(path.join(runDir,resumeRunId+'.json'),'utf8'));
     if (previous.assetId !== assetId || previous.status !== 'awaiting_confirmation' || !confirmToken || confirmToken !== previous.confirmation?.token) throw new AgentError('确认与待恢复任务不匹配',409);
-    // Durable, exclusive claim prevents replay even across server processes/restarts.
+    ({goal,model,protocol,dryRun} = previous);
+  }
+  const service=createProvider(previous?.provider||provider);
+  if(previous?.providerFingerprint&&previous.providerFingerprint!==service.fingerprint)throw new AgentError('待恢复任务的服务配置已改变，请创建新任务',409);
+  if(previous){
+    // Claim only after validating the service snapshot; invalid resumes consume nothing.
     try {fs.closeSync(fs.openSync(path.join(runDir,resumeRunId+'.resumed'),'wx'));}
     catch(e){if(e.code==='EEXIST')throw new AgentError('该任务已经恢复过，请查看最新运行记录',409);throw e;}
-    ({goal,model,protocol,dryRun} = previous);
     ctx.setVersion?.(previous.currentVersion);
   }
+  model=model||service.defaultModel||(service.id==='workbuddy'?DEFAULT_AGENT_MODEL:null);
   const proto = protocol === 'auto' ? resolveProtocol(model) : protocol;
   const llm = llmFn || streamLLM;
   const deadline = AbortSignal.timeout(Math.max(1,Math.min(Number(wallClockMs)||180000,180000)));
   const abort = signal ? AbortSignal.any([signal,deadline]) : deadline;
   const toolCtx = {...ctx, assetsDir, assetId, dryRun, signal:abort, confirmToken:previous ? confirmToken : undefined};
   const runId = 'run_'+Date.now()+'_'+crypto.randomBytes(4).toString('hex');
-  const log = {runId,assetId,model,protocol:proto,dryRun,goal,parentRunId:resumeRunId,
+  const log = {runId,assetId,model,provider:service.id,providerFingerprint:service.fingerprint,protocol:proto,dryRun,goal,parentRunId:resumeRunId,
     startedAt:nowIso(),endedAt:null,totalMs:0,rounds:[],toolStats:{},finish:null,rawChunkSample:[],errors:[],status:'running'};
   const started = Date.now();
   const messages = previous?.messages || [
@@ -84,7 +90,7 @@ export async function runAgent({
   async function query(params) {
     abort.throwIfAborted();
     let listener;
-    try {return await Promise.race([llm({...params,signal:abort}),new Promise((_,reject)=>{listener=()=>reject(abort.reason);abort.addEventListener('abort',listener,{once:true});})]);}
+    try {return await Promise.race([llm({...params,provider:service,signal:abort}),new Promise((_,reject)=>{listener=()=>reject(abort.reason);abort.addEventListener('abort',listener,{once:true});})]);}
     finally {abort.removeEventListener('abort',listener);}
   }
   try {

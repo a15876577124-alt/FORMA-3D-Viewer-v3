@@ -88,19 +88,23 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     state.lastError = null;
     emit('connecting', { silent });
     try {
-      const [health, opsRes, toolsRes, modelsRes, assetsRes, capsRes, presetsRes] = await Promise.all([
+      const [health, opsRes, toolsRes, modelsRes, assetsRes, capsRes, presetsRes,providerRes] = await Promise.all([
         pipelineApi.health(),
         pipelineApi.ops(),
         pipelineApi.agentTools(),
-        pipelineApi.models().catch((e) => ({ models: [], error: String(e?.message || e) })),
+        pipelineApi.models(state.provider).catch((e) => ({ models: [], error: String(e?.message || e) })),
         pipelineApi.assets(),
         pipelineApi.capabilities().catch(() => ({ capabilities: null })),
         pipelineApi.presets().catch(() => ({ presets: [] })),
+        pipelineApi.providers().catch(()=>({providers:[]})),
       ]);
       state.health = health;
       state.ops = opsRes.ops || [];
       state.tools = toolsRes.tools || [];
       state.models = modelsRes.models || [];
+      state.providers=providerRes.providers||[];
+      state.provider=state.provider||providerRes.defaultProvider||'workbuddy';
+      state.model=state.model||modelsRes.suggested||null;
       state.modelError = modelsRes.error || null;
       state.assets = assetsRes.assets || [];
       state.capabilities = capsRes.capabilities || null;
@@ -369,6 +373,23 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   // -------------------------------------------------------- Agent ----
+  let providerTicket=0;
+  async function selectProvider(id){
+    const ticket=++providerTicket;
+    state.provider=id;state.models=[];state.model=null;state.providerTest=null;state.modelError=null;
+    const config=state.providers?.find(p=>p.id===id);
+    state.model=config?.defaultModel||null;
+    if(!config?.configured){state.modelError='服务未配置，请在服务端设置凭据。';emit('provider');return;}
+    try{const r=await pipelineApi.models(id);if(ticket!==providerTicket)return;state.models=r.models||[];state.model=r.suggested||state.model||r.models?.[0]?.id;}
+    catch(e){if(ticket!==providerTicket)return;state.modelError=e.message;}
+    emit('provider');
+  }
+  async function testAiConnection(){
+    const ticket=providerTicket;state.providerTest={message:'正在测试连接与原生工具调用…'};emit('provider');
+    try{const result=await pipelineApi.testProvider({provider:state.provider,model:state.model});if(ticket===providerTicket)state.providerTest=result;}
+    catch(e){if(ticket===providerTicket)state.providerTest={message:e.message,connected:false};}
+    emit('provider');
+  }
   let agentRequestId = null;
   async function cancelAgent() { if(agentRequestId)await pipelineApi.agentCancel(agentRequestId); }
   async function runAgent({ goal, dryRun = true, resume = false } = {}) {
@@ -380,6 +401,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     emit('progress', {busy:true,text:'AI Agent 运行中…'});
     try {
       const res=await pipelineApi.agentRun({assetId:id,baseVersion:version,requestId:agentRequestId,
+        provider:state.provider,model:state.model,
         goal:goal||'分析当前资产，调用工具读取报告并提出建议，不实际执行。',dryRun,
         resumeRunId:pending?.runId,confirmToken:pending?.confirmation?.token});
       state.history.push({at:Date.now(),kind:'agent',runId:res.runId,model:res.log.model,rounds:res.log.rounds.length});
@@ -629,6 +651,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
 
   return {
     state,
+    selectProvider,testAiConnection,
     setMaterialDraft,
     connect, probe, refreshAssets,
     selectAsset, selectEntry, setOpEnabled, setOpParams, selectedOps, applyPreset,
