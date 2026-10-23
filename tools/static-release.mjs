@@ -59,6 +59,7 @@ addFile(htmlPath, 'entry');
 // Optional local preview remains zero-dependency and is part of the reproducible manifest.
 addFile(path.join(ROOT,'serve.mjs'),'preview');
 addFile(path.join(ROOT,'local-http.mjs'),'preview');
+for(const license of ['vendor/three/LICENSE','vendor/fflate/LICENSE','vendor/postprocessing/LICENSE.md'])addFile(path.join(ROOT,license),'license');
 
 // 导入映射：裸说明符 -> 仓库内路径。目标相对文档基准解析（不是相对引用模块）。
 const importMap = (() => {
@@ -250,5 +251,6 @@ if (PACK && !problems.length) {
     offlineOnly: ['后端 AI 管线（/api/*）不包含在静态包内'],
     note: '本目录可直接作为 GitHub Pages 站点根目录；不需要 assets/library 或 pipeline-out。',
   }, null, 2) + '\n');
+  fs.writeFileSync(path.join(dest,'README-RC.txt'), 'FORMA V5 — local Gallery release candidate\n\nRequires Node.js 22.12+ (verified on Windows / Node 24.22 / Edge 155).\nIn this directory, run: node serve.mjs\nOpen http://127.0.0.1:5173/#/gallery\nNo npm installation is required for this static preview.\n\nThis package contains the public Gallery and local preview server.\nThe AI/asset backend and private workspace are not included.\nFor the full local Studio, use the source checkout: npm ci, then npm start.\nPackaging does not deploy a public website. Final Logo artwork is not included.\n\nBundled libraries: Three.js 0.186.1 (MIT), fflate 0.8.2 (MIT),\npostprocessing 6.39.5 (Zlib). Original notices are in vendor/.\nThese software licenses do not grant rights to the figurine artwork.\n');
   say(`  已打包到 ${rel(dest)}/（${rows.length} 个文件）`);
 }

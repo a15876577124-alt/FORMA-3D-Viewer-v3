@@ -40,6 +40,7 @@ function run(cmd, argv, opts = {}) {
 console.log('[A] 生成静态发布包');
 await run(process.execPath, ['tools/static-release.mjs', `--pack=${PACK}`, '--quiet']);
 ok('静态包已生成', fs.existsSync(path.join(PACK, 'index.html')));
+for(const license of ['vendor/three/LICENSE','vendor/fflate/LICENSE','vendor/postprocessing/LICENSE.md'])ok('保留第三方许可 '+license,fs.existsSync(path.join(PACK,license)));
 
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'STATIC-MANIFEST.json'), 'utf8'));
 ok('清单文件数与实际一致', manifest.files.every((f) => fs.existsSync(path.join(PACK, f.path))), `${manifest.totals.files} 项`);
