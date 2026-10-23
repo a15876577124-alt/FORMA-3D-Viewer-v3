@@ -17,6 +17,7 @@ import { analyzeBuffer } from './analyze.mjs';
 import { listModels, pickAgentModel } from './llm.mjs';
 import { runAgent } from './agent/agent.mjs';
 import { TOOLS } from './agent/tools.mjs';
+import { describeAssetSource } from './assetSource.mjs';
 import { runAssetPipeline, makeAgentCtx } from './runPipeline.mjs';
 import { listOps } from './ops/index.mjs';
 import { detectCapabilities } from './ops/capabilities.mjs';
@@ -208,6 +209,8 @@ route('POST', '/api/assets/import', async (req) => {
   return { asset: meta, report };
 });
 
+route('GET', '/api/assets/:id/versions/:version', async (req, params) => describeAssetSource(params.id, Number(params.version)));
+
 route('GET', '/api/assets', async () => ({ assets: listAssets() }));
 
 route('POST', '/api/assets/:id/analyze', async (req, params) => {
@@ -329,7 +332,7 @@ route('POST', '/api/assets/:id/run', async (req, params) => {
   const ops = Array.isArray(body?.ops) ? body.ops : [];
   const confirmToken = typeof body?.confirmToken === 'string' ? body.confirmToken : undefined;
   const dryRun = body?.dryRun === true;
-  return runAssetPipeline({ assetId, ops, confirmToken, dryRun });
+  return runAssetPipeline({ assetId, ops, confirmToken, dryRun, baseVersion: body.baseVersion ?? 0 });
 });
 
 // ---------- 批量 + 资产库（M4） ----------

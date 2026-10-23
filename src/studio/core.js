@@ -48,7 +48,7 @@ export const OFFLINE_GUIDE = {
   note: 'AI Studio 的分析、算子处理、AI Agent、批处理与导出都依赖本地后端。GitHub Pages 静态展示版只提供数字展厅与观展功能——处理类能力请在本地完整版（FORMA.bat / npm run start）中使用。',
 };
 
-export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, onEvent }) {
+export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, onSelection, onEvent }) {
   const emit = (type, payload) => { try { onEvent?.(type, payload); } catch (e) { console.warn('[studio:emit]', e); } };
 
   const state = {
@@ -58,6 +58,9 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     health: null,
     ops: [], tools: [], models: [], assets: [], presets: [], capabilities: null,
     selectedAsset: null,
+    selectedVersion: 0,
+    selection: null,
+    selectionStatus: 'empty',
     opValues: {},             // { opName: params }
     enabledOps: new Set(),    // 勾选的算子名
     confirmToken: null,
@@ -128,18 +131,58 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   // ------------------------------------------------------------ 资产 ----
-  function selectAsset(id) {
+  let selectionTicket = 0;
+  let compareTicket = 0;
+  async function selectAsset(id, version = 0, { keepRun = false } = {}) {
+    const ticket = ++selectionTicket;
+    ++viewer.ticket; // Invalidate a pending Gallery load as well.
+    await exitCompare();
     state.selectedAsset = id || null;
+    state.selectedVersion = version;
+    state.selection = null;
+    state.selectionStatus = id ? 'loading' : 'empty';
+    if (viewer.modelRoot) viewer.modelRoot.visible = false;
     state.analysis = null;
     state.textures = null;
     state.confirmToken = null;
-    state.lastRun = null;
+    if (!keepRun) state.lastRun = null;
     emit('select', state.selectedAsset);
-    if (state.selectedAsset) {
-      analyze({ silent: true }).catch(() => { /* 后台分析失败不打断选择 */ });
-      detectTextures({ silent: true }).catch(() => { /* 同上 */ });
+    if (!id) return null;
+    try {
+      const source = await pipelineApi.source(id, version);
+      if (ticket !== selectionTicket) return null;
+      const loaded = source.format === 'glb' || source.format === 'gltf'
+        ? await loadGLTF(fileUrl(source.path))
+        : { root: await loadModelFromUrl(fileUrl(source.path), source.path), animations: [], extras: {format:source.format} };
+      if (ticket !== selectionTicket) { viewer._disposeLoaded(loaded); return null; }
+      viewer.materialState = {mode:'original'};
+      const entry = {id:'studio:' + id + ':' + version, assetId:id, version, name:source.name + (version ? ' · v' + version : ' · Original'), file:fileUrl(source.path), format:source.format};
+      viewer.mountImported(loaded, entry);
+      viewer.modelRoot.visible = true;
+      state.selection = source;
+      state.analysis = source.report;
+      state.selectionStatus = 'ready';
+      onSelection?.(entry);
+      emit('selection', source);
+      emit('analyze', {report:source.report});
+      await detectTextures({silent:true});
+      return source;
+    } catch (e) {
+      if (ticket !== selectionTicket) return null;
+      state.selectionStatus = 'error';
+      emit('selection', null);
+      emit('log', {tone:'err', text:'模型载入失败：' + e.message});
+      return null;
     }
-    return state.selectedAsset;
+  }
+
+  function requireSelection() {
+    if (!requireOnline()) return false;
+    if (state.selectionStatus !== 'ready' || viewer.currentEntry?.assetId !== state.selectedAsset || viewer.currentEntry?.version !== state.selectedVersion) {
+      emit('log', {tone:'warn', text:'请等待所选资产版本载入完成'});
+      return false;
+    }
+    return true;
   }
 
   function setOpEnabled(name, on) {
@@ -176,7 +219,9 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     if (!state.selectedAsset) { if (!silent) emit('log', { tone: 'warn', text: '请先选择资产' }); return null; }
     emit('progress', { busy: true, text: '分析中…' });
     try {
-      const rep = await pipelineApi.analyze(state.selectedAsset);
+      const ticket = selectionTicket;
+      const rep = await pipelineApi.source(state.selectedAsset, state.selectedVersion);
+      if (ticket !== selectionTicket) return null;
       state.analysis = rep.report || rep;
       emit('analyze', rep);
       return rep;
@@ -191,9 +236,11 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   async function detectTextures({ silent = false } = {}) {
     if (state.status !== 'online' || !state.selectedAsset) return null;
     const asset = state.assets.find((a) => a.id === state.selectedAsset);
-    if (!asset || !String(asset.format).startsWith('fbx')) { state.textures = null; emit('textures', null); return null; }
+    if (!asset || state.selectedVersion !== 0 || !String(asset.format).startsWith('fbx')) { state.textures = null; emit('textures', null); return null; }
     try {
+      const ticket = selectionTicket;
       const res = await pipelineApi.textures(state.selectedAsset);
+      if (ticket !== selectionTicket) return null;
       state.textures = { textures: res.textures || [], assetId: state.selectedAsset, name: asset.name };
       emit('textures', state.textures);
       return state.textures;
@@ -223,13 +270,15 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
 
   // ------------------------------------------------------------ 执行 ----
   async function run({ dryRun = false, ops } = {}) {
-    if (!requireOnline()) return null;
+    if (!requireSelection()) return null;
     if (!state.selectedAsset) { emit('log', { tone: 'warn', text: '请先选择资产' }); return null; }
     const list = ops || selectedOps();
     if (!list.length) { emit('log', { tone: 'warn', text: '请至少勾选一个算子' }); return null; }
     emit('progress', { busy: true, text: dryRun ? '预览中…' : '执行中…' });
     try {
-      const res = await pipelineApi.run(state.selectedAsset, list, state.confirmToken, dryRun);
+      const ticket = selectionTicket;
+      const res = await pipelineApi.run(state.selectedAsset, list, state.confirmToken, dryRun, state.selectedVersion);
+      if (ticket !== selectionTicket) { emit('log', {tone:'ok', text:'后台处理已完成：' + res.assetId}); return res; }
       state.confirmToken = null;
       if (res.dryRun) {
         emit('dryrun', res);
@@ -243,7 +292,10 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
           tone: res.verify?.pass ? 'ok' : 'err',
           text: `完成 v${res.version} · 后验 ${res.verify?.pass ? '通过' : '失败'}`,
         });
-        if (res.verify?.pass) await showCompare();
+        if (res.verify?.pass) {
+          await selectAsset(res.assetId, res.version, {keepRun:true});
+          await showCompare(res);
+        }
       }
       return res;
     } catch (e) {
@@ -358,10 +410,13 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     emit('progress', { busy: true, text: '载入 Before / After 模型…' });
     try {
       await exitCompare();
+      const ticket = compareTicket;
+      const selected = selectionTicket;
       const [rootA, rootB] = await Promise.all([
         loadModelFromUrl(fileUrl(target.beforePath), String(target.beforePath).split('/').pop()),
         loadModelFromUrl(fileUrl(target.afterPath), String(target.afterPath).split('/').pop()),
       ]);
+      if (ticket !== compareTicket || selected !== selectionTicket) { viewer._disposeLoaded({root:rootA}); viewer._disposeLoaded({root:rootB}); return null; }
       const rig = new CompareRig(viewer);
       rig.load(rootA, rootB);
       rig.setSplit(state.compareSplit);
@@ -393,6 +448,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   async function exitCompare() {
+    ++compareTicket;
     if (state.rig) {
       try { state.rig.dispose(); } catch { /* ignore */ }
       state.rig = null;
@@ -413,7 +469,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       await refreshAssets();
       emit('imported', res);
       emit('log', { tone: 'ok', text: `已导入到工作区：${file.name}` });
-      if (res?.asset?.id || res?.id) selectAsset(res?.asset?.id || res?.id);
+      if (res?.asset?.id || res?.id) await selectAsset(res?.asset?.id || res?.id);
       return res;
     } catch (e) {
       emit('log', { tone: 'err', text: '导入失败：' + (e?.message || e) });
@@ -424,9 +480,10 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   async function publish(version) {
+    if (!requireSelection()) return null;
     if (!requireOnline() || !state.selectedAsset) { emit('log', { tone: 'warn', text: '请先连接并选择资产' }); return null; }
     try {
-      const res = await pipelineApi.publish(state.selectedAsset, version || 1);
+      const res = await pipelineApi.publish(state.selectedAsset, version ?? state.selectedVersion);
       onPublish?.(res.url, state.selectedAsset, res);
       emit('publish', res);
       emit('log', { tone: 'ok', text: '已发布到展厅资产库' });
@@ -439,10 +496,11 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
 
   // 导出 = 对当前资产跑真实的 convert 算子（后端真实产出文件）
   async function exportAs(to, version) {
+    if (!requireSelection()) return null;
     if (!requireOnline() || !state.selectedAsset) { emit('log', { tone: 'warn', text: '请先连接并选择资产' }); return null; }
     emit('progress', { busy: true, text: `导出为 .${to}…` });
     try {
-      const res = await pipelineApi.run(state.selectedAsset, [{ op: 'convert', params: { to } }], state.confirmToken, false);
+      const res = await pipelineApi.run(state.selectedAsset, [{ op: 'convert', params: { to } }], state.confirmToken, false, version ?? state.selectedVersion);
       state.confirmToken = null;
       emit('export', { to, file: res.afterPath, url: fileUrl(res.afterPath), run: res });
       emit('log', { tone: 'ok', text: `已导出 .${to}：v${res.version}` });

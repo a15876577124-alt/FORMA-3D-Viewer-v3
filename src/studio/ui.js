@@ -12,7 +12,7 @@ import { createDock } from './dock.js';
 import { createStudioToolbar } from './toolbar.js';
 import { createLayout } from './layout.js';
 
-export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLocalEntries, onPreview }) {
+export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLocalEntries, onPreview, onSelection }) {
   const workspace = document.querySelector('main.workspace') || $('workspace');
   const sidebar = document.querySelector('.sidebar') || $('sidebar');
   const inspectorBody = document.querySelector('.inspector-body');
@@ -23,7 +23,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
 
   let ui = null;      // 事件订阅时可能还没建好，用惰性引用
   const core = createStudioCore({
-    viewer, appState, onPublish, onSyncLibrary,
+    viewer, appState, onPublish, onSyncLibrary, onSelection,
     onEvent: (type, payload) => handle(type, payload),
   });
 
@@ -158,6 +158,11 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         labs.updateAll();
         break;
       }
+      case 'selection':
+        toolbar.setAsset(core.state.selection ? core.state.selection.name + ' · ' + (core.state.selectedVersion ? 'v' + core.state.selectedVersion : 'Original') : '载入失败');
+        tree.renderVersions(core.state.selectedAsset);
+        labs.updateAll();
+        break;
       case 'analyze':
         labs.updateAll();
         dock.activate('process');
@@ -217,6 +222,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
     // 不改动 canvas 的挂载位置，也不销毁 Viewer。
     async enter() {
       active = true;
+      const restore = core.state.selection;
       layout.setMode('studio');
       document.body.classList.add('mode-studio');
       document.body.classList.remove('mode-gallery');
@@ -229,9 +235,11 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
       dock.renderOps();
       if (core.state.status !== 'online') await core.probe();
       else core.refreshAssets();
+      if (active && restore && core.state.selection === restore) await core.selectAsset(restore.assetId, restore.version, {keepRun:true});
     },
     leave() {
       active = false;
+      core.exitCompare();
       layout.setMode('gallery');
       document.body.classList.remove('mode-studio');
       document.body.classList.add('mode-gallery');

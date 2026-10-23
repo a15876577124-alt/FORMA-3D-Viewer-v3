@@ -263,8 +263,10 @@ export class Viewer {
   mountImported(loaded, entry) {
     snapshotBaseline(loaded.root);
     sanitizeMaterials(loaded.root, this.caps.maxAnisotropy);
+    const previous = this.cache.get(entry.id);
     this.cache.set(entry.id, loaded);
     this._mount(loaded, entry);
+    if (previous && previous !== loaded) this._disposeLoaded(previous);
     this._evictCache();
   }
 

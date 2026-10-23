@@ -212,7 +212,7 @@ function boot() {
 
     setProgress(2, '载入 ' + entry.name + '…');
     try {
-      await viewer.showEntry(entry, opts);
+      if (!await viewer.showEntry(entry, opts)) return false;
     } catch (err) {
       setProgress(null);
       if (err && err.stale) return false;
@@ -264,6 +264,7 @@ function boot() {
   studio = buildStudio({
     viewer,
     appState,
+    onSelection: (entry) => { current.entry = entry; updateMeta(entry); inspector.setAnimations(viewer.animations, 0); },
     onPublish: (url, assetId) => {
       const file = String(url).split('/').pop();
       const item = { id: assetId, name: assetId, url, version: 1 };

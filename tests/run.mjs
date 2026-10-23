@@ -7,7 +7,7 @@ import { spawn, execFileSync } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui', 'workflow'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
@@ -81,6 +81,7 @@ try {
   if (!only || only === 'batch') await check('batch', 'tests/batch.test.mjs');
   if (!only || only === 'compare') await check('compare', 'tests/compare.test.mjs');
   if (!only || only === 'fbxtex') await check('fbxtex', 'tests/fbxtex.test.mjs');
+  if (!only || only === 'workflow') await check('workflow', 'tools/workflow-test.mjs');
   if (!only || only === 'compare-ui') await check('compare-ui', 'tools/compare-ui-test.mjs');
   if (!only || only === 'fbxtex-ui') await check('fbxtex-ui', 'tools/fbxtex-ui-test.mjs');
   if (!only || only === 'proxy') await check('proxy', 'tests/proxy.test.mjs');

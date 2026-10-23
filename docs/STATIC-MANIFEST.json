@@ -3,7 +3,7 @@
   "entry": "index.html",
   "totals": {
     "files": 83,
-    "bytes": 30100215,
+    "bytes": 30103187,
     "byKind": {
       "html-link": 5,
       "runtime-asset": 10,
@@ -111,8 +111,8 @@
     {
       "path": "src/core/viewer.js",
       "kind": "module",
-      "bytes": 17705,
-      "sha256": "a625da39614f318e"
+      "bytes": 17824,
+      "sha256": "9bdf70544d8cd53f"
     },
     {
       "path": "src/lighting/environment.js",
@@ -153,8 +153,8 @@
     {
       "path": "src/main.js",
       "kind": "entry",
-      "bytes": 22179,
-      "sha256": "bc6b1940a7e2c10e"
+      "bytes": 21776,
+      "sha256": "61099937cc43e0b6"
     },
     {
       "path": "src/materials/override.js",
@@ -189,8 +189,8 @@
     {
       "path": "src/net/api.js",
       "kind": "module",
-      "bytes": 2714,
-      "sha256": "9827be034bff5ce0"
+      "bytes": 2846,
+      "sha256": "d0cfd53663f01552"
     },
     {
       "path": "src/pages/home.js",
@@ -237,8 +237,8 @@
     {
       "path": "src/studio/core.js",
       "kind": "module",
-      "bytes": 21315,
-      "sha256": "93b33de075bebea8"
+      "bytes": 23713,
+      "sha256": "2405c80ee5596808"
     },
     {
       "path": "src/studio/dock.js",
@@ -267,14 +267,14 @@
     {
       "path": "src/studio/tree.js",
       "kind": "module",
-      "bytes": 7748,
-      "sha256": "3ef3300e221957e5"
+      "bytes": 8186,
+      "sha256": "bcf3ca7ffc1ed910"
     },
     {
       "path": "src/studio/ui.js",
       "kind": "module",
-      "bytes": 10551,
-      "sha256": "1059ba8928650272"
+      "bytes": 10839,
+      "sha256": "cb73526b3fa54d4c"
     },
     {
       "path": "src/ui/chrome.js",

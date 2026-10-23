@@ -66,9 +66,9 @@ try {
   ok('Studio 自动连接后端', true);
 
   // 1. 选资产 + 只勾选 simplify（会真实减面，保证前后模型可区分）
-  await page.evaluate((id) => {
+  await page.evaluate(async (id) => {
     const core = window.__FORMA.studio.core;
-    core.selectAsset(id);
+    await core.selectAsset(id);
     for (const op of core.state.ops) core.setOpEnabled(op.name, op.name === 'simplify');
     const ratio = document.querySelector('[data-op="simplify"] #op-ratio');
     ratio.value = '0.4';
@@ -82,7 +82,7 @@ try {
   // simplify 属外观算子：首次点击走确认门，第二次点击才真实执行
   await page.evaluate(() => document.getElementById('stRunBtn').click());
   await page.waitForFunction(
-    () => !document.getElementById('stCompareBar')?.hidden,
+    () => document.getElementById('stCompareBar')?.hidden === false,
     { timeout: 60000 },
   );
   ok('执行后视口对比条自动出现', true);

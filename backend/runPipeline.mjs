@@ -8,6 +8,7 @@ import { runOps, validateSchema } from './ops/index.mjs';
 import { assessPolicy } from './policy.mjs';
 import { generateConfirmToken, verifyConfirmToken } from './gate.mjs';
 import { verifyPair } from './verify.mjs';
+import { resolveAssetSource } from './assetSource.mjs';
 import { analyzeBuffer } from './analyze.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -42,10 +43,11 @@ function nextVersionDir(assetId) {
   }
 }
 
-export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = false }) {
+export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = false, baseVersion = 0 }) {
   const id = assertSafeId(assetId);
   const meta = readMeta(id);
-  const inPath = originalPath(meta);
+  const source = resolveAssetSource(id, baseVersion);
+  const inPath = source.file;
   if (!fs.existsSync(inPath)) throw new PipelineError('原始文件缺失', 500);
 
   // 参数前置校验：dryRun 预览阶段同样校验，让用户立刻看到非法参数，
@@ -83,7 +85,7 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
 
   // 真实执行
   const { version, dir } = nextVersionDir(id);
-  const beforeReport = await analyzeBuffer(meta.name, fs.readFileSync(inPath), meta.format);
+  const beforeReport = await analyzeBuffer(path.basename(inPath), fs.readFileSync(inPath), source.format, { baseDir: path.dirname(inPath) });
   const { outPath, results } = await runOps({ inPath, outDir: dir, ops });
 
   // 后验：逐算子对比其「输入 vs 输出」（而非原始 vs 最终）
@@ -103,7 +105,7 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
   // 写元数据
   fs.writeFileSync(path.join(dir, 'report.before.json'), JSON.stringify(beforeReport, null, 2));
   fs.writeFileSync(path.join(dir, 'report.after.json'), JSON.stringify(afterReport, null, 2));
-  fs.writeFileSync(path.join(dir, 'ops.json'), JSON.stringify({ assetId: id, version, ops, results, policy, createdAt: new Date().toISOString() }, null, 2));
+  fs.writeFileSync(path.join(dir, 'ops.json'), JSON.stringify({ assetId: id, version, baseVersion, ops, results, policy, createdAt: new Date().toISOString() }, null, 2));
   fs.writeFileSync(path.join(dir, 'verify.json'), JSON.stringify(verify, null, 2));
   fs.writeFileSync(path.join(dir, 'CHANGE.txt'), results.map((r) => `[${r.op}] ${(r.changes || []).join('; ') || '(无变更)'}`).join('\n'));
 
@@ -112,6 +114,7 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
   return {
     assetId: id,
     version,
+    baseVersion,
     outPath: path.relative(ROOT, outPath),
     outDir: path.relative(ROOT, dir),
     beforePath: rel(inPath),

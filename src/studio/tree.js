@@ -125,24 +125,27 @@ export function createAssetTree({ core, onPreview, toast }) {
     }
     list.append(el('p', { class: 'st-hint' }, '读取版本…'));
     const entries = await core.listVersions();
+    if (assetId !== core.state.selectedAsset) return;
     const hit = entries.find((e) => e.assetId === assetId);
     list.innerHTML = '';
-    const versions = hit?.versions || [];
+    const versions = [{version:0, ops:['Original']}, ...(hit?.versions || []).filter(v => v.modelFile)];
     node.querySelector('[data-count="versions"]').textContent = String(versions.length);
     if (!versions.length) {
       list.append(el('p', { class: 'st-hint' }, '该资产还没有处理版本——执行一次处理后出现。'));
       return;
     }
     for (const v of versions) {
-      const label = `v${v.version}`;
+      const label = v.version ? `v${v.version}` : 'Original';
       const ops = (v.ops || []).join(' → ') || '（无算子记录）';
-      const row = el('div', { class: 'st-row st-row-version', role: 'listitem' },
+      const row = el('div', { class: 'st-row st-row-version' + (v.version === core.state.selectedVersion ? ' is-active' : ''), role: 'listitem', tabindex:'0', 'data-version':v.version },
         el('span', { class: 'st-ver-badge' }, label),
         el('span', { class: 'st-row-main' },
           el('span', { class: 'st-row-name' }, ops),
           el('span', { class: 'st-row-meta' }, v.createdAt ? String(v.createdAt).slice(0, 19).replace('T', ' ') : '时间未知'),
         ),
       );
+      row.addEventListener('click', () => core.selectAsset(assetId, v.version));
+      row.addEventListener('keydown', e => { if (e.key === 'Enter') core.selectAsset(assetId, v.version); });
       list.append(row);
     }
   }
