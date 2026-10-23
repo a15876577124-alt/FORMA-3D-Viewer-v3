@@ -123,15 +123,23 @@ export function buildSidebar({ onSelect }) {
   const strip = buildStrip(all, onSelect);
 
   const setSelected = (id) => {
-    for (const [key, node] of cards) node.classList.toggle('selected', key === id);
+    for (const [key, node] of cards) {node.classList.toggle('selected', key === id);node.setAttribute('aria-pressed',String(key===id));}
     for (const [key, node] of strip) node.classList.toggle('on', key === id);
     if (gallery && gallery.value !== id) gallery.value = id;
     const g = groupOf.get(id);
     if (g === 'demo') demo.expand();
     if (g === 'fig') fig.expand();
     const node = cards.get(id);
-    if (node && node.scrollIntoView) node.scrollIntoView({ block: 'nearest' });
+    if (node && node.scrollIntoView) node.scrollIntoView({ block: 'nearest', inline:'nearest' });
   };
+  listFig.addEventListener('keydown',e=>{
+    if(!['ArrowLeft','ArrowRight'].includes(e.key))return;
+    const i=FIGURINES.findIndex(f=>f.id===document.activeElement?.dataset.id);
+    if(i<0)return;
+    e.preventDefault();
+    const id=FIGURINES[(i+(e.key==='ArrowRight'?1:-1)+FIGURINES.length)%FIGURINES.length].id;
+    cards.get(id)?.focus();onSelect(id);
+  });
 
   // Imports land in their own group so they never masquerade as catalogue work.
   function addImported(entry, onSelectImported) {

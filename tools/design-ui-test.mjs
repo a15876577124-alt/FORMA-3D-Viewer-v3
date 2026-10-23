@@ -33,6 +33,9 @@ try{
     check('A01 body text readable '+width,await page.$eval('.v5-hero-lede',e=>parseFloat(getComputedStyle(e).fontSize)>=14));
     check('H01 uniform cards '+width,await page.$$eval('.v5-series-card',es=>Math.max(...es.map(e=>e.clientWidth))-Math.min(...es.map(e=>e.clientWidth))<=1));
     await page.screenshot({path:path.join(OUT,'home-'+width+'.png'),fullPage:true});
+    await page.mouse.move(width/2,500);await page.mouse.wheel({deltaY:6000});
+    await page.waitForFunction(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2);
+    check('home footer reachable by wheel '+width,await page.evaluate(()=>scrollY>0&&document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2));
     await page.goto(url+'/#/work/dan',{waitUntil:'networkidle0'});
     await page.waitForFunction(()=>document.querySelector('#v5Tech-dan')?.textContent.includes('真实解析'));
     await page.screenshot({path:path.join(OUT,'detail-'+width+'.png'),fullPage:true});
@@ -44,6 +47,15 @@ try{
   check('H02 works navigation opens collection',await page.evaluate(()=>location.hash.includes('section=collection')));
   await page.goto(url+'/#/gallery',{waitUntil:'networkidle0'});
   await page.waitForFunction(()=>window.__FORMA?.viewer.modelRoot);
+  for(const width of [1440,768,390]){
+    await page.setViewport({width,height:900});
+    await page.evaluate(()=>window.__FORMA.viewer.setAutoRotate(false));
+    await page.waitForFunction(()=>{const v=window.__FORMA.viewer,r=v.canvas.getBoundingClientRect();return Math.abs(v.camera.aspect-r.width/r.height)<.01;});
+    check('G03 canvas uses available width '+width,await page.$eval('#stage',(e,width)=>e.clientWidth>width*(width>=1200?.5:.9),width));
+    check('G02 real thumbnails are above fallback '+width,await page.$eval('.gl-selection .asset-thumb img',e=>getComputedStyle(e).zIndex==='1'&&e.naturalWidth>0));
+    await page.screenshot({path:path.join(OUT,'gallery-'+width+'.png')});
+  }
+  await page.setViewport({width:1440,height:1000});
   await page.click('#glAdvanced');
   check('G01 named native modal focuses close',await page.$eval('#glDrawer',e=>e.matches(':modal')&&e.contains(document.activeElement)&&!!e.getAttribute('aria-label')));
   await page.keyboard.down('Shift');await page.keyboard.press('Tab');await page.keyboard.up('Shift');

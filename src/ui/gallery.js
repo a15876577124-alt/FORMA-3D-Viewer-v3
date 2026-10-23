@@ -7,8 +7,7 @@
 //  · 程序化 Technical Demos 与五件正式作品在侧栏里明确分开
 import { $, $$, el, toast } from '../utils/dom.js';
 
-const ADV_TITLES = ['材质', '后期处理'];   // 搬进高级控制台的两个分组
-const EXHIBIT_SECT = ['相机与环境', '灯光']; // 观展必需的分组，留在右栏
+const ADV_TITLES = ['相机与环境', '灯光', '材质', '后期处理', '动画'];
 
 function summaryOf(details) {
   return details.querySelector('summary');
@@ -48,7 +47,7 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
     el('button', { class: 'gl-btn', type: 'button', id: 'glReset' }, '最佳视角'),
     el('button', { class: 'gl-btn', type: 'button', id: 'glCurate', title: '切换美术馆布光并把背景设为暖砂' }, '展厅布光'),
     el('button', { class: 'gl-btn', type: 'button', id: 'glShot' }, '导出 PNG'),
-    el('button', { class: 'gl-btn gl-btn-primary', type: 'button', id: 'glAdvanced' }, '高级控制台'),
+    el('button', { class: 'gl-btn', type: 'button', id: 'glAdvanced' }, '观展设置'),
   );
 
   inspectorBody.insertBefore(info, inspectorBody.firstChild);
@@ -79,9 +78,9 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
     drawerBody.append(s);
   }
 
-  const drawer = el('dialog', { class: 'gl-drawer', id: 'glDrawer', hidden: true, 'aria-label': '高级控制台' },
+  const drawer = el('dialog', { class: 'gl-drawer', id: 'glDrawer', hidden: true, 'aria-label': '观展设置' },
     el('div', { class: 'gl-drawer-head' },
-      el('h3', {}, '高级控制台'),
+      el('h3', {}, '观展设置'),
       el('span', { class: 'gl-drawer-tag' }, '材质 · 后期'),
       el('button', { class: 'icon-btn', type: 'button', id: 'glDrawerClose', 'aria-label': '关闭高级控制台' },
         el('span', { 'aria-hidden': 'true' }, '✕'),
@@ -118,6 +117,40 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
     const r=drawer.getBoundingClientRect();
     if(e.target===drawer && (e.clientX<r.left || e.clientX>r.right || e.clientY<r.top || e.clientY>r.bottom))closeDrawer();
   });
+
+  const workspace=$('workspace'), sidebar=document.querySelector('.sidebar');
+  const curation=el('section',{class:'gl-curation'},
+    el('p',{class:'v5-eyebrow'},'QIONG OPERA · COLLECTION'),
+    el('h2',{},'琼剧五相'),
+    el('p',{},'从衣纹、冠饰到脸谱，近距离观察五件数字手办的形与色。'),
+    el('a',{href:'#/?section=collection'},'返回作品集 ↗'),
+  );
+  sidebar.prepend(curation);
+  const caption=el('div',{class:'gl-caption'}),strip=el('div',{class:'gl-selection','aria-label':'五件作品'});
+  const footer=el('div',{class:'gl-stage-controls'},caption,actions,strip);
+  workspace.append(footer);
+  const secondary=el('div',{class:'gl-secondary'},actions.querySelector('#glCurate'),actions.querySelector('#glShot'));
+  drawerBody.prepend(secondary);
+  // Move the actual buttons and label; their existing state and handlers remain authoritative.
+  const relocations=[];
+  function place(node,target,before=null){
+    if(!node)return;
+    const marker=document.createComment('gallery return');node.before(marker);
+    relocations.push(()=>marker.replaceWith(node));target.insertBefore(node,before);
+  }
+  let active=false;
+  const compact=matchMedia('(max-width:1199px)');
+  let restoreCompact=[];
+  function adapt(){
+    for(const restore of restoreCompact)restore();restoreCompact=[];
+    if(!active || !compact.matches)return;
+    for(const node of [info,document.querySelector('.sidebar-body'),document.querySelector('.sidebar-foot')]){
+      if(!node)continue;
+      const marker=document.createComment('gallery compact return');node.before(marker);
+      restoreCompact.push(()=>marker.replaceWith(node));drawerBody.append(node);
+    }
+  }
+  compact.addEventListener('change',adapt);
 
   // ---- 辅助信息栏折叠（Gallery 专属：观展时可以把右栏整个收起来）----
   const railToggle = el('button', { class: 'gl-rail-btn', type: 'button', id: 'glRailToggle', title: '收起右侧信息栏' },
@@ -163,6 +196,13 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
 
   return {
     enter() {
+      if(!active){
+        active=true;
+        place($('groupFigurines'),strip);
+        place(document.querySelector('.vp-meta-tr'),caption);
+        place($('autoRotateBtn'),actions,trigger);
+        adapt();
+      }
       document.body.classList.add('mode-gallery');
       document.body.classList.remove('mode-studio');
       info.hidden = false;
@@ -172,10 +212,12 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
       for (const s of sects) {
         const label = summaryOf(s)?.textContent?.trim().split(/\s+/)[0] || '';
         const inDrawer = ADV_TITLES.includes(label);
-        s.hidden = !inDrawer && !EXHIBIT_SECT.includes(label) && label !== '动画';
+        s.hidden = !inDrawer;
       }
     },
     leave() {
+      active=false;adapt();
+      for(const restore of relocations.splice(0).reverse())restore();
       document.body.classList.remove('mode-gallery');
       info.hidden = true;
       actions.hidden = true;
