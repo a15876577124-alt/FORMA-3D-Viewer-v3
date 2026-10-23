@@ -93,7 +93,7 @@ export function createWorkPage({ params, catalog = [] } = {}) {
         el('a', { class: 'v5-work-navlink', href: `#/work/${prevId}` }, `‹ ${prevId}`),
         el('a', { class: 'v5-work-navlink', href: `#/work/${nextId}` }, `${nextId} ›`),
       ),
-      createContactBlock({ variant: 'inline', title: '联系与授权咨询' }),
+      createContactBlock({ variant: 'inline', title: '作品咨询', id: 'work-contact-' + id }),
     ),
   );
 

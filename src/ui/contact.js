@@ -25,6 +25,7 @@ function legacyCopy(text) {
   } catch { return false; }
 }
 
+const copyTimers = new WeakMap();
 async function copyText(text, btn) {
   let done = false;
   try {
@@ -35,9 +36,9 @@ async function copyText(text, btn) {
   if (done) {
     toast('已复制 ' + text, 'ok', 2000);
     if (btn) {
-      const old = btn.textContent;
-      btn.textContent = '已复制 ✓';
-      setTimeout(() => { btn.textContent = old; }, 1600);
+      clearTimeout(copyTimers.get(btn));
+      btn.textContent = '已复制';
+      copyTimers.set(btn, setTimeout(() => { btn.textContent = '复制'; }, 1600));
     }
   } else {
     toast('复制未成功，请手动选中邮箱地址后按 Ctrl+C', 'warn', 4000);
@@ -46,11 +47,11 @@ async function copyText(text, btn) {
 }
 
 // variant: 'block' 首页区块 | 'inline' 详情页紧凑条
-export function createContactBlock({ variant = 'block', title = '联系', note = '' } = {}) {
+export function createContactBlock({ variant = 'block', title = '联系', note = '', id = 'contactBlock' } = {}) {
   const list = el('div', { class: 'v5-contact-list' });
 
   for (const mail of CONTACT_EMAILS) {
-    const copyBtn = el('button', { class: 'v5-contact-copy', type: 'button', title: `复制 ${mail}` }, '复制');
+    const copyBtn = el('button', { class: 'v5-contact-copy', type: 'button', title: `复制 ${mail}`, 'aria-label': `复制 ${mail}`, 'aria-live': 'polite' }, '复制');
     copyBtn.addEventListener('click', () => copyText(mail, copyBtn));
     list.append(el('div', { class: 'v5-contact-row' },
       el('a', { class: 'v5-contact-mail', href: 'mailto:' + mail }, mail),
@@ -67,7 +68,7 @@ export function createContactBlock({ variant = 'block', title = '联系', note =
     note ? el('p', { class: 'v5-contact-note' }, note) : null,
   );
 
-  const node = el('section', { class: 'v5-contact v5-contact-' + variant, id: 'contactBlock' },
+  const node = el('section', { class: 'v5-contact v5-contact-' + variant, id, 'aria-label': '联系 FORMA' },
     el('div', { class: variant === 'block' ? 'v5-container' : '' }, inner),
   );
   return node;

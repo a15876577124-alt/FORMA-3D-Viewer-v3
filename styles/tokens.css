@@ -46,6 +46,7 @@
   /* ---------- 文本 ---------- */
   --v5-tx-hi:    #f2ede4;   /* 标题 / 关键值 */
   --v5-tx:       #c8cbd0;   /* 正文 */
+  --v5-tx-mid:   #c8cbd0;
   --v5-tx-lo:    #8b9098;   /* 次级 */
   --v5-tx-mute:  #62676f;   /* 提示 / 禁用 */
 
@@ -65,6 +66,7 @@
   --v5-fs-h1:      clamp(1.9rem, 3.4vw, 2.9rem);
   --v5-fs-h2:      clamp(1.35rem, 2.1vw, 1.75rem);
   --v5-fs-h3:      1.075rem;
+  --v5-fs-lg:      1rem;
   --v5-fs-body:    .875rem;
   --v5-fs-sm:      .8125rem;
   --v5-fs-xs:      .75rem;

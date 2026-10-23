@@ -36,6 +36,12 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
   });
   const labs = createLabs({ viewer, core, toast });
   const dock = createDock({ core, toast, getBatchIds: () => tree.getBatchIds() });
+  const empty = el('div', {class:'st-empty-view',id:'stEmptyView',hidden:true},
+    el('p',{class:'v5-eyebrow'},'ASSET WORKSPACE'),
+    el('h2',{},'开始处理一个资产'),
+    el('p',{},'导入自己的模型，或从资源树选择一件作品。分析、编辑与导出始终对应当前版本。'),
+    el('button',{class:'st-btn st-btn-primary',type:'button',onclick:()=>toolbar.node.querySelector('#studioFileInput').click()},'导入模型'));
+  document.querySelector('.viewport')?.append(empty);
 
   workspace.insertBefore(toolbar.node, workspace.firstChild);
 
@@ -152,6 +158,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         tree.renderAssets();
         break;
       case 'select': {
+        empty.hidden=!!payload;
         dock.clearConfirm();
         const asset = core.state.assets.find((a) => a.id === payload);
         toolbar.setAsset(asset?.name || payload || null);
@@ -227,6 +234,8 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
     async enter() {
       active = true;
       const restore = core.state.selection;
+      empty.hidden=!!restore;
+      if(!restore && viewer.modelRoot)viewer.modelRoot.visible=false;
       layout.setMode('studio');
       document.body.classList.add('mode-studio');
       document.body.classList.remove('mode-gallery');
@@ -243,6 +252,8 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
     },
     leave() {
       active = false;
+      empty.hidden=true;
+      if(viewer.modelRoot)viewer.modelRoot.visible=true;
       core.exitCompare();
       layout.setMode('gallery');
       document.body.classList.remove('mode-studio');

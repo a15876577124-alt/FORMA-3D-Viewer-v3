@@ -47,7 +47,11 @@
   color: var(--v5-gold-300);
   transition: transform var(--v5-dur-3) var(--v5-ease-expo);
 }
-.v5-brand:hover .v5-brand-mark { transform: rotate(-8deg) scale(1.06); }
+.v5-brand-mark img, .v5-brand-mark svg { display:block; width:100%; height:100%; object-fit:contain; }
+.v5-brand [hidden] { display:none; }
+.v5-brand[data-brand-size="small"] .v5-brand-mark { width:22px; height:22px; }
+.v5-brand { min-height:36px; }
+.v5-topbar { flex-shrink:0; }
 .v5-brand-text {
   display: flex; align-items: baseline; gap: 7px;
   font-family: var(--v5-ff-display);
@@ -466,7 +470,7 @@
   animation: v5-line-in var(--v5-dur-5) var(--v5-ease-expo) both;
 }
 .v5-hero-line-accent {
-  color: var(--v5-tx-mute);
+  color: var(--v5-ivory-300);
   margin-left: clamp(38px, 9vw, 132px);
   animation-delay: .13s;
 }
@@ -593,7 +597,7 @@
   opacity: 0; transform: translateX(-4px);
   transition: opacity var(--v5-dur-3) var(--v5-ease-out), transform var(--v5-dur-3) var(--v5-ease-out);
 }
-.v5-series-card:hover .v5-series-cta { opacity: 1; transform: none; }
+.v5-series-card .v5-series-cta { opacity: 1; transform: none; }
 
 /* 能力入口 */
 .v5-lane-grid {
@@ -869,7 +873,8 @@ input:disabled { opacity: .45; cursor: not-allowed; }
 }
 .v5-contact-mail:hover { background: rgba(217, 196, 160, .18); color: var(--v5-gold-100); }
 .v5-contact-copy {
-  cursor: pointer; font: 500 11px/1 var(--v5-ff-sans); color: var(--v5-tx-lo);
+  cursor: pointer; font: 500 12px/1 var(--v5-ff-sans); color: var(--v5-tx);
+  min-height:40px; min-width:64px;
   padding: 6px 10px; border-radius: var(--v5-r-sm);
   border: 1px solid var(--v5-line-2); background: var(--v5-bg-overlay);
 }
@@ -883,5 +888,26 @@ input:disabled { opacity: .45; cursor: not-allowed; }
 @media (max-width: 640px) {
   .v5-contact-inner { flex-direction: column; align-items: stretch; }
   .v5-contact-list { width: 100%; }
-  .v5-contact-mail { flex: 1 1 auto; word-break: break-all; }
+  .v5-contact-row { display:grid; grid-template-columns:minmax(0,1fr) 64px; gap:8px; }
+  .v5-contact-mail { font-size:12px; min-height:40px; display:flex; align-items:center; padding:6px 8px; overflow-wrap:anywhere; }
+}
+
+/* Keep the existing two-column composition; model and actions no longer overlap. */
+.v5-hero .v5-hero-inner { max-width:1280px; }
+.v5-hero-lede, .v5-launch-grid { max-width:min(48%, 580px); }
+.v5-hero-3d { left:52%; }
+.v5-hero .v5-hero-inner::before { display:none; }
+.v5-contact { scroll-margin-top:80px; }
+.v5-contact-inner { align-items:center; }
+.v5-contact-mail:focus-visible, .v5-brand:focus-visible, .v5-footer a:focus-visible { outline:2px solid var(--v5-gold-300); outline-offset:4px; }
+@media(max-width:760px) {
+  .v5-hero-3d { left:45%; height:320px; opacity:1; }
+  .v5-hero-lede, .v5-launch-grid { max-width:100%; }
+  .v5-hero-title { margin-bottom:70px; }
+  .v5-nav-toggle { margin-left:auto; }
+  .v5-contact-note { flex:auto; }
+  .v5-contact-inner { align-items:stretch; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .v5-brand *, .v5-hero *, .v5-series-card { animation:none!important; transition:none!important; }
 }

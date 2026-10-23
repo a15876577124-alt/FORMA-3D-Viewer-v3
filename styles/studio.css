@@ -567,3 +567,8 @@ body.mode-studio #studioRail {display:block !important;}
 
 
 @media (max-width:650px) { body.mode-studio .obj-name {font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .topbar .tool-btn {white-space:nowrap;flex-shrink:0;} }
+.st-empty-view { position:absolute; inset:0; z-index:12; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:16px; padding:32px; background:radial-gradient(ellipse at center,#161b22,#0b0d10 75%); text-align:center; }
+.st-empty-view[hidden] { display:none; }
+.st-empty-view h2 { color:var(--v5-tx-hi); font-size:24px; font-weight:500; margin:0; }
+.st-empty-view p { max-width:400px; line-height:1.8; color:var(--v5-tx-lo); margin:0; }
+@media(max-width:640px) { .st-empty-view { padding:20px; gap:12px; } .st-empty-view h2 { font-size:20px; } }

@@ -79,13 +79,13 @@ export function createHomePage({ catalog = [], version = '3.0.0', quality = 'hig
   const hero = el('section', { class: 'v5-hero' },
     heroStage,
     el('div', { class: 'v5-container v5-hero-inner' },
-      el('p', { class: 'v5-eyebrow' }, 'Qiong Opera · Digital Figurines'),
+      el('p', { class: 'v5-eyebrow' }, 'FORMA · Digital Art & 3D Creation'),
       el('h1', { class: 'v5-display v5-hero-title' },
         el('span', { class: 'v5-hero-line' }, '琼剧'),
         el('span', { class: 'v5-hero-line v5-hero-line-accent' }, '五相'),
       ),
       el('p', { class: 'v5-lede v5-hero-lede' },
-        '五件琼剧角色数字手办，以实时三维方式陈列。生旦净三行当、脸谱谱式与头饰规制皆可逐件审视；同一套资产贯穿展示、分析、修复与导出。'),
+        '探索五件琼剧数字手办，或导入自己的模型。从三维观察到分析、编辑、优化与导出，在同一工作区完成。'),
       el('div', { class: 'v5-launch-grid' }, ...deckCards, fileInput),
     ),
   );
@@ -93,11 +93,11 @@ export function createHomePage({ catalog = [], version = '3.0.0', quality = 'hig
   // ---- 真实指标条（数值来自真实工程状态，不做估算）----
   const statRow = el('div', { class: 'v5-stat-row' },
     v5Stat('展品', String(figurines.length), '琼剧角色'),
-    v5Stat('渲染内核', 'r186', 'Three.js'),
-    v5Stat('依赖', '离线', '无 CDN'),
+
+
     v5Stat('资产库', String(libCount), '处理产物'),
     v5Stat('运行记录', String(runCount), lastRun ? `最近 ${lastRun.slice(0, 12)}` : '暂无'),
-    v5Stat('版本', 'V' + version, '当前构建'),
+
   );
 
   // ---- 展品索引 ----
@@ -152,7 +152,7 @@ export function createHomePage({ catalog = [], version = '3.0.0', quality = 'hig
   const contactSection = createContactBlock({
     variant: 'block',
     title: '联系',
-    note: '关于展品授权、模型交付或本地完整版部署，都可以直接邮件联系。',
+    note: '作品交流与项目咨询，欢迎邮件联系。',
   });
 
   const node = el('div', { class: 'v5-home' }, hero, seriesSection, laneSection, contactSection);
@@ -166,6 +166,7 @@ export function createHomePage({ catalog = [], version = '3.0.0', quality = 'hig
 
   return {
     node,
+    enter({query}={}) { if(query?.section==='contact')requestAnimationFrame(()=>contactSection.scrollIntoView({block:'center'})); },
     unmount() {
       try { hero3d.dispose(); } catch (e) { console.warn('[home] hero3d dispose:', e); }
     },

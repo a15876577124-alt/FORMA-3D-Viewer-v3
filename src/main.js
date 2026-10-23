@@ -1,3 +1,4 @@
+import { createBrand } from './ui/brand.js';
 // Application entry: wires detection -> renderer -> catalogue -> panels, and
 // owns every cross-cutting action (switching exhibits, shortcuts, persistence).
 import { detectCapabilities } from './core/capabilities.js';
@@ -395,6 +396,8 @@ function boot() {
   const existingApp = document.getElementById('app');
   const { shell: v5ShellNode, outlet, nav } = buildV5Shell({ version: 'V5' });
   document.body.append(v5ShellNode);
+  const legacyBrand=document.querySelector('#sidebar .brand');
+  if(legacyBrand)legacyBrand.replaceChildren(createBrand({size:'small',lockup:'wordmark'}));
   v5ShellNode.insertBefore(existingApp, outlet);
   // 展厅层初始隐藏：路由首次激活 gallery 时由 router 显示。
   // 不隐藏的话，首帧 #app（未入 router 缓存）会盖住首页。

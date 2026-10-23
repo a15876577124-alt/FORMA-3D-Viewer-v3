@@ -18,7 +18,7 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
   });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.24;
+  renderer.toneMappingExposure = 1.1;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const dpr = Math.min(window.devicePixelRatio || 1, quality === 'low' ? 1 : 1.6);
   renderer.setPixelRatio(dpr);
@@ -30,7 +30,7 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
   keyLight.position.set(-2.2, 3.2, 2.9);
   const rimLight = new THREE.DirectionalLight(0x9db8dd, 1.6);
   rimLight.position.set(2.9, 2.2, -2.5);
-  const fillLight = new THREE.DirectionalLight(0xd9c4a0, 0.55);
+  const fillLight = new THREE.DirectionalLight(0xf2ede4, 1.1);
   fillLight.position.set(1.6, 0.5, 2.4);
   const ambient = new THREE.AmbientLight(0x3a4050, 0.95);
   scene.add(keyLight, rimLight, fillLight, ambient);
@@ -70,11 +70,14 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
   const root = new THREE.Group();
   scene.add(root);
   let model = null;
+  let disposed = false, envTarget = null, inView = false;
+  root.rotation.y = -1.42;
   const loadState = { ok: false, error: null };
   const loadPromise = new Promise((resolve) => {
     new GLTFLoader().load(
       MODEL_URL,
       (gltf) => {
+        if(disposed){gltf.scene.traverse(o=>{o.geometry?.dispose();for(const m of (Array.isArray(o.material)?o.material:[o.material]).filter(Boolean)){for(const v of Object.values(m))if(v?.isTexture)v.dispose();m.dispose();}});resolve(false);return;}
         model = gltf.scene;
         // 归一化：最大维度 2.1；底对齐——脚踩 y=-1.05（适配任意资产外形）
         const box = new THREE.Box3().setFromObject(model);
@@ -90,7 +93,9 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
           }
         });
         root.add(model);
-        scene.environment = pmrem.fromScene(envScene, 0.04).texture;
+        envTarget = pmrem.fromScene(envScene, 0.04);
+        scene.environment = envTarget.texture;
+        envLight.geometry.dispose();envLight.material.dispose();pmrem.dispose();
         loadState.ok = true;
         resolve(true);
       },
@@ -111,7 +116,7 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
 
   // 相机基准位：视轴向左偏移，使模型（原点）落在画面右三分之一；
   // 初始角 0.55 rad：微侧脸入画（电影感），转速放慢保持庄重
-  const BASE = { px: 1.35, py: 0.42, pz: 5.1, lx: -0.85, ly: -0.05 };
+  const BASE = { px: 0.4, py: 0.35, pz: 4.5, lx: 0, ly: -0.05 };
   camera.position.set(BASE.px, BASE.py, BASE.pz);
   camera.lookAt(BASE.lx, BASE.ly, 0);
 
@@ -128,8 +133,7 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
     if (model && !reduced) {
       // -1.62 rad：与 gallery best yaw 相对（相机方位角 vs 模型自转互为相反）；
       // 微侧脸入画，慢速自转
-      root.rotation.y = -1.62 + 0.35 + t * 0.055;
-      root.position.y = Math.sin(t * 0.7) * 0.026;    // 呼吸浮动
+      root.rotation.y = -1.42 + Math.sin(t * 0.16) * 0.16;
       camera.position.x = BASE.px + Math.sin(t * 0.23) * 0.1;
       camera.position.y = BASE.py - scrollY * 0.0011; // 滚动视差：镜头下沉
       camera.lookAt(BASE.lx, BASE.ly + scrollY * 0.0005, 0);
@@ -138,7 +142,8 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
   }
 
   function start() {
-    if (running) return;
+    if (running || disposed || document.hidden || !inView) return;
+    if(reduced){composer.render();return;}
     running = true;
     clock.start();
     tick();
@@ -149,22 +154,26 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
   }
 
   // 视口外暂停（省电）
-  const io = new IntersectionObserver(([e]) => { e.isIntersecting ? start() : stop(); }, { threshold: 0.02 });
+  const io = new IntersectionObserver(([e]) => { inView=e.isIntersecting; inView ? start() : stop(); }, { threshold: 0.02 });
   io.observe(container);
   const onScroll = () => { scrollY = window.scrollY || 0; };
   if (!reduced) window.addEventListener('scroll', onScroll, { passive: true });
 
-  const ro = new ResizeObserver(() => frame());
+  const onVisibility=()=>document.hidden?stop():start();
+  document.addEventListener('visibilitychange',onVisibility);
+  const ro = new ResizeObserver(() => { frame();if(reduced&&!disposed)composer.render(); });
   ro.observe(container);
   frame();
   if (reduced) { // 静态单帧
-    loadPromise.then(() => { frame(); composer.render(); });
+    loadPromise.then(() => { if(!disposed){frame(); composer.render();} });
   }
 
   function dispose() {
+    disposed=true;
     stop();
     io.disconnect(); ro.disconnect();
     window.removeEventListener('scroll', onScroll);
+    document.removeEventListener('visibilitychange',onVisibility);
     scene.traverse((o) => {
       if (o.isMesh) {
         o.geometry?.dispose();
@@ -176,6 +185,7 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
       }
     });
     pmrem.dispose();
+    envTarget?.dispose();envLight.geometry.dispose();envLight.material.dispose();
     composer.dispose();
     renderer.dispose();
     renderer.domElement.remove();

@@ -1,15 +1,7 @@
 // FORMA V5 — 品牌外壳：顶栏 / 导航 / 页脚 / 路由出口
 import { el } from '../utils/dom.js';
 
-// 抽象脸谱几何（自绘，无第三方素材）：外圆取「面」，内折线取「谱式」，
-// 底边一道横线取「台口」——三者构成可缩放至 16px 的识别符号。
-const BRAND_MARK = `
-<svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
-  <circle cx="20" cy="19" r="14.2" stroke="currentColor" stroke-width="1.4" opacity=".92"/>
-  <path d="M20 8.4v11.2M20 19.6l-5.4 4.6M20 19.6l5.4 4.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity=".82"/>
-  <path d="M13.6 28.2h12.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity=".62"/>
-  <path d="M6.6 33.4h26.8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" opacity=".4"/>
-</svg>`;
+import { createBrand, installBrandIcon } from './brand.js';
 
 // 仅列出当前阶段已实装的路由；新页面完工后再追加，避免死链。
 export const NAV_ITEMS = [
@@ -21,13 +13,8 @@ export const NAV_ITEMS = [
 
 export function buildV5Shell({ version = 'V5' } = {}) {
   // ---- 顶栏 ----
-  const brand = el('a', { class: 'v5-brand', href: '#/', 'aria-label': 'FORMA 首页' },
-    el('span', { class: 'v5-brand-mark', html: BRAND_MARK }),
-    el('span', { class: 'v5-brand-text' },
-      document.createTextNode('FORMA'),
-      el('span', { class: 'v5-brand-ver' }, version),
-    ),
-  );
+  installBrandIcon();
+  const brand = createBrand({href:'#/'});
 
   const nav = el('nav', { class: 'v5-nav', id: 'v5Nav', 'aria-label': '主导航' });
   for (const item of NAV_ITEMS) {
@@ -35,7 +22,7 @@ export function buildV5Shell({ version = 'V5' } = {}) {
       class: 'v5-nav-link',
       href: '#' + item.to,
       'data-match': item.match,
-      onclick: () => { nav.setAttribute('data-open', 'false'); },
+      onclick: () => { nav.setAttribute('data-open', 'false'); toggle.setAttribute('aria-expanded', 'false'); },
     }, item.label));
   }
 
@@ -58,7 +45,7 @@ export function buildV5Shell({ version = 'V5' } = {}) {
   const footer = el('footer', { class: 'v5-footer' },
     el('div', { class: 'v5-footer-grid' },
       el('div', { class: 'v5-footer-brand' },
-        el('span', { class: 'v5-brand-mark', style: { width: '22px', height: '22px' }, html: BRAND_MARK }),
+        createBrand({size:'small'}),
         el('p', { class: 'v5-footer-tag' },
           'FORMA 是一个面向数字文化遗产的三维创作平台：以琼剧手办为对象，贯通展示、分析、修复、优化与导出的完整资产生产链路。'),
       ),
@@ -75,8 +62,8 @@ export function buildV5Shell({ version = 'V5' } = {}) {
         // 邮箱不在这里重复：首页与作品详情页各自有专区内，避免同页两份联系方式
         el('div', { class: 'v5-footer-col' },
           el('h4', {}, '联系'),
-          el('a', { href: '#/' }, '首页联系方式'),
-          el('a', { href: '#/work/sheng' }, '作品详情联系方式'),
+          el('a', { href: '#/?section=contact' }, '邮件联系'),
+
         ),
       ),
     ),
