@@ -9,8 +9,10 @@ export const CONTACT_EMAILS = ['haorongli09@outlook.com', 'haorongli09@gmail.com
 // 回退不是装饰——file://、无窗口焦点的自动化环境、部分旧浏览器都会拒绝
 // navigator.clipboard，此时若直接放弃，按钮就成了「点了没反应」的假控件。
 function legacyCopy(text) {
+  let ta;
+  const focus = document.activeElement;
   try {
-    const ta = document.createElement('textarea');
+    ta = document.createElement('textarea');
     ta.value = text;
     ta.setAttribute('readonly', '');
     ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
@@ -18,18 +20,21 @@ function legacyCopy(text) {
     ta.select();
     ta.setSelectionRange(0, text.length);
     const ok = document.execCommand('copy');
-    ta.remove();
     return ok;
   } catch { return false; }
+  finally { ta?.remove(); focus?.focus({preventScroll:true}); }
 }
 
 const copyTimers = new WeakMap();
 async function copyText(text, btn) {
+  if (btn?.disabled) return false;
+  if (btn) { clearTimeout(copyTimers.get(btn)); btn.textContent = '复制中…'; btn.disabled = true; }
   let done = false;
   try {
     await navigator.clipboard.writeText(text);
     done = true;
   } catch { done = legacyCopy(text); }
+  if (btn) { btn.disabled = false; btn.textContent = '复制'; }
 
   if (done) {
     toast('已复制 ' + text, 'ok', 2000);

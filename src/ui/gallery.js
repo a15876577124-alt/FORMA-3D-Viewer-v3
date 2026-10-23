@@ -127,7 +127,15 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
   );
   sidebar.prepend(curation);
   const caption=el('div',{class:'gl-caption'}),strip=el('div',{class:'gl-selection','aria-label':'五件作品'});
-  const footer=el('div',{class:'gl-stage-controls'},caption,actions,strip);
+  const position=el('span',{'aria-live':'polite'},'五件作品 · 可横向浏览');
+  const previous=el('button',{type:'button',id:'glPrevious'},'← 上一件');
+  const next=el('button',{type:'button',id:'glNext'},'下一件 →');
+  const selectionNav=el('div',{class:'gl-selection-nav'},previous,position,next);
+  const footer=el('div',{class:'gl-stage-controls'},caption,actions,selectionNav,strip);
+  for(const [button,delta] of [[previous,-1],[next,1]])button.addEventListener('click',()=>{
+    const cards=[...strip.querySelectorAll('.asset')],index=cards.findIndex(n=>n.classList.contains('selected'));
+    cards[index+delta]?.click();
+  });
   workspace.append(footer);
   const secondary=el('div',{class:'gl-secondary'},actions.querySelector('#glCurate'),actions.querySelector('#glShot'));
   drawerBody.prepend(secondary);
@@ -180,6 +188,14 @@ export function buildGalleryMode({ viewer, capture, resetView, onToggleRail }) {
 
   function syncInfo(entry) {
     if (!entry) return;
+    const cards=[...strip.querySelectorAll('.asset')],index=cards.findIndex(n=>n.dataset.id===entry.id);
+    previous.disabled=index<=0;next.disabled=index===cards.length-1;
+    position.textContent=index<0?'五件作品 · 可横向浏览':`${index+1} / ${cards.length} · 可横向浏览`;
+    if(index>=0)requestAnimationFrame(()=>{
+      if(!active)return;
+      const card=cards[index],r=card.getBoundingClientRect(),s=strip.getBoundingClientRect();
+      strip.scrollLeft+=r.left-s.left-(s.width-r.width)/2;
+    });
     const st = viewer.stats || {};
     info.querySelector('#glTitle').textContent = entry.name || '—';
     info.querySelector('#glSub').textContent = entry.sub || '';

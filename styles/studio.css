@@ -506,6 +506,10 @@ body.mode-gallery .gl-stage-controls { display:flex; flex-direction:column; flex
 .gl-stage-controls .gl-actions button { justify-content:center; font:500 13px/1.4 var(--v5-ff-sans); min-height:44px; border:1px solid var(--v5-line-control); border-radius:6px; background:var(--v5-bg-surface); }
 .gl-stage-controls .gl-actions button.active { color:var(--v5-gold-300); border-color:var(--v5-gold-400); }
 .gl-selection { min-width:0; overflow-x:auto; scrollbar-width:thin; scrollbar-color:var(--v5-line-control) transparent; }
+.gl-selection-nav { display:none; align-items:center; justify-content:space-between; gap:8px; color:var(--v5-tx-lo); font-size:12px; }
+@media(max-width:1199px) { .gl-selection-nav { display:flex; } }
+.gl-selection-nav button { color:var(--v5-gold-300); background:transparent; border:1px solid var(--v5-line-control); border-radius:4px; padding:8px; min-height:36px; font:inherit; cursor:pointer; }
+.gl-selection-nav button:disabled { opacity:.45; cursor:default; }
 .gl-selection #groupFigurines { display:grid; grid-template-columns:repeat(5,minmax(116px,1fr)); padding:0; gap:8px; }
 .gl-selection .asset { display:flex; flex-direction:column; text-align:left; align-items:stretch; gap:8px; padding:8px; border-radius:0; border:0; border-bottom:2px solid transparent; }
 .gl-selection .asset.selected { border-color:var(--v5-gold-300); background:rgb(217 196 160 / .04); }
@@ -532,7 +536,7 @@ body.mode-gallery #openInspector { display:none; }
   body.mode-gallery .topbar { min-height:44px; height:44px; }
   body.mode-gallery .mobile-gallery { display:none; }
 }
-@media (max-width:767px) {
+@media (max-width:767px), (max-height:650px) {
   body.mode-gallery { height:auto; min-height:100%; overflow-y:auto; overflow-x:clip; }
   body.mode-gallery .v5-shell { height:auto; min-height:100dvh; overflow:visible; }
   body.mode-gallery #app { height:auto; }
@@ -541,6 +545,11 @@ body.mode-gallery #openInspector { display:none; }
   .gl-selection .asset-thumb { height:88px; }
   .gl-caption .obj-name { font-size:22px; }
   body.mode-gallery .vp-meta-tl { top:12px; left:12px; }
+}
+/* At native browser zoom, keep an actual model viewport and scroll the middle column. */
+@media (max-height:600px) {
+  body.mode-studio main.workspace { overflow-y:auto; }
+  body.mode-studio .viewport-shell { flex:none; height:320px; min-height:320px; }
 }
 @keyframes glSlide { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 .gl-drawer-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--v5-line); }

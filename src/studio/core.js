@@ -653,10 +653,13 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   // 导出 = 对当前资产跑真实的 convert 算子（后端真实产出文件）
+  let exporting = false;
   async function exportAs(to, version) {
+    if (exporting) return null;
     if (!requireSelection()) return null;
     if (!requireOnline() || !state.selectedAsset) { emit('log', { tone: 'warn', text: '请先连接并选择资产' }); return null; }
     const ticket=selectionTicket;
+    exporting = true;
     emit('progress', { busy: true, text: `导出为 .${to}…` });
     try {
       const res = await pipelineApi.run(state.selectedAsset, [{ op: 'convert', params: { to } }], state.confirmToken, false, version ?? state.selectedVersion);
@@ -670,13 +673,14 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       if(ticket!==selectionTicket)return null;
       if (e?.status === 409 && e?.data?.needConfirm) {
         state.confirmToken = e.data.token;
-        emit('confirm', { reasons: e.data.reasons || [] });
+        emit('confirm', { reasons: e.data.reasons || [], action: '导出' });
         emit('log', { tone: 'warn', text: '导出需确认——请再次点击导出' });
       } else {
         emit('log', { tone: 'err', text: '导出失败：' + (e?.message || e) });
       }
       return null;
     } finally {
+      exporting = false;
       emit('progress', { busy: false });
     }
   }

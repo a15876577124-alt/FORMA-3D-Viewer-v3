@@ -232,6 +232,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         else toast(payload.text, 'ok', 4000);
         break;
       case 'export':
+        dock.clearConfirm();labs.updateAll();break;
       case 'publish':
       case 'imported':
         labs.updateAll();
