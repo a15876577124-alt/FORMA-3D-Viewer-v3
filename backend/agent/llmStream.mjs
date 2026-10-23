@@ -25,6 +25,7 @@ export async function streamLLM({ model, messages, tools, toolChoice, temperatur
   const rawChunkSample = [];
 
   for await (const chunk of cloud.llm.chat.completions.create(params)) {
+    signal?.throwIfAborted();
     const delta = chunk.choices?.[0]?.delta;
     if (delta?.content) content += delta.content;
     if (delta?.reasoning_content) reasoning += delta.reasoning_content;

@@ -32,7 +32,7 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
 
   const importBtn = act('stImportBtn', '导入', '把模型送入后端工作区并开始分析', () => fileInput.click(), 'st-btn-primary');
   const analyzeBtn = act('stAnalyzeBtn2', '分析', '调用后端重新生成真实资产报告', () => core.analyze());
-  const aiBtn = act('stAiBtn', 'AI 优化', '运行真实 LLM Agent：分析资产并给出处理建议', () => { core.runAgent(); });
+  const aiBtn = act('stAiBtn', 'AI 分析', '运行真实 LLM Agent：分析资产并给出处理建议', () => { core.runAgent(); });
   const batchBtnTop = act('stBatchBtnTop', '批处理', '对资源树勾选的资产批量执行当前算子', () => {
     const ids = getBatchIds?.() || [];
     if (!ids.length) { toast?.('先在左侧资源树勾选要批处理的资产', 'warn'); return; }

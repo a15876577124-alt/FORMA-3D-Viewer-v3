@@ -358,29 +358,31 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   // -------------------------------------------------------- Agent ----
-  async function runAgent({ goal, dryRun = true } = {}) {
-    if (!requireOnline()) return null;
-    if (!state.selectedAsset) { emit('log', { tone: 'warn', text: '请先选择资产' }); return null; }
-    emit('progress', { busy: true, text: 'AI Agent 运行中…' });
+  let agentRequestId = null;
+  async function cancelAgent() { if(agentRequestId)await pipelineApi.agentCancel(agentRequestId); }
+  async function runAgent({ goal, dryRun = true, resume = false } = {}) {
+    if (!requireSelection() || agentRequestId) return null;
+    const ticket=selectionTicket, id=state.selectedAsset, version=state.selectedVersion;
+    const pending=resume ? state.lastAgent?.log : null;
+    if(resume && (pending?.status!=='awaiting_confirmation'||pending.assetId!==id))return null;
+    agentRequestId=crypto.randomUUID();
+    emit('progress', {busy:true,text:'AI Agent 运行中…'});
     try {
-      const res = await pipelineApi.agentRun({
-        assetId: state.selectedAsset,
-        goal: goal || '分析该资产的结构、材质与贴图问题，给出具体的处理建议（不要实际执行算子）',
-        dryRun,
-      });
-      state.lastAgent = res;
-      state.history.push({ at: Date.now(), kind: 'agent', runId: res.runId, model: res.log?.model, rounds: res.log?.rounds?.length });
-      try { appState?.addRecentRun?.(res.runId); } catch { /* 可选 */ }
-      emit('agent', res);
-      emit('history', state.history);
-      emit('log', { tone: res.log?.errors?.length ? 'err' : 'ok', text: res.log?.errors?.length ? 'AI 分析未完成：' + res.log.errors.join('；') : `AI 分析完成 · ${res.log?.model || 'LLM'} · ${res.log?.rounds?.length || 0} 轮` });
+      const res=await pipelineApi.agentRun({assetId:id,baseVersion:version,requestId:agentRequestId,
+        goal:goal||'分析当前资产，调用工具读取报告并提出建议，不实际执行。',dryRun,
+        resumeRunId:pending?.runId,confirmToken:pending?.confirmation?.token});
+      state.history.push({at:Date.now(),kind:'agent',runId:res.runId,model:res.log.model,rounds:res.log.rounds.length});
+      emit('history',state.history);
+      if(ticket!==selectionTicket)return res;
+      if(!res.log.dryRun && res.log.currentVersion!==version){
+        await refreshAssets();await selectAsset(id,res.log.currentVersion,{keepRun:true});
+      }
+      state.lastAgent=res;
+      emit('agent',res);
+      emit('log',{tone:res.log.errors.length?'err':'ok',text:'Agent '+res.log.status+(res.log.errors.length?'：'+res.log.errors.join('；'):'')});
       return res;
-    } catch (e) {
-      emit('log', { tone: 'err', text: 'AI 分析失败：' + (e?.message || e) });
-      return null;
-    } finally {
-      emit('progress', { busy: false });
-    }
+    } catch(e) {emit('log',{tone:'err',text:'AI 调用失败：'+e.message});return null;}
+    finally{agentRequestId=null;emit('progress',{busy:false});}
   }
 
   // AI 建议 → 算子草稿：把 Agent 日志里真实调用过的算子转成待确认的勾选状态。
@@ -591,7 +593,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     connect, probe, refreshAssets,
     selectAsset, setOpEnabled, setOpParams, selectedOps, applyPreset,
     analyze, detectTextures, extractTextures,
-    run, runBatch, runAgent, adoptAgentSuggestion,
+    run, runBatch, runAgent, cancelAgent, adoptAgentSuggestion,
     showCompare, compareVersions, exitCompare, setCompareSplit, compareStats,
     importFile, importFiles, prepareGLB, saveMaterial, publish, exportAs, listVersions, toFileUrl,
   };

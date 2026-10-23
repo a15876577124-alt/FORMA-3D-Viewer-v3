@@ -29,6 +29,7 @@ export const TOOLS = [
     parameters: { type: 'object', properties: { assetId: { type: 'string' } }, required: ['assetId'] },
     mutating: false, confirm: 'none',
     handler: (ctx, args) => {
+      if (ctx.analyze) return ctx.analyze(args);
       const id = String(args.assetId);
       const rp = path.join(ctx.assetsDir, id, 'report.json');
       if (!fs.existsSync(rp)) return { error: `资产 ${id} 无分析报告，请先 analyze` };
@@ -89,7 +90,7 @@ export const TOOLS = [
       if (typeof ctx.runOp !== 'function') {
         return { status: 'wouldApply', assetId: args.assetId, op: args.op, params: args.params || {}, note: '算子层未接线（M3）' };
       }
-      return ctx.runOp(args);
+      return ctx.runOp(args, ctx);
     },
   },
   {
@@ -119,7 +120,7 @@ export const TOOLS = [
     mutating: true, confirm: 'auto',
     handler: (ctx, args) => {
       if (typeof ctx.exportAsset !== 'function') return { status: 'not-available', note: '导出未接线（M3）' };
-      return ctx.exportAsset(args);
+      return ctx.exportAsset(args, ctx);
     },
   },
   {
@@ -153,12 +154,15 @@ export async function dispatchTool(ctx, name, args) {
   const tool = getTool(name);
   if (!tool) return { ok: false, error: `未知工具: ${name}` };
   try {
-    if (args?.assetId !== undefined) assertSafeId(args.assetId);
-    if (args?.version !== undefined && (!Number.isInteger(args.version) || args.version < 1)) throw new Error('version 必须是正整数');
+    ctx.signal?.throwIfAborted();
+    args = args || {};
+    if (args.assetId !== undefined) assertSafeId(args.assetId);
+    if (ctx.assetId && args.assetId && args.assetId !== ctx.assetId) throw new Error('Agent 只能操作当前选中的资产');
+    if (args?.version !== undefined && (!Number.isInteger(args.version) || args.version < 0)) throw new Error('version 必须是非负整数');
     if (ctx.dryRun && tool.mutating) return { ok: true, name, args, result: { status: 'wouldApply', ...args } };
     const result = await tool.handler(ctx, args);
     return { ok: true, name, args, result };
   } catch (e) {
-    return { ok: false, name, args, error: e.message };
+    return { ok: false, name, args, error: e.message, status:e.status, needConfirm:e.needConfirm, token:e.token, reasons:e.reasons, result:e.result };
   }
 }

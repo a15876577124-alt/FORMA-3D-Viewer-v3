@@ -48,159 +48,100 @@ function isRepeat(lastTwo, name, argsRaw) {
 export async function runAgent({
   assetId, goal, model = DEFAULT_AGENT_MODEL, protocol = 'native',
   maxRounds = 8, maxToolCalls = 24, wallClockMs = 180000, dryRun = true,
-  onEvent = () => {}, llmFn, ctx = {},
+  onEvent = () => {}, llmFn, ctx = {}, signal, resumeRunId, confirmToken,
 }) {
   assertSafeId(assetId);
-  if (process.env.FORMA_LLM_OFFLINE === '1') {
-    throw new AgentError('LLM 离线（FORMA_LLM_OFFLINE=1），无法生成 AI 决策', 503);
+  if (process.env.FORMA_LLM_OFFLINE === '1') throw new AgentError('LLM 离线（FORMA_LLM_OFFLINE=1）',503);
+  const assetsDir = ctx.assetsDir || path.join(ROOT,'backend/workspace/assets');
+  const runDir = path.join(assetsDir,assetId,'runs');
+  fs.mkdirSync(runDir,{recursive:true});
+  let previous;
+  if (resumeRunId) {
+    assertSafeId(resumeRunId);
+    previous = JSON.parse(fs.readFileSync(path.join(runDir,resumeRunId+'.json'),'utf8'));
+    if (previous.assetId !== assetId || previous.status !== 'awaiting_confirmation' || !confirmToken || confirmToken !== previous.confirmation?.token) throw new AgentError('确认与待恢复任务不匹配',409);
+    // Durable, exclusive claim prevents replay even across server processes/restarts.
+    try {fs.closeSync(fs.openSync(path.join(runDir,resumeRunId+'.resumed'),'wx'));}
+    catch(e){if(e.code==='EEXIST')throw new AgentError('该任务已经恢复过，请查看最新运行记录',409);throw e;}
+    ({goal,model,protocol,dryRun} = previous);
+    ctx.setVersion?.(previous.currentVersion);
   }
-  const modelId = model;
-  const proto = protocol === 'auto' ? resolveProtocol(modelId) : protocol;
-  const llm = llmFn || ((p) => streamLLM(p));
-
-  const assetsDir = ctx.assetsDir || path.join(ROOT, 'backend', 'workspace', 'assets');
-  const toolCtx = {
-    assetsDir, dryRun,
-    runOp: ctx.runOp, verify: ctx.verify, compare: ctx.compare, exportAsset: ctx.exportAsset,
-  };
-
-  const runId = `run_${Date.now()}_${crypto.randomBytes(2).toString('hex')}`;
-  const log = {
-    runId, assetId, model: modelId, protocol: proto, dryRun,
-    startedAt: nowIso(), endedAt: null, totalMs: 0,
-    goal, rounds: [], toolStats: {}, finish: null, rawChunkSample: [],
-    errors: [],
-  };
-  const startedAtMs = Date.now();
-
-  const nativeTools = toNativeTools();
-  const promptSpec = toPromptSpec();
-  const messages = proto === 'prompt'
-    ? [{ role: 'system', content: `${SYSTEM_PROMPT}\n\n可用工具：\n${promptSpec}\n\n每次调用工具时，只输出一行 JSON：{"tool":"<名>","args":{...}}，不要输出解释文字。` },
-       { role: 'user', content: goal }]
-    : [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: goal }];
-
-  const lastTwoCalls = []; // 死循环检测
-  let totalToolCalls = 0;
-
-  for (let round = 1; round <= maxRounds; round++) {
-    const roundRec = { i: round, llmMs: 0, usage: null, rawText: '', reasoning: '', toolCalls: [], errors: [] };
-    const t0 = Date.now();
-    let res;
-    try {
-      res = await llm({
-        model: modelId,
-        messages,
-        tools: proto === 'prompt' ? undefined : nativeTools,
-        toolChoice: proto === 'prompt' ? undefined : 'auto',
-        temperature: 0.2,
-      });
-    } catch (e) {
-      roundRec.errors.push(`LLM 调用失败: ${e.message}`);
-      log.rounds.push(roundRec);
-      log.errors.push(`round ${round}: ${e.message}`);
-      break;
-    }
-    roundRec.llmMs = Date.now() - t0;
-    roundRec.usage = res.usage || null;
-    roundRec.rawText = res.content || '';
-    roundRec.reasoning = res.reasoning || '';
-    if (res.rawChunkSample?.length) log.rawChunkSample.push(...res.rawChunkSample.slice(0, 5));
-
-    // 收集工具调用（native 来自 toolCalls；prompt 从文本解析）
-    let calls = res.toolCalls || [];
-    if (proto === 'prompt' && calls.length === 0 && res.content) {
-      calls = parsePromptToolCall(res.content);
-    }
-
-    if (calls.length === 0) {
-      // 无工具调用：视为最终答案
-      log.finish = { summary: (res.content || '').trim(), appliedOps: [] };
-      log.rounds.push(roundRec);
-      break;
-    }
-
-    // 回灌 assistant 消息
-    if (proto === 'prompt') {
-      messages.push({ role: 'assistant', content: res.content || '' });
-    } else {
-      messages.push({
-        role: 'assistant', content: res.content || '',
-        tool_calls: calls.map((c) => ({ id: c.id, type: 'function', function: { name: c.name, arguments: c.argumentsRaw || JSON.stringify(c.arguments) } })),
-      });
-    }
-
-    for (const call of calls) {
-      if (totalToolCalls >= maxToolCalls || log.finish) break;
-      totalToolCalls++;
-      const t1 = Date.now();
-      const disp = await dispatchTool(toolCtx, call.name, call.arguments);
-      const rec = {
-        id: call.id, name: call.name,
-        argsText: call.argumentsRaw || JSON.stringify(call.arguments),
-        parsed: call.arguments,
-        ok: disp.ok, ms: Date.now() - t1,
-        resultBytes: disp.ok ? JSON.stringify(disp.result).length : 0,
-        error: disp.ok ? null : disp.error,
-      };
-      roundRec.toolCalls.push(rec);
-      log.toolStats[call.name] = (log.toolStats[call.name] || 0) + 1;
-
-      if (disp.ok && call.name === 'finish') {
-        log.finish = disp.result;
-      }
-
-      // 工具失败也回灌结构化结果，不能序列化 undefined 令主循环崩溃。
-      const toolResult = disp.ok ? disp.result : { error: disp.error };
-      // 回灌 tool 结果
-      if (proto === 'prompt') {
-        messages.push({ role: 'user', content: `工具 ${call.name} 返回：${JSON.stringify(toolResult).slice(0, 2000)}` });
-      } else {
-        messages.push({ role: 'tool', tool_call_id: call.id, content: JSON.stringify(toolResult).slice(0, 4000) });
-      }
-
-      onEvent({ type: 'tool', runId, round, tool: call.name, ok: disp.ok, ms: rec.ms });
-
-      if (isRepeat(lastTwoCalls, call.name, rec.argsText)) {
-        // 死循环：强制收尾
-        messages.push({ role: 'user', content: '检测到重复调用，请立即用 finish 总结当前结论，不要再次调用相同工具。' });
-      }
-      lastTwoCalls.push(`${call.name}|${rec.argsText}`);
-      if (lastTwoCalls.length > 2) lastTwoCalls.shift();
-    }
-
-    log.rounds.push(roundRec);
-    if (log.finish) break;
-    if (totalToolCalls >= maxToolCalls) {
-      log.errors.push(`达到工具调用上限 ${maxToolCalls}`);
-      break;
-    }
-    if (Date.now() - startedAtMs > wallClockMs) {
-      log.errors.push(`超过墙钟上限 ${wallClockMs}ms`);
-      break;
-    }
+  const proto = protocol === 'auto' ? resolveProtocol(model) : protocol;
+  const llm = llmFn || streamLLM;
+  const deadline = AbortSignal.timeout(Math.max(1,Math.min(Number(wallClockMs)||180000,180000)));
+  const abort = signal ? AbortSignal.any([signal,deadline]) : deadline;
+  const toolCtx = {...ctx, assetsDir, assetId, dryRun, signal:abort, confirmToken:previous ? confirmToken : undefined};
+  const runId = 'run_'+Date.now()+'_'+crypto.randomBytes(4).toString('hex');
+  const log = {runId,assetId,model,protocol:proto,dryRun,goal,parentRunId:resumeRunId,
+    startedAt:nowIso(),endedAt:null,totalMs:0,rounds:[],toolStats:{},finish:null,rawChunkSample:[],errors:[],status:'running'};
+  const started = Date.now();
+  const messages = previous?.messages || [
+    {role:'system',content:SYSTEM_PROMPT + '\n当前资产 ID: '+assetId+'；起始版本: '+(ctx.getVersion?.()||0)+'。后续工具自动使用前一步通过后验的版本。可用算子及参数：'+JSON.stringify(ctx.operationSpec||[]) +(proto==='prompt'?'\n每次只输出一行 JSON {"tool":"工具名","args":{}}。\n'+toPromptSpec():'')},
+    {role:'user',content:goal}];
+  const lastTwoCalls=[];
+  let totalToolCalls=0;
+  // Only race read-only LLM waits. A running asset operator settles before cancellation returns.
+  async function query(params) {
+    abort.throwIfAborted();
+    let listener;
+    try {return await Promise.race([llm({...params,signal:abort}),new Promise((_,reject)=>{listener=()=>reject(abort.reason);abort.addEventListener('abort',listener,{once:true});})]);}
+    finally {abort.removeEventListener('abort',listener);}
   }
-
-  log.endedAt = nowIso();
-  log.totalMs = Date.now() - startedAtMs;
-
-  // 写执行日志（dryRun 也写，用于审计）
-  const runDir = path.join(assetsDir, assetId, 'runs');
-  fs.mkdirSync(runDir, { recursive: true });
-  const logPath = path.join(runDir, `${runId}.json`);
-  fs.writeFileSync(logPath, JSON.stringify(log, null, 2));
-  log.logPath = logPath;
-
+  try {
+    for(let round=1;round<=Math.max(1,Math.min(maxRounds,16));round++) {
+      abort.throwIfAborted();
+      const rec={i:round,llmMs:0,usage:null,rawText:'',reasoning:'',toolCalls:[],errors:[]};
+      log.rounds.push(rec);
+      let calls;
+      if (round===1 && previous) calls=previous.pendingCalls;
+      else {
+        const t=Date.now();
+        const res=await query({model,messages,tools:proto==='prompt'?undefined:toNativeTools(),toolChoice:proto==='prompt'?undefined:'auto',temperature:0.2});
+        Object.assign(rec,{llmMs:Date.now()-t,usage:res.usage||null,rawText:res.content||'',reasoning:res.reasoning||''});
+        log.rawChunkSample.push(...(res.rawChunkSample||[]).slice(0,5));
+        calls=res.toolCalls||[];
+        if(proto==='prompt'&&!calls.length)calls=parsePromptToolCall(res.content||'');
+        if(!calls.length){log.finish={summary:res.content||'',appliedOps:[]};break;}
+        messages.push(proto==='prompt'?{role:'assistant',content:res.content||''}:{role:'assistant',content:res.content||'',tool_calls:calls.map(c=>({id:c.id,type:'function',function:{name:c.name,arguments:c.argumentsRaw||JSON.stringify(c.arguments)}}))});
+      }
+      for(let i=0;i<calls.length;i++) {
+        abort.throwIfAborted();
+        if(++totalToolCalls>Math.min(maxToolCalls,64))throw new Error('达到工具调用上限');
+        const call=calls[i],t=Date.now();
+        const disp=await dispatchTool(toolCtx,call.name,call.arguments);
+        toolCtx.confirmToken=undefined;
+        const result=disp.ok?disp.result:disp;
+        const argsText=call.argumentsRaw||JSON.stringify(call.arguments);
+        rec.toolCalls.push({id:call.id,name:call.name,argsText,parsed:call.arguments,ok:disp.ok,ms:Date.now()-t,resultBytes:JSON.stringify(result).length,error:disp.error||null,result});
+        log.toolStats[call.name]=(log.toolStats[call.name]||0)+1;
+        onEvent({type:'tool',runId,round,tool:call.name,ok:disp.ok});
+        if(disp.needConfirm){log.status='awaiting_confirmation';log.confirmation={token:disp.token,reasons:disp.reasons,call};log.pendingCalls=calls.slice(i);break;}
+        messages.push(proto==='prompt'?{role:'user',content:'工具 '+call.name+' 返回：'+JSON.stringify(result).slice(0,12000)}:{role:'tool',tool_call_id:call.id,content:JSON.stringify(result).slice(0,12000)});
+        abort.throwIfAborted();
+        if(!disp.ok)throw new Error('工具 '+call.name+' 失败: '+disp.error);
+        if(call.name==='finish'){log.finish=disp.result;break;}
+        if(isRepeat(lastTwoCalls,call.name,argsText))messages.push({role:'user',content:'检测到重复调用，请立即用 finish 总结。'});
+        lastTwoCalls.push(call.name+'|'+argsText);if(lastTwoCalls.length>2)lastTwoCalls.shift();
+      }
+      if(log.finish||log.status==='awaiting_confirmation')break;
+    }
+    if(log.status==='running') {log.status=log.finish?'complete':'failed';if(!log.finish)log.errors.push('达到轮数上限');}
+  } catch(e) {
+    log.status=abort.aborted?(deadline.aborted?'timeout':'cancelled'):'failed';
+    log.errors.push(e.message||String(e));
+  }
+  log.currentVersion=ctx.getVersion?.()||0;
+  log.messages=messages;
+  log.endedAt=nowIso();log.totalMs=Date.now()-started;
+  log.logPath=path.join(runDir,runId+'.json');
+  fs.writeFileSync(log.logPath,JSON.stringify(log,null,2),{flag:'wx'});
   return log;
 }
 
-// prompt 协议：从文本解析首个 {"tool":..,"args":..}
 function parsePromptToolCall(text) {
-  const m = /(\{[^{}]*"tool"\s*:\s*"[^"]+"[^{}]*\})/.exec(text);
-  if (!m) return [];
+  // Nested parameter objects are valid; parse complete JSON, including fenced JSON.
   try {
-    const obj = JSON.parse(m[1]);
-    const args = obj.args ?? obj.arguments ?? {};
-    return [{ id: `call_prompt_${Date.now()}`, name: String(obj.tool), arguments: args, argumentsRaw: JSON.stringify(args) }];
-  } catch { return []; }
+    const value=JSON.parse(text.trim().replace(/^```(?:json)?\s*/,'').replace(/\s*```$/,''));
+    return value.tool?[{id:'prompt_'+Date.now(),name:value.tool,arguments:value.args||value.arguments||{}}]:[];
+  } catch{return [];}
 }

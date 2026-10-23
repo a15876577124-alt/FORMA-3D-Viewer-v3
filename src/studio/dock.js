@@ -132,11 +132,24 @@ export function createDock({ core, toast, getBatchIds }) {
   adoptBtn.addEventListener('click', () => { core.adoptAgentSuggestion(); renderOps(); activate('process'); });
 
   // ---------------- Agent 日志 ----------------
+  let agentGoal = '分析资产，提出方案，再执行必要的无损优化并验证结果。';
   function renderAgent() {
     agent.innerHTML = '';
+    const goal = el('input',{class:'st-select',id:'stAgentGoal',value:agentGoal,'aria-label':'AI 任务目标'});
+    goal.addEventListener('input',()=>{agentGoal=goal.value;});
+    const button=(id,label,action)=>{const b=el('button',{id,class:'st-btn',type:'button'},label);b.addEventListener('click',action);return b;};
+    agent.append(el('div',{class:'st-agent-controls'},goal,
+      button('stAgentPreview','仅分析',()=>core.runAgent({goal:agentGoal,dryRun:true})),
+      button('stAgentExecute','执行 AI 任务',()=>core.runAgent({goal:agentGoal,dryRun:false})),
+      button('stAgentCancel','取消运行',()=>core.cancelAgent())));
     const res = core.state.lastAgent;
     if (!res) { agent.append(el('p', { class: 'st-hint' }, '还没有 AI 运行记录——顶部点「AI 优化」启动真实 LLM 调用。')); return; }
     const log = res.log || {};
+    if(log.status==='awaiting_confirmation'){
+      agent.append(el('p',{class:'st-confirm'},'确认以下操作后继续：'+JSON.stringify(log.confirmation.call.arguments)+'；'+(log.confirmation.reasons||[]).join('；')));
+      agent.append(button('stAgentResume','确认并继续',()=>core.runAgent({resume:true})));
+    }
+    agent.append(el('p',{class:'st-hint'},'状态：'+log.status+' · 当前结果 v'+log.currentVersion+(log.dryRun?' · 仅分析，无资产写入':'')));
     agent.append(el('div', { class: 'st-log-head' }, `模型 ${log.model || '—'} · ${(log.rounds || []).length} 轮 · ${log.totalMs || 0}ms · runId ${res.runId || '—'}`));
     for (const r of log.rounds || []) {
       const calls = (r.toolCalls || []).map((t) => t.name).join(', ') || '(纯文本)';

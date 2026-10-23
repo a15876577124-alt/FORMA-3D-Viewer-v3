@@ -43,6 +43,7 @@ export const pipelineApi = {
   ops: () => request('/ops'),
   capabilities: () => request('/ops/capabilities'),
   presets: () => request('/presets'),
+  agentCancel: requestId => request('/agent/cancel',{method:'POST',body:{requestId}}),
   agentTools: () => request('/agent/tools'),
   agentRun: (payload) => request('/agent/run', { method: 'POST', body: payload }),
   agentRuns: () => request('/agent/runs'),

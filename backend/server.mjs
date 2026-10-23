@@ -245,6 +245,14 @@ route('GET', '/api/agent/tools', async () => ({
   tools: TOOLS.map((t) => ({ name: t.name, description: t.description, parameters: t.parameters, mutating: t.mutating, confirm: t.confirm })),
 }));
 
+const activeAgents = new Map();
+route('POST', '/api/agent/cancel', async req => {
+  const body = await readJson(req);
+  const controller = activeAgents.get(assertSafeId(body.requestId));
+  controller?.abort(new Error('用户取消执行'));
+  return {cancelled:!!controller};
+});
+
 route('POST', '/api/agent/run', async (req) => {
   const body = await readJson(req);
   const assetId = assertSafeId(String(body?.assetId || ''));
@@ -253,11 +261,16 @@ route('POST', '/api/agent/run', async (req) => {
   const model = typeof body.model === 'string' ? body.model : undefined;
   const maxRounds = Number.isInteger(body.maxRounds) ? body.maxRounds : undefined;
   const dryRun = body.dryRun !== false; // 默认 dryRun，不写盘
-  const log = await runAgent({
-    assetId, goal, model, maxRounds, dryRun,
-    ctx: makeAgentCtx(),
-  });
-  return { runId: log.runId, log };
+  const source = resolveAssetSource(assetId,body.baseVersion ?? 0);
+  const requestId = assertSafeId(body.requestId || 'agent_'+Date.now());
+  if(activeAgents.has(requestId)) throw Object.assign(new Error('任务已经运行'),{status:409});
+  const controller = new AbortController();activeAgents.set(requestId,controller);
+  try {
+    const log = await runAgent({assetId,goal,model,maxRounds,dryRun,signal:controller.signal,
+      resumeRunId:body.resumeRunId,confirmToken:body.confirmToken,
+      ctx:makeAgentCtx({baseVersion:source.version})});
+    return {runId:log.runId,log};
+  } finally {activeAgents.delete(requestId);}
 });
 
 route('GET', '/api/agent/runs/:runId', async (req, params) => {

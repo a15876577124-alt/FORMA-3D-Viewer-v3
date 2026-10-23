@@ -4,11 +4,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertSafeId, PIPELINE_OUT_ROOT } from './paths.mjs';
-import { runOps, validateSchema } from './ops/index.mjs';
+import { runOps, validateSchema, listOps } from './ops/index.mjs';
 import { assessPolicy } from './policy.mjs';
 import { generateConfirmToken, verifyConfirmToken } from './gate.mjs';
 import { verifyPair } from './verify.mjs';
-import { resolveAssetSource } from './assetSource.mjs';
+import { describeAssetSource, resolveAssetSource } from './assetSource.mjs';
 import { analyzeBuffer } from './analyze.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -43,7 +43,8 @@ export function nextVersionDir(assetId) {
   }
 }
 
-export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = false, baseVersion = 0 }) {
+export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = false, baseVersion = 0, signal }) {
+  signal?.throwIfAborted();
   const id = assertSafeId(assetId);
   const meta = readMeta(id);
   const source = resolveAssetSource(id, baseVersion);
@@ -63,11 +64,12 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
 
   const policy = assessPolicy(meta.name, id, ops);
 
+  const gateId = baseVersion ? id + '@v' + baseVersion : id;
   // 确认门
-  if (policy.required && !verifyConfirmToken(confirmToken, id, ops)) {
+  if (policy.required && !verifyConfirmToken(confirmToken, gateId, ops)) {
     throw new PipelineError('该操作会改变外观/贴图，需人工确认', 409, {
       needConfirm: true,
-      token: generateConfirmToken(id, ops),
+      token: generateConfirmToken(gateId, ops),
       riskyOps: policy.riskyOps,
       reasons: policy.reasons,
     });
@@ -91,7 +93,7 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
   fs.writeFileSync(versionFile,JSON.stringify(versionMeta,null,2));
   try {
   const beforeReport = await analyzeBuffer(path.basename(inPath), fs.readFileSync(inPath), source.format, { baseDir: path.dirname(inPath) });
-  const { outPath, results } = await runOps({ inPath, outDir: dir, ops });
+  const { outPath, results } = await runOps({ inPath, outDir: dir, ops, signal });
 
   // 后验：逐算子对比其「输入 vs 输出」（而非原始 vs 最终）
   let verify = null;
@@ -139,32 +141,32 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
 }
 
 // Agent ctx 注入的三个函数（runOp / verify / compare / exportAsset）
-export function makeAgentCtx() {
+export function makeAgentCtx({ baseVersion = 0 } = {}) {
+  let currentVersion = baseVersion;
+  async function process({ assetId, op, params, version }, context = {}) {
+    const result = await runAssetPipeline({ assetId, baseVersion: version ?? currentVersion,
+      ops: [{op, params:params || {}}], confirmToken:context.confirmToken, signal:context.signal });
+    if (!result.verify?.pass) throw new PipelineError('后验失败，Agent 已停止；失败版本保留供检查', 422, {result});
+    currentVersion = result.version;
+    return result;
+  }
   return {
     assetsDir: ASSETS_DIR,
-    async runOp({ assetId, op, params }) {
-      // dryRun 语义由 agent 层决定；这里执行单算子真实 pipeline
-      return runAssetPipeline({ assetId, ops: [{ op, params: params || {} }] });
+    operationSpec: listOps(),
+    getVersion: () => currentVersion,
+    setVersion: version => { currentVersion = version; },
+    analyze: async ({assetId}) => describeAssetSource(assetId, currentVersion),
+    runOp: process,
+    async verify({ assetId, version = currentVersion }) {
+      const file = path.join(PIPELINE_OUT_ROOT, assetId+'-v'+version, 'verify.json');
+      return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file,'utf8')) : {status:'not-available', version};
     },
-    async verify({ assetId, version }) {
-      const dir = path.join(PIPELINE_OUT_ROOT, `${assetId}-v${version}`);
-      const vp = path.join(dir, 'verify.json');
-      if (!fs.existsSync(vp)) return { status: 'not-available', note: '该版本无后验记录' };
-      return JSON.parse(fs.readFileSync(vp, 'utf8'));
+    async compare({ assetId, version = currentVersion }) {
+      const dir = path.join(PIPELINE_OUT_ROOT, assetId+'-v'+version);
+      const before = JSON.parse(fs.readFileSync(path.join(dir,'report.before.json'),'utf8'));
+      const after = JSON.parse(fs.readFileSync(path.join(dir,'report.after.json'),'utf8'));
+      return {version, before:before.stats, after:after.stats, bytes:{before:before.file.bytes,after:after.file.bytes}};
     },
-    async compare({ assetId, version }) {
-      const dir = path.join(PIPELINE_OUT_ROOT, `${assetId}-v${version}`);
-      const before = JSON.parse(fs.readFileSync(path.join(dir, 'report.before.json'), 'utf8'));
-      const after = JSON.parse(fs.readFileSync(path.join(dir, 'report.after.json'), 'utf8'));
-      return {
-        before: { verts: before.stats.verts, tris: before.stats.tris, bytes: before.file.bytes },
-        after: { verts: after.stats.verts, tris: after.stats.tris, bytes: after.file.bytes },
-        delta: { verts: after.stats.verts - before.stats.verts, tris: after.stats.tris - before.stats.tris, bytes: after.file.bytes - before.file.bytes },
-      };
-    },
-    async exportAsset({ assetId, version, to }) {
-      const dir = path.join(PIPELINE_OUT_ROOT, `${assetId}-v${version}`);
-      return runAssetPipeline({ assetId, ops: [{ op: 'convert', params: { to } }] });
-    },
+    exportAsset: (args, context) => process({...args,op:'convert',params:{to:args.to}}, context),
   };
 }

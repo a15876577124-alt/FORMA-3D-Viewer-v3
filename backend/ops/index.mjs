@@ -54,7 +54,7 @@ function validateParams(name, params) {
 }
 
 // 链式执行一组算子。inPath 是原始文件；outDir 是版本目录；返回 { outPath, results }。
-export async function runOps({ inPath, outDir, ops, onStep = () => {} }) {
+export async function runOps({ inPath, outDir, ops, onStep = () => {}, signal }) {
   if (!Array.isArray(ops) || ops.length === 0) throw new OpError('ops 不能为空');
   fs.mkdirSync(outDir, { recursive: true });
 
@@ -68,6 +68,7 @@ export async function runOps({ inPath, outDir, ops, onStep = () => {} }) {
   let finalExt = path.extname(inPath).toLowerCase();
 
   for (let i = 0; i < ops.length; i++) {
+    signal?.throwIfAborted();
     const { op, params: rawParams } = ops[i];
     const params = validateParams(op, rawParams || {});
     const def = OPS[op];
@@ -84,6 +85,7 @@ export async function runOps({ inPath, outDir, ops, onStep = () => {} }) {
     const outPath = path.join(outDir, isLast ? `model${ext}` : `.tmp-${i}-${op}${ext}`);
     const t0 = Date.now();
     const result = await def.run({ inPath: currentIn, outPath, params, outDir });
+    signal?.throwIfAborted();
     result.op = op;
     result.params = params;
     result.inPath = currentIn;
