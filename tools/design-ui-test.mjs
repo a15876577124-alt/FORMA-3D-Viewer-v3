@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
+import {createHash} from 'node:crypto';
 import {launchBrowser} from './browser-test.mjs';
 const ROOT=process.cwd(),OUT=process.env.FORMA_TEST_OUTPUT_DIR,children=[],checks=[],errors=[];
 assert.equal(ROOT,process.env.FORMA_TEST_ISOLATED_ROOT);
@@ -15,6 +16,9 @@ async function start(script,env){return new Promise((resolve,reject)=>{
   p.stderr.on('data',b=>{log+=b;});p.once('error',reject);
 });}
 try{
+  for(const f of JSON.parse(fs.readFileSync('assets/brand/PROVENANCE.json','utf8')).files){
+    check('brand handoff bytes '+f.file,createHash('sha256').update(fs.readFileSync(path.join('assets/brand',f.file))).digest('hex')===f.sha256);
+  }
   const backend=await start('backend/server.mjs',{FORMA_BACKEND_PORT:'0'});
   const url=await start('serve.mjs',{PORT:'0',FORMA_BACKEND:backend});
   browser=await launchBrowser();const page=await browser.newPage();
@@ -112,6 +116,7 @@ try{
   check('S01 double click submits once',requests.length===failedCount+2);
   check('S01 real validated version clears draft',await page.evaluate(()=>!window.__FORMA.studio.state.materialDirty&&window.__FORMA.studio.state.lastRun?.verify.pass));
   await page.evaluate(()=>window.__FORMA.studio.core.exitCompare());
+  await page.waitForFunction(()=>window.__FORMA.studio.state.materialSaveStatus==='idle');
   for(const width of [1440,768,390]){
     await page.setViewport({width,height:900});
     check('S04 Studio fits '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -134,6 +139,28 @@ try{
   await page.mouse.move(700,500);await page.mouse.wheel({deltaY:6000});
   await page.waitForFunction(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2);
   check('public scrolling restored after Studio',await page.evaluate(()=>scrollY>0));
+  check('brand V2 never loads before interaction',await page.evaluate(()=>!performance.getEntriesByType('resource').some(r=>r.name.includes('/motion-v2/'))));
+  await page.click('.v5-brand-presentation');
+  check('brand reduced motion keeps the static SVG',await page.$eval('#brandPresentation',e=>e.open&&!!e.querySelector('.v5-brand-motion-host>img')&&!e.querySelector('.v5-brand-motion-host>svg')));
+  await page.screenshot({path:path.join(OUT,'brand-static-reduced-motion.png')});
+  await page.keyboard.press('Escape');
+  await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'no-preference'}]);
+  await page.click('.v5-brand-presentation');
+  await page.waitForFunction(()=>document.querySelector('.v5-brand-motion-host')?.dataset.playing==='true');
+  check('brand uses approved Spatial V2',await page.$eval('.v5-brand-motion-host svg',e=>e.getAttribute('aria-label')==='FORMA Spatial Construction'));
+  await page.screenshot({path:path.join(OUT,'brand-v2-playing.png')});
+  await page.waitForFunction(()=>Number(document.querySelector('.v5-brand-motion-host')?.dataset.time)===3);
+  check('brand stops after one actual timeline',await page.$eval('.v5-brand-motion-host',e=>e.dataset.playing==='false'));
+  check('brand final paths match the delivered SVG',await page.evaluate(async()=>{
+    const approved=new DOMParser().parseFromString(await(await fetch('./assets/brand/lockup-ivory.svg')).text(),'image/svg+xml');
+    const paths=root=>[...root.querySelectorAll('path')].map(p=>p.getAttribute('d')).join('|');
+    return paths(approved)===paths(document.querySelector('.v5-brand-motion-host svg'));
+  }));
+  await page.screenshot({path:path.join(OUT,'brand-v2-final.png')});
+  await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
+  check('brand preference changes restore real static artwork',await page.$eval('.v5-brand-motion-host',e=>!!e.querySelector('img')&&!e.querySelector('svg')));
+  await page.keyboard.press('Escape');
+  check('brand close restores its trigger focus',await page.evaluate(()=>document.activeElement.classList.contains('v5-brand-presentation')));
   check('no page exceptions',errors.length===0);
 }finally{
   await browser?.close();for(const p of children)p.kill();

@@ -51,6 +51,17 @@ body:not(.mode-gallery):not(.mode-studio) { height:auto; min-height:100%; overfl
 }
 .v5-brand-mark img, .v5-brand-mark svg { display:block; width:100%; height:100%; object-fit:contain; }
 .v5-brand [hidden] { display:none; }
+.v5-brand[data-brand-artwork="lockup"] .v5-brand-mark { width:132px; height:32px; }
+.v5-brand[data-brand-artwork="lockup"][data-brand-size="small"] .v5-brand-mark { width:112px; height:28px; }
+.v5-brand-presentation { align-self:flex-start; min-height:44px; padding:0; color:var(--v5-tx-lo); border:0; background:transparent; cursor:pointer; font:13px/1.5 var(--v5-ff-sans); }
+.v5-brand-dialog { width:min(720px,calc(100vw - 32px)); padding:16px; color:var(--v5-tx-hi); background:var(--v5-bg-base); border:1px solid var(--v5-line-control); border-radius:10px; }
+.v5-brand-dialog::backdrop { background:rgb(0 0 0 / .65); }
+.v5-brand-motion-head { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; }
+.v5-brand-motion-host { aspect-ratio:16/9; display:grid; place-items:center; }
+.v5-brand-motion-host>img { width:44%; height:auto; }
+.v5-brand-motion-host>svg { width:100%; height:auto; }
+.v5-brand-motion-controls { display:flex; gap:8px; }
+.v5-brand-motion-status { color:var(--v5-tx-lo); font-size:12px; }
 .v5-brand[data-brand-size="small"] .v5-brand-mark { width:22px; height:22px; }
 .v5-brand { min-height:36px; }
 .v5-topbar { flex-shrink:0; }

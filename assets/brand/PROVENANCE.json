@@ -1,0 +1,31 @@
+{
+  "handoff": "FORMA Brand Handoff RC1 v1",
+  "approval": "2026-10-24 user integration request: A Spatial Monogram, Spatial Construction V2",
+  "files": [
+    {
+      "source": "static/svg/lockup-nav-ivory.svg",
+      "file": "lockup-nav-ivory.svg",
+      "sha256": "d52a2437c6558d006e43341d7403533ae5dde77500c2b6633026f6c247b3b5c3"
+    },
+    {
+      "source": "static/svg/lockup-ivory.svg",
+      "file": "lockup-ivory.svg",
+      "sha256": "1558971d72ebab63f152962c5b23edc66942aadf27f07fa2d674abe6d82f7939"
+    },
+    {
+      "source": "static/favicon/favicon.svg",
+      "file": "favicon.svg",
+      "sha256": "18f7978168cfda3d3abf68a878bc41066f1fec6775e8f7ccf41de5e637c695bb"
+    },
+    {
+      "source": "motion-v2/src/geometry.js",
+      "file": "motion-v2/geometry.js",
+      "sha256": "6a58e09dc35190cf1b82f0f203a7c3e2f6ed926059e796ba7cb10b2386994b6a"
+    },
+    {
+      "source": "motion-v2/src/motion.js",
+      "file": "motion-v2/motion.js",
+      "sha256": "27bc23fef49038ec96cbe111d91bc9b9a6d6bda0be42a81fd8962db7bc2c5cde"
+    }
+  ]
+}

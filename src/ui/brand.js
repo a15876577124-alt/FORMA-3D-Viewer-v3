@@ -3,9 +3,9 @@ import { el } from '../utils/dom.js';
 
 export const BRAND = {
   name: 'FORMA',
-  image: null, // Approved local SVG, transparent PNG or WebP; e.g. ./assets/brand/forma-light.svg
-  favicon: null,
-  lockup: 'both', // both | wordmark | symbol (always falls back to readable text)
+  image: './assets/brand/lockup-nav-ivory.svg',
+  favicon: './assets/brand/favicon.svg',
+  lockup: 'symbol', // Delivered full lockup; readable text remains the error fallback.
 };
 
 // Existing V5 mark, unchanged. Never an unapproved replacement design.
@@ -21,6 +21,7 @@ export function createBrand({size='nav',lockup=BRAND.lockup,href=null,version=''
   if(version)text.append(el('span',{class:'v5-brand-ver'},version));
   const mark=el('span',{class:'v5-brand-mark','aria-hidden':'true'});
   const node=el(href?'a':'span',{class:'v5-brand',href,'data-brand-size':size,'data-brand-state':'idle','aria-label':href?'FORMA 首页':'FORMA'},mark,text);
+  if(image===BRAND.image)node.dataset.brandArtwork='lockup';
   if(image){
     const img=el('img',{src:image,alt:'',decoding:'async',draggable:false});
     img.addEventListener('error',()=>{mark.hidden=true;text.hidden=false;node.dataset.brandFallback='text';});

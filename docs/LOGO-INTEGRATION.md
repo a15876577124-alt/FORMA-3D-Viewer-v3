@@ -1,4 +1,13 @@
-# Logo integration handoff
+# Logo integration handoff — approved runtime integration
+
+2026-10-24: A Spatial Monogram and Spatial Construction V2 are integrated from `forma-brand/handoff-rc1-v1` only. `assets/brand/PROVENANCE.json` pins all five copied files; `.gitattributes` preserves their exact bytes. No artwork was redrawn or merged from a design branch. V3 remains for portfolio/promotional films, as authorized by the latest user request.
+
+- Navigation/footer/sidebar: `src/ui/brand.js`, one approved 132×32 nav SVG, text fallback on load failure. `index.html` references the approved favicon.
+- Optional footer presentation: `src/ui/brandMotion.js`. Native modal, user-triggered sequential imports of exact V2 geometry/player, spatial variant, 3-second single playback, static SVG for reduced motion and load failures. Route exit/close destroys the player. No model-loading dependency.
+- Replacement: copy a newly approved delivery into `assets/brand/`, update provenance/config only, run `npm run release:verify` and isolated design/quality/layout/release tests. Never edit frozen path data or the delivered animation source in place.
+- Verified: real Edge static fallback, reduced-motion changes, no pre-interaction V2 download, single playback, exact final SVG paths, focus return, and standalone package. Physical phone rendering remains unverified.
+
+## Historical RC1 reservation (superseded by integration above)
 
 Ownership: this worktree owns application integration; the independent Logo workspace owns artwork. No design file, design branch or external workspace has been accessed, modified or merged in the RC1 portfolio pass. Design direction is approved (A Spatial Monogram; motion direction Spatial Construction), but formal SVG/animation/icon files have not been integrated. Approval of a concept is distinct from delivery of runtime files. No screenshot tracing or temporary animation was added.
 

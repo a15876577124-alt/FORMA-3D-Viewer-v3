@@ -3,6 +3,7 @@ import { createContactBlock } from './contact.js';
 import { el } from '../utils/dom.js';
 
 import { createBrand, installBrandIcon } from './brand.js';
+import { createBrandPresentation } from './brandMotion.js';
 
 // 仅列出当前阶段已实装的路由；新页面完工后再追加，避免死链。
 export const NAV_ITEMS = [
@@ -61,6 +62,7 @@ export function buildV5Shell({ version = 'V5' } = {}) {
           el('a', { href: '#/studio' }, 'AI Studio'),
         ),
         createContactBlock(),
+        createBrandPresentation(),
       ),
     ),
     el('div', { class: 'v5-footer-legal' },
