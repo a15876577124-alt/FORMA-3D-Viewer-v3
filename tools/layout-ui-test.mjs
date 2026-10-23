@@ -1,7 +1,7 @@
 // 可调整工作区 + 首页联系方式：真实 Edge 交互验收
 // 全部用真实鼠标事件（pointer/mouse）驱动，不只查 DOM 与 CSS 属性。
 import { launchBrowser } from './browser-test.mjs';
-import { spawn } from 'node:child_process';
+import {startTestServers} from './test-servers.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,18 +9,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'layout-' + Date.now()));
 fs.mkdirSync(OUT, { recursive: true });
-const PORT = 5421;
-const BE_PORT = PORT + 200;
-
-const be = spawn(process.execPath, ['backend/server.mjs'], {
-  cwd: ROOT, env: { ...process.env, FORMA_BACKEND_PORT: String(BE_PORT), HOST: '127.0.0.1' }, stdio: 'ignore',
-});
-const serve = spawn(process.execPath, ['serve.mjs'], {
-  cwd: ROOT, env: { ...process.env, PORT: String(PORT), HOST: '127.0.0.1', FORMA_BACKEND: `http://127.0.0.1:${BE_PORT}` }, stdio: 'ignore',
-});
-process.on('exit', () => { try { be.kill(); } catch { /* */ } try { serve.kill(); } catch { /* */ } });
-await new Promise((r) => setTimeout(r, 3200));
-const BASE = `http://127.0.0.1:${PORT}`;
+const {be,serve,BASE}=await startTestServers();
 
 let pass = 0, fail = 0; const failures = [];
 const ok = (name, cond, detail = '') => {
@@ -256,12 +245,13 @@ try {
       aspect: +v.camera.aspect.toFixed(4), canvasAspect: +(c.clientWidth / c.clientHeight).toFixed(4),
       drawing: c.width, drawingH: c.height,
       pngBytes: Math.round(body.length * 0.75),
-      rendererCount: document.querySelectorAll('canvas').length,
+      sharedRenderer:c===v.renderer.domElement&&!!c.getContext('webgl2'),
+      extraOnly2d:[...document.querySelectorAll('#app canvas')].filter(n=>n!==c).every(n=>n.classList.contains('st-tex-preview')&&!!n.getContext('2d')),
     };
   });
   ok('相机比例与视口一致（无拉伸变形）', Math.abs(render.aspect - render.canvasAspect) < 0.02, JSON.stringify(render));
   ok('画布尺寸非 1×1 且真的导出到画面', render.drawing > 100 && render.pngBytes > 20000, JSON.stringify(render));
-  ok('没有重复创建渲染器（canvas 唯一）', render.rendererCount === 1, String(render.rendererCount));
+  ok('工作区唯一 WebGL 渲染器，贴图预览使用 2D 画布', render.sharedRenderer&&render.extraOnly2d, JSON.stringify(render));
   await page.screenshot({ path: path.join(OUT, 'studio-layout.png') });
 
   // 13. Gallery ↔ Studio 切换后布局状态正确

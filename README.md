@@ -23,7 +23,7 @@
 
 ## 快速开始
 
-本次实测 Node 24.22.0 / npm 11.19.1 / Windows Edge；依赖要求 Node >=20.9.0。完整本地工作流先执行 `npm ci`，然后 `npm start`。首次接手不要运行会重生成模型的 assets:all。
+本次实测 Node 24.22.0 / npm 11.19.1 / Windows Edge；包含浏览器测试的开发环境要求 Node >=22.12.0。完整本地工作流先执行 `npm ci`，然后 `npm start`。首次接手不要运行会重生成模型的 assets:all。
 
 **Windows 完整版：双击 `FORMA.bat`** —— 同时启动 AI 管线后端（8787）与展厅前端（5173），健康检查通过后自动打开 AI Studio；关闭那个黑色窗口即停止全部服务。
 

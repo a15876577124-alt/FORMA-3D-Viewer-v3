@@ -4,7 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { safeResolveExisting } from './paths.mjs';
-import { parseGLB, readAccessor } from '../tools/glbkit.mjs';
+import { parseGLB } from '../tools/glbkit.mjs';
+import {gltfWorldBounds} from './gltfBounds.mjs';
 import { sniffImageSize, isPowerOfTwo } from './texture-sniff.mjs';
 import { detectFbxTextures } from './fbxTextures.mjs';
 
@@ -93,13 +94,6 @@ function gltfMaterialEntries(gltf) {
   return out;
 }
 
-function gltfBoundsFromAccessor(acc) {
-  if (acc.min && acc.max && acc.min.length === 3 && acc.max.length === 3) {
-    return { min: acc.min.map(Number), max: acc.max.map(Number), source: 'accessor' };
-  }
-  return null;
-}
-
 function analyzeGltfLike(name, buf, format, baseDir = path.dirname(name)) {
   let gltf, bin;
   if (format === 'glb') {
@@ -126,11 +120,9 @@ function analyzeGltfLike(name, buf, format, baseDir = path.dirname(name)) {
   let totalVerts = 0, totalTris = 0, totalPrimitives = 0;
   let bounds = null;
 
-  const binOf = (bufferIndex) => {
-    if (format === 'glb') return bin;
-    const b = gltf.buffers?.[bufferIndex];
-    return b?.__bytes ?? Buffer.alloc(0);
-  };
+  gltf.__bin=bin;
+  try{bounds=gltfWorldBounds(gltf);}
+  catch(e){issues.push({severity:'error',code:'position-unreadable',message:'无法计算场景边界：'+e.message,target:'scene'});}
 
   (gltf.meshes || []).forEach((mesh, mi) => {
     const primitives = [];
@@ -152,41 +144,6 @@ function analyzeGltfLike(name, buf, format, baseDir = path.dirname(name)) {
         else if (mode === 5 || mode === 6) tris = Math.max(0, posAcc.count - 2);
       }
       totalVerts += verts; totalTris += tris;
-
-      // 边界盒：优先 accessor min/max（真实数据），否则扫描顶点
-      if (posAcc) {
-        const accBounds = gltfBoundsFromAccessor(posAcc);
-        if (accBounds) {
-          if (!bounds) bounds = { min: [...accBounds.min], max: [...accBounds.max], source: 'accessor' };
-          else {
-            for (let k = 0; k < 3; k++) {
-              bounds.min[k] = Math.min(bounds.min[k], accBounds.min[k]);
-              bounds.max[k] = Math.max(bounds.max[k], accBounds.max[k]);
-            }
-          }
-        } else {
-          try {
-            gltf.__bin = binOf(posAcc.bufferView !== undefined ? gltf.bufferViews[posAcc.bufferView].buffer : 0);
-            const pos = readAccessor(gltf, prim.attributes.POSITION);
-            for (let i = 0; i < pos.count; i++) {
-              for (let k = 0; k < 3; k++) {
-                const v = pos.data[i * 3 + k];
-                if (!Number.isFinite(v)) {
-                  issues.push({ severity: 'error', code: 'non-finite-position', message: `网格 ${mesh.name || mi} 顶点 ${i} 含非有限坐标（NaN/Inf）`, target: `mesh:${mi}` });
-                  continue;
-                }
-                if (!bounds) bounds = { min: [v, v, v], max: [v, v, v], source: 'scan' };
-                else {
-                  bounds.min[k] = Math.min(bounds.min[k], v);
-                  bounds.max[k] = Math.max(bounds.max[k], v);
-                }
-              }
-            }
-          } catch (e) {
-            issues.push({ severity: 'error', code: 'position-unreadable', message: `无法读取网格 ${mesh.name || mi} 的 POSITION：${e.message}`, target: `mesh:${mi}` });
-          }
-        }
-      }
 
       // 诊断：法线 / UV
       if (prim.attributes?.NORMAL === undefined) {
@@ -309,6 +266,7 @@ async function analyzeObjOrFbx(name, buf, format, baseDir = null) {
   let meshes = [], totalVerts = 0, totalTris = 0, totalMaterials = 0;
   const materialSet = new Set();
   const bounds = { min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] };
+  object.updateMatrixWorld(true);const worldPoint=new THREE.Vector3();
 
   object.traverse((child) => {
     if (!child.isMesh && !child.isSkinnedMesh && !child.isPoints && !child.isLine) return;
@@ -321,8 +279,9 @@ async function analyzeObjOrFbx(name, buf, format, baseDir = null) {
     totalVerts += verts;
     totalTris += tris;
     for (let i = 0; i < pos.count; i++) {
+      worldPoint.fromBufferAttribute(pos,i).applyMatrix4(child.matrixWorld);
       for (let k = 0; k < 3; k++) {
-        const v = pos.array[i * 3 + k];
+        const v = worldPoint.getComponent(k);
         if (!Number.isFinite(v)) {
           issues.push({ severity: 'error', code: 'non-finite-position', message: `对象 ${child.name || '(未命名)'} 顶点 ${i} 含非有限坐标`, target: `object:${child.name || child.id}` });
           continue;
@@ -393,7 +352,7 @@ async function analyzeObjOrFbx(name, buf, format, baseDir = null) {
       animations: animClips.length, skins: meshes.filter((m) => m.skinned).length,
       cameras: 0, nodes: meshes.length,
     },
-    bounds: hasBounds ? { min: bounds.min, max: bounds.max, size: bounds.min.map((v, i) => bounds.max[i] - v), source: 'scan' } : null,
+    bounds: hasBounds ? { min: bounds.min, max: bounds.max, size: bounds.min.map((v, i) => bounds.max[i] - v), source: 'world-static-position' } : null,
     meshes,
     materials: [...materialSet].map((n, i) => ({ index: i, name: n, alphaMode: 'OPAQUE', doubleSided: false, metallicFactor: null, roughnessFactor: null, baseColorFactor: null, emissiveFactor: null, textureSlots: { baseColor: null, metallicRoughness: null, normal: null, occlusion: null, emissive: null } })),
     textures: texList.map((t) => ({

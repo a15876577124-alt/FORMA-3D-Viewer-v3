@@ -2,7 +2,7 @@
 // 1. 两个首屏外观明显不同  2. 首页→Gallery→Studio→Gallery 多次切换正常
 // 3. 共享同一模型但状态互不干扰  4. Gallery 无后端可用  5. Studio 五区齐备
 import { launchBrowser } from './browser-test.mjs';
-import { spawn } from 'node:child_process';
+import {startTestServers} from './test-servers.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,19 +10,10 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'workspaces-' + Date.now()));
 fs.mkdirSync(OUT, { recursive: true });
-const PORT = process.env.FORMA_PORT || 5412;
-const BASE = `http://127.0.0.1:${PORT}`;
-
-const BE_PORT = Number(PORT) + 200;
-const be = spawn(process.execPath, ['backend/server.mjs'], {
-  cwd: ROOT, env: { ...process.env, FORMA_BACKEND_PORT: String(BE_PORT), HOST: '127.0.0.1' }, stdio: 'ignore',
-});
-const serve = spawn(process.execPath, ['serve.mjs'], {
-  cwd: ROOT, env: { ...process.env, PORT: String(PORT), HOST: '127.0.0.1', FORMA_BACKEND: `http://127.0.0.1:${BE_PORT}` }, stdio: 'ignore',
-});
-process.on('exit', () => { try { serve.kill(); be.kill(); } catch { /* ignore */ } });
-await new Promise((r) => setTimeout(r, 3200));
-const backendUp = await fetch(`http://127.0.0.1:${BE_PORT}/api/health`).then((r) => r.json()).then((j) => !!j?.ok).catch(() => false);
+const {be,serve,BASE,backendURL}=await startTestServers();
+const backendUp = await fetch(backendURL+'/api/health').then((r) => r.json()).then((j) => !!j?.ok).catch(() => false);
+const seeded=await fetch(backendURL+'/api/assets/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'workspace-test-avocado.glb',dataBase64:fs.readFileSync(path.join(ROOT,'test-assets/licensed/Avocado.glb')).toString('base64')})});
+if(!seeded.ok)throw Error('Cannot seed isolated workspace asset');
 console.log('后端状态：' + (backendUp ? '已启动' : '未启动（Studio 将显示离线引导）'));
 
 let pass = 0, fail = 0;
@@ -44,6 +35,7 @@ try {
   await page.goto(`${BASE}/#/gallery`, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 120000 });
   await sleep(1200);
+  await page.evaluate(()=>{window.__workspaceContext=document.querySelector('#stage').getContext('webgl2');});
 
   console.log('[1] Gallery 首屏');
   const gallery = await page.evaluate(() => {
@@ -111,13 +103,15 @@ try {
 
   console.log('[3] WebGL 上下文单一（不重复初始化）');
   const ctxCount = await page.evaluate(() => {
-    // 同一 canvas 反复取 context 返回同一个对象即为单一上下文
+    // Material/Texture Lab now has real 2D preview canvases. Verify the WebGL identity,
+    // and require every extra canvas to be an actual 2D texture preview.
     const c = document.querySelector('#stage');
     const a = c.getContext('webgl2');
     const b = c.getContext('webgl2');
-    return { same: a === b, canvases: document.querySelectorAll('canvas').length };
+    const extra=[...document.querySelectorAll('canvas')].filter(n=>n!==c);
+    return { same: a === b&&a===window.__workspaceContext, previews:extra.length, only2d:extra.every(n=>n.classList.contains('st-tex-preview')&&!!n.getContext('2d')) };
   });
-  ok('canvas 唯一且上下文复用', ctxCount.same && ctxCount.canvases === 1, JSON.stringify(ctxCount));
+  ok('Gallery/Studio 共用同一 WebGL 上下文，额外画布仅为真实 2D 贴图预览', ctxCount.same && ctxCount.only2d, JSON.stringify(ctxCount));
 
   console.log('[4] 往返切换稳定性');
   let visibleAfter = true;

@@ -11,4 +11,8 @@ export function packageFiles(file){
  }
  return [...new Set(names)].map(name=>({name,path:resourcePath(base,name)}));
 }
-export function packageZip(file){const entries={};for(const f of packageFiles(file))entries[f.name]=new Uint8Array(fs.readFileSync(f.path));return Buffer.from(zipSync(entries,{level:0}));}
+export function packageZip(file){
+ const files=packageFiles(file),bytes=files.reduce((sum,f)=>sum+fs.statSync(f.path).size,0);
+ if(files.length>257||bytes>256*1024*1024)throw Object.assign(new Error('资产包超过 256 个依赖文件或 256 MiB 导出预算'),{status:413});
+ const entries={};for(const f of files)entries[f.name]=new Uint8Array(fs.readFileSync(f.path));return Buffer.from(zipSync(entries,{level:0}));
+}

@@ -72,43 +72,36 @@ const NUM_COMPONENTS = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4 };
 export function readAccessor(gltf, index) {
   const acc = gltf.accessors[index];
   if (!acc) throw new Error(`accessor ${index} missing`);
-  if (acc.sparse) throw new Error(`accessor ${index} is sparse (unsupported)`);
   const comp = COMPONENT[acc.componentType];
   if (!comp) throw new Error(`unsupported componentType ${acc.componentType}`);
   const n = NUM_COMPONENTS[acc.type];
   if (!n) throw new Error(`unsupported accessor type ${acc.type}`);
   const count = acc.count;
-  const stride = n * comp.size;
-  let data;
-
-  if (acc.bufferView !== undefined) {
-    const bv = gltf.bufferViews[acc.bufferView];
-    const start = (bv.byteOffset || 0) + (acc.byteOffset || 0);
-    if (bv.byteStride && bv.byteStride !== stride) {
-      // interleaved bufferView（gltf-transform 常见输出）：逐元素复制到连续数组
-      const elemStride = bv.byteStride;
-      const bin = gltf.__bin;
-      data = new comp.array(count * n);
-      const view = new DataView(bin.buffer, bin.byteOffset + start, count * elemStride);
-      const get = {
-        5120: (o) => view.getInt8(o),
-        5121: (o) => view.getUint8(o),
-        5122: (o) => view.getInt16(o, true),
-        5123: (o) => view.getUint16(o, true),
-        5125: (o) => view.getUint32(o, true),
-        5126: (o) => view.getFloat32(o, true),
-      }[acc.componentType];
-      for (let i = 0; i < count; i++) {
-        for (let k = 0; k < n; k++) {
-          data[i * n + k] = get(i * elemStride + k * comp.size);
-        }
-      }
-    } else {
-      const src = gltf.__bin.subarray(start, start + count * stride);
-      data = new comp.array(src.buffer, src.byteOffset, count * n);
-    }
-  } else {
-    data = new comp.array(count * n); // zero-filled per spec
+  if(!Number.isSafeInteger(count)||count<0||count*n>16777216)throw new Error('accessor exceeds 16M component budget');
+  function reader(viewIndex,offset,elements,width,componentType,interleaved=false){
+    const bv=gltf.bufferViews?.[viewIndex],c=COMPONENT[componentType];
+    if(!bv||!c)throw new Error('missing bufferView or component type');
+    const bin=gltf.buffers?.[bv.buffer]?.__bytes||(bv.buffer===0?gltf.__bin:null);
+    if(!bin)throw new Error('missing buffer '+bv.buffer);
+    const start=(bv.byteOffset||0)+(offset||0),stride=interleaved?(bv.byteStride||width*c.size):width*c.size;
+    const needed=elements?(elements-1)*stride+width*c.size:0;
+    if(!Number.isSafeInteger(start)||start<0||stride<width*c.size||offset<0||needed+(offset||0)>bv.byteLength||start+needed>bin.length)throw new Error('accessor exceeds bufferView range');
+    const view=new DataView(bin.buffer,bin.byteOffset+start,needed);
+    const getter={5120:'getInt8',5121:'getUint8',5122:'getInt16',5123:'getUint16',5125:'getUint32',5126:'getFloat32'}[componentType];
+    return (i,k=0)=>view[getter](i*stride+k*c.size,true);
+  }
+  // DataView handles interleaving and unaligned Buffer slices; the last vertex has no trailing stride requirement.
+  const base=acc.bufferView===undefined?null:reader(acc.bufferView,acc.byteOffset||0,count,n,acc.componentType,true);
+  const data=new (acc.normalized?Float32Array:comp.array)(count*n);
+  const normalize=v=>!acc.normalized?v:acc.componentType===5120?Math.max(v/127,-1):acc.componentType===5122?Math.max(v/32767,-1):v/({5121:255,5123:65535,5125:4294967295}[acc.componentType]||1);
+  if(base)for(let i=0;i<count;i++)for(let k=0;k<n;k++)data[i*n+k]=normalize(base(i,k));
+  if(acc.sparse){
+    const s=acc.sparse;
+    if(!Number.isSafeInteger(s.count)||s.count<0||s.count>count||![5121,5123,5125].includes(s.indices.componentType))throw new Error('invalid sparse accessor');
+    const indices=reader(s.indices.bufferView,s.indices.byteOffset||0,s.count,1,s.indices.componentType);
+    const values=reader(s.values.bufferView,s.values.byteOffset||0,s.count,n,acc.componentType);
+    let previous=-1;
+    for(let i=0;i<s.count;i++){const id=indices(i);if(id<=previous||id>=count)throw new Error('sparse indices must increase within accessor count');previous=id;for(let k=0;k<n;k++)data[id*n+k]=normalize(values(i,k));}
   }
   return { data, count, n, accessor: acc };
 }

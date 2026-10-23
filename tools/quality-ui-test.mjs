@@ -34,12 +34,21 @@ try{
     }));
     await page.goto(fe+'/#/?section=contact',{waitUntil:'networkidle0'});
     check('contact direct route scrolls into view',await page.$eval('#contactBlock',e=>{const r=e.getBoundingClientRect();return r.top>=0&&r.top<innerHeight;}));
-    await page.evaluate(()=>scrollTo(0,0));
+    await page.$eval('.v5-home',e=>e.scrollIntoView({block:'start',behavior:'instant'}));
   }
   await page.screenshot({path:path.join(OUT,'home-desktop.png')});
+  await (await page.$('.v5-topbar')).screenshot({path:path.join(OUT,'brand-navigation.png')});
+  await page.setViewport({width:390,height:844});await page.$eval('.v5-home',e=>e.scrollIntoView({block:'start',behavior:'instant'}));
+  check('home hero is visible at 390px',await page.$eval('.v5-hero',e=>e.getBoundingClientRect().top>=0&&e.getBoundingClientRect().top<100));
+  check('home 390px has no horizontal page overflow',await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.screenshot({path:path.join(OUT,'home-390.png')});await page.setViewport({width:1440,height:1000});
   const visibleContact=()=>page.$('.v5-layer:not([hidden]) .v5-contact');
   for(const [route,name] of [['/','home'],['/work/sheng','work']]){
     await page.goto(fe+'/#'+route,{waitUntil:'networkidle0'});
+    if(!baseline&&name==='work'){
+      await page.waitForFunction(()=>document.querySelector('#v5Tech-sheng')?.textContent.includes('47,512'));
+      check('public work statistics come from its actual rendered geometry',await page.$eval('#v5Tech-sheng',e=>e.textContent.includes('26,951')&&!e.textContent.includes('未连接')));
+    }
     const contact=await visibleContact();await contact.scrollIntoView();
     check(name+' has one visible contact module',await page.$$eval('.v5-layer:not([hidden]) .v5-contact',e=>e.length===1));
     check(name+' both mailto links',await contact.$$eval('a',es=>['haorongli09@outlook.com','haorongli09@gmail.com'].every(mail=>es.some(e=>e.textContent===mail&&e.getAttribute('href')==='mailto:'+mail))));
@@ -59,8 +68,16 @@ try{
   for(const id of ['sheng','dan','jing-red','jing-yellow','jing-white']){
     await page.goto(fe+'/#/gallery?work='+id,{waitUntil:'networkidle0'});
     await page.waitForFunction(id=>window.__FORMA?.viewer.currentEntry?.id===id&&window.__FORMA.viewer.modelRoot,id?{timeout:30000}:{},id);
-    await page.evaluate(()=>{window.__FORMA.viewer.controls.autoRotate=false;});
+    await page.evaluate(()=>{const f=window.__FORMA;if(f.viewer.controls.autoRotate)f.actions.toggle('autoRotate');});
     await page.screenshot({path:path.join(OUT,'gallery-'+id+'.png')});
+    if(!baseline){
+      const framing=await page.evaluate(async()=>{
+        const T=await import('/vendor/three/build/three.module.js'),v=window.__FORMA.viewer,old={position:v.camera.position.toArray(),target:v.controls.target.toArray()},b=new T.Box3().setFromObject(v.modelRoot),h=b.max.y-b.min.y,target=b.getCenter(new T.Vector3());
+        target.y=b.max.y-h*.32;const direction=v.camera.position.clone().sub(v.controls.target).normalize();v.controls.target.copy(target);v.camera.position.copy(target).addScaledVector(direction,h*1.15);v.controls.update();v.render();return old;
+      });
+      await page.screenshot({path:path.join(OUT,'detail-'+id+'.png')});
+      await page.evaluate(c=>{const v=window.__FORMA.viewer;v.camera.position.fromArray(c.position);v.controls.target.fromArray(c.target);v.controls.update();v.render();},framing);
+    }
     check(id+' gallery has no contact module',await page.$$eval('.v5-layer:not([hidden]) .v5-contact',es=>es.length===0));
   }
   await page.goto(fe+'/#/studio',{waitUntil:'networkidle0'});
@@ -81,6 +98,9 @@ try{
     page.once('dialog',d=>d.dismiss());
     await page.evaluate(()=>window.__FORMA.studio.core.selectAsset(window.__FORMA.studio.selectedAsset));
     check('cancelled asset switch retains draft',await page.evaluate(()=>window.__FORMA.studio.state.materialDirty));
+    page.once('dialog',d=>d.dismiss());await page.evaluate(()=>{location.hash='#/gallery';});
+    await page.waitForFunction(()=>location.hash==='#/studio');
+    check('cancelled route change retains material and Studio',await page.evaluate(()=>window.__FORMA.studio.state.materialDirty&&window.__FORMA.studio.active));
     await page.screenshot({path:path.join(OUT,'material-draft.png')});
     await page.click('#stMatSave');await page.waitForFunction(()=>window.__FORMA.studio.state.confirmToken);
     await page.click('#stMatSave');await page.waitForFunction(()=>window.__FORMA.studio.state.selectedVersion>0&&window.__FORMA.studio.state.selectionStatus==='ready');

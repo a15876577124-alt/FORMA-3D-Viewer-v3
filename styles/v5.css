@@ -901,7 +901,8 @@ input:disabled { opacity: .45; cursor: not-allowed; }
 .v5-contact-inner { align-items:center; }
 .v5-contact-mail:focus-visible, .v5-brand:focus-visible, .v5-footer a:focus-visible { outline:2px solid var(--v5-gold-300); outline-offset:4px; }
 @media(max-width:760px) {
-  .v5-hero-3d { left:45%; height:320px; opacity:1; }
+  .v5-hero-3d { top:56px; bottom:auto; left:45%; height:260px; opacity:1; }
+  .v5-hero .v5-eyebrow { max-width:43%; line-height:1.7; }
   .v5-hero-lede, .v5-launch-grid { max-width:100%; }
   .v5-hero-title { margin-bottom:70px; }
   .v5-nav-toggle { margin-left:auto; }

@@ -12,6 +12,7 @@ export function createMiniViewer({
   container,
   modelUrl,
   autoRotateSpeed = 0.05,
+  initialYaw = 0,
   interactive = true,
   cameraFov = 34,
   fitHeight = 2.1,
@@ -56,6 +57,7 @@ export function createMiniViewer({
   scene.add(glow);
 
   const root = new THREE.Group();
+  root.rotation.y=initialYaw;
   scene.add(root);
 
   const controls = interactive
@@ -71,7 +73,7 @@ export function createMiniViewer({
 
   // ---- 加载与归一化（底对齐，脚踩 groundY）----
   let model = null, disposed = false;
-  const stats = { tris: 0, verts: 0, meshes: 0 };
+  const stats = { tris: 0, verts: 0, meshes: 0, textures:0, maxTextureWidth:0 };
   const loadPromise = new Promise((resolve) => {
     new GLTFLoader().load(modelUrl, (gltf) => {
       if(disposed){disposeObject(gltf.scene);resolve(null);return;}
@@ -82,15 +84,21 @@ export function createMiniViewer({
       const scale = fitHeight / Math.max(size.x, size.y, size.z);
       model.scale.setScalar(scale);
       model.position.set(-center.x * scale, -box.min.y * scale + groundY, -center.z * scale);
+      const textures=new Set();
       model.traverse((o) => {
         if (!o.isMesh) return;
         stats.meshes++;
         const pos = o.geometry?.getAttribute?.('position');
         if (pos) { stats.verts += pos.count; stats.tris += (o.geometry.index ? o.geometry.index.count : pos.count) / 3; }
         const mats = Array.isArray(o.material) ? o.material : (o.material ? [o.material] : []);
-        for (const m of mats) if ('envMapIntensity' in m) m.envMapIntensity = 0.85;
+        for (const m of mats) {
+          if ('envMapIntensity' in m) m.envMapIntensity = 0.85;
+          for(const value of Object.values(m))if(value?.isTexture)textures.add(value);
+        }
       });
       root.add(model);
+      stats.textures=textures.size;stats.maxTextureWidth=Math.max(0,...[...textures].map(t=>t.image?.width||0));
+      render();
       resolve(stats);
       onReady?.(stats);
     }, undefined, (err) => { onError?.(err); resolve(null); });
@@ -103,10 +111,13 @@ export function createMiniViewer({
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
+    render();
   }
   let raf = 0, running = false;
   const clock = new THREE.Clock();
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(controls){controls.enableDamping=!reduced;controls.addEventListener('change',()=>{if(reduced)render();});}
+  function render(){if(!disposed&&!document.hidden&&renderer.domElement.getClientRects().length)renderer.render(scene,camera);}
 
   function tick() {
     raf = requestAnimationFrame(tick);
@@ -116,10 +127,12 @@ export function createMiniViewer({
     controls?.update();
     renderer.render(scene, camera);
   }
-  function start() { if (running || disposed) return; running = true; clock.start(); tick(); }
+  function start() { if (running || disposed || document.hidden) return; if(reduced){render();return;}running = true; clock.start(); tick(); }
   function stop() { running = false; cancelAnimationFrame(raf); }
   const io = new IntersectionObserver(([e]) => { e.isIntersecting ? start() : stop(); }, { threshold: 0.02 });
   io.observe(container);
+  const visibility=()=>document.hidden?stop():container.getClientRects().length&&start();
+  document.addEventListener('visibilitychange',visibility);
   const ro = new ResizeObserver(frame);
   ro.observe(container);
   frame();
@@ -127,6 +140,7 @@ export function createMiniViewer({
   function dispose() {
     if(disposed)return;disposed=true;
     stop();
+    document.removeEventListener('visibilitychange',visibility);
     io.disconnect(); ro.disconnect(); controls?.dispose();
     scene.traverse((o) => {
       if (o.isMesh) {

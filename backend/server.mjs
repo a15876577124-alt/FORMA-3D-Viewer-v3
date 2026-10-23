@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import {assertLocalRequest} from '../local-http.mjs';
 
 import { safeJoin, assertSafeId, PathError } from './paths.mjs';
 import { validateFile, sanitizeName, ValidationError, MAX_FILE_BYTES } from './validate.mjs';
@@ -57,6 +58,7 @@ function send(res, status, obj, extraHeaders = {}) {
 
 function sendError(res, err) {
   const status = err.status || 500;
+  if(status===413)res.setHeader('Connection','close');
   const payload = { error: { message: err.message || String(err), code: err.name || 'internal_error' } };
   // 确认门（409）必须把 needConfirm/token 带到响应体顶层——前端靠它二次提交。
   // 之前只塞进 error 对象，前端读 data.needConfirm 恒为 undefined，
@@ -87,11 +89,11 @@ async function readBody(req, limitBytes = MAX_FILE_BYTES + 1024 * 1024) {
     req.on('data', (c) => {
       size += c.length;
       if (size > limitBytes) {
-        reject(new ValidationError('请求体超过大小上限'));
-        req.destroy();
+        chunks.length=0;
+        reject(Object.assign(new Error('请求体超过大小上限'),{status:413,name:'body_limit'}));
         return;
       }
-      chunks.push(c);
+      if(size<=limitBytes)chunks.push(c);
     });
     req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', (e) => reject(e));
@@ -391,18 +393,22 @@ function resolveServableFile(relPath) {
 
 function serveFile(res, relPath) {
   const { real, ext } = resolveServableFile(relPath);
-  const buf = fs.readFileSync(real);
+  const size = fs.statSync(real).size;
   res.writeHead(200, {
     'Content-Type': MIME[ext] || 'application/octet-stream',
-    'Content-Length': buf.length,
+    'Content-Length': size,
     'Cache-Control': 'no-store',
   });
-  res.end(buf);
+  const stream=fs.createReadStream(real);stream.on('error',()=>res.destroy());res.on('close',()=>stream.destroy());stream.pipe(res);
 }
 
 // ---------- 服务器 ----------
 
 const server = http.createServer(async (req, res) => {
+  try{assertLocalRequest(req,{extraOrigins:['http://127.0.0.1:5173','http://localhost:5173']});}
+  catch(e){res.setHeader('Connection','close');sendError(res,e);req.resume();return;}
+  res.setHeader('X-Content-Type-Options','nosniff');
+  res.setHeader('Cross-Origin-Resource-Policy','same-origin');
   applyCors(req, res);
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
@@ -444,9 +450,11 @@ const server = http.createServer(async (req, res) => {
   send(res, 404, { error: { message: `Not found: ${req.method} ${pathname}`, code: 'not_found' } });
 });
 
+server.requestTimeout=30000;server.headersTimeout=15000;
 server.listen(PORT, HOST, () => {
   fs.mkdirSync(ASSETS_DIR, { recursive: true });
   const actualPort = server.address().port;
+  ALLOWED_ORIGINS.add(`http://127.0.0.1:${actualPort}`);ALLOWED_ORIGINS.add(`http://localhost:${actualPort}`);
   console.log(`[FORMA pipeline] http://${HOST}:${actualPort} (仅本机监听)`);
 });
 

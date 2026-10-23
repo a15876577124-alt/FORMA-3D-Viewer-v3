@@ -10,6 +10,7 @@ const mounted = new Map();   // cacheKey -> { node, instance, pattern, params }
 let outlet = null;
 let notFoundFactory = null;
 let currentKey = null;
+let currentHash = null;
 const listeners = new Set();
 const MAX_CACHE = 8;
 
@@ -70,6 +71,9 @@ async function render() {
   }
 
   const cacheKey = (pattern || '__notfound__') + '|' + JSON.stringify(params);
+  if(currentKey&&cacheKey!==currentKey&&mounted.get(currentKey)?.instance?.beforeLeave?.()===false){
+    history.replaceState(null,'',currentHash||'#/');return;
+  }
   let layer = mounted.get(cacheKey);
 
   if (!layer) {
@@ -100,6 +104,7 @@ async function render() {
   // 导致该节点最终被隐藏（展厅/工作室共用 existingApp 的空白根因）。
   for (const m of mounted.values()) m.node.hidden = (m.node !== layer.node);
   currentKey = cacheKey;
+  currentHash = location.hash;
 
   // 每次进入都刷新上下文：同一图层被再次激活时 query/params 可能是新的
   layer.ctx = { params, query, path };

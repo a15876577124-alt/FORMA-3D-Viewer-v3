@@ -7,7 +7,7 @@ import { spawn, execFileSync } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui', 'workflow', 'formats', 'agent-stability', 'agent-live', 'production-visual', 'art-repair', 'quality', 'providers', 'fbx-materials'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui', 'workflow', 'formats', 'agent-stability', 'agent-live', 'production-visual', 'art-repair', 'quality', 'providers', 'fbx-materials', 'local-security', 'geometry-semantics', 'performance', 'cdp'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
@@ -79,10 +79,14 @@ try {
   if (!only || only === 'quality') await check('quality', 'tools/quality-ui-test.mjs');
   if (only === 'art-repair') await check('art-repair', 'tools/art-repair-test.mjs');
   if (only === 'agent-live') await check('agent-live', 'tools/agent-live-test.mjs');
+  if (only === 'performance') await check('performance', 'tools/quality-performance.mjs');
+  if (only === 'cdp') await check('cdp', 'tools/cdp-attach-test.mjs');
   if (!only || only === 'agent-stability') await check('agent-stability', 'tests/agent-stability.test.mjs');
   if (!only || only === 'agent') await check('agent', 'tests/agent.test.mjs');
   if (!only || only === 'providers') await check('providers', 'tests/providers.test.mjs');
   if (!only || only === 'fbx-materials') await check('fbx-materials', 'tests/fbx-materials.test.mjs');
+  if (!only || only === 'local-security') await check('local-security', 'tests/local-security.test.mjs');
+  if (!only || only === 'geometry-semantics') await check('geometry-semantics', 'tests/geometry-semantics.test.mjs');
   if (!only || only === 'audit') await check('audit', 'tests/audit.test.mjs');
   if (!only || only === 'ops') await check('ops', 'tests/ops.test.mjs');
   if (!only || only === 'opparams') await check('opparams', 'tests/opparams.test.mjs');

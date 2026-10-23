@@ -1,6 +1,5 @@
 // FORMA V5 — 作品详情页 #/work/:id
-// 数据原则：3D 是真实手办资产；技术参数优先取本地后端真实分析报告，
-// 后端不可达时明确标注降级，绝不虚构数值。
+// 公开详情的技术参数来自本页载入的模型，不猜测私人工作区的同名资产。
 import { el } from '../utils/dom.js';
 import { createContactBlock } from '../ui/contact.js';
 import { createMiniViewer } from '../core/miniViewer.js';
@@ -44,6 +43,8 @@ export function createWorkPage({ params, catalog = [] } = {}) {
     container: stage,
     modelUrl: entry.file || `./assets/models/${id}.glb`,
     autoRotateSpeed: 0.04,
+    initialYaw:Math.atan2(1.1,4.6)-(entry.best?.yaw||0),
+    onReady:stats=>techBox.querySelector('.v5-tech-body').replaceChildren(buildReportStats(stats)),
     onError: () => stage.replaceChildren(el('div', { class: 'v5-state', 'data-tone': 'err' },
       el('div', { class: 'v5-state-icon' }, '!'),
       el('p', { class: 'v5-state-title' }, '模型加载失败'),
@@ -64,26 +65,14 @@ export function createWorkPage({ params, catalog = [] } = {}) {
     ),
   );
 
-  // ---- 技术参数（异步：后端可达时取真实报告）----
-  const techBox = el('div', { class: 'v5-card v5-tech', id: 'v5Tech' },
+  // ---- 技术参数（异步：当前模型加载后的真实统计）----
+  const techBox = el('div', { class: 'v5-card v5-tech', id: 'v5Tech-'+id },
     el('h3', { class: 'v5-h3' }, '技术参数'),
     el('div', { class: 'v5-tech-body' },
       el('div', { class: 'v5-skeleton v5-skeleton-text' }),
       el('div', { class: 'v5-skeleton v5-skeleton-text', style: { width: '70%' } }),
     ),
   );
-
-  fetchBackendReport(id).then((data) => {
-    const body = techBox.querySelector('.v5-tech-body');
-    if (!body) return;
-    if (!data) {
-      body.replaceChildren(el('p', { class: 'v5-work-note' },
-        '本地后端未连接——网格/贴图等处理级参数需运行 npm run pipeline:serve 后可用。基础信息见下。'));
-      body.append(buildBasicStats());
-      return;
-    }
-    body.replaceChildren(buildReportStats(data));
-  });
 
   const node = el('div', { class: 'v5-work' },
     el('div', { class: 'v5-container' },
@@ -103,20 +92,6 @@ export function createWorkPage({ params, catalog = [] } = {}) {
   };
 }
 
-// ---- 后端真实报告（workspace assetId 形如 sheng-6ce3cb51，按前缀匹配）----
-async function fetchBackendReport(catalogId) {
-  try {
-    const res = await fetch('/api/assets', { signal: AbortSignal.timeout(4000) });
-    if (!res.ok) return null;
-    const { assets = [] } = await res.json();
-    const asset = assets.find((a) => a.id.startsWith(catalogId + '-') || a.id === catalogId);
-    if (!asset) return null;
-    const rep = await fetch(`/api/assets/${asset.id}/report`, { signal: AbortSignal.timeout(4000) })
-      .then((r) => (r.ok ? r.json() : null)).catch(() => null);
-    return { assetId: asset.id, report: rep?.report || null };
-  } catch { return null; }
-}
-
 function statRow(label, value, sub) {
   return el('div', { class: 'v5-stat' },
     el('div', { class: 'v5-stat-label' }, label),
@@ -125,22 +100,12 @@ function statRow(label, value, sub) {
   );
 }
 
-function buildBasicStats() {
-  return el('div', { class: 'v5-stat-row' },
-    statRow('格式', 'GLB', 'glTF 二进制'),
-    statRow('行当', '生旦净', '琼剧三行当'),
-  );
-}
-
-function buildReportStats({ assetId, report }) {
-  const s = report?.stats || {};
-  const tex = (report?.textures || []);
-  const maxTex = tex.reduce((m, t) => Math.max(m, t.width || 0), 0);
+function buildReportStats(s) {
   const row = el('div', { class: 'v5-stat-row' },
-    statRow('资产 ID', assetId, '本地后端 workspace'),
+    statRow('格式', 'GLB', '当前展品'),
     statRow('顶点', (s.verts ?? 0).toLocaleString('en-US'), '真实解析'),
     statRow('三角形', (s.tris ?? 0).toLocaleString('en-US'), '真实解析'),
-    statRow('贴图最大宽', maxTex ? `${maxTex}px` : '—', `${tex.length} 张`),
+    statRow('贴图最大宽', s.maxTextureWidth ? `${s.maxTextureWidth}px` : '—', `${s.textures} 张 · 当前载入资源`),
   );
   return row;
 }

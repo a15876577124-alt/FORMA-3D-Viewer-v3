@@ -102,9 +102,9 @@ export const textureOps = {
       return rewriteTextures({
         inPath, outPath, mimeType: 'image/png',
         transform: async (bytes) => {
-          const info = await sharp(bytes).metadata();
+          const info = await sharp(bytes,{limitInputPixels:67108864}).metadata();
           if (info.width <= maxSize && info.height <= maxSize) return bytes; // 已小于阈值，保持原样
-          return sharp(bytes).resize(maxSize, maxSize, { fit: 'inside', withoutEnlargement: true }).png().toBuffer();
+          return sharp(bytes,{limitInputPixels:67108864}).resize(maxSize, maxSize, { fit: 'inside', withoutEnlargement: true }).png().toBuffer();
         },
       }).then((r) => ({ ...r, warnings: ['贴图缩放会改变脸谱/纹样清晰度，需人工确认'] }));
     },
@@ -118,8 +118,8 @@ export const textureOps = {
       return rewriteTextures({
         inPath, outPath, mimeType: format === 'webp' ? 'image/webp' : 'image/jpeg',
         transform: async (bytes) => {
-          if (format === 'webp') return sharp(bytes).webp({ quality }).toBuffer();
-          return sharp(bytes).jpeg({ quality }).toBuffer();
+          if (format === 'webp') return sharp(bytes,{limitInputPixels:67108864}).webp({ quality }).toBuffer();
+          return sharp(bytes,{limitInputPixels:67108864}).jpeg({ quality }).toBuffer();
         },
       }).then((r) => ({ ...r, warnings: ['有损压缩会改变贴图，需人工确认'] }));
     },

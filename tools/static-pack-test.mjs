@@ -51,8 +51,7 @@ ok('静态包不含运行期/后端目录', forbiddenPresent.length === 0, forbi
 const glbs = fs.readdirSync(path.join(PACK, 'assets', 'models')).filter((f) => f.endsWith('.glb'));
 ok('五个手办模型都在静态包里', glbs.length === 5, glbs.join(','));
 
-// 静态包需要自己的服务器：把仓库的零依赖服务器复制进去，保证 MIME/Range 与线上一致
-fs.copyFileSync(path.join(ROOT, 'serve.mjs'), path.join(PACK, 'serve.mjs'));
+// Run the preview server delivered in the manifest itself; no post-pack repair/copy.
 const served = spawn(process.execPath, ['serve.mjs'], {
   cwd: PACK,
   env: { ...process.env, PORT: String(PORT), HOST: '127.0.0.1', FORMA_BACKEND: 'http://127.0.0.1:65530' },

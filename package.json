@@ -32,10 +32,10 @@
     "test:release": "node tests/run.mjs --only=release"
   },
   "devDependencies": {
-    "puppeteer-core": "^22.15.0"
+    "puppeteer-core": "25.16.0"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=22.12.0"
   },
   "dependencies": {
     "@gltf-transform/core": "^4.5.1",

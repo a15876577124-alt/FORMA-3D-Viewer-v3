@@ -19,7 +19,7 @@ import { buildInspector } from './ui/inspector.js';
 import { setupChrome } from './ui/chrome.js';
 import { importFiles } from './loaders/registry.js';
 import { describeError } from './loaders/errors.js';
-import { $, el, setProgress, toast, fatal, formatNumber } from './utils/dom.js';
+import { $, el, setProgress, toast, clearToasts, fatal, formatNumber } from './utils/dom.js';
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -440,6 +440,7 @@ function boot() {
   // 与 Gallery 共用常驻的 3D 图层，进入时只切换模式与面板，不重建 Viewer。
   const studioLayer = {
     node: existingApp,
+    beforeLeave:()=>studio?.core?.canLeave()??true,
     enter: () => {
       gallery.leave();
       studio?.enter();
@@ -470,7 +471,7 @@ function boot() {
   });
 
   startRouter({ outlet });
-  onNavigate(({ pattern }) => syncNavActive(nav, pattern));
+  onNavigate(({ pattern }) => {clearToasts();syncNavActive(nav, pattern);});
 
   // Automation surface. Everything the test harness needs to assert real
   // rendering happens against this object - no mocking, no shortcuts.

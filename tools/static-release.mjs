@@ -56,6 +56,9 @@ if (html == null) {
   process.exit(1);
 }
 addFile(htmlPath, 'entry');
+// Optional local preview remains zero-dependency and is part of the reproducible manifest.
+addFile(path.join(ROOT,'serve.mjs'),'preview');
+addFile(path.join(ROOT,'local-http.mjs'),'preview');
 
 // 导入映射：裸说明符 -> 仓库内路径。目标相对文档基准解析（不是相对引用模块）。
 const importMap = (() => {
