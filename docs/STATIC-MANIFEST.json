@@ -1,13 +1,15 @@
 {
   "note": "FORMA 公开展厅静态发布清单。由 tools/static-release.mjs 生成，勿手工编辑。",
   "entry": "index.html",
+  "edition": "showcase",
   "totals": {
-    "files": 96,
-    "bytes": 31934695,
+    "files": 102,
+    "bytes": 32617277,
     "byKind": {
       "html-link": 5,
-      "runtime-asset": 12,
-      "module": 72,
+      "runtime-asset": 15,
+      "module": 74,
+      "provenance": 1,
       "entry": 2,
       "preview": 2,
       "license": 3
@@ -75,6 +77,30 @@
       "sha256": "59105b4e00f71e0e"
     },
     {
+      "path": "assets/studio-demo/analysis.webp",
+      "kind": "runtime-asset",
+      "bytes": 223056,
+      "sha256": "363d548654a905ce"
+    },
+    {
+      "path": "assets/studio-demo/comparison.webp",
+      "kind": "runtime-asset",
+      "bytes": 211444,
+      "sha256": "3804f7a0800cdd35"
+    },
+    {
+      "path": "assets/studio-demo/material.webp",
+      "kind": "runtime-asset",
+      "bytes": 237990,
+      "sha256": "528f42f25ec04c29"
+    },
+    {
+      "path": "assets/studio-demo/PROVENANCE.json",
+      "kind": "provenance",
+      "bytes": 1306,
+      "sha256": "e0778471132e9561"
+    },
+    {
       "path": "assets/thumbs/dan.png",
       "kind": "runtime-asset",
       "bytes": 318975,
@@ -107,8 +133,8 @@
     {
       "path": "index.html",
       "kind": "entry",
-      "bytes": 20063,
-      "sha256": "1d960b03ef64bc53"
+      "bytes": 20087,
+      "sha256": "9908a4be42439dd8"
     },
     {
       "path": "local-http.mjs",
@@ -137,14 +163,14 @@
     {
       "path": "src/core/miniViewer.js",
       "kind": "module",
-      "bytes": 6653,
-      "sha256": "4e496ac0926736a3"
+      "bytes": 6809,
+      "sha256": "e1a3bc20815b2d33"
     },
     {
       "path": "src/core/router.js",
       "kind": "module",
-      "bytes": 6381,
-      "sha256": "6766ca9515e68fa8"
+      "bytes": 6638,
+      "sha256": "df954374e91e9bf0"
     },
     {
       "path": "src/core/viewer.js",
@@ -197,8 +223,8 @@
     {
       "path": "src/main.js",
       "kind": "entry",
-      "bytes": 23449,
-      "sha256": "e95e96a1beb304ba"
+      "bytes": 23748,
+      "sha256": "1b9b707e0a520c2c"
     },
     {
       "path": "src/materials/override.js",
@@ -239,8 +265,8 @@
     {
       "path": "src/pages/home.js",
       "kind": "module",
-      "bytes": 4258,
-      "sha256": "08cbecde1650c8fc"
+      "bytes": 4383,
+      "sha256": "49f1892dbfb6d9bd"
     },
     {
       "path": "src/pages/home3d.js",
@@ -249,16 +275,28 @@
       "sha256": "bafa1060bb9a4986"
     },
     {
+      "path": "src/pages/studioShowcase.js",
+      "kind": "module",
+      "bytes": 3820,
+      "sha256": "4e314c6efb8c6b44"
+    },
+    {
       "path": "src/pages/work.js",
       "kind": "module",
-      "bytes": 4940,
-      "sha256": "3fc9044c82092cae"
+      "bytes": 5096,
+      "sha256": "e887b69cfbacb3df"
     },
     {
       "path": "src/post/composer.js",
       "kind": "module",
       "bytes": 3020,
       "sha256": "278fd64511f7899d"
+    },
+    {
+      "path": "src/runtime.js",
+      "kind": "module",
+      "bytes": 177,
+      "sha256": "60fb267c921338fb"
     },
     {
       "path": "src/stage/ground.js",
@@ -281,8 +319,8 @@
     {
       "path": "src/studio/core.js",
       "kind": "module",
-      "bytes": 35726,
-      "sha256": "1e54ff54dd7971f1"
+      "bytes": 35848,
+      "sha256": "50d9efe1c084f866"
     },
     {
       "path": "src/studio/dock.js",
@@ -317,8 +355,8 @@
     {
       "path": "src/studio/ui.js",
       "kind": "module",
-      "bytes": 13226,
-      "sha256": "360060cf64aa13d8"
+      "bytes": 13278,
+      "sha256": "f5f42a473f99efad"
     },
     {
       "path": "src/ui/brand.js",
@@ -341,8 +379,8 @@
     {
       "path": "src/ui/contact.js",
       "kind": "module",
-      "bytes": 2238,
-      "sha256": "4c2ea56ee3eae10c"
+      "bytes": 2539,
+      "sha256": "6e9109ea533515a8"
     },
     {
       "path": "src/ui/feedback.js",
@@ -353,8 +391,8 @@
     {
       "path": "src/ui/gallery.js",
       "kind": "module",
-      "bytes": 11790,
-      "sha256": "9c9f94144dedb99b"
+      "bytes": 12905,
+      "sha256": "f13c827bb6e57f7d"
     },
     {
       "path": "src/ui/inspector.js",
@@ -407,8 +445,8 @@
     {
       "path": "styles/studio.css",
       "kind": "html-link",
-      "bytes": 42771,
-      "sha256": "e8d06e28ac1acfaf"
+      "bytes": 43523,
+      "sha256": "de06f581a25ccdd4"
     },
     {
       "path": "styles/tokens.css",
@@ -419,8 +457,8 @@
     {
       "path": "styles/v5.css",
       "kind": "html-link",
-      "bytes": 32316,
-      "sha256": "5020a41cb051831d"
+      "bytes": 33746,
+      "sha256": "d1da30147d92f043"
     },
     {
       "path": "vendor/fflate/LICENSE",

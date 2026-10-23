@@ -1,0 +1,200 @@
+{
+  "sourceSha256": "7f7757dfc2a565119ae4b6cb7171a2b88335bac4130a3c26d8fbae91a2140e9b",
+  "candidateSha256": "c1deb6821870f386d99a779f935ac4dd5d9669f5bcbb1675f4f710b08249f8f2",
+  "region": {
+    "center": [
+      0.044,
+      -0.009,
+      -0.031
+    ],
+    "radiiYZ": [
+      0.008,
+      0.008
+    ],
+    "frontMinX": 0.035,
+    "iterations": 2,
+    "strength": 0.35,
+    "maxDepth": 0.00035
+  },
+  "vertices": 28662,
+  "triangles": 46828,
+  "changedVertices": 34,
+  "updatedNormals": 76,
+  "maxDisplacement": 0.00018675625324249268,
+  "meanDisplacement": 0.0000350808396058924,
+  "flippedTriangles": 0,
+  "minAreaRatio": 0.9163832329222887,
+  "validator": {
+    "numErrors": 0,
+    "numWarnings": 0,
+    "numInfos": 3,
+    "numHints": 2,
+    "messages": [
+      {
+        "code": "BUFFER_VIEW_TARGET_MISSING",
+        "message": "bufferView.target should be set for vertex or index data.",
+        "severity": 3,
+        "pointer": "/meshes/0/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "BUFFER_VIEW_TARGET_MISSING",
+        "message": "bufferView.target should be set for vertex or index data.",
+        "severity": 3,
+        "pointer": "/meshes/0/primitives/0/indices"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/bufferViews/1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/bufferViews/4"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/bufferViews/5"
+      }
+    ],
+    "truncated": false
+  },
+  "unchanged": [
+    "all original binary bytes",
+    "UV coordinates",
+    "indices",
+    "Y and Z coordinates",
+    "materials",
+    "textures",
+    "images",
+    "normals outside affected triangles"
+  ],
+  "approvedForDisplay": false,
+  "conditions": [
+    {
+      "key": "normal-front-authored",
+      "camera": [
+        2.5729533491854997,
+        1.188863865482971,
+        1.575479541717742e-16
+      ],
+      "target": [
+        0,
+        0.8,
+        0
+      ],
+      "exposure": 1,
+      "toneMapping": 7
+    },
+    {
+      "key": "normal-front-clay",
+      "camera": [
+        2.5729533491854997,
+        1.188863865482971,
+        1.575479541717742e-16
+      ],
+      "target": [
+        0,
+        0.8,
+        0
+      ],
+      "exposure": 1,
+      "toneMapping": 7
+    },
+    {
+      "key": "normal-oblique-authored",
+      "camera": [
+        2.3901700099776133,
+        1.188863865482971,
+        -0.9524580098295663
+      ],
+      "target": [
+        0,
+        0.8,
+        0
+      ],
+      "exposure": 1,
+      "toneMapping": 7
+    },
+    {
+      "key": "normal-oblique-clay",
+      "camera": [
+        2.3901700099776133,
+        1.188863865482971,
+        -0.9524580098295663
+      ],
+      "target": [
+        0,
+        0.8,
+        0
+      ],
+      "exposure": 1,
+      "toneMapping": 7
+    },
+    {
+      "key": "close-front-authored",
+      "camera": [
+        1.1578290071334754,
+        1.0389887394673372,
+        7.089657937729844e-17
+      ],
+      "target": [
+        0,
+        0.8640000000000001,
+        0
+      ],
+      "exposure": 1,
+      "toneMapping": 7
+    },
+    {
+      "key": "close-front-clay",
+      "camera": [
+        1.1578290071334754,
+        1.0389887394673372,
+        7.089657937729844e-17
+      ],
+      "target": [
+        0,
+        0.8640000000000001,
+        0
+      ],
+      "exposure": 1,
+      "toneMapping": 7
+    },
+    {
+      "key": "close-oblique-authored",
+      "camera": [
+        1.0755765044899261,
+        1.0389887394673372,
+        -0.4286061044233049
+      ],
+      "target": [
+        0,
+        0.8640000000000001,
+        0
+      ],
+      "exposure": 1,
+      "toneMapping": 7
+    },
+    {
+      "key": "close-oblique-clay",
+      "camera": [
+        1.0755765044899261,
+        1.0389887394673372,
+        -0.4286061044233049
+      ],
+      "target": [
+        0,
+        0.8640000000000001,
+        0
+      ],
+      "exposure": 1,
+      "toneMapping": 7
+    }
+  ],
+  "render": "Actual Edge, 512x512 DPR1 MSAA. Same camera, scene, lighting, exposure, environment and authored materials; only geometry and affected normals differ."
+}
