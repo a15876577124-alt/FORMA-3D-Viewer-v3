@@ -1,0 +1,97 @@
+{
+  "creator": "Blender (stable FBX IO) - 2.93.1 - 4.22.0",
+  "channels": [
+    {
+      "material": "Material.001",
+      "materialId": "86178542",
+      "textureId": "142239238",
+      "property": "DiffuseColor",
+      "channel": "baseColor",
+      "source": "embedded",
+      "sourceName": "checkerboard_diffuse.png",
+      "sha256": "51a90cde50a3583a3517a39e330ecf44b1fcd5471b36c25fb755b0035263b32d",
+      "status": "channel-packed",
+      "outputMaterial": "Material.001",
+      "outputChannel": "baseColor.RGB",
+      "conversion": "Source RGB bytes preserved, no color-space baking",
+      "risk": null
+    },
+    {
+      "material": "Material.001",
+      "materialId": "86178542",
+      "textureId": "598535738",
+      "property": "TransparencyFactor",
+      "channel": "alpha",
+      "source": "embedded",
+      "sourceName": "checkerboard_weight.png",
+      "sha256": "0be73806ceb8e0cdaebfc0081059db8803fdf1e213884883ebbffd5ba1666cce",
+      "status": "channel-packed",
+      "outputMaterial": "Material.001",
+      "outputChannel": "baseColor.A",
+      "conversion": "Source alpha scalar (R) packed into baseColor A; Blender alpha texture is not inverted",
+      "risk": null
+    },
+    {
+      "material": "Material.001",
+      "materialId": "86178542",
+      "textureId": "624360246",
+      "property": "EmissiveColor",
+      "channel": "emissive",
+      "source": "embedded",
+      "sourceName": "checkerboard_emissive.png",
+      "sha256": "97c073b536fad08c142e841b3b1e8fa77875ed580fbd2451bd2d985a71117778",
+      "status": "approximate",
+      "outputMaterial": "Material.001",
+      "outputChannel": "emissive",
+      "conversion": "RGB retained; missing exporter emission strength uses 1",
+      "risk": null
+    },
+    {
+      "material": "Material.001",
+      "materialId": "86178542",
+      "textureId": "133229921",
+      "property": "ShininessExponent",
+      "channel": "roughness",
+      "source": "embedded",
+      "sourceName": "checkerboard_roughness.png",
+      "sha256": "2ef501d609b8e0acf765a4e23d5da664b690e7a3c67f4bbfe587b79aa2caa2c4",
+      "status": "channel-packed",
+      "outputMaterial": "Material.001",
+      "outputChannel": "metallicRoughness.G",
+      "conversion": "Source scalar R copied byte-for-byte; no gamma conversion",
+      "risk": null
+    },
+    {
+      "material": "Material.001",
+      "materialId": "86178542",
+      "textureId": "132796523",
+      "property": "ReflectionFactor",
+      "channel": "metallic",
+      "source": "embedded",
+      "sourceName": "checkerboard_metallic.png",
+      "sha256": "f590ab01ea256a8333a621e0235074b162133e09f9c984416280c98549b61905",
+      "status": "channel-packed",
+      "outputMaterial": "Material.001",
+      "outputChannel": "metallicRoughness.B",
+      "conversion": "Source scalar R copied byte-for-byte; no gamma conversion",
+      "risk": null
+    }
+  ],
+  "warnings": [
+    "逐通道映射不等于原创作软件渲染无损；透明混合、自发光强度与 Phong/PBR 光照存在语义差异。"
+  ],
+  "pixelCheck": {
+    "pixels": 16384,
+    "sourceImages": 5,
+    "boundImages": 3,
+    "channels": [
+      "baseColor.RGB",
+      "baseColor.A",
+      "metallicRoughness.G",
+      "metallicRoughness.B",
+      "emissive.RGB"
+    ],
+    "pixelEquality": true,
+    "shadingLossless": false
+  }
+}

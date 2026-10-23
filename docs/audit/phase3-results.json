@@ -1,0 +1,639 @@
+{
+  "generatedAt": "2026-10-23T11:22:02.550Z",
+  "branch": "feature/codex-v5-quality",
+  "baseCommit": "7f133b9885466a1a1f528ce06c787775da096122",
+  "implementationCommit": "d20d1d231bf377b282cc7bdfb68c82ac7918b719",
+  "environment": {
+    "node": "v24.22.0",
+    "npm": "11.19.1",
+    "os": "Windows",
+    "browser": "Microsoft Edge 155",
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "mobile": "390px desktop emulation, not device qualification"
+  },
+  "suite": {
+    "directory": "test-out/suite-2026-10-23T11-10-14-363Z",
+    "generatedAt": "2026-10-23T11:14:25.483Z",
+    "results": [
+      {
+        "name": "vendor",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "vendorscan",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "assets",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "release",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "pipeline",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "production-visual",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "quality",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "agent-stability",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "agent",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "providers",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbx-materials",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "local-security",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "geometry-semantics",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "audit",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ops",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "opparams",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "batch",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "formats",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "workflow",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare-ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex-ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "proxy",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "server",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "render",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "import",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "extended",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "workspaces",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "layout",
+        "code": 0,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "release": {
+    "directory": "test-out/suite-2026-10-23T11-23-56-274Z",
+    "checks": 19,
+    "generatedAt": "2026-10-23T11:24:04.336Z",
+    "results": [
+      {
+        "name": "release",
+        "code": 0,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "note": "Packaging-only follow-up adds local preview scripts, library notices and README-RC; separately verified after the 31-group full suite."
+  },
+  "quality": {
+    "checks": [
+      "brand missing artwork falls back to text",
+      "contact direct route scrolls into view",
+      "home hero is visible at 390px",
+      "home 390px has no horizontal page overflow",
+      "home has one visible contact module",
+      "home both mailto links",
+      "home copy 0",
+      "home copy 1",
+      "home mobile emails readable",
+      "public work statistics come from its actual rendered geometry",
+      "work has one visible contact module",
+      "work both mailto links",
+      "work copy 0",
+      "work copy 1",
+      "work mobile emails readable",
+      "sheng gallery has no contact module",
+      "dan gallery has no contact module",
+      "jing-red gallery has no contact module",
+      "jing-yellow gallery has no contact module",
+      "jing-white gallery has no contact module",
+      "empty studio does not present a Gallery model as an editing target",
+      "studio has no contact module",
+      "material edit marks unsaved state",
+      "undo restores version material",
+      "redo restores unsaved material",
+      "cancelled asset switch retains draft",
+      "cancelled route change retains material and Studio",
+      "material saved to new version clears draft",
+      "texture lab draws actual texture previews",
+      "FBX five semantic channels match source pixels and output bindings",
+      "exported FBX-derived GLB preserves packed channel pixels",
+      "unconfigured provider has explicit UI status",
+      "ordinary asset processing works while AI is unconfigured",
+      "no page exceptions"
+    ],
+    "errors": []
+  },
+  "workflow": {
+    "checks": [
+      "sheng viewport and report agree",
+      "dan selection loads dan geometry",
+      "rapid selection discards stale model and report",
+      "processing targets selected asset",
+      "processed version is selected and rendered",
+      "Original version restores actual source",
+      "GLB to GLTF passes real post-verification",
+      "external GLTF renders correct geometry and textures",
+      "GLTF package re-import preserves texture sizes",
+      "GLTF to GLB passes validator and semantic checks",
+      "exported GLB re-import renders original geometry",
+      "material preview does not write source",
+      "material reset restores saved version",
+      "material save creates verified non-destructive version",
+      "saved material survives reload and file parse",
+      "export consumes selected Edited version",
+      "export retains edited material",
+      "download ZIP contains all GLTF dependencies",
+      "publish is idempotent",
+      "published GLTF loads textures and edited material",
+      "published entry selects its exact source version",
+      "late export response cannot overwrite next asset state",
+      "comparison selects two real version files",
+      "Avocado.glb actual upload loads model and report",
+      "Avocado.glb actual optimizer consumes selected version",
+      "Avocado.glb optimized output exports verified GLB",
+      "Avocado.glb final re-import matches optimized geometry",
+      "blender-embedded.fbx actual upload loads model and report",
+      "FBX embedded images are bound to rendered materials",
+      "FBX conversion shows channel packing and material risks before confirmation",
+      "FBX conversion passes validator and triangle verification",
+      "FBX conversion records all five source channel decisions",
+      "FBX converted texture still rendered",
+      "blender-embedded.fbx actual optimizer consumes selected version",
+      "blender-embedded.fbx optimized output exports verified GLB",
+      "blender-embedded.fbx final re-import matches optimized geometry",
+      "invalid versions rejected",
+      "no uncaught browser errors"
+    ],
+    "errors": [],
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "selection": {
+      "id": "roundtrip-b4284ec4",
+      "version": 0,
+      "path": "backend/workspace/assets/roundtrip-b4284ec4/original/roundtrip.glb",
+      "viewer": {
+        "id": "studio:roundtrip-b4284ec4:0",
+        "assetId": "roundtrip-b4284ec4",
+        "version": 0,
+        "name": "roundtrip.glb · Original",
+        "file": "/api/file/backend/workspace/assets/roundtrip-b4284ec4/original/roundtrip.glb",
+        "format": "glb"
+      },
+      "report": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 28662,
+        "tris": 46828,
+        "materials": 1,
+        "textures": 1,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 2
+      },
+      "stats": {
+        "verts": 28662,
+        "tris": 46828,
+        "meshes": 1,
+        "height": 1.6,
+        "originalHeight": 0.30000001192092896,
+        "format": "gltf"
+      },
+      "visible": true
+    }
+  },
+  "visual": {
+    "checks": [
+      "390px Gallery viewport stays in screen",
+      "390px Gallery inspector fully accessible",
+      "mobile asset picker opens within screen",
+      "mobile asset selection closes picker",
+      "mobile material and asset tools accessible",
+      "mobile action labels do not wrap",
+      "catalogue selection uses unified backend identity",
+      "comparison uses verified actual optimized model",
+      "comparison boundary follows screen after orbit",
+      "comparison cycles release geometry and textures",
+      "comparison preserves actual dimension changes",
+      "1024px Studio keeps usable viewport",
+      "no browser exceptions"
+    ],
+    "errors": [],
+    "memoryBefore": {
+      "geometries": 9,
+      "textures": 14,
+      "programs": 16,
+      "triangles": 1734,
+      "calls": 11
+    },
+    "memoryAfter": {
+      "geometries": 9,
+      "textures": 14,
+      "programs": 16,
+      "triangles": 1734,
+      "calls": 11
+    }
+  },
+  "fbx": {
+    "pixels": 16384,
+    "sourceImages": 5,
+    "boundImages": 3,
+    "channels": [
+      "baseColor.RGB",
+      "baseColor.A",
+      "metallicRoughness.G",
+      "metallicRoughness.B",
+      "emissive.RGB"
+    ],
+    "pixelEquality": true,
+    "shadingLossless": false
+  },
+  "performance": {
+    "method": "Same machine, serial runs on baseline and Q4 snapshots, 1440x1000, reduced motion; one sample is not a statistical speed claim. RAF intervals are not GPU timer measurements. Upload is licensed Avocado plus unused padding to 32 MiB.",
+    "before": {
+      "directory": "test-out/performance-phase3-before",
+      "homeReadyMs": 1694,
+      "reducedMotionHero": {
+        "draws": 2280,
+        "elapsedMs": 498.5
+      },
+      "downloadBytes": 12077866,
+      "requestCount": 75,
+      "galleryFrames": {
+        "medianMs": 4.199999999999818,
+        "p95Ms": 4.399999999999636,
+        "memory": {
+          "geometries": 7,
+          "textures": 9,
+          "programs": 9,
+          "triangles": 95804,
+          "calls": 11
+        }
+      },
+      "hiddenHero": {
+        "draws": 0
+      },
+      "analysisMs": [
+        2.7341999999998734,
+        1.9652999999998428,
+        1.7442999999993845,
+        1.8284999999996217,
+        2.16820000000007,
+        1.9799000000002707
+      ],
+      "upload": {
+        "encodedBytes": 44741369,
+        "elapsedMs": 3433.4757,
+        "frontend": {
+          "memory": {
+            "rss": 202768384,
+            "heapTotal": 10797056,
+            "heapUsed": 7260368,
+            "external": 138427041,
+            "arrayBuffers": 134328990
+          },
+          "maxRssKiB": 351024
+        },
+        "backend": {
+          "memory": {
+            "rss": 365617152,
+            "heapTotal": 72859648,
+            "heapUsed": 61414448,
+            "external": 242862456,
+            "arrayBuffers": 190655023
+          },
+          "maxRssKiB": 357056
+        }
+      }
+    },
+    "after": {
+      "directory": "test-out/performance-phase3-after",
+      "homeReadyMs": 1631,
+      "reducedMotionHero": {
+        "draws": 0,
+        "elapsedMs": 498.30000000074506
+      },
+      "downloadBytes": 12093963,
+      "requestCount": 76,
+      "galleryFrames": {
+        "medianMs": 4.199999999999818,
+        "p95Ms": 4.300000000000182,
+        "memory": {
+          "geometries": 7,
+          "textures": 9,
+          "programs": 9,
+          "triangles": 95804,
+          "calls": 11
+        }
+      },
+      "hiddenHero": {
+        "draws": 0
+      },
+      "analysisMs": [
+        8.801399999999376,
+        3.760200000000623,
+        5.1007999999992535,
+        3.500199999999495,
+        4.372199999999793,
+        4.82510000000002
+      ],
+      "upload": {
+        "encodedBytes": 44741369,
+        "elapsedMs": 322.53250000000025,
+        "frontend": {
+          "memory": {
+            "rss": 71147520,
+            "heapTotal": 12107776,
+            "heapUsed": 7563864,
+            "external": 6660502,
+            "arrayBuffers": 2556775
+          },
+          "maxRssKiB": 80016
+        },
+        "backend": {
+          "memory": {
+            "rss": 295186432,
+            "heapTotal": 82296832,
+            "heapUsed": 63315712,
+            "external": 164569975,
+            "arrayBuffers": 157103911
+          },
+          "maxRssKiB": 364660
+        }
+      }
+    },
+    "remaining": "Backend still buffers JSON/base64; homepage still fetches the sheng model for both retained Viewer and hero."
+  },
+  "cdp": {
+    "directory": "test-out/suite-2026-10-23T11-05-50-587Z",
+    "cdpAttach": true,
+    "tris": 46828,
+    "webgl": true
+  },
+  "dependencyAudit": {
+    "before": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 7,
+      "critical": 0,
+      "total": 7
+    },
+    "after": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "protected": {
+    "originalCheckoutBranch": "feature/codex-v5-audit",
+    "originalCheckoutHead": "7f133b9885466a1a1f528ce06c787775da096122",
+    "architectureSha256": "177CE7069926DAE58FA57FDE4CA2CAAD0C775C0C5198AC4F0A8C06318F21AA42",
+    "trackedRawAndModelChanges": [],
+    "privateCredentialsModified": false,
+    "logoArtworkImported": false,
+    "mainMerged": false,
+    "publiclyDeployed": false,
+    "recheckedAt": "2026-10-23T11:29:49.284Z"
+  },
+  "failedRunsRetained": [
+    {
+      "directory": "test-out/suite-2026-10-23T10-52-48-084Z",
+      "reason": "Bodyless reanalyze POST rejected by new JSON guard",
+      "resolution": "Accept bodyless actions; still reject non-JSON bodies; pipeline 50/50 passed."
+    },
+    {
+      "directory": "test-out/suite-2026-10-23T11-00-10-641Z",
+      "reason": "Canvas-count check mistook actual new 2D texture previews for duplicate WebGL renderer",
+      "resolution": "Assert stable same WebGL context and verify remaining canvases are real 2D; workspace 21/21 and layout 47/47."
+    }
+  ],
+  "liveAgent": {
+    "directory": "test-out/suite-2026-10-23T11-21-22-888Z",
+    "checks": [
+      "real model returns native tool-call chunks",
+      "real run logs its provider configuration snapshot",
+      "real agent completes without failure",
+      "two real operators pass post-verification",
+      "second operator consumes previous output",
+      "viewport selects actual AI result",
+      "no browser runtime exceptions"
+    ],
+    "errors": [],
+    "model": "deepseek-v4-pro",
+    "runId": "run_1792754486156_8d9df310",
+    "desktopState": {
+      "timestamp": "2026-10-23T11:21:22.7962421Z",
+      "note": "Independent PowerShell terminal; no desktop process, existing account configuration retained",
+      "command": "node tests/run.mjs --only=agent-live",
+      "processCountBefore": 0,
+      "processCountAfter": 0,
+      "exitCode": 0
+    },
+    "accountIndependenceVerified": false
+  },
+  "compatibleProvider": {
+    "contractTests": 7,
+    "passed": true,
+    "externalVendorVerified": false,
+    "reason": "No external compatible-provider credentials supplied"
+  },
+  "candidate": {
+    "file": "test-out/FORMA-V5-RC1-Gallery.zip",
+    "bytes": 25210231,
+    "sha256": "d6872e92bc761b4aef36e890d209e7866f6dc5a2c5d714be2404b9ed1d600b0b",
+    "staticClosure": {
+      "files": 90,
+      "bytes": 30246772,
+      "byKind": {
+        "html-link": 5,
+        "runtime-asset": 10,
+        "entry": 2,
+        "preview": 2,
+        "module": 68,
+        "license": 3
+      }
+    },
+    "deployed": false,
+    "zipContentVerified": true,
+    "zipFileCount": 92
+  },
+  "implementationFiles": [
+    "README.md",
+    "backend/agent/agent.mjs",
+    "backend/agent/llmStream.mjs",
+    "backend/analyze.mjs",
+    "backend/assetPackage.mjs",
+    "backend/assetSource.mjs",
+    "backend/derivedAsset.mjs",
+    "backend/fbxMaterials.mjs",
+    "backend/fbxTextures.mjs",
+    "backend/gltfBounds.mjs",
+    "backend/llm.mjs",
+    "backend/ops/presets.mjs",
+    "backend/ops/textureOps.mjs",
+    "backend/providers/index.mjs",
+    "backend/providers/workbuddy.mjs",
+    "backend/server.mjs",
+    "docs/AI-PROVIDERS.md",
+    "docs/LOGO-INTEGRATION.md",
+    "docs/V5-QUALITY.md",
+    "local-http.mjs",
+    "package-lock.json",
+    "package.json",
+    "serve.mjs",
+    "src/core/miniViewer.js",
+    "src/core/router.js",
+    "src/main.js",
+    "src/net/api.js",
+    "src/pages/home.js",
+    "src/pages/home3d.js",
+    "src/pages/work.js",
+    "src/studio/core.js",
+    "src/studio/dock.js",
+    "src/studio/panes.js",
+    "src/studio/tree.js",
+    "src/studio/ui.js",
+    "src/ui/brand.js",
+    "src/ui/contact.js",
+    "src/ui/shell.js",
+    "src/utils/dom.js",
+    "styles/studio.css",
+    "styles/tokens.css",
+    "styles/v5.css",
+    "tests/agent-stability.test.mjs",
+    "tests/fbx-materials.test.mjs",
+    "tests/geometry-semantics.test.mjs",
+    "tests/local-security.test.mjs",
+    "tests/providers.test.mjs",
+    "tests/run.mjs",
+    "tools/agent-live-test.mjs",
+    "tools/cdp-attach-test.mjs",
+    "tools/check-fbx-channels.mjs",
+    "tools/glbkit.mjs",
+    "tools/layout-ui-test.mjs",
+    "tools/perf-probe.mjs",
+    "tools/quality-performance.mjs",
+    "tools/quality-ui-test.mjs",
+    "tools/static-pack-test.mjs",
+    "tools/static-release.mjs",
+    "tools/test-servers.mjs",
+    "tools/workflow-test.mjs",
+    "tools/workspace-smoke.mjs",
+    "vendor/fflate/LICENSE",
+    "vendor/postprocessing/LICENSE.md"
+  ]
+}

@@ -4,6 +4,17 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
+## [2026-10-23 Quality RC] — Codex 第三阶段
+
+- 独立开发 worktree；联系方式可读、mailto/复制与直接定位；共享品牌组件和后续 Logo 动画钩子，保留原标识。
+- 首页模型取景、文字与入口分区、390px 可读性；详情页直接统计当前三维模型，移除同名工作区资产猜测及误报离线。
+- Material Lab 局部撤销/重做、未保存状态、切换资产/版本/路由确认、真实纹理通道预览与版本标签；保真预设不再强制重写材质。
+- Blender 2.93 FBX 基础色/透明度/粗糙度/金属度/自发光通道映射与逐像素验证；缺失/不支持/近似语义单独记录。
+- WorkBuddy 保留默认；新增服务端 OpenAI-compatible 适配、合成连接测试、任务配置快照、错误分类和模型输入脱敏。
+- Host/Origin 执行前校验、流式上传代理、大小/图像/几何预算、资源流式下载；复杂场景变换、stride、sparse 与 normalized 数据读取。
+- Puppeteer Core 25.16.0 精确锁定，Node 开发要求 22.12+；实际 Edge/CDP 兼容测试与依赖审计。
+- 增加独立工作区测试、33 张视觉证据和性能前后数据；发布包包含本地预览服务与第三方许可。全量 31/31、包验收 19/19、WorkBuddy 退出后的真实 Agent 7/7；完整结果见 docs/V5-QUALITY.md。
+
 ## [2026-10-23 Production workflow] — Codex 第二阶段
 
 - 统一选中资产/版本/视口，修复乱序响应、发布条目身份和 Gallery 分享链接启动竞态。

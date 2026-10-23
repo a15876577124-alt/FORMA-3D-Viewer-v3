@@ -26,5 +26,6 @@ FORMA_OPENAI_MODEL=<native-tool-capable model id>
 - Edge `suite-2026-10-23T10-44-17-661Z/quality`：兼容服务未配置时界面给出原因，普通 dedup 仍实际处理并通过后验。
 - 实时服务 `suite-2026-10-23T10-44-28-265Z/agent-live`：WorkBuddy / deepseek-v4-pro 实际返回原生工具流，weld → dedup 链式处理与视口版本一致，7 项验收通过。该次运行时 WorkBuddy 桌面进程存在，因此不能将此证据描述为“卸载/未登录 WorkBuddy 后也可用”。服务端代码调用 SDK 配置入口，不调用 WorkBuddy 桌面 IPC；账号、项目授权和额度仍由服务方控制。
 - 未提供新的兼容服务凭据：兼容协议已完成合约测试，外部兼容服务尚未完成真实供应商验收。
+- 补充独立验证 `suite-2026-10-23T11-21-22-888Z/agent-live`：用户正常退出 WorkBuddy 后，独立 PowerShell 启动隔离 FORMA，运行前后 WorkBuddy/CodeBuddy 进程均为 0；相同真实工具调用与处理验收 7/7 通过。证明当前配置无需桌面客户端运行，不证明注销/卸载后可用，也不改变账户授权依赖。进程状态与结果摘要在 `docs/audit/phase3-results.json`。
 
 本地后端通过 `/api/ai/providers` 返回不含凭据的配置状态；`/api/ai/test` 返回合成连接测试结果。禁止把密钥添加到前端配置、截图、日志或 Git 提交。

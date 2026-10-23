@@ -1,6 +1,16 @@
 # TASK_STATE — FORMA V5
 
-更新：2026-10-23（Asia/Shanghai）。阶段 2：专业资产生产闭环修复。
+更新：2026-10-23（Asia/Shanghai）。当前为第三阶段品质提升与发布候选验收。
+
+第三阶段已形成 RC1：运行代码 `d20d1d231bf377b282cc7bdfb68c82ac7918b719`；全量 31/31 组、最终包 19/19、WorkBuddy 完全退出时真实 Agent 7/7。发布候选 ZIP、实际截图和限制见下方品质报告，机器结果见 `docs/audit/phase3-results.json`。没有公开部署。
+
+- 开发位于独立 worktree `D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality`，分支 `feature/codex-v5-quality`，基线 `7f133b9885466a1a1f528ce06c787775da096122`。
+- 联系方式复用并优化；Logo 只做组件/资源/动画接口，保留已有标识和文字回退，不导入设计稿。
+- 已实现材质撤销/重做与未保存保护、实际通道预览、保真整理预设、Blender 2.93 FBX 五通道映射、AI Provider 边界、Origin/Host 与请求预算、世界坐标 bounds/stride/sparse、流式代理。
+- 原工程仍停留在阶段 2 分支；`docs/ARCHITECTURE.md` 格式修改与已记录 SHA256 不变。没有覆盖任何原始资产或私人凭据，没有合并 main 或部署。
+- 当前验收、截图、性能数据、限制和发布候选运行方法以 [V5-QUALITY.md](docs/V5-QUALITY.md)、[AI-PROVIDERS.md](docs/AI-PROVIDERS.md)、[LOGO-INTEGRATION.md](docs/LOGO-INTEGRATION.md) 为准。以下阶段 2 状态保留追溯。
+
+## 阶段 2 已验收基线
 
 本阶段已完成资产/版本统一、GLB/GLTF 资源包转换、材质版本保存、许可模型端到端、Agent 版本串联与确认恢复，以及窄屏/对比/GPU 生命周期修复。完整证据与限制见 [资产生产闭环记录](docs/V5-PRODUCTION-WORKFLOW.md)。
 
