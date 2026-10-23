@@ -58,7 +58,10 @@ export async function restoreFbxMaterials(glb,fbx,{baseDir}={}){
     const rows=report.channels.filter(r=>r.materialId===m.id),matches=doc.getRoot().listMaterials().filter(t=>t.getName()===m.name);
     if(matches.length!==1){for(const r of rows){r.status='unsupported';r.risk='Material name is not uniquely bound to output';}continue;}
     const mat=matches[0],get=c=>rows.find(r=>r.channel===c&&r.status==='pending');
-    const base=get('baseColor'),alpha=get('alpha');
+    const base=get('baseColor');let alpha=get('alpha');
+    if(alpha&&!base&&(mat.getBaseColorTexture()||rows.some(r=>r.channel==='baseColor'))){
+      alpha.status='unsupported';alpha.risk='Existing or unsupported base color must not be replaced with white to pack alpha';alpha=null;
+    }
     if(base||alpha){
       const b=base?await pixels(base):null,a=alpha?await pixels(alpha):null;
       if(a&&b&&(a.info.width!==b.info.width||a.info.height!==b.info.height)){
@@ -71,15 +74,17 @@ export async function restoreFbxMaterials(glb,fbx,{baseDir}={}){
       if(base){base.status=alpha?.status==='channel-packed'?'channel-packed':'exact';base.outputChannel='baseColor.RGB';base.conversion='Source RGB bytes preserved, no color-space baking';}
     }
     const rough=get('roughness'),metal=get('metallic');
-    if(rough||metal){
+    if((rough||metal)&&!(rough&&metal)&&mat.getMetallicRoughnessTexture()){
+      for(const c of [rough,metal].filter(Boolean)){c.status='unsupported';c.risk='Partial mapping would overwrite an existing packed channel';}
+    }else if(rough||metal){
       const r=rough?await pixels(rough):null,t=metal?await pixels(metal):null;
       if(r&&t&&(r.info.width!==t.info.width||r.info.height!==t.info.height)){
         for(const c of [rough,metal]){c.status='unsupported';c.risk='Roughness/metalness dimensions differ; no implicit resampling';}
       }else{
         const src=r||t,rgba=Buffer.alloc(src.data.length,255);
-        for(let i=0;i<rgba.length;i+=4){rgba[i+1]=r?r.data[i]:255;rgba[i+2]=t?t.data[i]:0;}
+        for(let i=0;i<rgba.length;i+=4){rgba[i+1]=r?r.data[i]:255;rgba[i+2]=t?t.data[i]:255;}
         mat.setMetallicRoughnessTexture(make(m.name+'-metal-rough',await sharp(rgba,{raw:{width:src.info.width,height:src.info.height,channels:4}}).png().toBuffer()));
-        mat.setRoughnessFactor(1).setMetallicFactor(1);
+        if(rough)mat.setRoughnessFactor(1);if(metal)mat.setMetallicFactor(1);
         for(const c of [rough,metal].filter(Boolean)){c.status='channel-packed';c.outputChannel=c===rough?'metallicRoughness.G':'metallicRoughness.B';c.conversion='Source scalar R copied byte-for-byte; no gamma conversion';}
       }
     }
