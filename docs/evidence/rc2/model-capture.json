@@ -1,0 +1,380 @@
+{
+  "browser": "Edg/155.0.4283.62",
+  "records": [
+    {
+      "id": "sheng",
+      "angle": "front",
+      "conditions": {
+        "camera": [
+          3.321829672037372,
+          1.3367246556466408,
+          -0.16357825066464082
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/sheng.glb",
+      "after": "assets/exhibition-v1/sheng.glb"
+    },
+    {
+      "id": "sheng",
+      "angle": "three-quarter",
+      "conditions": {
+        "camera": [
+          2.1969971653639626,
+          1.3367246556466408,
+          -2.4969008129081005
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/sheng.glb",
+      "after": "assets/exhibition-v1/sheng.glb"
+    },
+    {
+      "id": "sheng",
+      "angle": "back",
+      "conditions": {
+        "camera": [
+          -3.321829672037372,
+          1.3367246556466408,
+          0.1635782506646405
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/sheng.glb",
+      "after": "assets/exhibition-v1/sheng.glb"
+    },
+    {
+      "id": "dan",
+      "angle": "front",
+      "conditions": {
+        "camera": [
+          3.294046867281017,
+          1.3034398258484892,
+          -0.4951637587739854
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/dan.glb",
+      "after": "assets/exhibition-v1/dan.glb"
+    },
+    {
+      "id": "dan",
+      "angle": "three-quarter",
+      "conditions": {
+        "camera": [
+          1.9397758149894762,
+          1.3034398258484894,
+          -2.707988496915927
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/dan.glb",
+      "after": "assets/exhibition-v1/dan.glb"
+    },
+    {
+      "id": "dan",
+      "angle": "back",
+      "conditions": {
+        "camera": [
+          -3.294046867281017,
+          1.3034398258484892,
+          0.4951637587739843
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/dan.glb",
+      "after": "assets/exhibition-v1/dan.glb"
+    },
+    {
+      "id": "jing-red",
+      "angle": "front",
+      "conditions": {
+        "camera": [
+          3.321829672037372,
+          1.3367246556466408,
+          -0.16357825066464082
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-red.glb",
+      "after": "assets/exhibition-v1/jing-red.glb"
+    },
+    {
+      "id": "jing-red",
+      "angle": "three-quarter",
+      "conditions": {
+        "camera": [
+          2.1969971653639626,
+          1.3367246556466408,
+          -2.4969008129081005
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-red.glb",
+      "after": "assets/exhibition-v1/jing-red.glb"
+    },
+    {
+      "id": "jing-red",
+      "angle": "back",
+      "conditions": {
+        "camera": [
+          -3.321829672037372,
+          1.3367246556466408,
+          0.1635782506646405
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-red.glb",
+      "after": "assets/exhibition-v1/jing-red.glb"
+    },
+    {
+      "id": "jing-yellow",
+      "angle": "front",
+      "conditions": {
+        "camera": [
+          3.3121550965309834,
+          1.3367246556466408,
+          0.3015606583131301
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-yellow.glb",
+      "after": "assets/exhibition-v1/jing-yellow.glb"
+    },
+    {
+      "id": "jing-yellow",
+      "angle": "three-quarter",
+      "conditions": {
+        "camera": [
+          2.5239270531681384,
+          1.336724655646641,
+          -2.1658952985784934
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-yellow.glb",
+      "after": "assets/exhibition-v1/jing-yellow.glb"
+    },
+    {
+      "id": "jing-yellow",
+      "angle": "back",
+      "conditions": {
+        "camera": [
+          -3.3121550965309834,
+          1.3367246556466408,
+          -0.30156065831312895
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-yellow.glb",
+      "after": "assets/exhibition-v1/jing-yellow.glb"
+    },
+    {
+      "id": "jing-white",
+      "angle": "front",
+      "conditions": {
+        "camera": [
+          3.3016192757319303,
+          1.336724655646641,
+          0.40077471506294843
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-white.glb",
+      "after": "assets/exhibition-v1/jing-white.glb"
+    },
+    {
+      "id": "jing-white",
+      "angle": "three-quarter",
+      "conditions": {
+        "camera": [
+          2.5877584840412915,
+          1.336724655646641,
+          -2.089214264356517
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-white.glb",
+      "after": "assets/exhibition-v1/jing-white.glb"
+    },
+    {
+      "id": "jing-white",
+      "angle": "back",
+      "conditions": {
+        "camera": [
+          -3.3016192757319303,
+          1.336724655646641,
+          -0.400774715062948
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "fov": 38,
+        "exposure": 1,
+        "light": "studio",
+        "crop": [
+          1200,
+          1200
+        ]
+      },
+      "before": "assets/models/jing-white.glb",
+      "after": "assets/exhibition-v1/jing-white.glb"
+    }
+  ]
+}

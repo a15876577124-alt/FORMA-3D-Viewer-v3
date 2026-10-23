@@ -1,0 +1,703 @@
+{
+  "note": "Unmodified real Edge screenshots. Concepts are not included. Before/after UI backgrounds differ; use model-* conditions for repair comparisons.",
+  "files": [
+    {
+      "file": "contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/contact-desktop.png",
+      "bytes": 220420,
+      "sha256": "be1efbffc4384ec1852f73a9e5224fa3b2e32f863cbcf2f6e460672fe5cd280d"
+    },
+    {
+      "file": "gallery-390.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/gallery-390.png",
+      "bytes": 194362,
+      "sha256": "d44dee62b55698b6dc478060037e59dd47b18fdaa8045e21800c57161f3028a6"
+    },
+    {
+      "file": "gallery-768.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/gallery-768.png",
+      "bytes": 493003,
+      "sha256": "f766bb4e63dfaf5dab4442ff341bc2922bbcf7e29558525cea2f659e46c65363"
+    },
+    {
+      "file": "gallery-dan.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/gallery-dan.png",
+      "bytes": 416565,
+      "sha256": "e44333836865bb216ca085607a8f36d55924e33ab105470cf5d911b90f22876b"
+    },
+    {
+      "file": "gallery-jing-red.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/gallery-jing-red.png",
+      "bytes": 407214,
+      "sha256": "7a586ef4543c2ba55a91e363405cd004176b8d323f26953513b0f2c70ebcec28"
+    },
+    {
+      "file": "gallery-jing-white.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/gallery-jing-white.png",
+      "bytes": 289348,
+      "sha256": "b427624a9da056e98612790a9d37f58b8587d1e153b0aa56110dbca0b451454e"
+    },
+    {
+      "file": "gallery-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/gallery-jing-yellow.png",
+      "bytes": 305221,
+      "sha256": "d44ca6945fbd10538ebc4e190ce13faded5239dac5c9e3501ace2463fd301f97"
+    },
+    {
+      "file": "gallery-settings.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/gallery-settings.png",
+      "bytes": 446146,
+      "sha256": "689bc0205baba14a8480cb02cbecba8a1a8f91a590ef6c1d772897677822d55d"
+    },
+    {
+      "file": "gallery-sheng.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/gallery-sheng.png",
+      "bytes": 314593,
+      "sha256": "4ed3763bbf66cdf0ee6d58802162514eac9d5a6303aaf0420ee6ca9ece0bc72a"
+    },
+    {
+      "file": "home-390.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/home-390.png",
+      "bytes": 212682,
+      "sha256": "5a4e0397bd744f66a2ac4b35a68ad44d0455a8898a8f2e172ae1815838837993"
+    },
+    {
+      "file": "home-768.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/home-768.png",
+      "bytes": 206263,
+      "sha256": "a9835d698d1e246605e790b5a51879de8de91cb45d4f9367feea62e67a1b3858"
+    },
+    {
+      "file": "home-desktop.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/home-desktop.png",
+      "bytes": 493679,
+      "sha256": "ab6978cebcc33b4df783f74e6f095edb8e8ceb575b53278e8164b61831f4a4b6"
+    },
+    {
+      "file": "settings-390.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/settings-390.png",
+      "bytes": 36323,
+      "sha256": "2746615380fb795b51880ecf479d2bef1d06775076d96fc3c3b0c7e93c3f352c"
+    },
+    {
+      "file": "settings-768.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/settings-768.png",
+      "bytes": 302163,
+      "sha256": "0d04dc55e8bb273cfbcbe6e93a13e52694d017fc8aeb3e694a5868b856faae1e"
+    },
+    {
+      "file": "studio-390.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/studio-390.png",
+      "bytes": 99042,
+      "sha256": "2f487e81bae68e66910678538070c366bf90e137add31b22ba0d76e7d7610270"
+    },
+    {
+      "file": "studio-768.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/studio-768.png",
+      "bytes": 139499,
+      "sha256": "fb607ea089516b23aa5f652444017faca7427b57189dcdea67396eea1a763815"
+    },
+    {
+      "file": "studio-asset.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/studio-asset.png",
+      "bytes": 409522,
+      "sha256": "b1f52e34999810fa6a6c4b548fa4ba5e430c42f6e0cba1c46a81527131c59846"
+    },
+    {
+      "file": "studio-desktop.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/studio-desktop.png",
+      "bytes": 276959,
+      "sha256": "b9bb16a7a14a078ccbde2cca719903eeac046cc147e99d3ee15558a2cc62a81b"
+    },
+    {
+      "file": "work-390.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/work-390.png",
+      "bytes": 108021,
+      "sha256": "799ebc34b759023c6d467754aaf6c187531e2b29a1a62106ace29944734b7e0a"
+    },
+    {
+      "file": "work-768.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/work-768.png",
+      "bytes": 120036,
+      "sha256": "963cd300bb73518a1293e7dcea072be3aacd5392a408dc870c19cc24bb96bb18"
+    },
+    {
+      "file": "work-desktop.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/exhibition/work-desktop.png",
+      "bytes": 287733,
+      "sha256": "75f504935faffebcc742eea50b54c44b764b2fb339f67d75c01b31e7eee6439c"
+    },
+    {
+      "file": "contact-390.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/quality/home-contact-390.png",
+      "bytes": 53711,
+      "sha256": "fd8ea9cd7bac7205f62131810b2f06ec1b8bbeebcd71c85f1b9a0e40597a9159"
+    },
+    {
+      "file": "work-contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/quality/work-contact-desktop.png",
+      "bytes": 213278,
+      "sha256": "aef64e5ff252e0bd05693cf1068a5f4f00b0c8efac79d36850ff4d38083187d8"
+    },
+    {
+      "file": "work-contact-390.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/quality/work-contact-390.png",
+      "bytes": 48928,
+      "sha256": "94b019283896dfae3d5c85b2bc891f24e33f6cbd6fc1fdde3b3a673d8fbd8355"
+    },
+    {
+      "file": "material-draft.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/quality/material-draft.png",
+      "bytes": 446697,
+      "sha256": "31803342397ba0bccaa40c6c008990e3ec4a98e5891384ed63fbb43bfdc277dc"
+    },
+    {
+      "file": "texture-channels.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/quality/texture-channels.png",
+      "bytes": 453817,
+      "sha256": "5bead44a8615643d97155f1f8affc3d059162896924f2f76a7e7db0bc3102eb8"
+    },
+    {
+      "file": "before-home-desktop.png",
+      "source": "test-out/suite-2026-10-23T12-21-04-489Z/quality/home-desktop.png",
+      "bytes": 311651,
+      "sha256": "991745a7a9c9c8fc43edcceecd8475b55265a0338f2dc8c5eca2728868ca7207"
+    },
+    {
+      "file": "before-home-390.png",
+      "source": "test-out/suite-2026-10-23T12-21-04-489Z/quality/home-390.png",
+      "bytes": 77224,
+      "sha256": "7a90f27ea6eb8a1133663e615c161b0ac6c71ad8d3ce774cb87bc93a4fd28ef9"
+    },
+    {
+      "file": "before-gallery-dan.png",
+      "source": "test-out/suite-2026-10-23T12-21-04-489Z/quality/gallery-dan.png",
+      "bytes": 674815,
+      "sha256": "d8120dffa86f42e1fcfdf4a7e3a2217cadefb121ba88c8270c95da598c43e359"
+    },
+    {
+      "file": "before-studio-desktop.png",
+      "source": "test-out/suite-2026-10-23T12-21-04-489Z/quality/studio-desktop.png",
+      "bytes": 315076,
+      "sha256": "f6bbbc85865ad446ccdcabeb23a2b190d994c2b7cb31351091b3837e1f4250e3"
+    },
+    {
+      "file": "before-studio-390.png",
+      "source": "test-out/suite-2026-10-23T12-21-04-489Z/quality/studio-390.png",
+      "bytes": 99509,
+      "sha256": "27639255beb83af7af8d53b4bb8ba576788324d2a7bc922c01f3c55b0ef4716d"
+    },
+    {
+      "file": "before-contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T12-21-04-489Z/quality/home-contact-desktop.png",
+      "bytes": 87331,
+      "sha256": "bdeeeb94dea53f98ae70d8d0b1f6fca8291e568853837f22e08e26e1b125a288"
+    },
+    {
+      "file": "before-work-desktop.png",
+      "source": "test-out/exhibition-models/baseline-work-desktop.png",
+      "bytes": 272421,
+      "sha256": "30dd52a59e82c88e045db93a70926790c5980b3437179cd7bbb489931161424b"
+    },
+    {
+      "file": "before-work-390.png",
+      "source": "test-out/exhibition-models/baseline-work-390.png",
+      "bytes": 111853,
+      "sha256": "aa8ed648f27b0b30cd4353bbeef95ad5a188024ee151520005862c8bc589c95c"
+    },
+    {
+      "file": "sheng-front-before.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-front-before.png",
+      "bytes": 620777,
+      "sha256": "5fab2a7ace862075a0d4a9b92896b6d0d7a225f55334744cd995ba0c28812a0f"
+    },
+    {
+      "file": "sheng-front-after.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-front-after.png",
+      "bytes": 621405,
+      "sha256": "62feeafd47c10aec01578a15d652dac1b9e832891eb6fcd3036f6a67f40de78b"
+    },
+    {
+      "file": "dan-front-before.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-front-before.png",
+      "bytes": 813898,
+      "sha256": "9309836bdb468cff1342c54aa2edfb070fae39357b891db93282e6c1c7a50073"
+    },
+    {
+      "file": "dan-front-after.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-front-after.png",
+      "bytes": 814922,
+      "sha256": "c9e12156309f75b3656c0520ae83f2366aa1cd6c0fefb273ecf5185953021ec4"
+    },
+    {
+      "file": "jing-red-front-before.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-front-before.png",
+      "bytes": 759336,
+      "sha256": "3bc310784ac496375d2466b65a60b2a0c3469edc21968d7171be71c31be636fa"
+    },
+    {
+      "file": "jing-red-front-after.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-front-after.png",
+      "bytes": 760825,
+      "sha256": "b2a1f3cf8edbf1599800acaef4b11b778b6becb7335841c43b8abbe7e7e783e4"
+    },
+    {
+      "file": "jing-yellow-front-before.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-front-before.png",
+      "bytes": 569034,
+      "sha256": "d0f6ab6dbf7351539dcd1e860531913457cbb20d49d66adafbded82bea28dfb3"
+    },
+    {
+      "file": "jing-yellow-front-after.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-front-after.png",
+      "bytes": 569758,
+      "sha256": "31d8be74833a951c729e21a599cc330aff6fb1ed38513491166a77f62d1df7c0"
+    },
+    {
+      "file": "jing-white-front-before.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-front-before.png",
+      "bytes": 585645,
+      "sha256": "86994602dc5b9eaf27be7ca5a3be9a63cdbeaab063cbc7604536968f3bd37a77"
+    },
+    {
+      "file": "jing-white-front-after.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-front-after.png",
+      "bytes": 588085,
+      "sha256": "0fdda55c67dc42d582f21822cf7dab5514b668aae52e939ff212303ee5dfa7d1"
+    },
+    {
+      "file": "jing-white-three-quarter-before.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-before.png",
+      "bytes": 525510,
+      "sha256": "a0e21e5e1afcd8143ef3acf20d40ec2245e7daa5c6112b5c9db52c9a6257abfa"
+    },
+    {
+      "file": "jing-white-three-quarter-before-normals.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-before-normals.png",
+      "bytes": 470943,
+      "sha256": "16af926e832f2558c6651650b8569e73cfdc90ba12c1bfbfc0dfd36b7e01eb3f"
+    },
+    {
+      "file": "jing-white-three-quarter-before-unlit.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-before-unlit.png",
+      "bytes": 408426,
+      "sha256": "5bc141f19aa5d90cc84b5035cb5f671ac920664da0f82c0602f33a8088e51d1e"
+    },
+    {
+      "file": "jing-white-three-quarter-after.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-after.png",
+      "bytes": 526427,
+      "sha256": "27c4df87a8ef97ed4c49c6bcf73c9da093cdf56458554f83bf37068ffc6d6eb6"
+    },
+    {
+      "file": "jing-white-three-quarter-after-normals.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-after-normals.png",
+      "bytes": 471703,
+      "sha256": "ad617e1c6cc134129b55e7c0aa7ceacbc3e006669773f55c681a438b1bc4fdb2"
+    },
+    {
+      "file": "jing-white-three-quarter-after-unlit.png",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-after-unlit.png",
+      "bytes": 408426,
+      "sha256": "5bc141f19aa5d90cc84b5035cb5f671ac920664da0f82c0602f33a8088e51d1e"
+    },
+    {
+      "file": "model-capture.json",
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/capture.json",
+      "bytes": 7689,
+      "sha256": "e467a757b9f7a0d139fa3615fe78bd20f108f94494c19e0ebcaf864527eb1230"
+    },
+    {
+      "file": "workflow-roundtrip.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/workflow/roundtrip.png",
+      "bytes": 496667,
+      "sha256": "c088c90a8ec86f59df4758752220fd301e7b6d81545d86252e51decb47c00d7f"
+    },
+    {
+      "file": "workflow-material-comparison.png",
+      "source": "test-out/suite-2026-10-23T13-45-38-802Z/workflow/material-comparison.png",
+      "bytes": 483049,
+      "sha256": "9cb75892c966ba050511f5ce668b27e2377fb7c87270706b524bf04b66088d08"
+    },
+    {
+      "file": "package-gallery.png",
+      "source": "test-out/rc2-final-package-check/static-pack-gallery.png",
+      "bytes": 265214,
+      "sha256": "88b3b8e2ce516f7f8399fe6dd8e614559dc13ff8d148105a67a669849730fbea"
+    },
+    {
+      "file": "package-studio.png",
+      "source": "test-out/rc2-final-package-check/static-pack-studio.png",
+      "bytes": 243786,
+      "sha256": "3d7613329326a6a86b3f063dcf0baeae2e0e7efc0f42d0d5e936b3f53320f9ee"
+    },
+    {
+      "file": "model-diagnosis.json",
+      "source": "test-out/exhibition-models/diagnosis.json",
+      "bytes": 3787,
+      "sha256": "682b06cb3f23e681b34a9bc9caf773bd59d8ac9fc06facbaf55d62c73476c51f"
+    }
+  ],
+  "additionalLocalModelCaptures": [
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-back-after-normals.png",
+      "sha256": "af45f0bfaeb82546d9c890d92f2ffd4374c97a50a21362b2f77aa75ce651a67a"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-back-after-unlit.png",
+      "sha256": "db6eab0e470bd3c38d8bd456c2537c33abed9e8e62fdb5ff29aaa1891c8c6277"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-back-after.png",
+      "sha256": "0eabf384e18bf20f7a4f06eec0cbb681bec1cffc1d268e8ad1286faafba980b6"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-back-before-normals.png",
+      "sha256": "f69849ef6acc6896166b01e5dda4a4d078bae643e37e8f4376dd5b3ab6f4c280"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-back-before-unlit.png",
+      "sha256": "db6eab0e470bd3c38d8bd456c2537c33abed9e8e62fdb5ff29aaa1891c8c6277"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-back-before.png",
+      "sha256": "31a5c6e3ad0e8ed5d3eac1f57988f001af9be1e237cc42dd30e0ba6423c2aad0"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-front-after-normals.png",
+      "sha256": "b945d896d5e2c3b6806e2763c01102d351ed11976bcd00f4783bf0bace920d1f"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-front-after-unlit.png",
+      "sha256": "c3f8c8a84b01d2488d5929139504815f82a537f078ebca5b669217db85243ef4"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-front-after.png",
+      "sha256": "c9e12156309f75b3656c0520ae83f2366aa1cd6c0fefb273ecf5185953021ec4"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-front-before-normals.png",
+      "sha256": "5780a7a6680ddf136d0908050cc28be8d2b14a9c9eabe5e4bb2280ce62212efa"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-front-before-unlit.png",
+      "sha256": "c3f8c8a84b01d2488d5929139504815f82a537f078ebca5b669217db85243ef4"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-front-before.png",
+      "sha256": "9309836bdb468cff1342c54aa2edfb070fae39357b891db93282e6c1c7a50073"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-three-quarter-after-normals.png",
+      "sha256": "5f736d3494c9b177b11fbcdec1d23d8664a9e81f332d7557e3af8c5b2e70cc25"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-three-quarter-after-unlit.png",
+      "sha256": "87731df6d60020c95993bb24b8ad7c4745d8095c6ace2a965603201c5d6e5361"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-three-quarter-after.png",
+      "sha256": "08ce8ca6358a46935f3eea2c8b0d1fa34f5f2ec812d76f7ee8e397d4cfccf949"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-three-quarter-before-normals.png",
+      "sha256": "68a751d65b2e2e22afddcc860a05ae5199336bd59a2cde0f2d7138d100965e79"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-three-quarter-before-unlit.png",
+      "sha256": "87731df6d60020c95993bb24b8ad7c4745d8095c6ace2a965603201c5d6e5361"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/dan-three-quarter-before.png",
+      "sha256": "7a17a3291d20408551723e54210097df03893a07796048f131298669b522806e"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-back-after-normals.png",
+      "sha256": "5f3311f298ccb7506622dfd0d7ee4820bdfce63b9ecba10e382c44c711e1dfc1"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-back-after-unlit.png",
+      "sha256": "a2e6063c1d6b9c44d4f61bb39b898fad31a5de93204c9de6b924bc11bc7177c6"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-back-after.png",
+      "sha256": "818dbf64f982e28e8990ff39bc20f78f3f4d0aeba7351ca038b785b894434ca0"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-back-before-normals.png",
+      "sha256": "abd9f8f9bee5a3152bf24d024f958741f78001af7967f4be6c1ab1935cfaa813"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-back-before-unlit.png",
+      "sha256": "a2e6063c1d6b9c44d4f61bb39b898fad31a5de93204c9de6b924bc11bc7177c6"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-back-before.png",
+      "sha256": "5e905833676b7f42250a99335c699a4ce62b19d2e10911709d4e13febf7bac13"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-front-after-normals.png",
+      "sha256": "8e7ba8ec8d3e2ff67b3aa933986872521e497591bb85d89585f57b540611c87a"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-front-after-unlit.png",
+      "sha256": "5c83feb0f4ec8b89a43e304356ca7953095ec013570c6aea659757262e3f89c6"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-front-after.png",
+      "sha256": "b2a1f3cf8edbf1599800acaef4b11b778b6becb7335841c43b8abbe7e7e783e4"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-front-before-normals.png",
+      "sha256": "4a7eb16d9e798dff11aff5d731fdf24770a83f0c551fffbdcbd85dc09be42a1d"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-front-before-unlit.png",
+      "sha256": "5c83feb0f4ec8b89a43e304356ca7953095ec013570c6aea659757262e3f89c6"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-front-before.png",
+      "sha256": "3bc310784ac496375d2466b65a60b2a0c3469edc21968d7171be71c31be636fa"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-three-quarter-after-normals.png",
+      "sha256": "01ab5c0a7223ceb3b079475bac6bd043bef0cdbfac21c5418e602a509e4af63e"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-three-quarter-after-unlit.png",
+      "sha256": "f1f7d664bb86c3888a4515a8c11e3fcbd70fa583367b6eb5501254a8b526f139"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-three-quarter-after.png",
+      "sha256": "b2f6ca7d3518471b0b1fccdf3c1b5bde1c8b12d2edd45d407d59b23139947b92"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-three-quarter-before-normals.png",
+      "sha256": "186b3bfba40a7aea0781310d9beb1e09dd2d58e613d89f9fc4a144998e7c893e"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-three-quarter-before-unlit.png",
+      "sha256": "f1f7d664bb86c3888a4515a8c11e3fcbd70fa583367b6eb5501254a8b526f139"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-red-three-quarter-before.png",
+      "sha256": "ff50957e0cc3bf027f2f0f52b8c68e2d66608de88b81410a81755d010d526240"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-back-after-normals.png",
+      "sha256": "70c7081e89458097d630e0041d05aa088c2d275a667f047e95f140c6ac635d9b"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-back-after-unlit.png",
+      "sha256": "45778f56d9127485a16ca8568a07d5f413319fec94383ef89f79779b83579a4d"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-back-after.png",
+      "sha256": "65afc70f269a90e5238da4e380f3986c6969cb04fe54ecb773d841a35c6c5ae4"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-back-before-normals.png",
+      "sha256": "7cb47bda6ef253e00900ff533fb6ee1121c8aed2ffe54580d9a9b60bdaf5f09d"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-back-before-unlit.png",
+      "sha256": "45778f56d9127485a16ca8568a07d5f413319fec94383ef89f79779b83579a4d"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-back-before.png",
+      "sha256": "338384546f4196fc8a5921fcf52234e3ac276aaf98b6dda00670bb27f205bbd9"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-front-after-normals.png",
+      "sha256": "e77beb9ba8f5b268e323f0cef0f3e47fa7b3bd3d579c56a1b657e10a698c17ee"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-front-after-unlit.png",
+      "sha256": "4d43d461d67ee764a6a392da1cbb40df1b88f5edf7b934fef5d870152dba5efc"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-front-after.png",
+      "sha256": "0fdda55c67dc42d582f21822cf7dab5514b668aae52e939ff212303ee5dfa7d1"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-front-before-normals.png",
+      "sha256": "a4a2404d8e035fd80fc286205c689ea18d9a45725631d6c17fbbbe41c065b907"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-front-before-unlit.png",
+      "sha256": "4d43d461d67ee764a6a392da1cbb40df1b88f5edf7b934fef5d870152dba5efc"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-front-before.png",
+      "sha256": "86994602dc5b9eaf27be7ca5a3be9a63cdbeaab063cbc7604536968f3bd37a77"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-after-normals.png",
+      "sha256": "ad617e1c6cc134129b55e7c0aa7ceacbc3e006669773f55c681a438b1bc4fdb2"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-after-unlit.png",
+      "sha256": "5bc141f19aa5d90cc84b5035cb5f671ac920664da0f82c0602f33a8088e51d1e"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-after.png",
+      "sha256": "27c4df87a8ef97ed4c49c6bcf73c9da093cdf56458554f83bf37068ffc6d6eb6"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-before-normals.png",
+      "sha256": "16af926e832f2558c6651650b8569e73cfdc90ba12c1bfbfc0dfd36b7e01eb3f"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-before-unlit.png",
+      "sha256": "5bc141f19aa5d90cc84b5035cb5f671ac920664da0f82c0602f33a8088e51d1e"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-white-three-quarter-before.png",
+      "sha256": "a0e21e5e1afcd8143ef3acf20d40ec2245e7daa5c6112b5c9db52c9a6257abfa"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-back-after-normals.png",
+      "sha256": "ee6e33c9fc8b91a14b178e8a2cb21e65a5fb18c3a5d432a0c36152d4d90a0b18"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-back-after-unlit.png",
+      "sha256": "5cf6c3914bc5d56cabd17e02ddb2d89f6872bf0edb562707555bd751c667a061"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-back-after.png",
+      "sha256": "ca9e80455bdf696c0d5f2ddf2e6cb37d323df1b728af23430faebf0daff5c87d"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-back-before-normals.png",
+      "sha256": "0b94099c2c71754a838268e822d290bbaeed7cdd36ff54f1493b5b259b4066fe"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-back-before-unlit.png",
+      "sha256": "5cf6c3914bc5d56cabd17e02ddb2d89f6872bf0edb562707555bd751c667a061"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-back-before.png",
+      "sha256": "ec2dc93b27c685aecc9b0945fd7661c243f4413d8cde34580b616c0ce2afb3f8"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-front-after-normals.png",
+      "sha256": "c1ded0575ed7544dde8e270d97abcb0aab0338bf202784d58adfadfb7d4f2fea"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-front-after-unlit.png",
+      "sha256": "89c90fbeab76e7dbce39a3c1cdc69c1a2aa2090130d6a3194a832d6cc033868c"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-front-after.png",
+      "sha256": "31d8be74833a951c729e21a599cc330aff6fb1ed38513491166a77f62d1df7c0"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-front-before-normals.png",
+      "sha256": "bbb093b740af07db4f9d0372f8a80cae236f64260abb4f1de14683619113c57c"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-front-before-unlit.png",
+      "sha256": "89c90fbeab76e7dbce39a3c1cdc69c1a2aa2090130d6a3194a832d6cc033868c"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-front-before.png",
+      "sha256": "d0f6ab6dbf7351539dcd1e860531913457cbb20d49d66adafbded82bea28dfb3"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-three-quarter-after-normals.png",
+      "sha256": "f429cbcba1f5e345f81305ebc5f896bcad54e261ff29ad8985d87bdcc0572387"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-three-quarter-after-unlit.png",
+      "sha256": "c822760dd8f396ac4e60d246df49e8394b615dcfe3764daa06a9c56bbc348f9b"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-three-quarter-after.png",
+      "sha256": "8a20e0b2398e0c547b7fe2e42c666b48a4f0187190ff27b2c1d4a1cb961d8191"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-three-quarter-before-normals.png",
+      "sha256": "f8f9e84c0aea85b87c53f24e6cd15b762b17be6aaa6e6a9fa480640d5059459a"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-three-quarter-before-unlit.png",
+      "sha256": "c822760dd8f396ac4e60d246df49e8394b615dcfe3764daa06a9c56bbc348f9b"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/jing-yellow-three-quarter-before.png",
+      "sha256": "76af13df5c34b6fefdd352d48cd6505f351081cd21a557aff9208a050d2fd60d"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-back-after-normals.png",
+      "sha256": "4743d776fe6a1eaabe9f542e108c808967f6e843436eb82c61574df5c3220a57"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-back-after-unlit.png",
+      "sha256": "eb9b8975d714c2b212bee4f4f43c0264787964a722f01fa389cb25deb4ac133a"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-back-after.png",
+      "sha256": "b2575c460cc599083b8f15563b5d475573676ae62c42da3e09654baa7de21182"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-back-before-normals.png",
+      "sha256": "30132869d3a7e4b345f09726fdc20876b724a4dfc7bce50a5a9635e68195f4a1"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-back-before-unlit.png",
+      "sha256": "eb9b8975d714c2b212bee4f4f43c0264787964a722f01fa389cb25deb4ac133a"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-back-before.png",
+      "sha256": "dbcd66c5efd9796fd8d9c036ba4220c80d4ed7b4b607a228bce7658ba6e668ff"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-front-after-normals.png",
+      "sha256": "4c370251eba702efa26cff1c4a9bcd01eaabad3b3a7c09cb68487f5747afa2eb"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-front-after-unlit.png",
+      "sha256": "0edf03306f40768c1c9fe19cc1ccafd434672a393efee0acbb7cce63e7647dde"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-front-after.png",
+      "sha256": "62feeafd47c10aec01578a15d652dac1b9e832891eb6fcd3036f6a67f40de78b"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-front-before-normals.png",
+      "sha256": "1ae2f9d344b70843b40a1fce1af4c2f54baa3f65c105fa96b3f3b2855786b6bc"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-front-before-unlit.png",
+      "sha256": "0edf03306f40768c1c9fe19cc1ccafd434672a393efee0acbb7cce63e7647dde"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-front-before.png",
+      "sha256": "5fab2a7ace862075a0d4a9b92896b6d0d7a225f55334744cd995ba0c28812a0f"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-three-quarter-after-normals.png",
+      "sha256": "211554daaf774f299d6e7c284bfcf46988be9dd41c3c48cf7551c508490b91cf"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-three-quarter-after-unlit.png",
+      "sha256": "812c31e44b9c8ab9290bb478bc6f5a4446fb29c00643cedce647ce6338e3a4ff"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-three-quarter-after.png",
+      "sha256": "26c54f48679a1d3aa45c9f9680f2ea2fae205fbbdf9efc6b9003edf135bd09c0"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-three-quarter-before-normals.png",
+      "sha256": "30c63f12dcff3a45215c62ae3099345eb0446863af83228e2b7e3a77da88bf5b"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-three-quarter-before-unlit.png",
+      "sha256": "812c31e44b9c8ab9290bb478bc6f5a4446fb29c00643cedce647ce6338e3a4ff"
+    },
+    {
+      "source": "test-out/exhibition-models-2026-10-23T13-30-57-029Z/sheng-three-quarter-before.png",
+      "sha256": "38543c0fe94c637a5073ab77ae5b54ac79812874db6cb2ae4662d04f9e3d73e4"
+    }
+  ]
+}

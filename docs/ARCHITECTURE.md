@@ -1,5 +1,7 @@
 # FORMA AI 3D Asset Pipeline — 架构
 
+RC2 展陈层：公开首页与详情使用从五件真实模型渲染的 WebP；进入 Gallery 后才加载 assets/exhibition-v1，新版本只追加修复法线，Original 与 RC1 模型保留。Gallery / Studio 共享 Viewer；Router leave 与请求序号防止迟到响应污染新页面，静止场景不持续提交 GPU 渲染。界面布局在 styles/exhibition.css，品牌统一由 src/ui/brand.js 配置。详见 [RC2 记录](EXHIBITION-RC2.md)。此文档修改仅在 quality worktree，原工程中用户的格式修改保持不动。
+
 三层结构：**前端展厅（Three.js）→ 本地后端（Node，仅本机）→ 云服务（WorkBuddy LLM）**。
 
 ```

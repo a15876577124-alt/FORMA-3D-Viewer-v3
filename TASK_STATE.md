@@ -1,6 +1,10 @@
 # TASK_STATE — FORMA V5
 
-更新：2026-10-23（Asia/Shanghai）。当前为第三阶段品质提升与发布候选验收。
+更新：2026-10-23（Asia/Shanghai）。当前为 RC2 展陈改造与发布候选验收。
+
+当前分支 `feature/codex-v5-exhibition`，基线 `83453aafbc1dd8f8885f05d5ab9d1c3215218b65`。主页/详情/Gallery 已完成展陈重构，Studio 保留生产闭环；新增非破坏法线版本、按需渲染、迟到选择隔离与目录高亮同步。当前结果、截图、候选包与限制以 [EXHIBITION-RC2.md](docs/EXHIBITION-RC2.md) 和 `docs/audit/rc2-results.json` 为准。P1-05 部分修复，手机真机未验证，正式 Logo 未接入。
+
+以下保留 RC1 与阶段 2 历史记录：
 
 第三阶段已形成 RC1：运行代码 `d20d1d231bf377b282cc7bdfb68c82ac7918b719`；全量 31/31 组、最终包 19/19、WorkBuddy 完全退出时真实 Agent 7/7。发布候选 ZIP、实际截图和限制见下方品质报告，机器结果见 `docs/audit/phase3-results.json`。没有公开部署。
 

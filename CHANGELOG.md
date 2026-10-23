@@ -4,6 +4,15 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
+## [2026-10-23 Exhibition RC2] — 数字展陈改造
+
+- 首页真实海报与五件目录、详情信息精简、全宽 Gallery / 设置与资源抽屉，Studio 深色操作区与窄屏触控布局。
+- 联系方式收为共享页脚的单一展开项；品牌文字回退，批准的正式 Logo 文件暂不接入。
+- 新 Exhibition v1 修复同位置 UV 接缝法线与旧 NORMAL 元数据；原始模型、POSITION、UV、材质、贴图和面数保持不变。
+- 首页零 GLB 请求、移除独立 miniViewer 与重复环境预计算、按需 GPU 渲染、手机相机空间取景。
+- Studio 离开时迟到响应不覆盖 Gallery；导入后清除旧目录高亮；隐藏视口不缩为 1×1。
+- 全量 33/33 组；新增真实模型/展陈回归、三角度同条件采集、候选包哈希及实际解压包验收；限制见 docs/EXHIBITION-RC2.md。
+
 ## [2026-10-23 Quality RC] — Codex 第三阶段
 
 - 独立开发 worktree；联系方式可读、mailto/复制与直接定位；共享品牌组件和后续 Logo 动画钩子，保留原标识。

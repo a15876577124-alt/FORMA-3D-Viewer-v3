@@ -2,9 +2,11 @@
 
 一个实时三维展示器，用于陈列五件琼剧角色数字手办（生角、旦角·完整头饰、净角·红谱 / 黄谱 / 白谱），支持专业影棚布光、材质与后期调整、多格式模型导入、逐展品参数持久化、沉浸模式与截图导出。
 
-**V5 双工作区**（当前审计分支 `feature/codex-v5-audit`，交付基线 `feature/forma-v5-experience`）：
+**RC2 展陈候选版**（开发分支 `feature/codex-v5-exhibition`，RC1 恢复点 `83453aa`）。当前验收和真实截图见 [RC2 报告](docs/EXHIBITION-RC2.md)，未合并 main 或部署。
 
-- **Gallery 数字展厅**：观展优先。大视口 + 观展信息卡 + 动作条（最佳视角 / 展厅布光 / 导出 PNG），专业材质与后期收进「高级控制台」抽屉，生产工具在观展模式下不出现。
+**V5 双工作区**：
+
+- **Gallery 数字展厅**：观展优先。全宽三维舞台、五件底部缩略图、旋转 / 重置视角 / 保存图片；专业材质与后期收进「观看设置」，导入与资源库保留在「更多资源」，生产工具在观展模式下不出现。
 - **AI Studio 专业工作区**：五区布局（顶部工具条 / 左资源树 / 中央视口 / 右 Lab 坞 / 底部任务 Dock），已接入统一资产/版本、材质保存、真实 GLB/GLTF/FBX 工作流程、Agent、后验、真实两版本比较和完整资源包导出，见 [生产闭环记录](docs/V5-PRODUCTION-WORKFLOW.md)。
 - **可调整工作区**：左右面板宽度、底部 Dock 高度全部可拖拽（也支持键盘与双击复位），布局按 Gallery / Studio 分别记忆。
 - 两者共用**同一个 Viewer / 同一个 WebGL 上下文**，切换零重建。
@@ -53,7 +55,7 @@ npm run op:demo -- --asset=assets/raw/sheng.glb --ops=weld,genNormals,fixMateria
 npm run batch:demo       # 5 手办批量处理 + 发布到资产库
 ```
 
-测试：`npm test` 一次跑完 **19 组、约 706 条断言**（自带服务器，无需手动启动）。单组：`npm run test:pipeline` / `test:agent` / `test:ops` / `test:batch` / `test:proxy` / `test:release`。浏览器渲染验收见 [docs/demo/README.md](docs/demo/README.md)。
+测试：`npm test` 当前运行 **33 组**（19 组 / 706 项为最初 WorkBuddy 历史基线）（自带服务器，无需手动启动）。单组：`npm run test:pipeline` / `test:agent` / `test:ops` / `test:batch` / `test:proxy` / `test:release`。浏览器渲染验收见 [docs/demo/README.md](docs/demo/README.md)。
 
 ## 展品
 

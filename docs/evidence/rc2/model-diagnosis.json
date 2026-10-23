@@ -1,0 +1,187 @@
+[
+  {
+    "id": "sheng",
+    "seamsBefore": 1511,
+    "seamsAfter": 0,
+    "metal": 0,
+    "rough": 0.9036020036098448,
+    "validation": {
+      "sourceErrors": 6,
+      "errors": 0,
+      "warnings": 0
+    },
+    "rawHasNormals": false,
+    "rawMaterial": {
+      "baseColorTexture": {
+        "index": 0
+      },
+      "baseColorFactor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "roughnessFactor": 0.9036020036098448
+    },
+    "lit": {
+      "meanChannelDifference": 0.022655555555555557,
+      "channelsChangedOver8": 1624
+    },
+    "-normals": {
+      "meanChannelDifference": 0.04318333333333333,
+      "channelsChangedOver8": 5043
+    },
+    "-unlit": {
+      "meanChannelDifference": 0,
+      "channelsChangedOver8": 0
+    }
+  },
+  {
+    "id": "dan",
+    "seamsBefore": 3766,
+    "seamsAfter": 0,
+    "metal": 0,
+    "rough": 0.9036020036098448,
+    "validation": {
+      "sourceErrors": 5,
+      "errors": 0,
+      "warnings": 0
+    },
+    "rawHasNormals": false,
+    "rawMaterial": {
+      "baseColorTexture": {
+        "index": 0
+      },
+      "baseColorFactor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "roughnessFactor": 0.9036020036098448
+    },
+    "lit": {
+      "meanChannelDifference": 0.13980416666666667,
+      "channelsChangedOver8": 21099
+    },
+    "-normals": {
+      "meanChannelDifference": 0.3234361111111111,
+      "channelsChangedOver8": 59117
+    },
+    "-unlit": {
+      "meanChannelDifference": 0,
+      "channelsChangedOver8": 0
+    }
+  },
+  {
+    "id": "jing-red",
+    "seamsBefore": 2753,
+    "seamsAfter": 0,
+    "metal": 0,
+    "rough": 0.9036020036098448,
+    "validation": {
+      "sourceErrors": 7,
+      "errors": 0,
+      "warnings": 0
+    },
+    "rawHasNormals": false,
+    "rawMaterial": {
+      "baseColorTexture": {
+        "index": 0
+      },
+      "baseColorFactor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "roughnessFactor": 0.9036020036098448
+    },
+    "lit": {
+      "meanChannelDifference": 0.061088715277777775,
+      "channelsChangedOver8": 7238
+    },
+    "-normals": {
+      "meanChannelDifference": 0.1393578125,
+      "channelsChangedOver8": 22575
+    },
+    "-unlit": {
+      "meanChannelDifference": 0,
+      "channelsChangedOver8": 0
+    }
+  },
+  {
+    "id": "jing-yellow",
+    "seamsBefore": 1843,
+    "seamsAfter": 0,
+    "metal": 0,
+    "rough": 0.9036020036098448,
+    "validation": {
+      "sourceErrors": 6,
+      "errors": 0,
+      "warnings": 0
+    },
+    "rawHasNormals": false,
+    "rawMaterial": {
+      "baseColorTexture": {
+        "index": 0
+      },
+      "baseColorFactor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "roughnessFactor": 0.9036020036098448
+    },
+    "lit": {
+      "meanChannelDifference": 0.034998784722222225,
+      "channelsChangedOver8": 4369
+    },
+    "-normals": {
+      "meanChannelDifference": 0.0834734375,
+      "channelsChangedOver8": 13359
+    },
+    "-unlit": {
+      "meanChannelDifference": 0,
+      "channelsChangedOver8": 0
+    }
+  },
+  {
+    "id": "jing-white",
+    "seamsBefore": 1815,
+    "seamsAfter": 0,
+    "metal": 0,
+    "rough": 0.9036020036098448,
+    "validation": {
+      "sourceErrors": 8,
+      "errors": 0,
+      "warnings": 0
+    },
+    "rawHasNormals": false,
+    "rawMaterial": {
+      "baseColorTexture": {
+        "index": 0
+      },
+      "baseColorFactor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "roughnessFactor": 0.9036020036098448
+    },
+    "lit": {
+      "meanChannelDifference": 0.038428993055555555,
+      "channelsChangedOver8": 3975
+    },
+    "-normals": {
+      "meanChannelDifference": 0.0891501736111111,
+      "channelsChangedOver8": 12630
+    },
+    "-unlit": {
+      "meanChannelDifference": 0,
+      "channelsChangedOver8": 0
+    }
+  }
+]

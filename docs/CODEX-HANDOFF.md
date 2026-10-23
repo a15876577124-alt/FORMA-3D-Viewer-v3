@@ -1,12 +1,14 @@
 # CODEX-HANDOFF — 当前工程交接
 
-2026-10-23：当前为第三阶段品质提升。以 [品质报告](V5-QUALITY.md)、[Logo 接入约定](LOGO-INTEGRATION.md)、[AI 服务适配](AI-PROVIDERS.md) 与 [剩余问题](../KNOWN-ISSUES.md) 为当前状态。阶段 2 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md) 与第一轮审计保留追溯。
+2026-10-23：当前为 RC2 展陈改造，首读 [EXHIBITION-RC2.md](EXHIBITION-RC2.md) 与 [机器结果](audit/rc2-results.json)。以下 RC1 服务/业务说明继续有效。以 [品质报告](V5-QUALITY.md)、[Logo 接入约定](LOGO-INTEGRATION.md)、[AI 服务适配](AI-PROVIDERS.md) 与 [剩余问题](../KNOWN-ISSUES.md) 为当前状态。阶段 2 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md) 与第一轮审计保留追溯。
 
 ## Git 与资产
 
-RC1 已完成全量 31/31 组、最终静态包 19/19、WorkBuddy 完全退出时真实 Agent 7/7。运行代码提交 `d20d1d231bf377b282cc7bdfb68c82ac7918b719`；最终文档/截图另存提交。候选包和复现步骤见品质报告，不依赖私人运行期目录。
+RC2 运行行为：公开页使用真实 WebP 海报，进入 Gallery 才加载 Exhibition v1；Studio 选择仍以 assetId/version/path 为准。Gallery / Studio 共用 Viewer，离开 Studio 使迟到选择失效。Logo 已批准方案但未接入正式文件。
 
-当前开发 worktree：D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality，分支 feature/codex-v5-quality。基线 7f133b9885466a1a1f528ce06c787775da096122。原工程 FORMA-3D-Viewer-v3 保留 feature/codex-v5-audit 与原有未提交文档。不要在两个工作区交叉覆盖，不合并 main 或 force push。
+历史 RC1 已完成全量 31/31 组、最终静态包 19/19、WorkBuddy 完全退出时真实 Agent 7/7。运行代码提交 `d20d1d231bf377b282cc7bdfb68c82ac7918b719`；最终文档/截图另存提交。候选包和复现步骤见品质报告，不依赖私人运行期目录。
+
+当前开发 worktree：D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality，分支 feature/codex-v5-exhibition；从 RC1 检查点 83453aafbc1dd8f8885f05d5ab9d1c3215218b65 创建。原工程 FORMA-3D-Viewer-v3 保留 feature/codex-v5-audit 与原有未提交文档。不要在两个工作区交叉覆盖，不合并 main 或 force push。
 
 docs/ARCHITECTURE.md 的接手前格式改动必须继续保留，未纳入任何功能提交。原始资产、仓库外 OBJ/MTL/PNG、既有用户工作区资产、凭据均不可覆盖；所有处理输出写新版本。
 
