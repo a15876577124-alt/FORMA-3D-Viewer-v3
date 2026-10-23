@@ -131,6 +131,8 @@ function materialPane({ viewer, core }) {
   const listBox = el('div', { class: 'st-mat-list', id: 'stMatList' });
   const editBox = el('div', { class: 'st-mat-edit', id: 'stMatEdit' });
   const actRow = el('div', { class: 'st-actions' },
+    el('button', { class:'st-btn st-btn-ghost', type:'button', id:'stMatUndo', disabled:true }, '撤销'),
+    el('button', { class:'st-btn st-btn-ghost', type:'button', id:'stMatRedo', disabled:true }, '重做'),
     el('button', { class: 'st-btn st-btn-ghost', type: 'button', id: 'stMatReset' }, '重置预览'),
     el('button', { class: 'st-btn st-btn-primary', type: 'button', id: 'stMatSave' }, '保存为新版本'),
     el('button', { class: 'st-btn st-btn-ghost', type: 'button', id: 'stMatRefresh' }, '重新读取'),
@@ -140,6 +142,19 @@ function materialPane({ viewer, core }) {
   // 原始值快照：只在首次读取时记录，供「还原」使用（WeakMap 天然随对象回收）
   const originals = new WeakMap();
   let selected = null;
+  let undo=[],redo=[],editKey=null;
+  const draftStatus=el('p',{class:'st-hint',id:'stMatDraft',role:'status'},'选择材质开始编辑');
+  actRow.after(draftStatus);
+  const capture=m=>({color:m.color?.getHex(),metalness:m.metalness,roughness:m.roughness,envMapIntensity:m.envMapIntensity,emissiveIntensity:m.emissiveIntensity,opacity:m.opacity,transparent:m.transparent,side:m.side});
+  function restore(m,values){if(m.color&&values.color!=null)m.color.setHex(values.color);for(const k of Object.keys(values))if(k!=='color'&&values[k]!=null)m[k]=values[k];m.needsUpdate=true;viewer.render?.();}
+  function syncDraft(){
+    const mat=selected?.material,base=mat&&originals.get(mat),now=mat&&capture(mat);
+    const dirty=!!base&&Object.keys(now).some(k=>k!=='envMapIntensity'&&now[k]!==base[k]);
+    core.setMaterialDraft({dirty,reset:()=>{if(mat&&base)restore(mat,base);}});
+    draftStatus.textContent=dirty?'未保存 · 当前材质预览；保存生成新版本':mat?'已与当前版本一致 · 环境反射仅预览':'选择材质开始编辑';
+    node.querySelector('#stMatUndo').disabled=!undo.length;node.querySelector('#stMatRedo').disabled=!redo.length;
+  }
+  function beginEdit(key){if(editKey!==key){undo.push(capture(selected.material));if(undo.length>50)undo.shift();redo=[];editKey=key;}}
 
   function snapshot(mat) {
     if (originals.has(mat)) return;
@@ -167,11 +182,14 @@ function materialPane({ viewer, core }) {
       const out = el('em', { class: 'st-num' }, String(Number(mat[key] ?? 0).toFixed(2)));
       const input = el('input', { type: 'range', min: String(min), max: String(max), step: String(step), value: String(mat[key] ?? 0), class: 'st-range', 'data-material-param':key });
       input.addEventListener('input', () => {
+        beginEdit(key);
         const v = parseFloat(input.value);
         out.textContent = v.toFixed(2);
         apply(v);
+        syncDraft();
         viewer.render?.();
       });
+      input.addEventListener('change',()=>{editKey=null;});
       return el('label', { class: 'st-field' }, el('span', {}, label), input, out);
     };
 
@@ -184,14 +202,15 @@ function materialPane({ viewer, core }) {
     if (mat.color) {
       const picker = el('input', { type: 'color', value: f.color || '#ffffff', class: 'st-color' });
       const hex = el('em', { class: 'st-num' }, f.color);
-      picker.addEventListener('input', () => { mat.color.set(picker.value); hex.textContent = picker.value; viewer.render?.(); });
+      picker.addEventListener('input', () => { beginEdit('color');mat.color.set(picker.value); hex.textContent = picker.value;syncDraft(); viewer.render?.(); });
+      picker.addEventListener('change',()=>{editKey=null;});
       editBox.append(el('label', { class: 'st-field' }, el('span', {}, '基色'), picker, hex));
     }
 
     const cbTransparent = el('input', { type: 'checkbox', checked: !!mat.transparent });
-    cbTransparent.addEventListener('change', () => { mat.transparent = cbTransparent.checked; mat.needsUpdate = true; viewer.render?.(); });
+    cbTransparent.addEventListener('change', () => { beginEdit('transparent');mat.transparent = cbTransparent.checked; mat.needsUpdate = true;editKey=null;syncDraft(); viewer.render?.(); });
     const cbDouble = el('input', { type: 'checkbox', checked: mat.side === 2 });
-    cbDouble.addEventListener('change', () => { mat.side = cbDouble.checked ? 2 : 0; mat.needsUpdate = true; viewer.render?.(); });
+    cbDouble.addEventListener('change', () => { beginEdit('side');mat.side = cbDouble.checked ? 2 : 0; mat.needsUpdate = true;editKey=null;syncDraft(); viewer.render?.(); });
     editBox.append(el('label', { class: 'st-check' }, cbTransparent, el('span', {}, '透明混合')),
       el('label', { class: 'st-check' }, cbDouble, el('span', {}, '双面渲染')));
   }
@@ -199,7 +218,7 @@ function materialPane({ viewer, core }) {
   function update() {
     listBox.innerHTML = '';
     const meshes = core.state.selectionStatus === 'ready' ? collectMeshes(viewer.modelRoot) : [];
-    if (selected && !meshes.includes(selected.mesh)) selected = null;
+    if (selected && !meshes.includes(selected.mesh)) {selected = null;undo=[];redo=[];editKey=null;syncDraft();}
     if (!meshes.length) { listBox.append(hint('当前视口没有网格——先在资源树里选中资产并载入。')); selected = null; renderEdit(); return; }
     const seen = new Set();
     let idx = 0;
@@ -216,7 +235,14 @@ function materialPane({ viewer, core }) {
           el('span', { class: 'st-mat-name' }, name),
           el('span', { class: 'st-mat-meta' }, `${f.slots.length} 贴图 · M${Number(f.metalness ?? 0).toFixed(2)} / R${Number(f.roughness ?? 0).toFixed(2)}`),
         );
-        row.addEventListener('click', () => { selected = { mesh, material: mat, name }; renderEdit(); });
+        row.addEventListener('click', () => {
+          if(selected?.material!==mat){
+            if(core.state.materialDirty&&!window.confirm('当前材质尚未保存。放弃修改并编辑另一材质？'))return;
+            if(selected){const base=originals.get(selected.material);if(base)restore(selected.material,base);}
+            undo=[];redo=[];editKey=null;
+          }
+          selected = { mesh, material: mat, name };renderEdit();syncDraft();
+        });
         listBox.append(row);
       });
       idx += 1;
@@ -229,12 +255,16 @@ function materialPane({ viewer, core }) {
     const o = originals.get(selected.material);
     if (!o) return;
     const m = selected.material;
+    beginEdit('reset');editKey=null;
     if (m.color && o.color != null) m.color.setHex(o.color);
     for (const k of ['metalness', 'roughness', 'emissiveIntensity', 'envMapIntensity', 'opacity', 'transparent', 'side']) if (o[k] != null) m[k] = o[k];
     m.needsUpdate = true;
     viewer.render?.();
     renderEdit();
+    syncDraft();
   });
+  node.querySelector('#stMatUndo').addEventListener('click',()=>{if(!selected||!undo.length)return;redo.push(capture(selected.material));restore(selected.material,undo.pop());editKey=null;renderEdit();syncDraft();});
+  node.querySelector('#stMatRedo').addEventListener('click',()=>{if(!selected||!redo.length)return;undo.push(capture(selected.material));restore(selected.material,redo.pop());editKey=null;renderEdit();syncDraft();});
   node.querySelector('#stMatRefresh').addEventListener('click', update);
   node.querySelector('#stMatSave').addEventListener('click', () => selected && core.saveMaterial(selected.material));
 
@@ -347,12 +377,21 @@ function texturePane({ viewer, core }) {
       for (const mat of (Array.isArray(mesh.material) ? mesh.material : [mesh.material])) {
         if (!mat) continue;
         for (const s of matFacts(mat).slots) {
-          if (seen.has(s.slot + s.name)) continue;
-          seen.set(s.slot + s.name, true);
+          const texture=mat[s.slot], key=mat.uuid+'|'+s.slot;
+          if (seen.has(key)) continue;
+          seen.set(key, true);
+          const preview=el('canvas',{width:80,height:80,class:'st-tex-preview','aria-label':s.slot+' 真实通道预览'});
+          try {
+            const ctx=preview.getContext('2d',{willReadFrequently:true});ctx.drawImage(texture.image,0,0,80,80);
+            const channel={roughnessMap:1,metalnessMap:2,aoMap:0,alphaMap:1}[s.slot];
+            if(channel!=null){const pixels=ctx.getImageData(0,0,80,80);for(let i=0;i<pixels.data.length;i+=4){const v=pixels.data[i+channel];pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=v;pixels.data[i+3]=255;}ctx.putImageData(pixels,0,0);}
+          }catch{preview.title='该纹理格式不能直接生成 Canvas 缩略图';}
           liveBox.append(el('div', { class: 'st-tex-row' },
+            preview,
             el('span', { class: 'st-tex-badge is-live' }, s.slot.replace('Map', '')),
             el('span', { class: 'st-tex-name', title: s.name }, s.name),
             el('span', { class: 'st-tex-dim' }, s.w && s.h ? `${s.w}×${s.h}` : '尺寸未知'),
+            el('span',{class:'st-tex-binding'},`${mesh.name||'Mesh'} → ${mat.name||'Material'} → ${s.slot}`),
           ));
         }
       }

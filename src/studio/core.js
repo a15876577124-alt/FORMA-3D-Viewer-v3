@@ -137,7 +137,16 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   // ------------------------------------------------------------ 资产 ----
   let selectionTicket = 0;
   let compareTicket = 0;
+  let materialDraft = null;
+  function setMaterialDraft(draft) {
+    materialDraft=draft;
+    state.materialDirty=!!draft?.dirty;
+    emit('material-draft',state.materialDirty);
+  }
+  window.addEventListener('beforeunload',e=>{if(state.materialDirty){e.preventDefault();e.returnValue='';}});
   async function selectAsset(id, version = 0, { keepRun = false } = {}) {
+    if(state.materialDirty && !keepRun && !window.confirm('当前材质有未保存修改。放弃预览并切换资产或版本？'))return null;
+    materialDraft?.reset?.();setMaterialDraft(null);
     const ticket = ++selectionTicket;
     ++viewer.ticket; // Invalidate a pending Gallery load as well.
     await exitCompare();
@@ -181,7 +190,8 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     }
   }
 
-  function requireSelection() {
+  function requireSelection(allowDraft = false) {
+    if(state.materialDirty && !allowDraft){emit('log',{tone:'warn',text:'材质有未保存修改，请先保存为新版本或重置预览。'});return false;}
     if (!requireOnline()) return false;
     if (state.selectionStatus !== 'ready' || viewer.currentEntry?.assetId !== state.selectedAsset || viewer.currentEntry?.version !== state.selectedVersion) {
       emit('log', {tone:'warn', text:'请等待所选资产版本载入完成'});
@@ -274,8 +284,8 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   // ------------------------------------------------------------ 执行 ----
-  async function run({ dryRun = false, ops } = {}) {
-    if (!requireSelection()) return null;
+  async function run({ dryRun = false, ops, materialSave = false } = {}) {
+    if (!requireSelection(materialSave)) return null;
     if (!state.selectedAsset) { emit('log', { tone: 'warn', text: '请先选择资产' }); return null; }
     const list = ops || selectedOps();
     if (!list.length) { emit('log', { tone: 'warn', text: '请至少勾选一个算子' }); return null; }
@@ -554,11 +564,11 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   async function saveMaterial(mat) {
-    if (!requireSelection() || !Number.isInteger(mat?.userData?.gltfMaterialIndex)) { emit('log',{tone:'warn',text:'请先选择 GLB/GLTF 版本的材质'});return null; }
+    if (!requireSelection(true) || !Number.isInteger(mat?.userData?.gltfMaterialIndex)) { emit('log',{tone:'warn',text:'请先选择 GLB/GLTF 版本的材质'});return null; }
     let belongs=false;viewer.modelRoot.traverse(o=>{if(o.isMesh&&(Array.isArray(o.material)?o.material:[o.material]).includes(mat))belongs=true;});
     if(!belongs){emit('log',{tone:'warn',text:'材质不属于当前版本，请重新选择'});return null;}
     const ticket=selectionTicket;await exitCompare();if(ticket!==selectionTicket)return null;
-    return run({ops:[{op:'setMaterial',params:{materialIndex:mat.userData.gltfMaterialIndex,metallicFactor:mat.metalness,roughnessFactor:mat.roughness,colorR:mat.color.r,colorG:mat.color.g,colorB:mat.color.b,opacity:mat.opacity,emissiveStrength:mat.emissiveIntensity ?? 1,alphaMode:mat.transparent?'BLEND':mat.alphaTest>0?'MASK':'OPAQUE',doubleSided:mat.side===2}}]});
+    return run({materialSave:true,ops:[{op:'setMaterial',params:{materialIndex:mat.userData.gltfMaterialIndex,metallicFactor:mat.metalness,roughnessFactor:mat.roughness,colorR:mat.color.r,colorG:mat.color.g,colorB:mat.color.b,opacity:mat.opacity,emissiveStrength:mat.emissiveIntensity ?? 1,alphaMode:mat.transparent?'BLEND':mat.alphaTest>0?'MASK':'OPAQUE',doubleSided:mat.side===2}}]});
   }
 
   async function publish(version) {
@@ -619,6 +629,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
 
   return {
     state,
+    setMaterialDraft,
     connect, probe, refreshAssets,
     selectAsset, selectEntry, setOpEnabled, setOpParams, selectedOps, applyPreset,
     analyze, detectTextures, extractTextures,

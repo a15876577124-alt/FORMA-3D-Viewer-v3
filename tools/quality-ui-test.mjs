@@ -68,6 +68,27 @@ try{
   await page.screenshot({path:path.join(OUT,'studio-desktop.png')});
   check('studio has no contact module',await page.$$eval('.v5-layer:not([hidden]) .v5-contact',es=>es.length===0));
   await page.setViewport({width:390,height:844});await page.screenshot({path:path.join(OUT,'studio-390.png')});
+  if(!baseline){
+    await page.setViewport({width:1440,height:1000});
+    const input=await page.$('#studioFileInput');await input.uploadFile(path.join(ROOT,'test-assets/licensed/Avocado.glb'));
+    await page.waitForFunction(()=>window.__FORMA.studio.state.selectionStatus==='ready');
+    await page.click('.st-tab[data-pane="material"]');await page.click('#stMatList button');
+    await page.focus('[data-material-param="roughness"]');await page.keyboard.press('ArrowLeft');
+    check('material edit marks unsaved state',await page.evaluate(()=>window.__FORMA.studio.state.materialDirty));
+    await page.click('#stMatUndo');check('undo restores version material',!await page.evaluate(()=>window.__FORMA.studio.state.materialDirty));
+    await page.click('#stMatRedo');check('redo restores unsaved material',await page.evaluate(()=>window.__FORMA.studio.state.materialDirty));
+    page.once('dialog',d=>d.dismiss());
+    await page.evaluate(()=>window.__FORMA.studio.core.selectAsset(window.__FORMA.studio.selectedAsset));
+    check('cancelled asset switch retains draft',await page.evaluate(()=>window.__FORMA.studio.state.materialDirty));
+    await page.screenshot({path:path.join(OUT,'material-draft.png')});
+    await page.click('#stMatSave');await page.waitForFunction(()=>window.__FORMA.studio.state.confirmToken);
+    await page.click('#stMatSave');await page.waitForFunction(()=>window.__FORMA.studio.state.selectedVersion>0&&window.__FORMA.studio.state.selectionStatus==='ready');
+    check('material saved to new version clears draft',!await page.evaluate(()=>window.__FORMA.studio.state.materialDirty));
+    await page.evaluate(()=>window.__FORMA.studio.core.exitCompare());
+    await page.click('.st-tab[data-pane="texture"]');
+    check('texture lab draws actual texture previews',await page.$$eval('.st-tex-preview',es=>es.length>=3));
+    await page.screenshot({path:path.join(OUT,'texture-channels.png')});
+  }
   check('no page exceptions',errors.length===0);
   metrics.gpu=await page.evaluate(()=>{const gl=window.__FORMA.viewer.renderer.getContext();return gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL);});
 }finally{

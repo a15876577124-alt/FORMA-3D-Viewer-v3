@@ -51,6 +51,7 @@ export function createDock({ core, toast, getBatchIds }) {
 
   // ---------------- 处理页：预设 / 算子 / 参数 / 执行 ----------------
   const presetSel = el('select', { class: 'st-select', id: 'stPresetSel' }, el('option', { value: '' }, '自定义（手动配置）'));
+  const presetInfo=el('p',{class:'st-hint',id:'stPresetInfo'},'自定义处理：勾选算子并检查右侧参数。所有处理生成新版本。');
   const opsBox = el('div', { class: 'st-ops', id: 'stOps' });
   const paramHost = el('div', { class: 'st-params', id: 'stOpParams' });
   const dryCheck = el('input', { type: 'checkbox', id: 'stDryRun' });
@@ -72,7 +73,7 @@ export function createDock({ core, toast, getBatchIds }) {
       batchBtn,
       runBtn,
     ),
-    confirmBox,
+    presetInfo, confirmBox,
     progressBar,
     el('div', { class: 'st-dock-cols' },
       el('div', { class: 'st-col st-col-ops' }, el('div', { class: 'st-subhead' }, '算子（后端注册，ⓘ 悬停看说明）'), opsBox),
@@ -118,9 +119,12 @@ export function createDock({ core, toast, getBatchIds }) {
   }
 
   presetSel.addEventListener('change', () => {
-    if (!presetSel.value) return;
-    core.applyPreset(presetSel.value);
+    const id=presetSel.value,preset=core.state.presets.find(p=>p.id===id);
+    if (!preset) {presetInfo.textContent='自定义：当前算子与参数保持，可继续编辑。';return;}
+    core.applyPreset(id);
     renderOps();
+    presetSel.value=id;
+    presetInfo.textContent=preset.desc+' 参数：'+preset.ops.map(s=>s.op+' '+JSON.stringify(s.params)).join(' → ');
   });
   runBtn.addEventListener('click', () => { syncOpsUI(); core.run({ dryRun: dryCheck.checked }); });
   batchBtn.addEventListener('click', () => {

@@ -138,6 +138,9 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
 
   function handle(type, payload) {
     switch (type) {
+      case 'material-draft':
+        toolbar.node.classList.toggle('has-draft',!!payload);
+        break;
       case 'connecting':
         toolbar.setStatus('connecting');
         break;

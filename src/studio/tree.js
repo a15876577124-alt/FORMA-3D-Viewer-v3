@@ -128,7 +128,7 @@ export function createAssetTree({ core, onPreview, toast }) {
     if (assetId !== core.state.selectedAsset) return;
     const hit = entries.find((e) => e.assetId === assetId);
     list.innerHTML = '';
-    const versions = [{version:0, ops:['Original']}, ...(hit?.versions || []).filter(v => v.modelFile)];
+    const versions = [{version:0, kind:'Original', ops:[], status:'original'}, ...(hit?.versions || [])];
     node.querySelector('[data-count="versions"]').textContent = String(versions.length);
     if (!versions.length) {
       list.append(el('p', { class: 'st-hint' }, '该资产还没有处理版本——执行一次处理后出现。'));
@@ -136,7 +136,7 @@ export function createAssetTree({ core, onPreview, toast }) {
     }
     const from = el('select', {class:'st-select',id:'stCompareFrom','aria-label':'Before 版本'});
     const to = el('select', {class:'st-select',id:'stCompareTo','aria-label':'After 版本'});
-    for(const v of versions){for(const sel of [from,to])sel.append(el('option',{value:String(v.version)},v.version?'v'+v.version+' · '+(v.kind||'Processed'):'Original'));}
+    for(const v of versions.filter(v=>!v.version||v.verifyPass===true)){for(const sel of [from,to])sel.append(el('option',{value:String(v.version)},v.version?'v'+v.version+' · '+(v.kind||'Processed'):'Original'));}
     to.value=String(core.state.selectedVersion);
     const compare=el('button',{class:'st-btn',type:'button',id:'stCompareVersions'},'比较所选版本');
     compare.addEventListener('click',()=>core.compareVersions(Number(from.value),Number(to.value)));
@@ -148,11 +148,13 @@ export function createAssetTree({ core, onPreview, toast }) {
         el('span', { class: 'st-ver-badge' }, label),
         el('span', { class: 'st-row-main' },
           el('span', { class: 'st-row-name' }, ops),
-          el('span', { class: 'st-row-meta' }, v.createdAt ? String(v.createdAt).slice(0, 19).replace('T', ' ') : '时间未知'),
+          el('span', { class: 'st-row-meta' }, v.version ? (v.verifyPass===true?'验证通过':'未通过验证')+' · '+(v.status||'unknown') : '只读原始版本'),
+          v.error?el('span',{class:'st-issue-msg'},v.error):null,
         ),
       );
-      row.addEventListener('click', () => core.selectAsset(assetId, v.version));
-      row.addEventListener('keydown', e => { if (e.key === 'Enter') core.selectAsset(assetId, v.version); });
+      row.setAttribute('aria-disabled',String(!!v.version&&!v.modelFile));
+      row.addEventListener('click', () => {if(!v.version||v.modelFile)core.selectAsset(assetId, v.version);});
+      row.addEventListener('keydown', e => { if (e.key === 'Enter'&&(!v.version||v.modelFile)) core.selectAsset(assetId, v.version); });
       list.append(row);
     }
   }

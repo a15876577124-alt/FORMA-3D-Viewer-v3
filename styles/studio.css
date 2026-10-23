@@ -572,3 +572,8 @@ body.mode-studio #studioRail {display:block !important;}
 .st-empty-view h2 { color:var(--v5-tx-hi); font-size:24px; font-weight:500; margin:0; }
 .st-empty-view p { max-width:400px; line-height:1.8; color:var(--v5-tx-lo); margin:0; }
 @media(max-width:640px) { .st-empty-view { padding:20px; gap:12px; } .st-empty-view h2 { font-size:20px; } }
+.st-toolbar.has-draft .st-crumb-item::after { content:' · 未保存材质'; color:var(--v5-warn); }
+.st-tex-preview { width:64px; height:64px; object-fit:contain; border:1px solid var(--v5-line-2); border-radius:6px; flex:none; }
+.st-tex-binding { display:block; flex-basis:100%; color:var(--v5-tx-lo); font-size:11px; overflow-wrap:anywhere; }
+.st-tex-row { flex-wrap:wrap; }
+#stPresetInfo { overflow-wrap:anywhere; margin:8px 0; }

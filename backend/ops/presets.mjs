@@ -5,24 +5,20 @@ import { OP_SCHEMA, validateSchema } from './schema.mjs';
 export const PIPELINE_PRESETS = [
   {
     id: 'repair',
-    label: '修复补全',
-    desc: '焊接顶点 + 生成法线 + 修正材质金属度，不改变网格拓扑。',
+    label: '保真整理',
+    desc: '适合已有正确材质的 GLB/GLTF：去重并清理未引用资源。不重建法线、不改金属度、不减面或缩图；没有重复资源时可能无体积收益。',
     ops: [
-      { op: 'weld', params: { epsilon: 1e-5 } },
-      { op: 'genNormals', params: { hardAngle: 180 } },
-      { op: 'fixMaterials', params: { metallicFactor: 0, roughnessFactor: 1 } },
-      { op: 'setSampler', params: {} },
+      { op: 'dedup', params: {} },
+      { op: 'prune', params: {} },
     ],
   },
   {
     id: 'web',
     label: 'Web 展示优化',
-    desc: '修复补全 + 几何量化，显著减小体积且拓扑不变。',
+    desc: '资源去重与几何量化；保持材质与纹理分辨率。量化有精度损失，适合常规静态 Web 展示，精密模型须对比检查，不保证所有模型都会变小。',
     ops: [
-      { op: 'weld', params: { epsilon: 1e-5 } },
-      { op: 'genNormals', params: { hardAngle: 180 } },
-      { op: 'fixMaterials', params: { metallicFactor: 0, roughnessFactor: 1 } },
-      { op: 'setSampler', params: {} },
+      { op: 'dedup', params: {} },
+      { op: 'prune', params: {} },
       { op: 'quantize', params: { quantizePosition: 14, quantizeNormal: 10, quantizeTexcoord: 12, quantizationVolume: 'mesh' } },
     ],
   },
