@@ -1,0 +1,353 @@
+{
+  "note": "Unedited Edge captures. Model pairs have identical camera/light/exposure; page captures document UI, not controlled shading comparisons.",
+  "files": [
+    {
+      "file": "before-home-desktop.png",
+      "source": "test-out/rc1-polish-before-pages/home-desktop.png",
+      "sha256": "ebbb6f88eeee7a5b04363c9b4a2263babd86c221e7bd0ac3a081b8e9554e9f4c",
+      "bytes": 308516
+    },
+    {
+      "file": "before-collection-desktop.png",
+      "source": "test-out/rc1-polish-before-pages/collection-desktop.png",
+      "sha256": "0762bd05f833c5ba61954e8b8e231885490a4de27a46ef6cdd52cf8ada6ec21e",
+      "bytes": 85534
+    },
+    {
+      "file": "before-work-sheng.png",
+      "source": "test-out/rc1-polish-before-pages/work-sheng.png",
+      "sha256": "95b3d8935f39bf83d00965b75b66114ec571d29007315dec8e23c869fb8a93a2",
+      "bytes": 236695
+    },
+    {
+      "file": "before-work-dan.png",
+      "source": "test-out/rc1-polish-before-pages/work-dan.png",
+      "sha256": "6a0e68930137e860ee34cfb3f1c85aa842a9a3bfd8c69292fbbc792453b3ea95",
+      "bytes": 273527
+    },
+    {
+      "file": "before-work-jing-red.png",
+      "source": "test-out/rc1-polish-before-pages/work-jing-red.png",
+      "sha256": "60389a6903089155ab748822c5b3d74057aedaadb7e2579547bca67684fc524d",
+      "bytes": 265185
+    },
+    {
+      "file": "before-work-jing-yellow.png",
+      "source": "test-out/rc1-polish-before-pages/work-jing-yellow.png",
+      "sha256": "eeecc87af2cdb0c305e6218e1daea31ea91218f14664a166b132e337f46089da",
+      "bytes": 239866
+    },
+    {
+      "file": "before-work-jing-white.png",
+      "source": "test-out/rc1-polish-before-pages/work-jing-white.png",
+      "sha256": "b454ff8727941feeb29adb36fd75b6807e5ff1ce0b76b6da4800e9296d653cec",
+      "bytes": 243447
+    },
+    {
+      "file": "before-work-390.png",
+      "source": "test-out/rc1-polish-before-pages/work-390.png",
+      "sha256": "43f79b54a1f9d8a61fbb6fe87a1e7259c8599486de794d1206654712d77eebb7",
+      "bytes": 127669
+    },
+    {
+      "file": "after-home-desktop.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/home-desktop.png",
+      "sha256": "3eb59bcc2b8bb77adb8418279efa9e484b791e7a56b345ade636dea4aa066915",
+      "bytes": 575828
+    },
+    {
+      "file": "after-collection-desktop.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/collection-desktop.png",
+      "sha256": "4400560453cd80668ca82d4d8fa48d8216f44e4f230648c301bc7052c8e40173",
+      "bytes": 235865
+    },
+    {
+      "file": "after-work-sheng.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/work-sheng.png",
+      "sha256": "c7dc4ede9194bc6d9ca344d4304056916ae18a3e0c6ec06d1d43f584ce125300",
+      "bytes": 244478
+    },
+    {
+      "file": "after-work-dan.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/work-dan.png",
+      "sha256": "a455d049aae84eeb16cdb74fbbcc3d920c27cc475f6dc15efc3fef38efc7b910",
+      "bytes": 281261
+    },
+    {
+      "file": "after-work-jing-red.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/work-jing-red.png",
+      "sha256": "da2ed1cf40cc0de2e7b3ac7ecbd1fe34659c9f9d7bc8f2234e14c6236fcb24ca",
+      "bytes": 274429
+    },
+    {
+      "file": "after-work-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/work-jing-yellow.png",
+      "sha256": "cd8e57ce642b9fe8411f73b32b4b3b268cfbb01fd816834720fde45f549ce638",
+      "bytes": 247963
+    },
+    {
+      "file": "after-work-jing-white.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/work-jing-white.png",
+      "sha256": "4d8d7ae4c9db3c9f63c8b0e18a40caf53c5f52384546f7c75eb2a0e5f774343f",
+      "bytes": 251859
+    },
+    {
+      "file": "after-gallery-sheng.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/gallery-sheng.png",
+      "sha256": "655fabeb6b96cfc7fd368806562deebeb1696e7e522680589eb4fc1d1f9f51e8",
+      "bytes": 522767
+    },
+    {
+      "file": "after-gallery-dan.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/gallery-dan.png",
+      "sha256": "b3f40f7e7e60fa48ba69bab8c9629ead3e11a907a44071b01f74d96a931bafc7",
+      "bytes": 594097
+    },
+    {
+      "file": "after-gallery-jing-red.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/gallery-jing-red.png",
+      "sha256": "04e035628380f727ca39413c3a5593d98ed6441748f16cd2b22bd689a132641e",
+      "bytes": 578247
+    },
+    {
+      "file": "after-gallery-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/gallery-jing-yellow.png",
+      "sha256": "181debb1fa0161fa4d31262d8aabb8f9c1c064f1df72b12363a014f704f13976",
+      "bytes": 526544
+    },
+    {
+      "file": "after-gallery-jing-white.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/gallery-jing-white.png",
+      "sha256": "743ce81c72eaa82301dbd2f0aba6cd492b9703e97a908f432b1f88c6d154979e",
+      "bytes": 578340
+    },
+    {
+      "file": "after-studio-asset.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/studio-asset.png",
+      "sha256": "0a9c5c7a4e9ca00d63642ec1c4f076842ac7be2df778218de8700f6f13cc8d69",
+      "bytes": 537749
+    },
+    {
+      "file": "after-home-390.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/home-390.png",
+      "sha256": "5c212388d94a69b0a539851d0899e2ae15fe3444693876e569af3663aaf96a78",
+      "bytes": 72489
+    },
+    {
+      "file": "after-work-390.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/work-390.png",
+      "sha256": "3f85b5a85cd12ddae31d170c28d841b063b9ad6aa11154b3f9b3e5d1c1585019",
+      "bytes": 126064
+    },
+    {
+      "file": "after-gallery-390.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/gallery-390.png",
+      "sha256": "00cf17afd05e6c02ceaf5f69f9f269d4dcb38e5cf5fc6bfc8a64a08411715b9f",
+      "bytes": 181146
+    },
+    {
+      "file": "after-studio-390.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/studio-390.png",
+      "sha256": "7b6baf2f58d82d39d06fbb7b482aa3c346d1e8b0124c76c88fd389b2d90adcde",
+      "bytes": 96721
+    },
+    {
+      "file": "after-home-768.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/home-768.png",
+      "sha256": "abf29e21e4ee6450f547817340bdf0020bdfef1391300d08f29a3d9baa671c15",
+      "bytes": 259206
+    },
+    {
+      "file": "after-work-768.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/work-768.png",
+      "sha256": "91cf5a4886a14b341b64a35f970689143172669ce87152434417d0fc3e0097b6",
+      "bytes": 87295
+    },
+    {
+      "file": "after-gallery-768.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/gallery-768.png",
+      "sha256": "9e05c4df8f543e4043e7017634580ac18becbccbe1097d7016a5d19d02319ec5",
+      "bytes": 298005
+    },
+    {
+      "file": "after-studio-768.png",
+      "source": "test-out/suite-2026-10-23T14-40-56-449Z/portfolio/studio-768.png",
+      "sha256": "17b7157b6fdf12bc538e9f6aad95fd30d4e3733fbef2dc93ba4338d06f13b937",
+      "bytes": 132362
+    },
+    {
+      "file": "before-home-contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/home-contact-desktop.png",
+      "sha256": "bdeeeb94dea53f98ae70d8d0b1f6fca8291e568853837f22e08e26e1b125a288",
+      "bytes": 87331
+    },
+    {
+      "file": "after-home-contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T14-35-36-662Z/quality/home-contact-desktop.png",
+      "sha256": "32bcbaa6ed6dbcf2393e0eed2dae70e0cb3b0b53e8c4ec111336cbe55beb18c9",
+      "bytes": 174848
+    },
+    {
+      "file": "before-home-contact-390.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/home-contact-390.png",
+      "sha256": "ca109340b846bfc4f5155d86be1540904faeefbfed3e5d6455385a72989d650c",
+      "bytes": 39769
+    },
+    {
+      "file": "after-home-contact-390.png",
+      "source": "test-out/suite-2026-10-23T14-35-36-662Z/quality/home-contact-390.png",
+      "sha256": "fbf5e2521ffa9ac8814bd483cd8677a7165d946fb6b54448c37dfa5dd8e3e3dd",
+      "bytes": 37098
+    },
+    {
+      "file": "before-work-contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/work-contact-desktop.png",
+      "sha256": "20d0107513ea934b8f0ce3f9f8713e5e05f2d4c1c2b120e4624795e7f94f2a66",
+      "bytes": 236463
+    },
+    {
+      "file": "after-work-contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T14-35-36-662Z/quality/work-contact-desktop.png",
+      "sha256": "95c077dc749855e4ffa6bc01ce5ad9f320d23f07015fecbf218ab57f159c100d",
+      "bytes": 217611
+    },
+    {
+      "file": "before-work-contact-390.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/work-contact-390.png",
+      "sha256": "b5e6b77bacfdd0d8d0aafc6b8c4e193f0367bab192603b10e777fefdd5889747",
+      "bytes": 33880
+    },
+    {
+      "file": "after-work-contact-390.png",
+      "source": "test-out/suite-2026-10-23T14-35-36-662Z/quality/work-contact-390.png",
+      "sha256": "ddb7909dae6389f323c62a5f1b333e3eda9444c937441c705f59b5963e2a7fd0",
+      "bytes": 35207
+    },
+    {
+      "file": "before-gallery-sheng.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/gallery-sheng.png",
+      "sha256": "e34af048347f5cf6a5cc5ee4c6468fc2a7c748b9bd9cf56fdd507e9d124571ed",
+      "bytes": 579315
+    },
+    {
+      "file": "before-gallery-dan.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/gallery-dan.png",
+      "sha256": "2b8db50a42aae880612aa1720b7f593adaada76aca0f380f2ec09d9e24f0deb3",
+      "bytes": 675355
+    },
+    {
+      "file": "before-gallery-jing-red.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/gallery-jing-red.png",
+      "sha256": "face1599e2e023e264b21b2548e6bf269f62c44e9d3df6298aea3c03f374f06f",
+      "bytes": 655182
+    },
+    {
+      "file": "before-gallery-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/gallery-jing-yellow.png",
+      "sha256": "e0d23bc28b64cb905c1bd68e6f176fab74fe449e3835e421ee84bca9f622374e",
+      "bytes": 582563
+    },
+    {
+      "file": "before-gallery-jing-white.png",
+      "source": "test-out/suite-2026-10-23T14-15-28-423Z/quality/gallery-jing-white.png",
+      "sha256": "46db2ea3a4e37423ec5ebc675a83aa4a598ca92c919039ef3b5165f1127f9ea1",
+      "bytes": 579078
+    },
+    {
+      "file": "sheng-front-before.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/sheng-front-before.png",
+      "sha256": "42d46b1bbe2c6603e0ca10781eb6b21d6fd007cf35934241563c4c7eb9133323",
+      "bytes": 596149
+    },
+    {
+      "file": "sheng-front-after.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/sheng-front-after.png",
+      "sha256": "ad175d38ef371d7c1deb41a264685ab30072efe975b7dbd3f725d5c7acb12bdb",
+      "bytes": 596957
+    },
+    {
+      "file": "dan-front-before.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/dan-front-before.png",
+      "sha256": "59a72fab2199c1e2d1e1e0957f340eace900d0652b7754f17f93468042148a1b",
+      "bytes": 783294
+    },
+    {
+      "file": "dan-front-after.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/dan-front-after.png",
+      "sha256": "0af4b28b6e5559a73e984ddeedd9ecde8a18ce401e94deaff9d176cd7691fe9a",
+      "bytes": 784849
+    },
+    {
+      "file": "jing-red-front-before.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-red-front-before.png",
+      "sha256": "15f26c71e7fccdd6d82dd0c8d933e4e590e6191526fa5d59ddb98e69f461a23e",
+      "bytes": 736843
+    },
+    {
+      "file": "jing-red-front-after.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-red-front-after.png",
+      "sha256": "550b42d274f484ea36b87d3c9575e57b446bfedbe057b6232053f3a3e7da7c23",
+      "bytes": 737842
+    },
+    {
+      "file": "jing-yellow-front-before.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-yellow-front-before.png",
+      "sha256": "4502e09dc383508bfbaead31688a59e19f6d07b215a20a733fec7a95e806ab6c",
+      "bytes": 545339
+    },
+    {
+      "file": "jing-yellow-front-after.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-yellow-front-after.png",
+      "sha256": "e22775b784dfd35d3639dd3787b829ba4938a8ff5c0e8d4a0d5992e58dcdf340",
+      "bytes": 546137
+    },
+    {
+      "file": "jing-white-front-before.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-white-front-before.png",
+      "sha256": "fe1a032b9e7b1804e21ed7ae9298d8fb208f958bd40d19bb1af8c6f057de3e15",
+      "bytes": 561709
+    },
+    {
+      "file": "jing-white-front-after.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-white-front-after.png",
+      "sha256": "70fa8a2155794a5103bbaddc5412fe5e61117cf0d2f7f36a5052f4e0e5ff9006",
+      "bytes": 563083
+    },
+    {
+      "file": "jing-white-three-quarter-before.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-white-three-quarter-before.png",
+      "sha256": "c6d0a14291f8846f4128b5f9545e8bf4f5a638f0cf0f84d411151df6075285c8",
+      "bytes": 501686
+    },
+    {
+      "file": "jing-white-three-quarter-before-normals.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-white-three-quarter-before-normals.png",
+      "sha256": "abf68ace70b875406a83c851036c52271eca3449c4cff9f20a17acf9c4452a7f",
+      "bytes": 448499
+    },
+    {
+      "file": "jing-white-three-quarter-before-unlit.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-white-three-quarter-before-unlit.png",
+      "sha256": "0fd090c8a772444c27142832d0796dba9324e735361798e361cff008179238bc",
+      "bytes": 383411
+    },
+    {
+      "file": "jing-white-three-quarter-after.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-white-three-quarter-after.png",
+      "sha256": "c22db562288631a5a37139f40b1a36a8569a005245e61feda43e74e83b6bac40",
+      "bytes": 502962
+    },
+    {
+      "file": "jing-white-three-quarter-after-normals.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-white-three-quarter-after-normals.png",
+      "sha256": "cbd945e5c0f7650c504468796f879edda71657e4df976c8df1a457c6c943ea1a",
+      "bytes": 449355
+    },
+    {
+      "file": "jing-white-three-quarter-after-unlit.png",
+      "source": "test-out/portfolio-models-2026-10-23T14-26-14-276Z/jing-white-three-quarter-after-unlit.png",
+      "sha256": "0fd090c8a772444c27142832d0796dba9324e735361798e361cff008179238bc",
+      "bytes": 383411
+    }
+  ]
+}

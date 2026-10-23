@@ -1,6 +1,6 @@
 # Logo integration handoff
 
-Ownership: this worktree owns application integration; the independent Logo workspace owns artwork. No design file, design branch or external workspace has been modified or merged. The supplied screenshot is context, not an approved deliverable.
+Ownership: this worktree owns application integration; the independent Logo workspace owns artwork. No design file, design branch or external workspace has been accessed, modified or merged in the RC1 portfolio pass. Design direction is approved (A Spatial Monogram; motion direction Spatial Construction), but formal SVG/animation/icon files have not been integrated. Approval of a concept is distinct from delivery of runtime files. No screenshot tracing or temporary animation was added.
 
 - Single component/config: src/ui/brand.js (`BRAND`, `createBrand`, `setBrandState`, `installBrandIcon`).
 - Consumers: src/ui/shell.js (shared navigation/footer), src/main.js (Gallery/Studio sidebar). Home retains its collection title and shares navigation branding.
@@ -12,3 +12,5 @@ Ownership: this worktree owns application integration; the independent Logo work
 After user provides final files or an approved SHA: review license/artwork, copy approved files into assets/brand/, change BRAND once, register these runtime resources with tools/static-release.mjs, run quality/layout/release tests, inspect 390px and desktop screenshots, commit integration separately. Do not auto-merge a design branch.
 
 Potential integration conflicts: src/ui/brand.js, src/ui/shell.js, src/main.js, styles/v5.css, index.html (favicon if changed), tools/static-release.mjs, docs/STATIC-MANIFEST.json. Future assets/brand/ belongs to approved-delivery integration only; coordinate before writing. Existing main checkout docs/ARCHITECTURE.md remains owner-protected.
+
+Current integration branch: feature/codex-v5-rc1-polish, based on verified RC1 83453aa. The RC1 portfolio pass modified shell/contact, main, home/work and v5.css, but left brand.js and all brand artwork unchanged. Coordinate edits to these consumer/layout files when formal artwork arrives; do not auto-merge the separate design branch. Contact is now a collapsed shared-footer entry with the exact existing emails retained in src/ui/contact.js; it does not occupy Gallery or Studio.

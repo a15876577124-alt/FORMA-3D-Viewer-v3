@@ -4,6 +4,14 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
+## [2026-10-23 RC1 Portfolio] — 回到 RC1 的针对性展示修正
+
+- 从核验的 RC1 `83453aa` 创建 `feature/codex-v5-rc1-polish`，保留 RC2 分支/原包，不强制重置原工程。
+- 保留原首页结构与实时 Hero，五件卡片使用现有真实缩略图；联系入口收至公共页脚并默认折叠，原邮箱配置与复制保留。
+- 主 Viewer 在进入 Gallery 时选模，首页 GLB 请求 2→1；模型首次绘制才标记 Hero ready；修复离开 Studio 后的迟到结果、侧栏高亮、公共页模式及详情渲染器释放。
+- 同位置法线平均生效，五件新版本输出至 assets/portfolio-v1/，保留几何/UV/材质/贴图，无减面；固定条件前后渲染，P1-05 残留面片如实保留。
+- 全量 33/33、专项作品集 43 项、解压独立包 22/22。58 张截图、真机未验证清单和发布包 SHA256 见 docs/RC1-PORTFOLIO-ACCEPTANCE.md。Logo 接口与原标识未改，未部署。
+
 ## [2026-10-23 Quality RC] — Codex 第三阶段
 
 - 独立开发 worktree；联系方式可读、mailto/复制与直接定位；共享品牌组件和后续 Logo 动画钩子，保留原标识。

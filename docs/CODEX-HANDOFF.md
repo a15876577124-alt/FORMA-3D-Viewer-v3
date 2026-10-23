@@ -1,12 +1,12 @@
 # CODEX-HANDOFF — 当前工程交接
 
-2026-10-23：当前为第三阶段品质提升。以 [品质报告](V5-QUALITY.md)、[Logo 接入约定](LOGO-INTEGRATION.md)、[AI 服务适配](AI-PROVIDERS.md) 与 [剩余问题](../KNOWN-ISSUES.md) 为当前状态。阶段 2 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md) 与第一轮审计保留追溯。
+2026-10-23：已按用户要求从实际 RC1 重新开始针对性展示修正。当前状态以 [RC1 作品集验收](RC1-PORTFOLIO-ACCEPTANCE.md)、[Logo 接入约定](LOGO-INTEGRATION.md) 与 [剩余问题](../KNOWN-ISSUES.md) 为准。第三阶段 [品质报告](V5-QUALITY.md)、阶段 2 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md) 与第一轮审计保留追溯，不继续 RC2 全面视觉重构。
 
 ## Git 与资产
 
-RC1 已完成全量 31/31 组、最终静态包 19/19、WorkBuddy 完全退出时真实 Agent 7/7。运行代码提交 `d20d1d231bf377b282cc7bdfb68c82ac7918b719`；最终文档/截图另存提交。候选包和复现步骤见品质报告，不依赖私人运行期目录。
+RC1 完整交付基线 `83453aafbc1dd8f8885f05d5ab9d1c3215218b65`；本轮代码 `17ac8ffc4df42a4e2b01757d50273b2628acaace`，全量 33/33、作品集专项 43 项、新 ZIP 解压验证 22/22。原始 RC1 31/31、WorkBuddy 完全退出后真实 Agent 7/7 是历史记录，本轮没有重新实连外部 AI。原 RC1 和 RC2 分支/包均保留，没有强制重置或覆盖原工程。
 
-当前开发 worktree：D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality，分支 feature/codex-v5-quality。基线 7f133b9885466a1a1f528ce06c787775da096122。原工程 FORMA-3D-Viewer-v3 保留 feature/codex-v5-audit 与原有未提交文档。不要在两个工作区交叉覆盖，不合并 main 或 force push。
+当前开发 worktree：D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality，分支 feature/codex-v5-rc1-polish，从核验的 feature/codex-v5-quality 创建。原工程 FORMA-3D-Viewer-v3 保留 feature/codex-v5-audit 与原有未提交文档。不要在两个工作区交叉覆盖，不合并 main 或 force push。
 
 docs/ARCHITECTURE.md 的接手前格式改动必须继续保留，未纳入任何功能提交。原始资产、仓库外 OBJ/MTL/PNG、既有用户工作区资产、凭据均不可覆盖；所有处理输出写新版本。
 
@@ -20,6 +20,7 @@ Windows / Node 24.22.0 / npm 11.19.1 / Edge 155 已实测。开发依赖要求 N
 - node tests/run.mjs --only=agent-live：真实 deepseek-v4-pro 工具调用与实际算子；和故障注入测试分开。
 - node tests/run.mjs --only=production-visual：390px/1024px/1600px、对比尺度/裁剪/显存、同机位截图。
 - node tests/run.mjs --only=quality：联系/品牌、材质编辑、FBX 通道、无 AI 服务的实际处理与最终截图。
+- node tests/run.mjs --only=portfolio：实际五件详情/Gallery、迟到请求、导航循环、刷新、窄屏加载完成后的截图；portfolio-models 检查法线与非破坏输出；node tools/portfolio-render.mjs 做固定条件的模型前后对照。
 - providers、fbx-materials、local-security、geometry-semantics：针对性故障与语义回归；cdp、performance 为单独执行的连接/性能验收。
 
 浏览器路径变量 FORMA_BROWSER。测试输出 test-out/suite-*/；不自动清理历史证据。发布打包只允许新目录。静态站点只有展示，处理和真实 Agent 需要本地后端。
@@ -41,3 +42,5 @@ Agent 每个任务独立追踪通过后验的版本；需要风险确认时保�
 ## 尚需工作
 
 复杂 FBX 的全部动画/约束/特殊材质、动态变形 bounds、KTX2 GPU 压缩、手机真机性能、批任务取消恢复、持续压力与 worker 隔离仍未完成。不可把固定模型测试扩展成所有格式/模型都无损的承诺。最终 Logo 等用户交付确认文件/分支/SHA 后独立接入。
+
+本轮 P1-05 只解决法线连续性与错误元数据；白谱面部等面片仍保留，详情与 Gallery 的色调/灯光差异未校准。联系入口已收至公共页脚，原邮箱配置保留。Logo 设计方向已批准但正式文件尚未接入，brand.js 与原标识未修改。手机仍标注“真机未验证”，人工步骤见本轮报告。

@@ -1,6 +1,16 @@
 # TASK_STATE — FORMA V5
 
-更新：2026-10-23（Asia/Shanghai）。当前为第三阶段品质提升与发布候选验收。
+更新：2026-10-23（Asia/Shanghai）。当前已回到 RC1 基础做作品集验收，暂停全面功能/视觉扩展。
+
+## 当前：RC1 作品集针对性修正
+
+- 实际检查 quality 工作树原为干净的 `feature/codex-v5-exhibition` / `7a2c657`。核对 RC1 本地/远程 `83453aa` 后，以新分支 `feature/codex-v5-rc1-polish` 开发；没有强制重置，RC1、RC2 和原工程均保留。
+- 代码提交 `17ac8ffc4df42a4e2b01757d50273b2628acaace` 已推送。保留 RC1 黑金、实时 Hero 与原工作区；五件卡片真实缩略图、页脚折叠联系、延迟主 Viewer 加载、路由竞态和详情资源释放已修正。
+- 五件展示派生资产位于 `assets/portfolio-v1/`，只修复法线和相关元数据，原 BIN/材质保留，未减面。P1-05 部分改善，白谱面片等仍待处理；详情比 Gallery 偏亮的原渲染差异未改。
+- 全量 33/33、作品集专项 43 项、品质 34 项、布局 47 项、新 ZIP 独立验证 22/22；机器证据 [rc1-portfolio-results.json](docs/audit/rc1-portfolio-results.json)。原模型/凭据/原工程文档修改未动。
+- 当前报告、58 张截图与手机人工清单见 [RC1-PORTFOLIO-ACCEPTANCE.md](docs/RC1-PORTFOLIO-ACCEPTANCE.md)。手机真机未验证；Logo 方案已批准但正式文件未接入。本轮无公开部署，没有重跑外部 AI 实连。
+
+## 历史：第三阶段 RC1
 
 第三阶段已形成 RC1：运行代码 `d20d1d231bf377b282cc7bdfb68c82ac7918b719`；全量 31/31 组、最终包 19/19、WorkBuddy 完全退出时真实 Agent 7/7。发布候选 ZIP、实际截图和限制见下方品质报告，机器结果见 `docs/audit/phase3-results.json`。没有公开部署。
 
