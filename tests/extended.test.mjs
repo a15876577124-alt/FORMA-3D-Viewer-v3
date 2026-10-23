@@ -38,6 +38,7 @@ try {
     const app = document.getElementById('app');
     return !!app && !app.hidden && app.offsetParent !== null;
   }, { timeout: 30000 });
+  await page.waitForFunction(()=>window.__FORMA.current?.id&&window.__FORMA.info?.modelTris>0);
   await check('外部 glTF + bin + PNG 真实导入', async () => {
     // Derive disposable external files from an existing real mesh. Original bytes stay untouched.
     const glb = fs.readFileSync(path.join(ROOT, 'assets/models/sheng.glb'));

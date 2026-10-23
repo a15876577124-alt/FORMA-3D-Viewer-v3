@@ -2,7 +2,7 @@
 // parameter that affects how an exhibit is presented.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
 
 import { Environment, BACKDROPS } from '../lighting/environment.js';
 import { Lighting, LIGHT_PRESETS } from '../lighting/studio.js';
@@ -58,17 +58,7 @@ export class Viewer {
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.02, 220);
     this.camera.position.set(0, 1.2, 4);
 
-    // 环境照明：three 官方 RoomEnvironment（影棚灯箱）经 PMREM 处理，
-    // 为 PBR 材质提供真实反射与漫射。强度由既有「材质 → 环境反射」滑杆
-    // （envMapIntensity）管理——V3 的滑杆在无 environment 时无效，现在生效。
-    {
-      const pmrem = new THREE.PMREMGenerator(this.renderer);
-      this._roomEnv = new RoomEnvironment();
-      this._envTarget = pmrem.fromScene(this._roomEnv, 0.04);
-      this.scene.environment = this._envTarget.texture;
-      this._roomEnv.dispose(); pmrem.dispose();
-    }
-
+    // Environment below owns the single PMREM environment target.
     this.controls = new OrbitControls(this.camera, canvas);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.06;
@@ -140,8 +130,9 @@ export class Viewer {
 
   _bindResize() {
     const apply = () => {
-      const w = this.viewport.clientWidth || 1;
-      const h = this.viewport.clientHeight || 1;
+      const w = this.viewport.clientWidth;
+      const h = this.viewport.clientHeight;
+      if(!w || !h)return;
       this.size = { w, h };
       this.renderer.setPixelRatio(this.caps.dpr);
       this.renderer.setSize(w, h, false);

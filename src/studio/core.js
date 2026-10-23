@@ -656,6 +656,10 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
 
   return {
     state,
+    invalidateSelectionRequests() {
+      selectionTicket++;
+      if(state.selectionStatus==='loading')state.selectionStatus='empty';
+    },
     selectProvider,testAiConnection,
     setMaterialDraft,
     canLeave,

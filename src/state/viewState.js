@@ -54,6 +54,9 @@ export class ViewState {
     } else {
       for (const c of CATALOG) this.data[c.id] = baseFor(c);
     }
+    if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+      for(const state of Object.values(this.data))state.view.autoRotate=false;
+    }
     this._timer = null;
     this._dirty = false;
   }

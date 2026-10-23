@@ -42,15 +42,15 @@ try{
   check('home hero is visible at 390px',await page.$eval('.v5-hero',e=>e.getBoundingClientRect().top>=0&&e.getBoundingClientRect().top<100));
   check('home 390px has no horizontal page overflow',await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:path.join(OUT,'home-390.png')});await page.setViewport({width:1440,height:1000});
-  const visibleContact=()=>page.$('.v5-layer:not([hidden]) .v5-contact');
+  const visibleContact=()=>page.$('.v5-footer .v5-contact');
   for(const [route,name] of [['/','home'],['/work/sheng','work']]){
     await page.goto(fe+'/#'+route,{waitUntil:'networkidle0'});
     if(!baseline&&name==='work'){
       await page.waitForFunction(()=>document.querySelector('#v5Tech-sheng')?.textContent.includes('47,512'));
       check('public work statistics come from its actual rendered geometry',await page.$eval('#v5Tech-sheng',e=>e.textContent.includes('26,951')&&!e.textContent.includes('未连接')));
     }
-    const contact=await visibleContact();await contact.scrollIntoView();
-    check(name+' has one visible contact module',await page.$$eval('.v5-layer:not([hidden]) .v5-contact',e=>e.length===1));
+    const contact=await visibleContact();await contact.evaluate(e=>{e.open=true;});await contact.scrollIntoView();
+    check(name+' has one visible contact module',await page.$$eval('.v5-footer .v5-contact',e=>e.length===1));
     check(name+' both mailto links',await contact.$$eval('a',es=>['haorongli09@outlook.com','haorongli09@gmail.com'].every(mail=>es.some(e=>e.textContent===mail&&e.getAttribute('href')==='mailto:'+mail))));
     await page.screenshot({path:path.join(OUT,name+'-contact-desktop.png')});
     if(!baseline){
@@ -78,13 +78,13 @@ try{
       await page.screenshot({path:path.join(OUT,'detail-'+id+'.png')});
       await page.evaluate(c=>{const v=window.__FORMA.viewer;v.camera.position.fromArray(c.position);v.controls.target.fromArray(c.target);v.controls.update();v.render();},framing);
     }
-    check(id+' gallery has no contact module',await page.$$eval('.v5-layer:not([hidden]) .v5-contact',es=>es.length===0));
+    check(id+' gallery has no contact module',await page.$$eval('.v5-contact',es=>es.every(e=>e.getClientRects().length===0)));
   }
   await page.goto(fe+'/#/studio',{waitUntil:'networkidle0'});
   await page.waitForFunction(()=>window.__FORMA.studio.state.status==='online',{timeout:30000});
   if(!baseline)check('empty studio does not present a Gallery model as an editing target',await page.$eval('#stEmptyView',e=>!e.hidden));
   await page.screenshot({path:path.join(OUT,'studio-desktop.png')});
-  check('studio has no contact module',await page.$$eval('.v5-layer:not([hidden]) .v5-contact',es=>es.length===0));
+  check('studio has no contact module',await page.$$eval('.v5-contact',es=>es.every(e=>e.getClientRects().length===0)));
   await page.setViewport({width:390,height:844});await page.screenshot({path:path.join(OUT,'studio-390.png')});
   if(!baseline){
     await page.setViewport({width:1440,height:1000});

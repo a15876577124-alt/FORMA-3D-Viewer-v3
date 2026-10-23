@@ -12,7 +12,7 @@ export const FIGURINES = [
   {
     id: 'sheng',
     group: 'figurines',
-    file: './assets/models/sheng.glb',
+    file: './assets/portfolio-v1/sheng.glb',
     thumb: './assets/thumbs/sheng.png',
     name: '生角',
     sub: 'SHENG',
@@ -27,7 +27,7 @@ export const FIGURINES = [
   {
     id: 'dan',
     group: 'figurines',
-    file: './assets/models/dan.glb',
+    file: './assets/portfolio-v1/dan.glb',
     thumb: './assets/thumbs/dan.png',
     name: '旦角 · 完整头饰',
     sub: 'DAN · FULL HEADDRESS',
@@ -42,7 +42,7 @@ export const FIGURINES = [
   {
     id: 'jing-red',
     group: 'figurines',
-    file: './assets/models/jing-red.glb',
+    file: './assets/portfolio-v1/jing-red.glb',
     thumb: './assets/thumbs/jing-red.png',
     name: '净角 · 红谱',
     sub: 'JING · RED',
@@ -57,7 +57,7 @@ export const FIGURINES = [
   {
     id: 'jing-yellow',
     group: 'figurines',
-    file: './assets/models/jing-yellow.glb',
+    file: './assets/portfolio-v1/jing-yellow.glb',
     thumb: './assets/thumbs/jing-yellow.png',
     name: '净角 · 黄谱',
     sub: 'JING · YELLOW',
@@ -72,7 +72,7 @@ export const FIGURINES = [
   {
     id: 'jing-white',
     group: 'figurines',
-    file: './assets/models/jing-white.glb',
+    file: './assets/portfolio-v1/jing-white.glb',
     thumb: './assets/thumbs/jing-white.png',
     name: '净角 · 白谱',
     sub: 'JING · WHITE',

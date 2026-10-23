@@ -1,8 +1,6 @@
 // FORMA V5 — 联系方式模块
 //
-// 一处定义、多处复用（首页 / 作品详情页）。两点硬性约束：
-//  1. 全局公共页脚不再重复列出邮箱，避免同一页面出现两份联系方式；
-//  2. 只做「联系」这一件事——不写个人简介、不做项目汇报。
+// 公共页脚单一展开入口；邮箱配置保留，不占用三维工作区。
 import { el, toast } from '../utils/dom.js';
 
 export const CONTACT_EMAILS = ['haorongli09@outlook.com', 'haorongli09@gmail.com'];
@@ -46,8 +44,7 @@ async function copyText(text, btn) {
   return done;
 }
 
-// variant: 'block' 首页区块 | 'inline' 详情页紧凑条
-export function createContactBlock({ variant = 'block', title = '联系', note = '', id = 'contactBlock' } = {}) {
+export function createContactBlock({ id = 'contactBlock' } = {}) {
   const list = el('div', { class: 'v5-contact-list' });
 
   for (const mail of CONTACT_EMAILS) {
@@ -59,17 +56,5 @@ export function createContactBlock({ variant = 'block', title = '联系', note =
     ));
   }
 
-  const inner = el('div', { class: 'v5-contact-inner' },
-    el('div', { class: 'v5-contact-head' },
-      el('p', { class: 'v5-eyebrow' }, 'Contact'),
-      el('h2', { class: 'v5-contact-title' }, title),
-    ),
-    list,
-    note ? el('p', { class: 'v5-contact-note' }, note) : null,
-  );
-
-  const node = el('section', { class: 'v5-contact v5-contact-' + variant, id, 'aria-label': '联系 FORMA' },
-    el('div', { class: variant === 'block' ? 'v5-container' : '' }, inner),
-  );
-  return node;
+  return el('details', { class: 'v5-contact', id }, el('summary', {}, '联系'), list);
 }

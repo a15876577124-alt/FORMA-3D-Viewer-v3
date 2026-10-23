@@ -5,9 +5,11 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { EffectComposer, RenderPass, BloomEffect, EffectPass } from 'postprocessing';
 
-const MODEL_URL = './assets/models/sheng.glb';
+const MODEL_URL = './assets/portfolio-v1/sheng.glb';
 
 export function createHero3D({ container, reducedMotion = false, quality = 'high' } = {}) {
+  const status=document.createElement('span');status.className='v5-hero-status';status.textContent='载入手办…';status.setAttribute('role','status');
+  container.dataset.modelState='loading';container.append(status);
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 60);
@@ -106,8 +108,9 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
 
   // ---- 取景：模型偏画面右侧（文字在左）----
   function frame() {
-    const w = container.clientWidth || 1;
-    const h = container.clientHeight || 1;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    if(!w || !h)return;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
@@ -164,9 +167,11 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
   const ro = new ResizeObserver(() => { frame();if(reduced&&!disposed)composer.render(); });
   ro.observe(container);
   frame();
-  if (reduced) { // 静态单帧
-    loadPromise.then(() => { if(!disposed){frame(); composer.render();} });
-  }
+  loadPromise.then(ok => {
+    if(disposed)return;
+    if(ok){frame();composer.render();container.dataset.modelState='ready';status.remove();}
+    else{container.dataset.modelState='error';status.textContent='手办加载失败，请进入数字展厅重试。';}
+  });
 
   function dispose() {
     disposed=true;
@@ -188,6 +193,7 @@ export function createHero3D({ container, reducedMotion = false, quality = 'high
     envTarget?.dispose();envLight.geometry.dispose();envLight.material.dispose();
     composer.dispose();
     renderer.dispose();
+    renderer.forceContextLoss();status.remove();
     renderer.domElement.remove();
   }
 

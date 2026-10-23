@@ -31,7 +31,8 @@ try {
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 120000 });
   await sleep(900);
 
-  const contact = await page.evaluate(() => {
+  await page.$eval('#contactBlock',e=>{e.open=true;});
+const contact = await page.evaluate(() => {
     const block = document.getElementById('contactBlock');
     if (!block) return null;
     const mails = [...block.querySelectorAll('a.v5-contact-mail')].map((a) => ({ text: a.textContent, href: a.getAttribute('href') }));
@@ -51,7 +52,7 @@ try {
     && contact.mails.some((m) => m.text.includes('haorongli09@gmail.com') && m.href.startsWith('mailto:')),
   JSON.stringify(contact?.mails));
   ok('每个邮箱都有复制按钮', contact?.copies === 2, String(contact?.copies));
-  ok('首页不重复出现邮箱（页脚已让位）', contact?.pageMailLinks === 2 && !contact?.inFooter, JSON.stringify({ n: contact?.pageMailLinks, foot: contact?.inFooter }));
+  ok('首页只在页脚提供一份联系方式', contact?.pageMailLinks === 2 && contact?.inFooter, JSON.stringify({ n: contact?.pageMailLinks, foot: contact?.inFooter }));
 
   // 真实点击复制（授予剪贴板权限后读回真实剪贴板内容）
   const ctx = browser.defaultBrowserContext();
@@ -75,7 +76,7 @@ try {
     const b = document.getElementById('contactBlock');
     return { has: !!b, mails: b ? b.querySelectorAll('a.v5-contact-mail').length : 0, foot: !!document.querySelector('.v5-footer a[href^="mailto:"]') };
   });
-  ok('作品详情页保留联系方式且不重复', workContact.has && workContact.mails === 2 && !workContact.foot, JSON.stringify(workContact));
+  ok('作品详情页保留联系方式且不重复', workContact.has && workContact.mails === 2 && workContact.foot, JSON.stringify(workContact));
 
   // ---------------------------------------------------------------- 布局
   console.log('[B] Studio 可拖拽布局');

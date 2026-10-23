@@ -1,30 +1,15 @@
 // FORMA V5 — 作品详情页 #/work/:id
 // 公开详情的技术参数来自本页载入的模型，不猜测私人工作区的同名资产。
 import { el } from '../utils/dom.js';
-import { createContactBlock } from '../ui/contact.js';
+
 import { createMiniViewer } from '../core/miniViewer.js';
 
 const CULTURE = {
-  sheng: {
-    role: '生角', line: '素面俊扮 · 青衫褶子',
-    desc: '生角为琼剧行当男性正面角色，俊扮不勾脸谱。此件手办以素面呈现，重在身段与褶子纹样的整洁利落——青衫与乌纱构成读书人的舞台形象。',
-  },
-  dan: {
-    role: '旦角', line: '完整头饰 · 点翠成规',
-    desc: '旦角头饰规制繁复：顶花、边凤、后三件逐层佩戴。此件完整呈现头饰层叠结构，点翠蓝与珠饰的配比依琼剧传统样式。',
-  },
-  'jing-red': {
-    role: '净角 · 红谱', line: '红为忠勇 · 额面勾纹',
-    desc: '红色脸谱在琼剧谱式中主忠勇耿直。额面勾纹与眉窝的走势决定了角色的气度，此件按红谱标准谱式勾画。',
-  },
-  'jing-yellow': {
-    role: '净角 · 黄谱', line: '黄示骠悍 · 眉窝高挑',
-    desc: '黄色谱式多表骠悍凶猛。眉窝高挑、鼻窝宽阔是其识别特征，配色上黄底配红黑线条以强化性格张力。',
-  },
-  'jing-white': {
-    role: '净角 · 白谱', line: '白多疑诈 · 鼻窝三瓦',
-    desc: '白色脸谱主多疑奸诈，鼻窝三瓦式是典型画法。此件以白底细线勾出内敛的阴鸷感，与红黄谱式的浓烈形成对照。',
-  },
+  sheng: {role:'生角',line:'红袍乌纱 · 蓝白波纹',desc:'红色衣袍、乌纱与金色装饰。转动模型，观察正面纹样、袖口和衣袍下缘的蓝白波纹。'},
+  dan: {role:'旦角',line:'蓝色花饰 · 珠串流苏',desc:'蓝色花饰、珠串与红色戏服层层相叠。可以转动作品，近看头饰、面部与两侧流苏。'},
+  'jing-red': {role:'净角 · 红谱',line:'红色脸谱 · 蓝白戏服',desc:'红色脸谱与蓝白色戏服形成对比。可从不同角度观察面部纹样与冠饰。'},
+  'jing-yellow': {role:'净角 · 黄谱',line:'黄色脸谱 · 冠饰长髯',desc:'黄色脸谱、蓝色冠饰与长髯。可近看额面纹样以及衣袍下缘的波浪图案。'},
+  'jing-white': {role:'净角 · 白谱',line:'白色脸谱 · 黑线冠饰',desc:'白色脸谱与黑色线条相衬。冠饰、髯口与服饰共同构成作品的轮廓。'},
 };
 
 const FIGURINE_IDS = ['sheng', 'dan', 'jing-red', 'jing-yellow', 'jing-white'];
@@ -39,7 +24,8 @@ export function createWorkPage({ params, catalog = [] } = {}) {
 
   // ---- 3D 展示（独立轻量查看器，可拖拽旋转）----
   const stage = el('div', { class: 'v5-work-stage' });
-  const viewer3d = createMiniViewer({
+  let viewer3d = null;
+  const mountViewer = () => { if(viewer3d)return; viewer3d = createMiniViewer({
     container: stage,
     modelUrl: entry.file || `./assets/models/${id}.glb`,
     autoRotateSpeed: 0.04,
@@ -48,8 +34,8 @@ export function createWorkPage({ params, catalog = [] } = {}) {
     onError: () => stage.replaceChildren(el('div', { class: 'v5-state', 'data-tone': 'err' },
       el('div', { class: 'v5-state-icon' }, '!'),
       el('p', { class: 'v5-state-title' }, '模型加载失败'),
-      el('p', { class: 'v5-state-desc' }, '请确认 assets/models 下的 GLB 文件存在。'))),
-  });
+      el('p', { class: 'v5-state-desc' }, '请确认展品资源文件存在。'))),
+  }); };
 
   // ---- 信息面板 ----
   const infoPanel = el('aside', { class: 'v5-work-info' },
@@ -82,13 +68,14 @@ export function createWorkPage({ params, catalog = [] } = {}) {
         el('a', { class: 'v5-work-navlink', href: `#/work/${prevId}` }, `‹ ${prevId}`),
         el('a', { class: 'v5-work-navlink', href: `#/work/${nextId}` }, `${nextId} ›`),
       ),
-      createContactBlock({ variant: 'inline', title: '作品咨询', id: 'work-contact-' + id }),
     ),
   );
 
   return {
     node,
-    unmount() { try { viewer3d.dispose(); } catch { /* ignore */ } },
+    enter: mountViewer,
+    leave() { viewer3d?.dispose(); viewer3d=null; },
+    unmount() { viewer3d?.dispose(); viewer3d=null; },
   };
 }
 

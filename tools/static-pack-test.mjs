@@ -13,11 +13,13 @@ import { launchBrowser } from './browser-test.mjs';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'static-pack-' + Date.now()));
-const PACK = path.join(ROOT, 'test-out', 'static-site-' + Date.now());
+const CANDIDATE = process.env.FORMA_STATIC_CANDIDATE;
+const PACK = CANDIDATE ? path.resolve(CANDIDATE) : path.join(ROOT, 'test-out', 'static-site-' + Date.now());
 const PORT = Number(process.env.FORMA_STATIC_PACK_PORT || 0);
 fs.mkdirSync(OUT, { recursive: true });
 
@@ -37,19 +39,23 @@ function run(cmd, argv, opts = {}) {
 }
 
 // ---------------------------------------------------------------- 1. 打包
-console.log('[A] 生成静态发布包');
-await run(process.execPath, ['tools/static-release.mjs', `--pack=${PACK}`, '--quiet']);
+console.log(CANDIDATE ? '[A] 验收指定候选包（不重建）' : '[A] 生成静态发布包');
+if (!CANDIDATE) await run(process.execPath, ['tools/static-release.mjs', `--pack=${PACK}`, '--quiet']);
 ok('静态包已生成', fs.existsSync(path.join(PACK, 'index.html')));
 for(const license of ['vendor/three/LICENSE','vendor/fflate/LICENSE','vendor/postprocessing/LICENSE.md'])ok('保留第三方许可 '+license,fs.existsSync(path.join(PACK,license)));
 
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'STATIC-MANIFEST.json'), 'utf8'));
 ok('清单文件数与实际一致', manifest.files.every((f) => fs.existsSync(path.join(PACK, f.path))), `${manifest.totals.files} 项`);
+ok('候选文件哈希与清单一致', manifest.files.every(f => {
+  const p=path.join(PACK,f.path);
+  return fs.existsSync(p)&&crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex').startsWith(f.sha256);
+}));
 
 const forbiddenPresent = ['assets/library', 'pipeline-out', 'backend', 'test-assets']
   .filter((d) => fs.existsSync(path.join(PACK, d)));
 ok('静态包不含运行期/后端目录', forbiddenPresent.length === 0, forbiddenPresent.join(','));
 
-const glbs = fs.readdirSync(path.join(PACK, 'assets', 'models')).filter((f) => f.endsWith('.glb'));
+const glbs = fs.readdirSync(path.join(PACK, 'assets', 'portfolio-v1')).filter((f) => f.endsWith('.glb'));
 ok('五个手办模型都在静态包里', glbs.length === 5, glbs.join(','));
 
 // Run the preview server delivered in the manifest itself; no post-pack repair/copy.
@@ -78,6 +84,12 @@ try {
   page.on('response', (r) => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
   await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
 
+  await page.goto(`${BASE}/#/`, { waitUntil: 'networkidle0', timeout: 60000 });
+  await page.waitForSelector('.v5-hero-3d[data-model-state="ready"]');
+  ok('候选包首页真实 Hero 和五件缩略图可用', await page.$$eval('.v5-series-thumb',es=>es.length===5&&es.every(e=>e.complete&&e.naturalWidth>0)));
+  await page.goto(`${BASE}/#/work/dan`, { waitUntil: 'networkidle0', timeout: 60000 });
+  await page.waitForFunction(()=>document.querySelector('#v5Tech-dan')?.textContent.includes('46,828'));
+  ok('候选包详情加载真实旦角',await page.$eval('.v5-work-stage canvas',e=>e.width>100&&e.height>100));
   await page.goto(`${BASE}/#/gallery?work=jing-red`, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 120000 }).catch(async e=>{console.error(await page.evaluate(()=>document.body.innerText.slice(0,1200)));throw e;});
   await page.waitForFunction('window.__FORMA.info && window.__FORMA.info.modelTris > 0', { timeout: 120000 });
@@ -138,4 +150,5 @@ try {
 }
 
 console.log(`\n静态包验收：${pass} 通过 / ${fail} 失败`);
+fs.writeFileSync(path.join(OUT,'report.json'),JSON.stringify({pack:PACK,reusedCandidate:!!CANDIDATE,pass,fail,failures},null,2)+'\n');
 if (fail) { console.log('失败项：' + failures.join('、')); process.exitCode = 1; }

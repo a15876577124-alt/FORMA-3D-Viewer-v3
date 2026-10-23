@@ -1,3 +1,4 @@
+import { createContactBlock } from './contact.js';
 // FORMA V5 — 品牌外壳：顶栏 / 导航 / 页脚 / 路由出口
 import { el } from '../utils/dom.js';
 
@@ -59,12 +60,7 @@ export function buildV5Shell({ version = 'V5' } = {}) {
           el('h4', {}, '工具'),
           el('a', { href: '#/studio' }, 'AI Studio'),
         ),
-        // 邮箱不在这里重复：首页与作品详情页各自有专区内，避免同页两份联系方式
-        el('div', { class: 'v5-footer-col' },
-          el('h4', {}, '联系'),
-          el('a', { href: '#/?section=contact' }, '邮件联系'),
-
-        ),
+        createContactBlock(),
       ),
     ),
     el('div', { class: 'v5-footer-legal' },

@@ -11,6 +11,7 @@ let outlet = null;
 let notFoundFactory = null;
 let currentKey = null;
 let currentHash = null;
+let renderTicket = 0;
 const listeners = new Set();
 const MAX_CACHE = 8;
 
@@ -63,6 +64,7 @@ function evictCache() {
 }
 
 async function render() {
+  const ticket = ++renderTicket;
   const { path, query } = parseHash();
   let pattern = null, params = {}, entry = null;
   for (const [p, r] of routes) {
@@ -87,6 +89,7 @@ async function render() {
       const { v5State } = await import('../ui/feedback.js');
       instance = { node: v5State({ tone: 'err', title: '页面加载失败', desc: String(e?.message || e).slice(0, 240) }) };
     }
+    if(ticket!==renderTicket){instance?.unmount?.();return;}
     const node = instance?.nodeType ? instance : instance?.node;
     if (!node) { console.error('[router] factory returned no node for', path); return; }
     node.classList?.add('v5-layer');
@@ -102,6 +105,7 @@ async function render() {
   // 图层切换：按 DOM 节点去重计算可见性。
   // 若逐图层赋值 hidden，同一节点被多个路由复用时后一次会覆盖前一次，
   // 导致该节点最终被隐藏（展厅/工作室共用 existingApp 的空白根因）。
+  if(currentKey!==cacheKey)mounted.get(currentKey)?.instance?.leave?.();
   for (const m of mounted.values()) m.node.hidden = (m.node !== layer.node);
   currentKey = cacheKey;
   currentHash = location.hash;

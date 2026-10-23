@@ -5,15 +5,15 @@
 import { el } from '../utils/dom.js';
 import { v5Stat } from '../core/router.js';
 import { createHero3D } from './home3d.js';
-import { createContactBlock } from '../ui/contact.js';
+
 
 // 五件展品的真实分组语义（与 catalog 一致，非虚构）
 const SERIES = [
-  { id: 'sheng', role: '生角', line: '素面俊扮 · 青衫褶子' },
-  { id: 'dan', role: '旦角', line: '完整头饰 · 点翠成规' },
-  { id: 'jing-red', role: '净角 · 红谱', line: '红为忠勇 · 额面勾纹' },
-  { id: 'jing-yellow', role: '净角 · 黄谱', line: '黄示骠悍 · 眉窝高挑' },
-  { id: 'jing-white', role: '净角 · 白谱', line: '白多疑诈 · 鼻窝三瓦' },
+  { id: 'sheng', role: '生角', line: '红袍乌纱 · 蓝白波纹' },
+  { id: 'dan', role: '旦角', line: '蓝色花饰 · 珠串流苏' },
+  { id: 'jing-red', role: '净角 · 红谱', line: '红色脸谱 · 蓝白戏服' },
+  { id: 'jing-yellow', role: '净角 · 黄谱', line: '黄色脸谱 · 冠饰长髯' },
+  { id: 'jing-white', role: '净角 · 白谱', line: '白色脸谱 · 黑线冠饰' },
 ];
 
 export function createHomePage({ catalog = [], version = '3.0.0', quality = 'high', appState = null, onImportFiles = null } = {}) {
@@ -106,7 +106,7 @@ export function createHomePage({ catalog = [], version = '3.0.0', quality = 'hig
     // 深链接到展厅并选中该展品（真实功能：/#/gallery?work=<id>）
     return el('a', { class: 'v5-series-card', href: `#/gallery?work=${f.id}` },
       el('div', { class: 'v5-series-head' },
-        el('span', { class: 'v5-series-glyph', 'aria-hidden': 'true' }, meta?.role.slice(0, 1) || '◦'),
+        el('img', { class: 'v5-series-thumb', src:f.thumb, width:512, height:512, loading:'lazy', alt:f.name+'手办模型渲染' }),
         el('span', { class: 'v5-badge', 'data-tone': 'gold' }, '系列'),
       ),
       el('h3', { class: 'v5-series-name' }, f.name),
@@ -148,14 +148,7 @@ export function createHomePage({ catalog = [], version = '3.0.0', quality = 'hig
     ),
   );
 
-  // ---- 联系方式：位于功能展示之后、公共页脚之前，只占一小条 ----
-  const contactSection = createContactBlock({
-    variant: 'block',
-    title: '联系',
-    note: '作品交流与项目咨询，欢迎邮件联系。',
-  });
-
-  const node = el('div', { class: 'v5-home' }, hero, seriesSection, laneSection, contactSection);
+  const node = el('div', { class: 'v5-home' }, hero, seriesSection, laneSection);
 
   // 3D 主体：挂载后启动；unmount 完整释放（renderer/geo/textures/composer）
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -166,7 +159,7 @@ export function createHomePage({ catalog = [], version = '3.0.0', quality = 'hig
 
   return {
     node,
-    enter({query}={}) { if(query?.section==='contact')requestAnimationFrame(()=>contactSection.scrollIntoView({block:'center'})); },
+    enter({query}={}) { if(query?.section==='contact')requestAnimationFrame(()=>{const contact=document.getElementById('contactBlock');if(contact){contact.open=true;contact.scrollIntoView({block:'center'});}}); },
     unmount() {
       try { hero3d.dispose(); } catch (e) { console.warn('[home] hero3d dispose:', e); }
     },

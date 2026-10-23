@@ -847,50 +847,21 @@ input:disabled { opacity: .45; cursor: not-allowed; }
 .p-cs-after { color: var(--v5-tx-hi); text-align: right; }
 .p-cs-delta { color: var(--v5-gold-300); text-align: right; min-width: 62px; }
 
-/* ============================================================================
-   联系方式模块（首页区块 / 作品详情紧凑条）
-   深色底 + 香槟金描边，只占一小条，不做个人简介式大版面
-   ========================================================================== */
-.v5-contact { padding: var(--v5-sp-6) 0 var(--v5-sp-7); }
-.v5-contact-inner {
-  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
-  gap: var(--v5-sp-4) var(--v5-sp-6);
-  padding: var(--v5-sp-5) 0 0;
-  border-top: 1px solid var(--v5-line-gold);
-}
-.v5-contact-head { min-width: 0; }
-.v5-contact-title {
-  margin: 6px 0 0; font: 400 clamp(1.1rem, 1.7vw, 1.45rem)/1.2 var(--v5-ff-display);
-  color: var(--v5-ivory-200);
-}
-.v5-contact-list { display: flex; flex-direction: column; gap: 8px; }
-.v5-contact-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.v5-contact-mail {
-  font: 400 13.5px/1.4 var(--v5-ff-mono); color: var(--v5-gold-200);
-  text-decoration: none; padding: 6px 10px; border-radius: var(--v5-r-sm);
-  border: 1px solid var(--v5-line-gold); background: rgba(217, 196, 160, .07);
-  transition: background .18s var(--v5-ease-out), color .18s var(--v5-ease-out);
-}
-.v5-contact-mail:hover { background: rgba(217, 196, 160, .18); color: var(--v5-gold-100); }
-.v5-contact-copy {
-  cursor: pointer; font: 500 12px/1 var(--v5-ff-sans); color: var(--v5-tx);
-  min-height:40px; min-width:64px;
-  padding: 6px 10px; border-radius: var(--v5-r-sm);
-  border: 1px solid var(--v5-line-2); background: var(--v5-bg-overlay);
-}
-.v5-contact-copy:hover { color: var(--v5-tx-hi); border-color: rgba(242, 237, 228, .28); }
-.v5-contact-note { flex: 1 1 240px; margin: 0; font-size: var(--v5-fs-xs); line-height: 1.6; color: var(--v5-tx-lo); }
-
-/* 详情页紧凑条：不抢技术参数的视觉重心 */
-.v5-contact-inline { padding: var(--v5-sp-5) 0 var(--v5-sp-6); }
-.v5-contact-inline .v5-contact-inner { padding-top: var(--v5-sp-4); }
-
-@media (max-width: 640px) {
-  .v5-contact-inner { flex-direction: column; align-items: stretch; }
-  .v5-contact-list { width: 100%; }
-  .v5-contact-row { display:grid; grid-template-columns:minmax(0,1fr) 64px; gap:8px; }
-  .v5-contact-mail { font-size:12px; min-height:40px; display:flex; align-items:center; padding:6px 8px; overflow-wrap:anywhere; }
-}
+/* One quiet contact entry in the shared public footer. */
+.v5-contact { padding:0; max-width:100%; scroll-margin-top:80px; }
+.v5-contact summary { cursor:pointer; min-height:44px; display:flex; align-items:center; gap:24px; color:var(--v5-tx-hi); font-size:14px; list-style:none; }
+.v5-contact summary::-webkit-details-marker { display:none; }
+.v5-contact summary::after { content:'+'; color:var(--v5-gold-300); }
+.v5-contact[open] summary::after { content:'−'; }
+.v5-contact-list { display:flex; flex-direction:column; gap:4px; }
+.v5-contact-row { display:grid; grid-template-columns:minmax(0,1fr) 48px; align-items:center; gap:8px; }
+.v5-contact-mail { color:var(--v5-ivory-200); font:400 13px/1.5 var(--v5-ff-sans); min-height:44px; display:flex; align-items:center; text-decoration:none; overflow-wrap:anywhere; }
+.v5-contact-copy { min-width:44px; min-height:44px; padding:4px; border:0; background:transparent; color:var(--v5-gold-300); cursor:pointer; font-size:12px; }
+.v5-contact summary:focus-visible, .v5-contact-copy:focus-visible { outline:2px solid var(--v5-gold-300); outline-offset:3px; }
+.v5-series-head { position:relative; display:block; }
+.v5-series-head .v5-badge { position:absolute; top:0; right:0; }
+.v5-series-thumb { width:100%; height:auto; display:block; aspect-ratio:1; object-fit:contain; border-radius:var(--v5-r-sm); }
+.v5-hero-status { position:absolute; left:8px; right:8px; bottom:16px; text-align:center; color:var(--v5-tx-hi); font-size:12px; }
 
 /* Keep the existing two-column composition; model and actions no longer overlap. */
 .v5-hero .v5-hero-inner { max-width:1280px; }
@@ -898,7 +869,6 @@ input:disabled { opacity: .45; cursor: not-allowed; }
 .v5-hero-3d { left:52%; }
 .v5-hero .v5-hero-inner::before { display:none; }
 .v5-contact { scroll-margin-top:80px; }
-.v5-contact-inner { align-items:center; }
 .v5-contact-mail:focus-visible, .v5-brand:focus-visible, .v5-footer a:focus-visible { outline:2px solid var(--v5-gold-300); outline-offset:4px; }
 @media(max-width:760px) {
   .v5-hero-3d { top:56px; bottom:auto; left:45%; height:260px; opacity:1; }
@@ -906,8 +876,6 @@ input:disabled { opacity: .45; cursor: not-allowed; }
   .v5-hero-lede, .v5-launch-grid { max-width:100%; }
   .v5-hero-title { margin-bottom:70px; }
   .v5-nav-toggle { margin-left:auto; }
-  .v5-contact-note { flex:auto; }
-  .v5-contact-inner { align-items:stretch; }
 }
 @media(prefers-reduced-motion:reduce) {
   .v5-brand *, .v5-hero *, .v5-series-card { animation:none!important; transition:none!important; }

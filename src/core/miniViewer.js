@@ -151,6 +151,7 @@ export function createMiniViewer({
     });
     envTarget.dispose();
     renderer.dispose();
+    renderer.forceContextLoss();
     renderer.domElement.remove();
   }
 
