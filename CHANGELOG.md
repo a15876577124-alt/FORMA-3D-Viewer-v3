@@ -4,6 +4,15 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
+## [2026-10-24 Approved Design RC] — 已批准设计接入与跨页面渲染校准
+
+- 独立 `feature/codex-v5-design-integration`，实际基线 `253a1ab`；保留原生 JS/CSS/Three.js，不移植 React 演示代码。
+- 作品优先首页、五件真实详情入口、公共页自然滚动；Gallery 真实选择条与可键盘操作设置模态，原显示/灯光/材质/导出控件保留。
+- 材质确认绑定冻结请求、防重复提交与失败草稿；Before/After 标签、精确数值、真实保存状态；修复 768px 遗留资源树遮挡工具按钮。
+- 交接包正式 A / V2 原样接入，按需、单次、减少动态回退；不接入 V3、不修改设计工作区。
+- 详情/Gallery 统一 Neutral、曝光与灯光；修复 GPU 能力在上下文释放后读取。五件固定条件对照、白谱/旦角几何/基础色诊断；不改模型或减面。
+- 全量 35/35、设计 76、布局 47、真实工作流 38、新 ZIP 独立验证 25/25。61 张截图、性能、源 SHA 与剩余项见 `docs/DESIGN-INTEGRATION.md`；不合并 main、不部署、不覆盖旧包。
+
 ## [2026-10-23 RC1 Portfolio] — 回到 RC1 的针对性展示修正
 
 - 从核验的 RC1 `83453aa` 创建 `feature/codex-v5-rc1-polish`，保留 RC2 分支/原包，不强制重置原工程。

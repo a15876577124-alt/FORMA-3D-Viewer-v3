@@ -2,7 +2,7 @@
 
 2026-10-24: A Spatial Monogram and Spatial Construction V2 are integrated from `forma-brand/handoff-rc1-v1` only. `assets/brand/PROVENANCE.json` pins all five copied files; `.gitattributes` preserves their exact bytes. No artwork was redrawn or merged from a design branch. V3 remains for portfolio/promotional films, as authorized by the latest user request.
 
-- Navigation/footer/sidebar: `src/ui/brand.js`, one approved 132×32 nav SVG, text fallback on load failure. `index.html` references the approved favicon.
+- Navigation/footer: `src/ui/brand.js`, approved nav SVG (132×32 in navigation, smaller in footer), text fallback on load failure. The Studio sidebar reuses the component's text-only wordmark mode to avoid repeating a large mark. `index.html` references the approved favicon.
 - Optional footer presentation: `src/ui/brandMotion.js`. Native modal, user-triggered sequential imports of exact V2 geometry/player, spatial variant, 3-second single playback, static SVG for reduced motion and load failures. Route exit/close destroys the player. No model-loading dependency.
 - Replacement: copy a newly approved delivery into `assets/brand/`, update provenance/config only, run `npm run release:verify` and isolated design/quality/layout/release tests. Never edit frozen path data or the delivered animation source in place.
 - Verified: real Edge static fallback, reduced-motion changes, no pre-interaction V2 download, single playback, exact final SVG paths, focus return, and standalone package. Physical phone rendering remains unverified.

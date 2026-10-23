@@ -1,0 +1,483 @@
+{
+  "label": "design-after",
+  "node": "v24.22.0",
+  "measurements": {
+    "homeReadyMs": 1626,
+    "reducedMotionHero": {
+      "draws": 0,
+      "elapsedMs": 495.5
+    },
+    "downloadBytes": 9788335,
+    "requestCount": 84,
+    "galleryFrames": {
+      "medianMs": 4.199999999999818,
+      "p95Ms": 4.300000000000182,
+      "memory": {
+        "geometries": 7,
+        "textures": 8,
+        "programs": 9,
+        "triangles": 95804,
+        "calls": 11
+      }
+    },
+    "hiddenHero": {
+      "draws": 0
+    },
+    "analysisMs": [
+      9.337099999999737,
+      6.815000000000509,
+      3.0453999999999724,
+      7.143699999999626,
+      8.044600000000173,
+      8.542000000000371
+    ],
+    "upload": {
+      "encodedBytes": 44741369,
+      "elapsedMs": 356.03890000000047,
+      "frontend": {
+        "memory": {
+          "rss": 70004736,
+          "heapTotal": 11845632,
+          "heapUsed": 7575800,
+          "external": 6660502,
+          "arrayBuffers": 2556775
+        },
+        "maxRssKiB": 79532
+      },
+      "backend": {
+        "memory": {
+          "rss": 328450048,
+          "heapTotal": 82034688,
+          "heapUsed": 63841024,
+          "external": 198125959,
+          "arrayBuffers": 190659895
+        },
+        "maxRssKiB": 331676
+      }
+    }
+  },
+  "errors": [],
+  "resources": [
+    {
+      "path": "/styles.css",
+      "bytes": 28888,
+      "duration": 6
+    },
+    {
+      "path": "/styles/tokens.css",
+      "bytes": 4695,
+      "duration": 7.200000002980232
+    },
+    {
+      "path": "/styles/v5.css",
+      "bytes": 32616,
+      "duration": 7.799999997019768
+    },
+    {
+      "path": "/styles/studio.css",
+      "bytes": 43071,
+      "duration": 7.799999997019768
+    },
+    {
+      "path": "/src/main.js",
+      "bytes": 23749,
+      "duration": 2.6999999955296516
+    },
+    {
+      "path": "/src/ui/brand.js",
+      "bytes": 2785,
+      "duration": 3.7999999970197678
+    },
+    {
+      "path": "/src/core/capabilities.js",
+      "bytes": 2235,
+      "duration": 4.700000002980232
+    },
+    {
+      "path": "/src/core/viewer.js",
+      "bytes": 18272,
+      "duration": 4.5
+    },
+    {
+      "path": "/src/state/viewState.js",
+      "bytes": 3671,
+      "duration": 4.5999999940395355
+    },
+    {
+      "path": "/src/state/appState.js",
+      "bytes": 1893,
+      "duration": 6.5999999940395355
+    },
+    {
+      "path": "/src/models/catalog.js",
+      "bytes": 4955,
+      "duration": 7.0999999940395355
+    },
+    {
+      "path": "/src/models/library.js",
+      "bytes": 1281,
+      "duration": 7.0999999940395355
+    },
+    {
+      "path": "/src/ui/sidebar.js",
+      "bytes": 8813,
+      "duration": 7.5
+    },
+    {
+      "path": "/src/ui/gallery.js",
+      "bytes": 12090,
+      "duration": 8.100000001490116
+    },
+    {
+      "path": "/src/studio/ui.js",
+      "bytes": 13526,
+      "duration": 8.100000001490116
+    },
+    {
+      "path": "/src/ui/shell.js",
+      "bytes": 4133,
+      "duration": 9.900000005960464
+    },
+    {
+      "path": "/src/core/router.js",
+      "bytes": 6681,
+      "duration": 10.100000001490116
+    },
+    {
+      "path": "/src/ui/feedback.js",
+      "bytes": 5732,
+      "duration": 10.100000001490116
+    },
+    {
+      "path": "/src/pages/home.js",
+      "bytes": 4558,
+      "duration": 10.399999998509884
+    },
+    {
+      "path": "/src/pages/work.js",
+      "bytes": 5240,
+      "duration": 10.800000004470348
+    },
+    {
+      "path": "/src/ui/inspector.js",
+      "bytes": 11322,
+      "duration": 11
+    },
+    {
+      "path": "/src/ui/chrome.js",
+      "bytes": 6247,
+      "duration": 12.5
+    },
+    {
+      "path": "/src/loaders/registry.js",
+      "bytes": 4887,
+      "duration": 13.300000004470348
+    },
+    {
+      "path": "/src/loaders/errors.js",
+      "bytes": 4645,
+      "duration": 13.399999998509884
+    },
+    {
+      "path": "/src/utils/dom.js",
+      "bytes": 4214,
+      "duration": 13.299999997019768
+    },
+    {
+      "path": "/vendor/three/addons/controls/OrbitControls.js",
+      "bytes": 41055,
+      "duration": 9.5
+    },
+    {
+      "path": "/src/lighting/environment.js",
+      "bytes": 3776,
+      "duration": 11.200000002980232
+    },
+    {
+      "path": "/src/lighting/studio.js",
+      "bytes": 6475,
+      "duration": 12.399999998509884
+    },
+    {
+      "path": "/src/stage/ground.js",
+      "bytes": 5405,
+      "duration": 12.399999998509884
+    },
+    {
+      "path": "/src/lighting/profile.js",
+      "bytes": 549,
+      "duration": 12
+    },
+    {
+      "path": "/src/post/composer.js",
+      "bytes": 3320,
+      "duration": 12.5
+    },
+    {
+      "path": "/vendor/three/build/three.module.js",
+      "bytes": 663072,
+      "duration": 14.399999998509884
+    },
+    {
+      "path": "/src/models/place.js",
+      "bytes": 5040,
+      "duration": 14.399999998509884
+    },
+    {
+      "path": "/src/materials/override.js",
+      "bytes": 7035,
+      "duration": 17.600000001490116
+    },
+    {
+      "path": "/src/models/procedural.js",
+      "bytes": 5374,
+      "duration": 17.899999998509884
+    },
+    {
+      "path": "/src/loaders/normals.js",
+      "bytes": 4663,
+      "duration": 18
+    },
+    {
+      "path": "/src/utils/dispose.js",
+      "bytes": 3307,
+      "duration": 18.100000001490116
+    },
+    {
+      "path": "/src/loaders/importers.js",
+      "bytes": 12827,
+      "duration": 18.299999997019768
+    },
+    {
+      "path": "/src/utils/storage.js",
+      "bytes": 1698,
+      "duration": 17.900000005960464
+    },
+    {
+      "path": "/src/studio/core.js",
+      "bytes": 36026,
+      "duration": 17.299999997019768
+    },
+    {
+      "path": "/src/studio/tree.js",
+      "bytes": 10219,
+      "duration": 21.600000001490116
+    },
+    {
+      "path": "/src/studio/dock.js",
+      "bytes": 15814,
+      "duration": 21.700000002980232
+    },
+    {
+      "path": "/src/studio/toolbar.js",
+      "bytes": 7956,
+      "duration": 21.799999997019768
+    },
+    {
+      "path": "/src/studio/panes.js",
+      "bytes": 30499,
+      "duration": 21.700000002980232
+    },
+    {
+      "path": "/src/studio/layout.js",
+      "bytes": 10672,
+      "duration": 21.799999997019768
+    },
+    {
+      "path": "/src/ui/contact.js",
+      "bytes": 2538,
+      "duration": 18.399999998509884
+    },
+    {
+      "path": "/src/ui/brandMotion.js",
+      "bytes": 3880,
+      "duration": 22
+    },
+    {
+      "path": "/src/pages/home3d.js",
+      "bytes": 8781,
+      "duration": 22.899999998509884
+    },
+    {
+      "path": "/src/core/miniViewer.js",
+      "bytes": 6953,
+      "duration": 22.100000001490116
+    },
+    {
+      "path": "/vendor/three/addons/environments/RoomEnvironment.js",
+      "bytes": 5260,
+      "duration": 17.5
+    },
+    {
+      "path": "/vendor/three/addons/postprocessing/EffectComposer.js",
+      "bytes": 8801,
+      "duration": 16.200000002980232
+    },
+    {
+      "path": "/vendor/three/addons/postprocessing/RenderPass.js",
+      "bytes": 4580,
+      "duration": 16.200000002980232
+    },
+    {
+      "path": "/vendor/three/addons/postprocessing/UnrealBloomPass.js",
+      "bytes": 15697,
+      "duration": 18.200000002980232
+    },
+    {
+      "path": "/vendor/three/addons/postprocessing/OutputPass.js",
+      "bytes": 4484,
+      "duration": 19.100000001490116
+    },
+    {
+      "path": "/vendor/three/build/three.core.js",
+      "bytes": 1458413,
+      "duration": 32.899999998509884
+    },
+    {
+      "path": "/vendor/three/addons/loaders/MTLLoader.js",
+      "bytes": 11656,
+      "duration": 13.899999998509884
+    },
+    {
+      "path": "/vendor/three/addons/loaders/OBJLoader.js",
+      "bytes": 23216,
+      "duration": 14.399999998509884
+    },
+    {
+      "path": "/vendor/three/addons/loaders/GLTFLoader.js",
+      "bytes": 117870,
+      "duration": 14.200000002980232
+    },
+    {
+      "path": "/vendor/three/addons/loaders/FBXLoader.js",
+      "bytes": 113672,
+      "duration": 18.200000002980232
+    },
+    {
+      "path": "/src/net/api.js",
+      "bytes": 3607,
+      "duration": 15.800000004470348
+    },
+    {
+      "path": "/src/core/compare.js",
+      "bytes": 3388,
+      "duration": 15.800000004470348
+    },
+    {
+      "path": "/vendor/three/addons/exporters/GLTFExporter.js",
+      "bytes": 93870,
+      "duration": 18.600000001490116
+    },
+    {
+      "path": "/src/ui/opParams.js",
+      "bytes": 4956,
+      "duration": 12.300000004470348
+    },
+    {
+      "path": "/vendor/three/addons/shaders/CopyShader.js",
+      "bytes": 1029,
+      "duration": 12.099999994039536
+    },
+    {
+      "path": "/vendor/three/addons/postprocessing/ShaderPass.js",
+      "bytes": 3528,
+      "duration": 12
+    },
+    {
+      "path": "/vendor/three/addons/postprocessing/MaskPass.js",
+      "bytes": 4994,
+      "duration": 12.5
+    },
+    {
+      "path": "/vendor/postprocessing/build/postprocessing.esm.js",
+      "bytes": 634835,
+      "duration": 19.100000001490116
+    },
+    {
+      "path": "/vendor/three/addons/postprocessing/Pass.js",
+      "bytes": 4518,
+      "duration": 12.700000002980232
+    },
+    {
+      "path": "/vendor/three/addons/shaders/LuminosityHighPassShader.js",
+      "bytes": 1591,
+      "duration": 15
+    },
+    {
+      "path": "/vendor/three/addons/shaders/OutputShader.js",
+      "bytes": 2176,
+      "duration": 13.5
+    },
+    {
+      "path": "/vendor/three/addons/utils/BufferGeometryUtils.js",
+      "bytes": 38012,
+      "duration": 13.600000001490116
+    },
+    {
+      "path": "/vendor/three/addons/utils/SkeletonUtils.js",
+      "bytes": 11835,
+      "duration": 13.399999998509884
+    },
+    {
+      "path": "/vendor/three/addons/curves/NURBSCurve.js",
+      "bytes": 4188,
+      "duration": 14.700000002980232
+    },
+    {
+      "path": "/vendor/three/addons/libs/fflate.module.js",
+      "bytes": 89684,
+      "duration": 15.300000004470348
+    },
+    {
+      "path": "/vendor/three/addons/curves/NURBSUtils.js",
+      "bytes": 11102,
+      "duration": 3.3000000044703484
+    },
+    {
+      "path": "/assets/portfolio-v1/sheng.glb",
+      "bytes": 4462060,
+      "duration": 99.60000000149012
+    },
+    {
+      "path": "/assets/brand/lockup-nav-ivory.svg",
+      "bytes": 1639,
+      "duration": 2.600000001490116
+    },
+    {
+      "path": "/assets/brand/lockup-ivory.svg",
+      "bytes": 1568,
+      "duration": 2.899999998509884
+    },
+    {
+      "path": "/assets/thumbs/sheng.png",
+      "bytes": 288774,
+      "duration": 11.5
+    },
+    {
+      "path": "/assets/thumbs/dan.png",
+      "bytes": 319275,
+      "duration": 7
+    },
+    {
+      "path": "/assets/thumbs/jing-yellow.png",
+      "bytes": 285031,
+      "duration": 7.300000004470348
+    },
+    {
+      "path": "/assets/thumbs/jing-red.png",
+      "bytes": 307308,
+      "duration": 11.200000002980232
+    },
+    {
+      "path": "/assets/thumbs/jing-white.png",
+      "bytes": 287838,
+      "duration": 11.399999998509884
+    },
+    {
+      "path": "/assets/brand/favicon.svg",
+      "bytes": 747,
+      "duration": 5.399999998509884
+    }
+  ],
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

@@ -1,0 +1,397 @@
+{
+  "baseline": "253a1abfe92681f4c093118eace55e6b899be339",
+  "afterSuite": "test-out/suite-2026-10-23T18-35-25-579Z",
+  "note": "Exact source bytes, no image retouching. UI pairs compare layout; only calibration pairs hold geometry/camera/materials fixed. Phones untested.",
+  "files": [
+    {
+      "file": "before-home-desktop.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/home-desktop.png",
+      "bytes": 575828,
+      "sha256": "3eb59bcc2b8bb77adb8418279efa9e484b791e7a56b345ade636dea4aa066915"
+    },
+    {
+      "file": "before-home-390.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/home-390.png",
+      "bytes": 72489,
+      "sha256": "5c212388d94a69b0a539851d0899e2ae15fe3444693876e569af3663aaf96a78"
+    },
+    {
+      "file": "before-home-768.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/home-768.png",
+      "bytes": 259206,
+      "sha256": "abf29e21e4ee6450f547817340bdf0020bdfef1391300d08f29a3d9baa671c15"
+    },
+    {
+      "file": "before-work-dan.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/work-dan.png",
+      "bytes": 281261,
+      "sha256": "a455d049aae84eeb16cdb74fbbcc3d920c27cc475f6dc15efc3fef38efc7b910"
+    },
+    {
+      "file": "before-work-390.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/work-390.png",
+      "bytes": 126064,
+      "sha256": "3f85b5a85cd12ddae31d170c28d841b063b9ad6aa11154b3f9b3e5d1c1585019"
+    },
+    {
+      "file": "before-work-768.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/work-768.png",
+      "bytes": 87295,
+      "sha256": "91cf5a4886a14b341b64a35f970689143172669ce87152434417d0fc3e0097b6"
+    },
+    {
+      "file": "before-gallery-dan.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/gallery-dan.png",
+      "bytes": 594378,
+      "sha256": "4e23c4ed6b539ea2ab4cc1a52e6cd95ceb76d56006fed1691beac8a42bdf19cd"
+    },
+    {
+      "file": "before-gallery-390.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/gallery-390.png",
+      "bytes": 163908,
+      "sha256": "2fff332dca2eb818e4e698f8df19b18f15d43233438c4353a5c26a5c932ca3ab"
+    },
+    {
+      "file": "before-gallery-768.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/gallery-768.png",
+      "bytes": 278689,
+      "sha256": "3c3820cf114ccb9eb9c309e85e7fba5cf0666cf52a9f81dba0ee0ced52fdad63"
+    },
+    {
+      "file": "before-studio-asset.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/studio-asset.png",
+      "bytes": 459755,
+      "sha256": "5d5837e40dbb9581b4e8a91f729e303f8236e7db12da04c0f42331c09c3e1aa1"
+    },
+    {
+      "file": "before-studio-390.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/studio-390.png",
+      "bytes": 99506,
+      "sha256": "c72d80d71f4e179404f13b30696305fd8a289f43a288ecb35b71aac848d3d9ae"
+    },
+    {
+      "file": "before-studio-768.png",
+      "source": "test-out/suite-2026-10-23T16-30-55-664Z/portfolio/studio-768.png",
+      "bytes": 125274,
+      "sha256": "5364ce31c1d850210fb2e847e7b885c30201d355af48ddc341bee11d9fd1d3b2"
+    },
+    {
+      "file": "after-home-desktop.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/home-desktop.png",
+      "bytes": 405733,
+      "sha256": "4d28f00e3cb4c8241a630ec2d8e92cedbcae32209f40efcbdaf8e18d87629b44"
+    },
+    {
+      "file": "after-home-390.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/home-390.png",
+      "bytes": 71729,
+      "sha256": "3366708203a04446769310726cce494ed8900609e3d2e6fb471dae6c3b5c560b"
+    },
+    {
+      "file": "after-home-768.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/home-768.png",
+      "bytes": 186897,
+      "sha256": "50948fff8030be5af8505f6a93112fb49add5f039e8d109184b5279ce6da5521"
+    },
+    {
+      "file": "after-work-dan.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/work-dan.png",
+      "bytes": 284684,
+      "sha256": "6a71709ca8ce61863f1a211e07c2f6e7cee092f4b8d25b7e8203b0f2884ddc2a"
+    },
+    {
+      "file": "after-work-390.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/work-390.png",
+      "bytes": 121863,
+      "sha256": "8d0745738642ec85326e643f64c38ce8eab3ae12ad26d46f3622a7df5f2fe533"
+    },
+    {
+      "file": "after-work-768.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/work-768.png",
+      "bytes": 85571,
+      "sha256": "451e012295857cb98cbd79ee387b706225e64cb929513be21752dcf9e87cb4fc"
+    },
+    {
+      "file": "after-gallery-dan.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/gallery-dan.png",
+      "bytes": 494094,
+      "sha256": "974b63dc3ac35cf4f7d4bb9aa654fa5d1ac636431170d43b6388ef97bdb66585"
+    },
+    {
+      "file": "after-gallery-390.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/gallery-390.png",
+      "bytes": 169432,
+      "sha256": "c3dbddf3e92e848ad0a28920c2e55056f9eb00723c2e6e1fd92679180dee7649"
+    },
+    {
+      "file": "after-gallery-768.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/gallery-768.png",
+      "bytes": 267711,
+      "sha256": "1a86720a82fce4b3e2e64ef522ebb5f0469eb8322dae0c4bfd48670cec6000be"
+    },
+    {
+      "file": "after-studio-asset.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/studio-asset.png",
+      "bytes": 458429,
+      "sha256": "15a7b6ba88c934a530116a4b31d4026a8dae26fc246a8a94f82714596de149a5"
+    },
+    {
+      "file": "after-studio-390.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/studio-390.png",
+      "bytes": 100083,
+      "sha256": "afcd78606169911de2990dd12fb1b3ebe473add2e5e5241d7f89aaea77e440a3"
+    },
+    {
+      "file": "after-studio-768.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/studio-768.png",
+      "bytes": 179717,
+      "sha256": "9ccf88375fe3f2de2d21a801dc2b88c9db65a6bcdc4cd576e106031cc4c42cae"
+    },
+    {
+      "file": "design-home-1366.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/home-1366.png",
+      "bytes": 372921,
+      "sha256": "de835d1c0958a36dbca035bc252cbb8c8155005caecb94e570be256ce2ccbef2"
+    },
+    {
+      "file": "design-home-1920.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/home-1920.png",
+      "bytes": 414626,
+      "sha256": "4326c9dbdc5618e09307e2c94af90b8f09df76f9cfa3603a654d57bdc62d7a9d"
+    },
+    {
+      "file": "design-home-390.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/home-390.png",
+      "bytes": 220180,
+      "sha256": "4e7b42b1963cf144dfd7fb964886895986e8a0117fb008801c410114142f01f1"
+    },
+    {
+      "file": "design-home-768.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/home-768.png",
+      "bytes": 358294,
+      "sha256": "833528cfec792d1eb2e7ce500b3e39a2641441d18bc64dcf64c782c8667324a1"
+    },
+    {
+      "file": "design-gallery-settings-desktop.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/gallery-settings-desktop.png",
+      "bytes": 359570,
+      "sha256": "0b17b075bc45328501c0f1cfd1765ab6fdd324264423623d62bd569ce2245869"
+    },
+    {
+      "file": "design-studio-1440.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/studio-1440.png",
+      "bytes": 394649,
+      "sha256": "061ccd301a78b8f59fcf6f40aa5f3471aed88efe1bd248a6f2f3b576cdebd86e"
+    },
+    {
+      "file": "design-studio-768.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/studio-768.png",
+      "bytes": 272716,
+      "sha256": "b0266146f4186bffc84402de44f30ab3a76d45d4f441619f8299668949e3a7f7"
+    },
+    {
+      "file": "design-studio-390.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/studio-390.png",
+      "bytes": 165624,
+      "sha256": "0e1d259ddaef999a4c50b54bc73c4becb623efe55044722d1e625a3da3e09f7f"
+    },
+    {
+      "file": "design-studio-properties-390.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/studio-properties-390.png",
+      "bytes": 56243,
+      "sha256": "8fa5024d8410758e7d06da19027be986da8e032448f9c580f8ce258d5833c944"
+    },
+    {
+      "file": "design-brand-static-reduced-motion.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/brand-static-reduced-motion.png",
+      "bytes": 161434,
+      "sha256": "8e8eb33ad83004f0d6f25d194cfd01dbc70a18c0d76648ecbf4b33f3afe3317f"
+    },
+    {
+      "file": "design-brand-v2-final.png",
+      "source": "test-out/suite-2026-10-23T18-30-19-916Z/design/brand-v2-final.png",
+      "bytes": 160489,
+      "sha256": "ae994b3351f303127874c22e4754c075a3265a5d5a926a588bf72ed02ad1215d"
+    },
+    {
+      "file": "home-contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/quality/home-contact-desktop.png",
+      "bytes": 256963,
+      "sha256": "679c2c901a9510dc4ccd06c89651967e220871788444e3598100022eaad32f8b"
+    },
+    {
+      "file": "home-contact-390.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/quality/home-contact-390.png",
+      "bytes": 33847,
+      "sha256": "9e284bda0b96e6484bd6dbfa11fcc7d5caf52193e356240a2e88697b3d783fdb"
+    },
+    {
+      "file": "work-contact-desktop.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/quality/work-contact-desktop.png",
+      "bytes": 209526,
+      "sha256": "81eb867017713b589eaed057557c1f3a212d753626118e1b0e50bf25cf9971bf"
+    },
+    {
+      "file": "work-contact-390.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/quality/work-contact-390.png",
+      "bytes": 36417,
+      "sha256": "67ece6804715bfca7e6fed5726de5f3388c8b3dc6e9b13be1f2e7d9892592fb9"
+    },
+    {
+      "file": "calibration-before-sheng.png",
+      "source": "test-out/calibration-baseline-matched/sheng-paired.png",
+      "bytes": 411974,
+      "sha256": "afec20a54dc58f7c0031864ec4ac808fb4c0435ed745404c27d20c0646cb99c9"
+    },
+    {
+      "file": "calibration-after-sheng.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/calibration/sheng-paired.png",
+      "bytes": 237934,
+      "sha256": "77b8e8b1934bef62a312435094621dabb0dc1f24a78e6bd51e9620176289539b"
+    },
+    {
+      "file": "after-work-sheng.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/work-sheng.png",
+      "bytes": 226044,
+      "sha256": "14026eafffbfaa2b545968fad96df9335db52ef1bbd159cd11d93a8b2ab9e9cf"
+    },
+    {
+      "file": "after-gallery-sheng.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/gallery-sheng.png",
+      "bytes": 433340,
+      "sha256": "9d76580ec679f328f3eab49582be2f9218f192a3fae1b2c5f98e21874392d635"
+    },
+    {
+      "file": "calibration-before-dan.png",
+      "source": "test-out/calibration-baseline-matched/dan-paired.png",
+      "bytes": 576092,
+      "sha256": "dffae3ce54b0c610c620d4d5e851c56aba34586e8b5dbda92375df5f41fcd117"
+    },
+    {
+      "file": "calibration-after-dan.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/calibration/dan-paired.png",
+      "bytes": 328063,
+      "sha256": "4b1421162adbab39ec219921e721ca2473672466e4222ea8cda08031b5c8c58d"
+    },
+    {
+      "file": "calibration-before-jing-red.png",
+      "source": "test-out/calibration-baseline-matched/jing-red-paired.png",
+      "bytes": 522416,
+      "sha256": "30fcdad467d24f7ae0f790823ab9d6c494a08ebce83e2e2926f296fcf83a3e66"
+    },
+    {
+      "file": "calibration-after-jing-red.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/calibration/jing-red-paired.png",
+      "bytes": 290429,
+      "sha256": "95cf0eaa4a06a90b7383e1b54002d3a31e955095b905a96e031c7e076dcf54ab"
+    },
+    {
+      "file": "after-work-jing-red.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/work-jing-red.png",
+      "bytes": 278408,
+      "sha256": "5ee45ce175e11b5c43f57d14d3770a01aa3a1fba6066fed2dac5738639da45f6"
+    },
+    {
+      "file": "after-gallery-jing-red.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/gallery-jing-red.png",
+      "bytes": 478511,
+      "sha256": "71a259d2077a7d0148cf3ce7bb704344523dfae3ef1437db3865f3dd42c53172"
+    },
+    {
+      "file": "calibration-before-jing-yellow.png",
+      "source": "test-out/calibration-baseline-matched/jing-yellow-paired.png",
+      "bytes": 379291,
+      "sha256": "6d7fd1e88e8d48ef780bba11e37f718af8c0b1a7c1f25b0fefccb49759f2733d"
+    },
+    {
+      "file": "calibration-after-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/calibration/jing-yellow-paired.png",
+      "bytes": 224300,
+      "sha256": "1d0f7680f32a471397c89ec5e7eaa9847ad71b002e56152ddb29c584888ae769"
+    },
+    {
+      "file": "after-work-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/work-jing-yellow.png",
+      "bytes": 249182,
+      "sha256": "eb82beb3053bc4da217d850b69f6c2797b0b65e0f1aeba73cb04bf1d9266493d"
+    },
+    {
+      "file": "after-gallery-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/gallery-jing-yellow.png",
+      "bytes": 434196,
+      "sha256": "e17f2833c3c65274a544a2509731fd597a99d7ef38c0a7fc45c3f38d079b35c1"
+    },
+    {
+      "file": "calibration-before-jing-white.png",
+      "source": "test-out/calibration-baseline-matched/jing-white-paired.png",
+      "bytes": 391876,
+      "sha256": "ea4186a726b06a5790fb24b4ac3cffc5320856541cbaa479b54e8a3796c3f345"
+    },
+    {
+      "file": "calibration-after-jing-white.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/calibration/jing-white-paired.png",
+      "bytes": 227142,
+      "sha256": "837c35dd63dd48e8fa515df71ec0aa3e1da38cf0334211c3e60bfd3fdc521b30"
+    },
+    {
+      "file": "after-work-jing-white.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/work-jing-white.png",
+      "bytes": 248343,
+      "sha256": "7d8ea2414f8e19dbc73d7ec17f659ee839d47c5cbb5255038f200741c87a98ed"
+    },
+    {
+      "file": "after-gallery-jing-white.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/portfolio/gallery-jing-white.png",
+      "bytes": 434315,
+      "sha256": "e37b88c2735377da55307d43edea9b807a89f970794875ddb80eaeb468d452c2"
+    },
+    {
+      "file": "dan-face-diagnosis.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/calibration/dan-face-diagnosis.png",
+      "bytes": 2112926,
+      "sha256": "17491ee1b3323feb2e2b203faf1d96413c489f7fb6ee6749fa1c0927444aa8af"
+    },
+    {
+      "file": "jing-white-face-diagnosis.png",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/calibration/jing-white-face-diagnosis.png",
+      "bytes": 1170308,
+      "sha256": "84cc51ffdc2cdedb954fa119f5e60488e721d31f53d863873b7a0179d52553d6"
+    },
+    {
+      "file": "calibration-before.json",
+      "source": "test-out/calibration-baseline-matched/report.json",
+      "bytes": 17775,
+      "sha256": "5c6a7d4a6f33738ec152a51d4e0f43a73fb9aec3dd8208ec7399eea9afb8d117"
+    },
+    {
+      "file": "calibration-after.json",
+      "source": "test-out/suite-2026-10-23T18-35-25-579Z/calibration/report.json",
+      "bytes": 18465,
+      "sha256": "21de3611f0abe957223b64520e2b390223e964a26c9c9790d38acbd43f7fef31"
+    },
+    {
+      "file": "performance-before.json",
+      "source": "test-out/suite-2026-10-23T16-40-24-664Z/performance/performance.json",
+      "bytes": 10539,
+      "sha256": "3f3c62b4f8a5c426141374471f41f54f7093b020dda7970b672f46bd7b05f226"
+    },
+    {
+      "file": "performance-after.json",
+      "source": "test-out/suite-2026-10-23T18-31-11-816Z/performance/performance.json",
+      "bytes": 11057,
+      "sha256": "eaa07098a5b660391d224e9d6e8ae505ba8eb5cbf3b751f5cc98ccd717ffeaf0"
+    },
+    {
+      "file": "static-pack-gallery.png",
+      "source": "test-out/suite-2026-10-23T18-39-12-490Z/release/static-pack-gallery.png",
+      "bytes": 378284,
+      "sha256": "6f43c6fb18a7e0fd4253b822f08e46272073194eb0b0d59f3889ab55bd16725a"
+    },
+    {
+      "file": "static-pack-studio.png",
+      "source": "test-out/suite-2026-10-23T18-39-12-490Z/release/static-pack-studio.png",
+      "bytes": 264937,
+      "sha256": "8a6dc4ccf6f282b84d51a57d1c6ad5ccdf4dd4de92472a2c3e645da4e1393639"
+    }
+  ]
+}

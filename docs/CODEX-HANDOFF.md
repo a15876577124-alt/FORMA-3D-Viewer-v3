@@ -1,12 +1,12 @@
 # CODEX-HANDOFF — 当前工程交接
 
-2026-10-23：已按用户要求从实际 RC1 重新开始针对性展示修正。当前状态以 [RC1 作品集验收](RC1-PORTFOLIO-ACCEPTANCE.md)、[Logo 接入约定](LOGO-INTEGRATION.md) 与 [剩余问题](../KNOWN-ISSUES.md) 为准。第三阶段 [品质报告](V5-QUALITY.md)、阶段 2 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md) 与第一轮审计保留追溯，不继续 RC2 全面视觉重构。
+2026-10-24：当前已进入用户批准的 UX 与正式 A/V2 设计接入，基线为实际核验的 RC1 polish `253a1ab`。当前状态以 [设计接入验收](DESIGN-INTEGRATION.md)、[Logo 接入约定](LOGO-INTEGRATION.md) 与 [剩余问题](../KNOWN-ISSUES.md) 为准。[RC1 作品集验收](RC1-PORTFOLIO-ACCEPTANCE.md)、第三阶段 [品质报告](V5-QUALITY.md)、阶段 2 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md) 与第一轮审计保留追溯。
 
 ## Git 与资产
 
-RC1 完整交付基线 `83453aafbc1dd8f8885f05d5ab9d1c3215218b65`；本轮代码 `17ac8ffc4df42a4e2b01757d50273b2628acaace`，全量 33/33、作品集专项 43 项、新 ZIP 解压验证 22/22。原始 RC1 31/31、WorkBuddy 完全退出后真实 Agent 7/7 是历史记录，本轮没有重新实连外部 AI。原 RC1 和 RC2 分支/包均保留，没有强制重置或覆盖原工程。
+已核验实施基线 `253a1abfe92681f4c093118eace55e6b899be339`；本轮分阶段提交、完整测试与新候选包来源见设计接入报告。历史 RC1 完整基线为 `83453aafbc1dd8f8885f05d5ab9d1c3215218b65`，作品集代码为 `17ac8ff`。WorkBuddy 完全退出后的真实 Agent 7/7 是历史记录，本轮没有重新实连外部 AI。原 RC1 和 RC2 分支/包均保留，没有强制重置或覆盖原工程。
 
-当前开发 worktree：D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality，分支 feature/codex-v5-rc1-polish，从核验的 feature/codex-v5-quality 创建。原工程 FORMA-3D-Viewer-v3 保留 feature/codex-v5-audit 与原有未提交文档。不要在两个工作区交叉覆盖，不合并 main 或 force push。
+当前开发 worktree：D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality，分支 feature/codex-v5-design-integration，从核验的 feature/codex-v5-rc1-polish 创建。原工程 FORMA-3D-Viewer-v3 保留 feature/codex-v5-audit 与原有未提交文档。不要在两个工作区交叉覆盖，不合并 main 或 force push。
 
 docs/ARCHITECTURE.md 的接手前格式改动必须继续保留，未纳入任何功能提交。原始资产、仓库外 OBJ/MTL/PNG、既有用户工作区资产、凭据均不可覆盖；所有处理输出写新版本。
 

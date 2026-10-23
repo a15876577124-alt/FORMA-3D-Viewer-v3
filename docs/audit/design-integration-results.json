@@ -1,0 +1,2124 @@
+{
+  "generatedAt": "2026-10-23T18:40:26.289Z",
+  "sourceCommit": "0febd7648377f93a1fcff808270190cb97cb8b06",
+  "branch": "feature/codex-v5-design-integration",
+  "baseline": "253a1abfe92681f4c093118eace55e6b899be339",
+  "environment": {
+    "node": "v24.22.0",
+    "npm": "11.19.1",
+    "edge": "155.0.4283.62",
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "physicalMobile": false
+  },
+  "fullSuite": {
+    "path": "test-out/suite-2026-10-23T18-35-25-579Z",
+    "report": {
+      "generatedAt": "2026-10-23T18:38:36.053Z",
+      "results": [
+        {
+          "name": "vendor",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "vendorscan",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "assets",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "release",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "pipeline",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "production-visual",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "portfolio-models",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "portfolio",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "quality",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "design",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "calibration",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "agent-stability",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "agent",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "providers",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "fbx-materials",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "local-security",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "geometry-semantics",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "audit",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "ops",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "opparams",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "batch",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "compare",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "fbxtex",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "formats",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "workflow",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "compare-ui",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "fbxtex-ui",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "proxy",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "server",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "render",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "ui",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "import",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "extended",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "workspaces",
+          "code": 0,
+          "passed": true
+        },
+        {
+          "name": "layout",
+          "code": 0,
+          "passed": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  "checks": {
+    "portfolio": 43,
+    "quality": 34,
+    "design": 76,
+    "layout": 47,
+    "workflow": 38,
+    "productionVisual": 13,
+    "render": {
+      "exhibitsPassed": 5,
+      "exhibitsTotal": 5,
+      "checksPassed": 61,
+      "checksTotal": 61
+    }
+  },
+  "calibration": {
+    "before": {
+      "baseline": true,
+      "conditions": "512x512, DPR 1, hardware MSAA, identical normalized geometry/camera, authored material, no bloom/shadows/stage, black background; renderer profiles compared.",
+      "models": [
+        {
+          "id": "sheng",
+          "meanChannelDelta": 27.596111679037588,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 0.85,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "camera": [
+            2.5658276008976633,
+            1.214573527120164,
+            -0.12633905194408374
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            4
+          ],
+          "exposure": [
+            1,
+            1.2
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -2.2,
+                  3.2,
+                  2.9
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "ffe2b8",
+                "intensity": 3
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.9,
+                  2.2,
+                  -2.5
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "9db8dd",
+                "intensity": 1.6
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  1.6,
+                  0.5,
+                  2.4
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "d9c4a0",
+                "intensity": 0.55
+              },
+              {
+                "type": "AmbientLight",
+                "pos": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "3a4050",
+                "intensity": 0.95
+              }
+            ]
+          }
+        },
+        {
+          "id": "dan",
+          "meanChannelDelta": 28.440695483008085,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 0.85,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "camera": [
+            2.544367235417062,
+            1.188863865482971,
+            -0.382471317121975
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            4
+          ],
+          "exposure": [
+            1,
+            1.2
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -2.2,
+                  3.2,
+                  2.9
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "ffe2b8",
+                "intensity": 3
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.9,
+                  2.2,
+                  -2.5
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "9db8dd",
+                "intensity": 1.6
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  1.6,
+                  0.5,
+                  2.4
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "d9c4a0",
+                "intensity": 0.55
+              },
+              {
+                "type": "AmbientLight",
+                "pos": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "3a4050",
+                "intensity": 0.95
+              }
+            ]
+          },
+          "faceCamera": {
+            "position": [
+              1.0686342388751662,
+              1.1073228235028478,
+              -0.1606379531912295
+            ],
+            "target": [
+              0,
+              0.944,
+              0
+            ]
+          },
+          "normals": [
+            {
+              "vertices": 28662,
+              "triangles": 46828,
+              "repeated": 5304,
+              "minLength": 0.9999999578867866,
+              "maxLength": 1.0000000466012195,
+              "maxSeamDegrees": 0
+            }
+          ]
+        },
+        {
+          "id": "jing-red",
+          "meanChannelDelta": 25.218982048143616,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 0.85,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "camera": [
+            2.565827057021971,
+            1.214573527120164,
+            -0.12635009706510192
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            4
+          ],
+          "exposure": [
+            1,
+            1.2
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -2.2,
+                  3.2,
+                  2.9
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "ffe2b8",
+                "intensity": 3
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.9,
+                  2.2,
+                  -2.5
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "9db8dd",
+                "intensity": 1.6
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  1.6,
+                  0.5,
+                  2.4
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "d9c4a0",
+                "intensity": 0.55
+              },
+              {
+                "type": "AmbientLight",
+                "pos": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "3a4050",
+                "intensity": 0.95
+              }
+            ]
+          }
+        },
+        {
+          "id": "jing-yellow",
+          "meanChannelDelta": 24.10501029779911,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 0.85,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "camera": [
+            2.5583542814584157,
+            1.214573527120164,
+            0.2329296119384178
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            4
+          ],
+          "exposure": [
+            1,
+            1.2
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -2.2,
+                  3.2,
+                  2.9
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "ffe2b8",
+                "intensity": 3
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.9,
+                  2.2,
+                  -2.5
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "9db8dd",
+                "intensity": 1.6
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  1.6,
+                  0.5,
+                  2.4
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "d9c4a0",
+                "intensity": 0.55
+              },
+              {
+                "type": "AmbientLight",
+                "pos": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "3a4050",
+                "intensity": 0.95
+              }
+            ]
+          }
+        },
+        {
+          "id": "jing-white",
+          "meanChannelDelta": 24.736678193260165,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 0.85,
+              "flat": false,
+              "anisotropy": 1
+            }
+          ],
+          "camera": [
+            2.5502162681515594,
+            1.214573527120164,
+            0.30956391784172566
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            4
+          ],
+          "exposure": [
+            1,
+            1.2
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -2.2,
+                  3.2,
+                  2.9
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "ffe2b8",
+                "intensity": 3
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.9,
+                  2.2,
+                  -2.5
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "9db8dd",
+                "intensity": 1.6
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  1.6,
+                  0.5,
+                  2.4
+                ],
+                "target": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "d9c4a0",
+                "intensity": 0.55
+              },
+              {
+                "type": "AmbientLight",
+                "pos": [
+                  0,
+                  0,
+                  0
+                ],
+                "color": "3a4050",
+                "intensity": 0.95
+              }
+            ]
+          },
+          "faceCamera": {
+            "position": [
+              1.0710908326236552,
+              1.1181208813904688,
+              0.1300168454935248
+            ],
+            "target": [
+              0,
+              0.944,
+              0
+            ]
+          },
+          "normals": [
+            {
+              "vertices": 26720,
+              "triangles": 46939,
+              "repeated": 3252,
+              "minLength": 0.9999999526022829,
+              "maxLength": 1.0000000477667832,
+              "maxSeamDegrees": 0
+            }
+          ]
+        }
+      ],
+      "errors": []
+    },
+    "after": {
+      "baseline": false,
+      "conditions": "512x512, DPR 1, hardware MSAA, identical normalized geometry/camera, authored material, no bloom/shadows/stage, black background; renderer profiles compared.",
+      "models": [
+        {
+          "id": "sheng",
+          "meanChannelDelta": 1.026883544945683,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "camera": [
+            2.5658275147565646,
+            1.214573527120164,
+            -0.1263408013768298
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            7
+          ],
+          "exposure": [
+            1,
+            1
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ]
+          }
+        },
+        {
+          "id": "dan",
+          "meanChannelDelta": 0.8040983410172949,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "camera": [
+            2.544367235417062,
+            1.188863865482971,
+            -0.382471317121975
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            7
+          ],
+          "exposure": [
+            1,
+            1
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ]
+          },
+          "faceCamera": {
+            "position": [
+              1.0686342388751662,
+              1.1073228235028478,
+              -0.1606379531912295
+            ],
+            "target": [
+              0,
+              0.944,
+              0
+            ]
+          },
+          "normals": [
+            {
+              "vertices": 28662,
+              "triangles": 46828,
+              "repeated": 5304,
+              "minLength": 0.9999999578867866,
+              "maxLength": 1.0000000466012195,
+              "maxSeamDegrees": 0
+            }
+          ]
+        },
+        {
+          "id": "jing-red",
+          "meanChannelDelta": 0.5216329481901221,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "camera": [
+            2.565827057021971,
+            1.214573527120164,
+            -0.12635009706510192
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            7
+          ],
+          "exposure": [
+            1,
+            1
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ]
+          }
+        },
+        {
+          "id": "jing-yellow",
+          "meanChannelDelta": 1.4292565316500088,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "camera": [
+            2.5583542814584157,
+            1.214573527120164,
+            0.2329296119384178
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            7
+          ],
+          "exposure": [
+            1,
+            1
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ]
+          }
+        },
+        {
+          "id": "jing-white",
+          "meanChannelDelta": 1.0753318976542323,
+          "gallery": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "detail": [
+            {
+              "metalness": 0,
+              "roughness": 0.9036020036098448,
+              "map": true,
+              "normalMap": false,
+              "env": 1,
+              "flat": false,
+              "anisotropy": 8
+            }
+          ],
+          "camera": [
+            2.5502162681515594,
+            1.214573527120164,
+            0.30956391784172566
+          ],
+          "target": [
+            0,
+            0.8,
+            0
+          ],
+          "tone": [
+            7,
+            7
+          ],
+          "exposure": [
+            1,
+            1
+          ],
+          "lights": {
+            "gallery": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ],
+            "detail": [
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  2.8136822185426347,
+                  4.47943059347883,
+                  2.380808031074537
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffffff",
+                "intensity": 2.2
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -4.2491678266379305,
+                  3.0662228408735626,
+                  1.9829449857643673
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "dfe9f2",
+                "intensity": 0.55
+              },
+              {
+                "type": "DirectionalLight",
+                "pos": [
+                  -1.8343004295433132,
+                  3.682472103568064,
+                  -3.9306437775928145
+                ],
+                "target": [
+                  0,
+                  0.8,
+                  0
+                ],
+                "color": "ffe9d0",
+                "intensity": 1.1
+              },
+              {
+                "type": "HemisphereLight",
+                "pos": [
+                  0,
+                  1,
+                  0
+                ],
+                "color": "dfe8f0",
+                "intensity": 0.25
+              }
+            ]
+          },
+          "faceCamera": {
+            "position": [
+              1.0710908326236552,
+              1.1181208813904688,
+              0.1300168454935248
+            ],
+            "target": [
+              0,
+              0.944,
+              0
+            ]
+          },
+          "normals": [
+            {
+              "vertices": 26720,
+              "triangles": 46939,
+              "repeated": 3252,
+              "minLength": 0.9999999526022829,
+              "maxLength": 1.0000000477667832,
+              "maxSeamDegrees": 0
+            }
+          ]
+        }
+      ],
+      "errors": []
+    }
+  },
+  "performance": {
+    "before": {
+      "homeReadyMs": 1578,
+      "reducedMotionHero": {
+        "draws": 0,
+        "elapsedMs": 496.30000000447035
+      },
+      "downloadBytes": 9764833,
+      "requestCount": 80,
+      "galleryFrames": {
+        "medianMs": 4.199999999999818,
+        "p95Ms": 4.300000000000182,
+        "memory": {
+          "geometries": 7,
+          "textures": 8,
+          "programs": 9,
+          "triangles": 95804,
+          "calls": 11
+        }
+      },
+      "hiddenHero": {
+        "draws": 0
+      },
+      "analysisMs": [
+        49.759500000000116,
+        18.423099999999977,
+        39.00240000000122,
+        20.334399999999732,
+        26.05869999999959,
+        14.714799999999741
+      ],
+      "upload": {
+        "encodedBytes": 44741369,
+        "elapsedMs": 1527.684799999999,
+        "frontend": {
+          "memory": {
+            "rss": 76648448,
+            "heapTotal": 12369920,
+            "heapUsed": 7963272,
+            "external": 12880787,
+            "arrayBuffers": 8782736
+          },
+          "maxRssKiB": 79428
+        },
+        "backend": {
+          "memory": {
+            "rss": 320278528,
+            "heapTotal": 65781760,
+            "heapUsed": 61883520,
+            "external": 198119124,
+            "arrayBuffers": 190659895
+          },
+          "maxRssKiB": 323944
+        }
+      }
+    },
+    "after": {
+      "homeReadyMs": 1626,
+      "reducedMotionHero": {
+        "draws": 0,
+        "elapsedMs": 495.5
+      },
+      "downloadBytes": 9788335,
+      "requestCount": 84,
+      "galleryFrames": {
+        "medianMs": 4.199999999999818,
+        "p95Ms": 4.300000000000182,
+        "memory": {
+          "geometries": 7,
+          "textures": 8,
+          "programs": 9,
+          "triangles": 95804,
+          "calls": 11
+        }
+      },
+      "hiddenHero": {
+        "draws": 0
+      },
+      "analysisMs": [
+        9.337099999999737,
+        6.815000000000509,
+        3.0453999999999724,
+        7.143699999999626,
+        8.044600000000173,
+        8.542000000000371
+      ],
+      "upload": {
+        "encodedBytes": 44741369,
+        "elapsedMs": 356.03890000000047,
+        "frontend": {
+          "memory": {
+            "rss": 70004736,
+            "heapTotal": 11845632,
+            "heapUsed": 7575800,
+            "external": 6660502,
+            "arrayBuffers": 2556775
+          },
+          "maxRssKiB": 79532
+        },
+        "backend": {
+          "memory": {
+            "rss": 328450048,
+            "heapTotal": 82034688,
+            "heapUsed": 63841024,
+            "external": 198125959,
+            "arrayBuffers": 190659895
+          },
+          "maxRssKiB": 331676
+        }
+      }
+    },
+    "caveat": "One run per state on the same desktop GPU. Changed viewport area and system/cache noise prevent causal speed claims."
+  },
+  "candidate": {
+    "path": "test-out/FORMA-Design-RC-0febd76.zip",
+    "bytes": 26572686,
+    "sha256": "476418385b2e6f0f68f6aa1090ec889b5759cadcd99444c1876932e9807daba6",
+    "manifest": {
+      "files": 96,
+      "bytes": 31934695,
+      "byKind": {
+        "html-link": 5,
+        "runtime-asset": 12,
+        "module": 72,
+        "entry": 2,
+        "preview": 2,
+        "license": 3
+      }
+    },
+    "verification": {
+      "pack": "D:\\haorongli09\\FORMA-3D-Viewer-琼剧五手办版\\FORMA-3D-Viewer-v3-quality\\test-out\\FORMA-Design-RC-0febd76-extracted",
+      "reusedCandidate": true,
+      "pass": 25,
+      "fail": 0,
+      "failures": []
+    }
+  },
+  "protection": {
+    "originalArchitectureSha256": "177ce7069926dae58fa57fde4ca2caad0c775c0c5198ac4f0a8c06318f21aa42",
+    "assetAndBackendChanges": "",
+    "note": "All mutating asset tests ran inside disposable snapshots. No credential or original asset writes."
+  },
+  "commits": [
+    "4aaf3ef fix(ux): bind material confirmation and contain gallery focus",
+    "a8f8172 feat(ux): apply approved collection-first home and readable tokens",
+    "64f7bc9 fix(public): restore wheel scrolling on home and work pages",
+    "bbe6f78 feat(gallery): integrate approved exhibit strip and settings layout",
+    "3a54c49 feat(studio): integrate version labels material inputs and save status",
+    "50f4a37 feat(brand): integrate approved A artwork and optional Spatial V2",
+    "6737693 fix(render): calibrate detail lighting and read live GPU capabilities",
+    "0febd76 fix(ux): preserve settings controls and tablet toolbar access"
+  ],
+  "changedFiles": [
+    ".gitattributes",
+    "assets/brand/PROVENANCE.json",
+    "assets/brand/favicon.svg",
+    "assets/brand/lockup-ivory.svg",
+    "assets/brand/lockup-nav-ivory.svg",
+    "assets/brand/motion-v2/geometry.js",
+    "assets/brand/motion-v2/motion.js",
+    "docs/DESIGN-INTEGRATION.md",
+    "docs/LOGO-INTEGRATION.md",
+    "docs/STATIC-MANIFEST.json",
+    "index.html",
+    "src/core/capabilities.js",
+    "src/core/miniViewer.js",
+    "src/core/viewer.js",
+    "src/lighting/environment.js",
+    "src/lighting/profile.js",
+    "src/pages/home.js",
+    "src/pages/work.js",
+    "src/studio/core.js",
+    "src/studio/dock.js",
+    "src/studio/layout.js",
+    "src/studio/panes.js",
+    "src/studio/toolbar.js",
+    "src/studio/tree.js",
+    "src/studio/ui.js",
+    "src/ui/brand.js",
+    "src/ui/brandMotion.js",
+    "src/ui/gallery.js",
+    "src/ui/shell.js",
+    "src/ui/sidebar.js",
+    "styles.css",
+    "styles/studio.css",
+    "styles/tokens.css",
+    "styles/v5.css",
+    "tests/extended.test.mjs",
+    "tests/run.mjs",
+    "tools/design-ui-test.mjs",
+    "tools/layout-ui-test.mjs",
+    "tools/production-visual-test.mjs",
+    "tools/quality-performance.mjs",
+    "tools/quality-ui-test.mjs",
+    "tools/render-calibration-test.mjs",
+    "tools/static-pack-test.mjs",
+    "tools/static-release.mjs",
+    "tools/test-render.mjs",
+    "tools/test-ui.mjs",
+    "tools/workflow-test.mjs",
+    "tools/workspace-smoke.mjs"
+  ],
+  "limitations": [
+    "P1-05 residual surface geometry and texture boundaries remain",
+    "No physical phone, assistive-reader or native 200% zoom acceptance",
+    "Live Figma read quota prevented current screenshot verification",
+    "No new external AI live call; provider/agent regression only",
+    "Complex FBX, multi-UV, worker isolation and batch recovery remain follow-up"
+  ]
+}

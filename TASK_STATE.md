@@ -1,8 +1,18 @@
 # TASK_STATE — FORMA V5
 
-更新：2026-10-23（Asia/Shanghai）。当前已回到 RC1 基础做作品集验收，暂停全面功能/视觉扩展。
+更新：2026-10-24（Asia/Shanghai）。当前已完成批准设计的工程接入与候选包验证。
 
-## 当前：RC1 作品集针对性修正
+## 当前：批准的 UX / A / V2 接入
+
+- 从本地/远程干净且一致的 `feature/codex-v5-rc1-polish` / `253a1ab` 创建 `feature/codex-v5-design-integration`，运行代码 `0febd7648377f93a1fcff808270190cb97cb8b06` 已推送；不合并 main、不公开部署。
+- 作品优先首页、真实滚轮滚动、Gallery 选择条/设置模态、Studio 冻结材质确认/版本/数值/保存状态、768px 按钮遮挡修复；保持原生 JS/CSS/Three.js 和真实资产流水线。
+- 从正式交接包原样接入 A 静态与用户主动播放的 V2；V3 未进入网页。联系继续使用公共页脚折叠入口。
+- 详情/Gallery 共用渲染基准，五件同条件对照通过。白谱/旦角四视图诊断证明仍有几何和基础色贡献，P1-05 未宣称完全修复；所有模型文件保持不变。
+- 全量 **35/35**；作品集 **43**、品质 **34**、设计 **76**、布局 **47**、真实工作流 **38**；新 ZIP 解压独立验收 **25/25**。见 [设计接入报告](docs/DESIGN-INTEGRATION.md)、[机器结果](docs/audit/design-integration-results.json)、[61 张截图](docs/evidence/design-integration/README.md)。
+- 候选 `test-out/FORMA-Design-RC-0febd76.zip`；旧 RC1/RC2 包保留。原工程 `ARCHITECTURE.md` 哈希未变，未写私人资产/凭据。
+- 真机、读屏器、原生 200% 缩放未验收；Figma 在线读取受调用额度限制，使用已核验交接与 MagicPath 修订。本轮未重跑外部 AI 实连。下一步优先局部技术美术修整和真机验收。
+
+## 历史：RC1 作品集针对性修正
 
 - 实际检查 quality 工作树原为干净的 `feature/codex-v5-exhibition` / `7a2c657`。核对 RC1 本地/远程 `83453aa` 后，以新分支 `feature/codex-v5-rc1-polish` 开发；没有强制重置，RC1、RC2 和原工程均保留。
 - 代码提交 `17ac8ffc4df42a4e2b01757d50273b2628acaace` 已推送。保留 RC1 黑金、实时 Hero 与原工作区；五件卡片真实缩略图、页脚折叠联系、延迟主 Viewer 加载、路由竞态和详情资源释放已修正。
