@@ -1,6 +1,8 @@
 // 资产库：扫描 pipeline-out 版本，发布产物到 assets/library/（可上 Pages），删除。
 import fs from 'node:fs';
 import path from 'node:path';
+import {resolveAssetSource} from './assetSource.mjs';
+import {packageFiles} from './assetPackage.mjs';
 import { PIPELINE_OUT_ROOT, LIBRARY_ROOT, safeJoinLibrary, assertSafeId } from './paths.mjs';
 
 export class LibraryError extends Error {
@@ -22,10 +24,12 @@ export function listLibrary() {
     if (fs.existsSync(opsPath)) ops = JSON.parse(fs.readFileSync(opsPath, 'utf8'));
     if (fs.existsSync(verifyPath)) verify = JSON.parse(fs.readFileSync(verifyPath, 'utf8'));
     for (const f of fs.readdirSync(dir)) {
-      if (f.startsWith('model.')) { modelFile = f; break; }
+      if (/^model\.(glb|gltf|obj|fbx)$/.test(f)) { modelFile = f; break; }
     }
     const entry = entries.get(assetId) || { assetId, versions: [] };
-    entry.versions.push({ version, dir: dirName, ops: ops?.ops?.map((o) => o.op) || [], verifyPass: verify?.pass ?? null, modelFile, createdAt: ops?.createdAt ?? null });
+    const vp = path.join(dir,'version.json');
+    const versionMeta = fs.existsSync(vp) ? JSON.parse(fs.readFileSync(vp,'utf8')) : {};
+    entry.versions.push({ ...versionMeta, baseVersion:ops?.baseVersion ?? versionMeta.baseVersion ?? 0, version, dir: dirName, ops: ops?.ops?.map((o) => o.op) || [], verifyPass: verify?.pass ?? null, modelFile, createdAt: ops?.createdAt ?? null });
     entries.set(assetId, entry);
   }
   const out = [];
@@ -39,18 +43,27 @@ export function listLibrary() {
 }
 
 // 发布某版本产物到 assets/library/（只复制，不移动、不删原文件）
-export function publishAsset({ assetId, version }) {
-  const id = assertSafeId(assetId);
-  const dir = path.join(PIPELINE_OUT_ROOT, `${id}-v${version}`);
-  if (!fs.existsSync(dir)) throw new LibraryError(`版本不存在: ${id}-v${version}`, 404);
-  const modelFile = fs.readdirSync(dir).find((f) => f.startsWith('model.'));
-  if (!modelFile) throw new LibraryError(`版本无产物: ${id}-v${version}`, 404);
-  const src = path.join(dir, modelFile);
-  const ext = path.extname(modelFile);
-  fs.mkdirSync(LIBRARY_ROOT, { recursive: true });
-  const dest = path.join(LIBRARY_ROOT, `${id}-v${version}${ext}`);
-  fs.copyFileSync(src, dest); // 只复制，原始产物保留在 pipeline-out
-  return { url: `/assets/library/${path.basename(dest)}`, file: path.basename(dest), bytes: fs.statSync(dest).size };
+export function publishAsset({assetId,version}) {
+  const src=resolveAssetSource(assetId,version);
+  if(version===0)throw new LibraryError('请先创建并验证处理版本');
+  const verify=JSON.parse(fs.readFileSync(path.join(path.dirname(src.file),'verify.json'),'utf8'));
+  if(!verify.pass)throw new LibraryError('后验未通过，不能发布',409);
+  if(!['glb','gltf'].includes(src.format))throw new LibraryError('展厅发布需要 GLB/GLTF');
+  fs.mkdirSync(LIBRARY_ROOT,{recursive:true});
+  const key=src.assetId+'-v'+version;
+  if(src.format==='glb'){
+    const file=key+'.glb', dest=path.join(LIBRARY_ROOT,file);
+    if(!fs.existsSync(dest))fs.copyFileSync(src.file,dest,fs.constants.COPYFILE_EXCL);
+    return {assetId:src.assetId,version,url:'/assets/library/'+file,file,bytes:fs.statSync(dest).size};
+  }
+  const dest=path.join(LIBRARY_ROOT,key), manifest=path.join(dest,'publication.json');
+  if(!fs.existsSync(manifest)){
+    try{fs.mkdirSync(dest);}catch(e){if(e.code==='EEXIST')throw new LibraryError('发布正在进行或未完成',409);throw e;}
+    for(const f of packageFiles(src.file)){const target=path.join(dest,f.name);fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(f.path,target,fs.constants.COPYFILE_EXCL);}
+    fs.writeFileSync(manifest,JSON.stringify({assetId:src.assetId,version,modelFile:path.basename(src.file)}),{flag:'wx'});
+  }
+  const file=key+'/'+path.basename(src.file);
+  return {assetId:src.assetId,version,file,url:'/assets/library/'+file,bytes:fs.statSync(path.join(LIBRARY_ROOT,file)).size};
 }
 
 // 删除 assets/library/ 内的文件（仅限该目录内，防穿越）
@@ -64,6 +77,15 @@ export function deleteLibraryFile(file) {
 
 // 列出已发布到 assets/library/ 的文件
 export function listPublished() {
-  if (!fs.existsSync(LIBRARY_ROOT)) return { files: [] };
-  return { files: fs.readdirSync(LIBRARY_ROOT).filter((f) => f.endsWith('.glb') || f.endsWith('.gltf')).map((f) => ({ file: f, url: `/assets/library/${f}`, bytes: fs.statSync(path.join(LIBRARY_ROOT, f)).size })) };
+  if(!fs.existsSync(LIBRARY_ROOT))return {files:[]};
+  const files=[];
+  for(const item of fs.readdirSync(LIBRARY_ROOT,{withFileTypes:true})){
+    if(item.isFile()&&/\.(glb|gltf)$/.test(item.name))files.push({file:item.name,url:'/assets/library/'+item.name,bytes:fs.statSync(path.join(LIBRARY_ROOT,item.name)).size});
+    else if(item.isDirectory()){
+      const p=path.join(LIBRARY_ROOT,item.name,'publication.json');if(!fs.existsSync(p))continue;
+      const m=JSON.parse(fs.readFileSync(p,'utf8')), file=item.name+'/'+m.modelFile;
+      files.push({...m,file,url:'/assets/library/'+file,bytes:fs.statSync(path.join(LIBRARY_ROOT,file)).size});
+    }
+  }
+  return {files};
 }

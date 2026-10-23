@@ -5,6 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { parseGLB } from '../tools/glbkit.mjs';
 import { analyzeFile } from './analyze.mjs';
+import {readDocument} from './gltfIO.mjs';
 import { validateGltf } from './validateGltf.mjs';
 import { validateFile } from './validate.mjs';
 
@@ -168,6 +169,14 @@ export async function verifyPair({ beforePath, afterPath, opName, params = {} })
     checks.push({ name: 'bounds.size', ok: same, detail: `${bb.map((v) => v.toFixed(4)).join('x')} vs ${ba.map((v) => v.toFixed(4)).join('x')}` });
   }
 
+  if(opName==='setMaterial') {
+    const beforeDoc=await readDocument(beforePath),afterDoc=await readDocument(afterPath);
+    const geometry=d=>d.getRoot().listMeshes().map(m=>m.listPrimitives().map(p=>({attributes:p.listSemantics().map(s=>[s,Array.from(p.getAttribute(s).getArray())]),indices:p.getIndices()?Array.from(p.getIndices().getArray()):null})));
+    checks.push({name:'material.geometry',ok:JSON.stringify(geometry(beforeDoc))===JSON.stringify(geometry(afterDoc))});
+    checks.push({name:'material.textures',ok:JSON.stringify(beforeDoc.getRoot().listTextures().map(t=>sha(t.getImage())))===JSON.stringify(afterDoc.getRoot().listTextures().map(t=>sha(t.getImage())))});
+    const m=afterDoc.getRoot().listMaterials()[params.materialIndex];
+    checks.push({name:'material.values',ok:!!m&&m.getMetallicFactor()===params.metallicFactor&&m.getRoughnessFactor()===params.roughnessFactor&&JSON.stringify(m.getBaseColorFactor())===JSON.stringify([params.colorR,params.colorG,params.colorB,params.opacity])});
+  }
   const pass = checks.every((c) => c.ok);
   return { pass, checks, opName, params };
 }

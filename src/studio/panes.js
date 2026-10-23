@@ -130,10 +130,11 @@ function materialPane({ viewer, core }) {
   const listBox = el('div', { class: 'st-mat-list', id: 'stMatList' });
   const editBox = el('div', { class: 'st-mat-edit', id: 'stMatEdit' });
   const actRow = el('div', { class: 'st-actions' },
-    el('button', { class: 'st-btn st-btn-ghost', type: 'button', id: 'stMatReset' }, '还原材质'),
+    el('button', { class: 'st-btn st-btn-ghost', type: 'button', id: 'stMatReset' }, '重置预览'),
+    el('button', { class: 'st-btn st-btn-primary', type: 'button', id: 'stMatSave' }, '保存为新版本'),
     el('button', { class: 'st-btn st-btn-ghost', type: 'button', id: 'stMatRefresh' }, '重新读取'),
   );
-  node.append(actRow, listBox, editBox);
+  node.append(hint('调整先用于预览；保存后生成新的 Edited 版本。环境反射仅影响预览。'), actRow, listBox, editBox);
 
   // 原始值快照：只在首次读取时记录，供「还原」使用（WeakMap 天然随对象回收）
   const originals = new WeakMap();
@@ -143,7 +144,7 @@ function materialPane({ viewer, core }) {
     if (originals.has(mat)) return;
     originals.set(mat, {
       color: mat.color?.getHex(), metalness: mat.metalness, roughness: mat.roughness,
-      emissiveIntensity: mat.emissiveIntensity, opacity: mat.opacity, transparent: mat.transparent, side: mat.side,
+      envMapIntensity: mat.envMapIntensity, emissiveIntensity: mat.emissiveIntensity, opacity: mat.opacity, transparent: mat.transparent, side: mat.side,
     });
   }
 
@@ -163,7 +164,7 @@ function materialPane({ viewer, core }) {
 
     const rangeRow = (label, key, min, max, step, apply) => {
       const out = el('em', { class: 'st-num' }, String(Number(mat[key] ?? 0).toFixed(2)));
-      const input = el('input', { type: 'range', min: String(min), max: String(max), step: String(step), value: String(mat[key] ?? 0), class: 'st-range' });
+      const input = el('input', { type: 'range', min: String(min), max: String(max), step: String(step), value: String(mat[key] ?? 0), class: 'st-range', 'data-material-param':key });
       input.addEventListener('input', () => {
         const v = parseFloat(input.value);
         out.textContent = v.toFixed(2);
@@ -196,7 +197,8 @@ function materialPane({ viewer, core }) {
 
   function update() {
     listBox.innerHTML = '';
-    const meshes = collectMeshes(viewer.modelRoot);
+    const meshes = core.state.selectionStatus === 'ready' ? collectMeshes(viewer.modelRoot) : [];
+    if (selected && !meshes.includes(selected.mesh)) selected = null;
     if (!meshes.length) { listBox.append(hint('当前视口没有网格——先在资源树里选中资产并载入。')); selected = null; renderEdit(); return; }
     const seen = new Set();
     let idx = 0;
@@ -227,12 +229,13 @@ function materialPane({ viewer, core }) {
     if (!o) return;
     const m = selected.material;
     if (m.color && o.color != null) m.color.setHex(o.color);
-    for (const k of ['metalness', 'roughness', 'emissiveIntensity', 'opacity', 'transparent', 'side']) if (o[k] != null) m[k] = o[k];
+    for (const k of ['metalness', 'roughness', 'emissiveIntensity', 'envMapIntensity', 'opacity', 'transparent', 'side']) if (o[k] != null) m[k] = o[k];
     m.needsUpdate = true;
     viewer.render?.();
     renderEdit();
   });
   node.querySelector('#stMatRefresh').addEventListener('click', update);
+  node.querySelector('#stMatSave').addEventListener('click', () => selected && core.saveMaterial(selected.material));
 
   return { node, update, title: 'Material Lab', id: 'material' };
 }
@@ -425,10 +428,10 @@ function exportPane({ core, toast }) {
 
   function update() {
     body.innerHTML = '';
-    const run = core.state.lastRun;
+    const run = core.state.lastExport || core.state.lastRun;
     body.append(el('div', { class: 'st-subhead' }, '最近产物'));
     if (!run) { body.append(hint('还没有处理产物——执行处理后，这里会出现真实文件的下载链接。')); return; }
-    const url = core.toFileUrl(run.afterPath);
+    const url = '/api/assets/' + encodeURIComponent(run.assetId) + '/versions/' + run.version + '/download';
     body.append(rows(
       kv('资产', run.assetId),
       kv('版本', 'v' + run.version),
@@ -437,7 +440,7 @@ function exportPane({ core, toast }) {
       kv('后验', run.verify?.pass ? '通过' : (run.verify ? '失败' : '未执行'), run.verify?.pass ? 'ok' : 'warn'),
     ));
     body.append(el('div', { class: 'st-link-row' },
-      el('a', { class: 'st-link', href: url, target: '_blank', rel: 'noreferrer', download: String(run.afterPath).split('/').pop() }, '下载处理产物'),
+      el('a', { class: 'st-link', href: url, target: '_blank', rel: 'noreferrer', download: String(run.afterPath).split('/').pop() }, '下载完整资源包 ZIP'),
       el('a', { class: 'st-link', href: core.toFileUrl(run.beforePath), target: '_blank', rel: 'noreferrer' }, '原始文件'),
     ));
     body.append(hint('产物路径由后端真实落盘后返回（pipeline-out/<资产>-v<N>/），链接走同源 /api/file 安全服务。', 'info'));
@@ -447,7 +450,7 @@ function exportPane({ core, toast }) {
     const res = await core.exportAs(fmtSel.value);
     if (res) { const b = body; update(); b.scrollTop = 0; toast?.('已导出 ' + String(res.afterPath).split('/').pop(), 'ok'); }
   });
-  node.querySelector('#stExportPublish').addEventListener('click', () => core.publish(1));
+  node.querySelector('#stExportPublish').addEventListener('click', () => core.publish());
 
   return { node, update, title: 'Export Manager', id: 'export' };
 }

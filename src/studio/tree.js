@@ -134,9 +134,16 @@ export function createAssetTree({ core, onPreview, toast }) {
       list.append(el('p', { class: 'st-hint' }, '该资产还没有处理版本——执行一次处理后出现。'));
       return;
     }
+    const from = el('select', {class:'st-select',id:'stCompareFrom','aria-label':'Before 版本'});
+    const to = el('select', {class:'st-select',id:'stCompareTo','aria-label':'After 版本'});
+    for(const v of versions){for(const sel of [from,to])sel.append(el('option',{value:String(v.version)},v.version?'v'+v.version+' · '+(v.kind||'Processed'):'Original'));}
+    to.value=String(core.state.selectedVersion);
+    const compare=el('button',{class:'st-btn',type:'button',id:'stCompareVersions'},'比较所选版本');
+    compare.addEventListener('click',()=>core.compareVersions(Number(from.value),Number(to.value)));
+    list.append(from,to,compare);
     for (const v of versions) {
       const label = v.version ? `v${v.version}` : 'Original';
-      const ops = (v.ops || []).join(' → ') || '（无算子记录）';
+      const ops = (v.kind ? v.kind + ' · ' : '') + ((v.ops || []).join(' → ') || '（无算子记录）') + (v.version ? ' · 来源 ' + (v.baseVersion ? 'v' + v.baseVersion : 'Original') : '');
       const row = el('div', { class: 'st-row st-row-version' + (v.version === core.state.selectedVersion ? ' is-active' : ''), role: 'listitem', tabindex:'0', 'data-version':v.version },
         el('span', { class: 'st-ver-badge' }, label),
         el('span', { class: 'st-row-main' },

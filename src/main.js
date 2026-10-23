@@ -265,9 +265,9 @@ function boot() {
     viewer,
     appState,
     onSelection: (entry) => { current.entry = entry; updateMeta(entry); inspector.setAnimations(viewer.animations, 0); },
-    onPublish: (url, assetId) => {
+    onPublish: (url, assetId, res) => {
       const file = String(url).split('/').pop();
-      const item = { id: assetId, name: assetId, url, version: 1 };
+      const item = { id: assetId + '-v' + res.version, sourceId:assetId, name:assetId + ' · v' + res.version, url, version:res.version };
       const entry = libraryEntryToCatalog(item);
       libraryMap.set(entry.id, entry);
       appState.addLibraryEntry(item);
@@ -279,7 +279,7 @@ function boot() {
       let added = 0;
       for (const f of files) {
         const file = String(f.file || f.url || '').split('/').pop();
-        const m = /^(.+)-v(\d+)\.(glb|gltf)$/.exec(file);
+        const m = f.assetId && f.version ? [null,f.assetId,String(f.version)] : /^(.+)-v(\d+)\.(glb|gltf)$/.exec(file);
         if (!m) continue;
         const [, assetId, ver] = m;
         const id = `${assetId}-v${ver}`;
@@ -499,7 +499,7 @@ function boot() {
       get active() { return !!studio?.isActive; },
       get core() { return studio?.core || null; },
       // 兼容旧管线 API（部分脚本用 async connect 等待连接结果）
-      connect: async () => { await studio?.core?.connect(); return !!studio?.core?.state.connected; },
+      connect: async () => { await studio?.core?.connect(); return studio?.core?.state.status === 'online'; },
       get connected() { return studio?.core?.state.status === 'online'; },
       get selectedAsset() { return studio?.core?.state.selectedAsset || null; },
       selectAsset: (id) => studio?.core?.selectAsset(id),

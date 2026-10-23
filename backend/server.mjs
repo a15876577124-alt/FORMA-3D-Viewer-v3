@@ -18,7 +18,8 @@ import { listModels, pickAgentModel } from './llm.mjs';
 import { runAgent } from './agent/agent.mjs';
 import { TOOLS } from './agent/tools.mjs';
 import { importAsset } from './importAsset.mjs';
-import { describeAssetSource } from './assetSource.mjs';
+import { packageZip } from './assetPackage.mjs';
+import { describeAssetSource, resolveAssetSource } from './assetSource.mjs';
 import { runAssetPipeline, makeAgentCtx } from './runPipeline.mjs';
 import { listOps } from './ops/index.mjs';
 import { detectCapabilities } from './ops/capabilities.mjs';
@@ -388,6 +389,12 @@ const server = http.createServer(async (req, res) => {
   let pathname;
   try { pathname = decodeURIComponent(new URL(req.url, `http://${HOST}:${PORT}`).pathname); }
   catch { send(res, 400, { error: { message: '非法 URL', code: 'bad_url' } }); return; }
+
+  const download = /^\/api\/assets\/([^/]+)\/versions\/(\d+)\/download$/.exec(pathname);
+  if (req.method === 'GET' && download) {
+    try { const src=resolveAssetSource(download[1],Number(download[2])); const data=packageZip(src.file); res.writeHead(200,{'Content-Type':'application/zip','Content-Disposition':'attachment; filename="'+src.assetId+'-v'+src.version+'.zip"','Content-Length':data.length});res.end(data); }
+    catch(e){sendError(res,e);}return;
+  }
 
   // /api/file/<相对路径> —— 走路径段而非 query，使 .gltf 的相对引用（.bin/贴图）
   // 能被 three.js 按 URL 规则正确解析到同一目录下。

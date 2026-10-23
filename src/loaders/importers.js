@@ -148,6 +148,10 @@ export async function loadGLTF(source, { files = [], onProgress } = {}) {
   const scene = gltf.scene || gltf.scenes?.[0];
   if (!scene) throw new Error('no mesh found in this glTF');
 
+  scene.traverse(o => { for (const mat of (Array.isArray(o.material) ? o.material : [o.material]).filter(Boolean)) {
+    const index = gltf.parser.associations.get(mat)?.materials;
+    if (index !== undefined) mat.userData.gltfMaterialIndex = index;
+  }});
   const root = wrap(scene);
   enableShadows(root);
 

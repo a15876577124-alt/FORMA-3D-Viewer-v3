@@ -18,3 +18,8 @@ ARCHITECTURE.md 原有格式修改保持未提交，SHA256 177CE7069926DAE58FA57
 根因：转换器先按 GLB 读取所有输入、输出报告使用输入格式、URL GLTF 预检错误、GLTF byteLength 被删除。改用现有 glTF Transform；安全读取包内依赖，保存 UTF-8；OBJ 修复全局索引、节点变换、MTL 和基色纹理。
 新依赖仅 gltf-validator 2.0.0-dev.3.10（Apache-2.0），Node 24 实测。导出 GLB/GLTF 加官方格式校验，仍做实际 Edge 重载。
 实测：formats 3/3，workflow 13/13（suite-2026-10-23T07-18-49-568Z），ops 64/64，pipeline 50/50，audit 7/7。FBX 转可处理版本与完整下载包在后续闭环阶段实现。
+
+## 阶段 3：版本、材质与资源发布
+新增 version.json：baseVersion、kind、running/complete/failed 状态；每次处理独立输出，失败版本不复用。Material Lab 保存指定材质为 Edited 版本，预览/重置与真实保存分开；环境反射仅预览。纹理和几何后验检查通过。
+导出下载完整 ZIP（复用 Three.js 随附 MIT fflate），发布 GLTF 连同全部依赖到独立目录；仅后验通过版本可发布。版本树选择真实两端对比。
+实测 workflow 23/23（suite-2026-10-23T07-23-42-993Z），formats 4/4（含并发），batch 20/20。没有新增 ZIP 依赖。

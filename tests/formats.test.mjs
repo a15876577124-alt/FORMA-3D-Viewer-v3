@@ -37,3 +37,15 @@ test('malicious package references and collisions are rejected before writes',as
   assert.throws(()=>importAsset('duplicate.gltf',Buffer.from(j),[{name:'texture.png',dataBase64:'AA=='},{name:'TEXTURE.png',dataBase64:'AA=='}]));
 });
 test('GLB container accepts UTF-8 without corrupting byte alignment',()=>{const b=buildGLB({asset:{version:'2.0',generator:'琼剧'}},Buffer.alloc(0));assert.equal(b.readUInt32LE(8),b.length);assert.equal(b.length%4,0);});
+
+test('version ancestry and concurrent tasks never overwrite',async()=>{
+  const {runAssetPipeline}=await import('../backend/runPipeline.mjs');
+  const original=fs.readFileSync(path.join(out,'glb/model.glb'));
+  const asset=importAsset('version-fixture.glb',original);
+  const ops=[{op:'dedup',params:{}}];
+  const first=await runAssetPipeline({assetId:asset.id,ops});
+  const pair=await Promise.all([runAssetPipeline({assetId:asset.id,baseVersion:first.version,ops}),runAssetPipeline({assetId:asset.id,baseVersion:first.version,ops})]);
+  assert.notEqual(pair[0].version,pair[1].version);
+  for(const r of pair){assert.equal(r.beforePath,first.afterPath);assert.equal(r.baseVersion,first.version);const m=JSON.parse(fs.readFileSync(path.join(process.cwd(),r.outDir,'version.json')));assert.equal(m.status,'complete');}
+  assert.deepEqual(fs.readFileSync(path.join(process.cwd(),'backend/workspace',asset.originalRelPath)),original);
+});

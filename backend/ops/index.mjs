@@ -6,6 +6,7 @@ import { transformOps } from './transformOps.mjs';
 import { geometryOps } from './geometry.mjs';
 import { containerOps } from './container.mjs';
 import { convertOps } from './convert.mjs';
+import { materialOps } from './material.mjs';
 import { textureOps } from './textureOps.mjs';
 import { detectCapabilities } from './capabilities.mjs';
 import { OP_SCHEMA, validateSchema, withDefaults } from './schema.mjs';
@@ -20,6 +21,7 @@ export const OPS = {
   ...containerOps,
   ...convertOps,
   ...textureOps,
+  ...materialOps,
 };
 
 // 依赖某能力的算子 → 不可用时明确报错（禁止假执行）

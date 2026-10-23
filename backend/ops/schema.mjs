@@ -199,6 +199,20 @@ export const OP_SCHEMA = {
     params: {},
   },
 
+  setMaterial: {
+    label:'保存材质', group:'material', desc:'对指定材质保存 PBR 参数为新版本，保留贴图。',
+    params:{
+      materialIndex:{type:'integer',label:'材质索引',min:0,max:10000,default:0},
+      metallicFactor:{type:'number',label:'金属度',min:0,max:1,default:0},
+      roughnessFactor:{type:'number',label:'粗糙度',min:0,max:1,default:1},
+      colorR:{type:'number',label:'线性红',min:0,max:1,default:1},colorG:{type:'number',label:'线性绿',min:0,max:1,default:1},colorB:{type:'number',label:'线性蓝',min:0,max:1,default:1},
+      opacity:{type:'number',label:'不透明度',min:0,max:1,default:1},
+      emissiveStrength:{type:'number',label:'自发光强度',min:0,max:3,default:1},
+      alphaMode:{type:'enum',label:'透明模式',default:'OPAQUE',options:[{value:'OPAQUE',label:'不透明'},{value:'MASK',label:'裁切'},{value:'BLEND',label:'混合'}]},
+      doubleSided:{type:'bool',label:'双面',default:false},
+    },
+  },
+
   // ---------------- 容器 / 格式 ----------------
   convert: {
     label: '格式转换',

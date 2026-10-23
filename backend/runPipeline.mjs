@@ -29,7 +29,7 @@ function originalPath(meta) {
 }
 
 // 下一个版本目录（不覆盖已有）
-function nextVersionDir(assetId) {
+export function nextVersionDir(assetId) {
   fs.mkdirSync(PIPELINE_OUT_ROOT, { recursive: true });
   for (let n = 1; ; n++) {
     const dir = path.join(PIPELINE_OUT_ROOT, `${assetId}-v${n}`);
@@ -85,6 +85,11 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
 
   // 真实执行
   const { version, dir } = nextVersionDir(id);
+  const kind = ops.some(o => ['simplify','quantize','textureResize','textureCompress'].includes(o.op)) ? 'Optimized' : ops.every(o => o.op === 'convert') ? 'Converted' : ops.some(o => o.op === 'setMaterial') ? 'Edited' : 'Repaired';
+  const versionMeta = {assetId:id,version,baseVersion,kind,status:'running',createdAt:new Date().toISOString(),sourcePath:source.path};
+  const versionFile = path.join(dir,'version.json');
+  fs.writeFileSync(versionFile,JSON.stringify(versionMeta,null,2));
+  try {
   const beforeReport = await analyzeBuffer(path.basename(inPath), fs.readFileSync(inPath), source.format, { baseDir: path.dirname(inPath) });
   const { outPath, results } = await runOps({ inPath, outDir: dir, ops });
 
@@ -109,6 +114,8 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
   fs.writeFileSync(path.join(dir, 'verify.json'), JSON.stringify(verify, null, 2));
   fs.writeFileSync(path.join(dir, 'CHANGE.txt'), results.map((r) => `[${r.op}] ${(r.changes || []).join('; ') || '(无变更)'}`).join('\n'));
 
+  fs.writeFileSync(versionFile,JSON.stringify({...versionMeta,status:verify.pass?'complete':'failed',modelFile:path.basename(outPath),verifyPass:verify.pass},null,2));
+
   // Before/After 3D 对比需要拿到两端的真实文件路径（相对项目根，供 /api/file 安全服务）
   const rel = (p) => path.relative(ROOT, p).split(path.sep).join('/');
   return {
@@ -125,6 +132,10 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
     verify,
     policy,
   };
+  } catch(e) {
+    fs.writeFileSync(versionFile,JSON.stringify({...versionMeta,status:'failed',error:e.message},null,2));
+    throw e;
+  }
 }
 
 // Agent ctx 注入的三个函数（runOp / verify / compare / exportAsset）

@@ -67,6 +67,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     analysis: null,           // 最近一次 analyze 报告
     textures: null,           // 最近一次贴图三态报告
     lastRun: null,
+    lastExport: null,
     lastAgent: null,
     lastExtract: null,
     lastBatch: null,
@@ -144,6 +145,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     if (viewer.modelRoot) viewer.modelRoot.visible = false;
     state.analysis = null;
     state.textures = null;
+    state.lastExport = null;
     state.confirmToken = null;
     if (!keepRun) state.lastRun = null;
     emit('select', state.selectedAsset);
@@ -432,6 +434,15 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     }
   }
 
+  async function compareVersions(beforeVersion, afterVersion) {
+    if (!requireSelection()) return null;
+    const ticket=selectionTicket, id=state.selectedAsset;
+    const [before,after]=await Promise.all([pipelineApi.source(id,beforeVersion),pipelineApi.source(id,afterVersion)]);
+    if(ticket!==selectionTicket)return null;
+    const stats=s=>({...s.report.stats,bytes:s.report.file.bytes});
+    return showCompare({assetId:id,baseVersion:beforeVersion,version:afterVersion,beforePath:before.path,afterPath:after.path,before:stats(before),after:stats(after)});
+  }
+
   function compareStats(run) {
     const b = run?.before || {}; const a = run?.after || {};
     return [
@@ -492,6 +503,12 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     return results;
   }
 
+  async function saveMaterial(mat) {
+    if (!requireSelection() || !Number.isInteger(mat?.userData?.gltfMaterialIndex)) { emit('log',{tone:'warn',text:'请先选择 GLB/GLTF 版本的材质'});return null; }
+    await exitCompare();
+    return run({ops:[{op:'setMaterial',params:{materialIndex:mat.userData.gltfMaterialIndex,metallicFactor:mat.metalness,roughnessFactor:mat.roughness,colorR:mat.color.r,colorG:mat.color.g,colorB:mat.color.b,opacity:mat.opacity,emissiveStrength:mat.emissiveIntensity ?? 1,alphaMode:mat.transparent?'BLEND':mat.alphaTest>0?'MASK':'OPAQUE',doubleSided:mat.side===2}}]});
+  }
+
   async function publish(version) {
     if (!requireSelection()) return null;
     if (!requireOnline() || !state.selectedAsset) { emit('log', { tone: 'warn', text: '请先连接并选择资产' }); return null; }
@@ -515,6 +532,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     try {
       const res = await pipelineApi.run(state.selectedAsset, [{ op: 'convert', params: { to } }], state.confirmToken, false, version ?? state.selectedVersion);
       state.confirmToken = null;
+      state.lastExport = res;
       emit('export', { to, file: res.afterPath, url: fileUrl(res.afterPath), run: res });
       emit('log', { tone: 'ok', text: `已导出 .${to}：v${res.version}` });
       return res;
@@ -549,7 +567,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     selectAsset, setOpEnabled, setOpParams, selectedOps, applyPreset,
     analyze, detectTextures, extractTextures,
     run, runBatch, runAgent, adoptAgentSuggestion,
-    showCompare, exitCompare, setCompareSplit, compareStats,
-    importFile, importFiles, publish, exportAs, listVersions, toFileUrl,
+    showCompare, compareVersions, exitCompare, setCompareSplit, compareStats,
+    importFile, importFiles, saveMaterial, publish, exportAs, listVersions, toFileUrl,
   };
 }
