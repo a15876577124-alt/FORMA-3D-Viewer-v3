@@ -74,3 +74,34 @@ Before/After 使用 Original 的同一摆放变换，不再各自归一化隐藏
 5. 版本区选择 Before 与 After，旋转/滑动比较；导出选定版本，GLTF 下载 ZIP，解包后选择模型与全部依赖重新导入。
 6. 发布通过验证的版本到本地资产库；点击条目加载。这里的“发布”没有部署到公共网站。
 7. Agent 日志输入任务，选择“仅分析”或“执行 AI 任务”；风险出现后确认具体工具调用；结果和失败都写实际日志。
+
+
+## 最终独立验收
+
+- 实现提交：a3beb516c9deea58d728c152287de87f46fe3577，已推送 feature/codex-v5-audit；最后文档/证据提交见 git log。
+- npm test：**26/26 组通过**（test-out/suite-2026-10-23T08-39-20-157Z）。不同组分别用断言/Node test case 计数，不合并伪造一个统一断言总数。
+- 完整工作流 **38 项**；视觉与资源 **13 项**；formats **4 个用例**；agent-stability **4 个用例**；真实 Agent **6 项**；艺术修复 **2 项**。
+- npm run release:verify：84 文件 / 30210971 字节，静态包实际五模型加载 16 项通过。
+- NVIDIA RTX 4060 Laptop / ANGLE Direct3D11 / Windows Edge，五模型渲染 56/56。普通处理的测试明确模拟模型服务不可用，仍完成完整闭环。
+- 对比五轮前后 GPU geometry 9→9、texture 14→14；未据此宣称长期压力无泄漏。
+- 真实 Agent：run_1792744148150_a41bf4a6，6 轮、30 个原生工具分片采样、最终 v2；原始日志在 test-out/suite-2026-10-23T08-29-04-733Z/agent-live/live-agent.json。
+- 艺术修复：Original v0 → Repaired v1，47512 个三角面保持，几何/贴图后验通过。法线与金属度修复使用新文件；不是修改原始素材或仅调整截图。
+- 12 个原始/展示文件、30 个既有运行期文件与 ARCHITECTURE 原有改动保持字节不变；私人凭据扫描无匹配（只覆盖已跟踪文本，不是整个 Git 历史审计）。
+
+### 可查看的证据
+
+| 目的 | 文件 |
+|---|---|
+| 原始生角 / 新修复版本，同机位 | [Before](evidence/phase2/qiong-before.png) / [After](evidence/phase2/qiong-after.png) |
+| 修复流程与后验界面 | [截图](evidence/phase2/qiong-comparison.png) |
+| Avocado 减面 682 → 477，同机位 | [Before](evidence/phase2/avocado-before.png) / [After](evidence/phase2/avocado-after.png) |
+| 390px Gallery / Studio | [Gallery](evidence/phase2/gallery-390.png) / [Studio](evidence/phase2/studio-390.png) |
+| 真实模型 Agent 执行日志 | [截图](evidence/phase2/agent-live.png) |
+| 检查、版本关系、文件清单、保护摘要 | [JSON](audit/phase2-results.json) |
+
+截图为真实 Edge 输出，未修图。全部测试模型和产物仍在隔离副本，原始工作区没有演示数据污染。
+
+重新生成艺术修复证据：node tests/run.mjs --only=art-repair。它只在隔离副本读取仓库 raw 生角生成新版本，不写用户原文。复杂艺术模型的自动视觉质量评分仍未完成，剩余工作见 KNOWN-ISSUES.md。
+
+
+最终 FBX 证据复核：5 张源图像 → 2 张输出图像，Three.js FBXLoader 的 Phong 到 GLTF PBR 映射没有覆盖所有粗糙度、金属度与权重通道。已增加转换前的持久风险确认、版本 textureInventory 和 warnings；不会将其报告为完整材质无损。支持的贴图渲染与往返加载已验收，剩余通道见 KNOWN-ISSUES.md。

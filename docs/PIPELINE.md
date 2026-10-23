@@ -1,6 +1,6 @@
 # FORMA 处理算子与后验
 
-> 2026-10-23 Codex 核验：GLB 核心算子与真实前后对比可运行，但完整格式互转/版本导出尚未完成。`runAssetPipeline` 导出 GLTF 的后验仍错误沿用输入格式，会返回 500；GLTF 导出结构与多文件发布也有缺口。详情见 [CODEX-AUDIT.md](CODEX-AUDIT.md) P1-02/03/04/05/10。以下算法描述不是全面格式兼容承诺。
+> 2026-10-23 阶段 2：GLB/GLTF 通过统一 NodeIO 转换，完整资源包导出/发布、版本选择、材质保存和 FBX→GLB 工作版本已验证。实际覆盖与限制见 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md)。
 
 ## 算子清单
 
@@ -18,14 +18,15 @@
 | `textureReport` | 自研 | 否 | 只读贴图尺寸/字节报告 |
 | `textureResize` | sharp | **是** | 缩放贴图（compact 重建 BIN） |
 | `textureCompress` | sharp | **是** | WebP/JPEG 有损压缩 |
-| `convert` | 自研 | **是** | 当前有效输入主要为 GLB；GLTF/OBJ 输出存在已知缺陷，FBX 无导出实现 |
+| `convert` | glTF Transform NodeIO + OBJ writer | **是** | GLB↔GLTF，含依赖包；GLB/GLTF→OBJ+MTL；FBX/OBJ 需先生成 GLB 工作版本，无 FBX 输出 |
+| `setMaterial` | glTF Transform | **是** | 指定材质参数保存为 Edited 版本，并验证几何与纹理未改 |
 
 \* 琼剧手办命中 `prune`/`join` 等仍强制确认（红线见 `docs/SECURITY.md`）。
 
 ## 确认门
 
 - `appearance=true` 或命中琼剧红线的算子，未携带有效 HMAC token 时返回 `409 { needConfirm, token, riskyOps, reasons }`，**不写盘**。
-- token 10 分钟有效，绑定 `assetId + ops`（批量绑定整组资产）。
+- token 10 分钟有效，绑定 `assetId + baseVersion + ops`（批量绑定整组资产）。
 - `dryRun` 模式只返回 `wouldApply`，不写盘（供 AI Agent 决策阶段）。
 
 ## 后验（每算子「输入 vs 输出」）

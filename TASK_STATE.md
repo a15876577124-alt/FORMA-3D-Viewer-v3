@@ -1,38 +1,29 @@
 # TASK_STATE — FORMA V5
 
-更新时间：2026-10-23（Asia/Shanghai）。当前阶段：**Codex 安全接管与独立审计完成，待按 P1 清单进入下一轮迭代**。
+更新：2026-10-23（Asia/Shanghai）。阶段 2：专业资产生产闭环修复。
 
-## 当前工程状态
+本阶段已完成资产/版本统一、GLB/GLTF 资源包转换、材质版本保存、许可模型端到端、Agent 版本串联与确认恢复，以及窄屏/对比/GPU 生命周期修复。完整证据与限制见 [资产生产闭环记录](docs/V5-PRODUCTION-WORKFLOW.md)。
 
-- 本地目录：`D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3`。
-- 分支：`feature/codex-v5-audit`，基线 `eeb7b3231d329cd3a8b05a0a7d9648fd3e708177`。
-- 修复提交：`1be3f46`（安全/资产/测试）、`91f3ff0`（启动/Studio）。文档与摘要随其后提交；未推送、未合并 main。
-- 唯一应保留的既有工作区差异：`docs/ARCHITECTURE.md` 格式改动，接手前就存在；不要覆盖或代为提交。
-- 本次未创建替代项目、未升级依赖、未替换已能运行的 WorkBuddy 云服务。
+## 工程与保护边界
 
-## 验收记录
+- 原工程路径未变；分支 feature/codex-v5-audit。审计基线 8632195 已备份到 GitHub，阶段提交逐次推送；未合并 main、未部署。
+- 提交：b0d93de（身份）、b9ebcfc（转换）、4ee5d86（版本/材质）、18c963c（真实 FBX）、dcaa253（Agent）；阶段 6 和最终证据提交见 git log。
+- docs/ARCHITECTURE.md 原有格式修改保持未提交。SHA256：177CE7069926DAE58FA57FDE4CA2CAAD0C775C0C5198AC4F0A8C06318F21AA42。
+- 原始/展示资产 12 文件、既有运行期资产 30 文件逐字节核验保持不变。测试只写隔离副本。未修改 backend/.env 或私人凭据。
+- 唯一新增依赖 gltf-validator 精确锁定版本；原有处理依赖和 WorkBuddy SDK 保留。
 
-- npm ci 成功；Node 24.22.0 / npm 11.19.1 / Windows / Edge 155.0.4283.62。
-- 原始测试逻辑独立隔离复现 19/19，706 项报告检查。
-- 修复后 npm test 22/22，735 项报告检查；额外 9 项本地启动/界面/故障降级场景通过。
-- npm run release:verify：83 文件、30,100,215 字节；实际打包加载验证通过。
-- NVIDIA RTX 4060 Laptop 硬件 WebGL2，5/5 展品、56/56 渲染检查。
-- WorkBuddy 真实 LLM：34 模型可列举，deepseek-v4-pro 2 轮工具调用成功；合成报告，无用户模型上传。
-- 原始/展示资产 12 文件、既有运行期资产 30 文件和既有 ARCHITECTURE 改动字节不变。
+## 可复现验收
 
-## 已完成修复
+使用 npm test、npm run release:verify。新增单组 workflow、formats、agent-stability、production-visual；真实在线 Agent 单独运行 node tests/run.mjs --only=agent-live。后者调用实际模型服务，会产生真实请求与隔离资产版本，未混入离线单元测试。最终结果见 docs/audit/phase2-results.json。
 
-测试全量隔离和批处理清理范围；并发版本目录排他创建；Agent await/dryRun/错误回灌与 ID 校验；GLTF/FBX 引用范围和静态私有目录限制；打包拒绝删除已有目录；Windows vendor/FBX 字节保护；非法 URL 400；导入 JSON 上限；npm start/自定义代理；模型服务故障不阻断本地工作；分析报告层级/Agent parsed 字段/滑条 0；真实 compare/fbxtex UI 纳入安全浏览器测试。
+## 下一阶段
 
-## 后续优先级
+1. 高价值艺术模型的视觉损失量化、法线与世界坐标 bounds、复杂动画/多材质 FBX 回归集。
+2. 批任务取消/恢复和逐资产版本目标；高负载资源预算与 Worker 隔离。
+3. 本机 Origin/Host 请求授权、开发依赖告警的兼容升级。
+4. 有数据依据后试验 ufbx / KTX2，不为依赖数量重建现有流水线。
 
-1. 资产选择→视口→编辑→版本→导出统一同一身份，修复 GLTF 导出 500 和资源包缺失。
-2. 手机 Gallery 右栏被裁、Studio 工具栏拥挤；补可见性而非仅 scrollWidth 断言。
-3. 量化/压缩扩展、法线/尺度/中文/stride/sparse fixtures 与视觉后验。
-4. Agent 多步骤版本串接、确认恢复、取消/超时和成功验证。
-5. Origin/Host 请求限制与大文件资源预算；Puppeteer 开发依赖 7 项 high 告警的兼容升级。
-
-详见 [docs/CODEX-AUDIT.md](docs/CODEX-AUDIT.md)、[docs/CODEX-HANDOFF.md](docs/CODEX-HANDOFF.md)、[KNOWN-ISSUES.md](KNOWN-ISSUES.md)。完整日志/截图在 test-out，精确路径在 [审计摘要](docs/audit/2026-10-23-results.json)。历史 WorkBuddy 状态见交付 SHA 和 CHANGELOG。
+未验收范围与残留项见 KNOWN-ISSUES.md。历史审计证据保留于 docs/CODEX-AUDIT.md。
 
 ---
 

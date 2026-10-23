@@ -1,0 +1,529 @@
+{
+  "generatedAt": "2026-10-23T08:43:40.460Z",
+  "branch": "feature/codex-v5-audit",
+  "implementationCommit": "a3beb516c9deea58d728c152287de87f46fe3577",
+  "auditBackup": "86321954a56cbaf47682660ae7852fead89d7e4c",
+  "suite": {
+    "directory": "test-out/suite-2026-10-23T08-39-20-157Z",
+    "groups": 26,
+    "passed": true,
+    "results": [
+      {
+        "name": "vendor",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "vendorscan",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "assets",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "release",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "pipeline",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "production-visual",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "agent-stability",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "agent",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "audit",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ops",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "opparams",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "batch",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "formats",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "workflow",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare-ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex-ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "proxy",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "server",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "render",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "import",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "extended",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "workspaces",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "layout",
+        "code": 0,
+        "passed": true
+      }
+    ]
+  },
+  "acceptance": {
+    "workflow": {
+      "checks": 38,
+      "errors": [],
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "visual": {
+      "checks": 13,
+      "errors": [],
+      "memoryBefore": {
+        "geometries": 9,
+        "textures": 14,
+        "programs": 16,
+        "triangles": 3098,
+        "calls": 13
+      },
+      "memoryAfter": {
+        "geometries": 9,
+        "textures": 14,
+        "programs": 16,
+        "triangles": 1734,
+        "calls": 11
+      }
+    },
+    "agent": {
+      "directory": "test-out/suite-2026-10-23T08-29-04-733Z",
+      "runId": "run_1792744148150_a41bf4a6",
+      "model": "deepseek-v4-pro",
+      "status": "complete",
+      "dryRun": false,
+      "rounds": 6,
+      "rawToolChunkSamples": 30,
+      "currentVersion": 2,
+      "toolStats": {
+        "analyze_asset": 1,
+        "propose_ops": 1,
+        "run_op": 2,
+        "verify": 1,
+        "compare": 1,
+        "finish": 1
+      }
+    },
+    "artRepair": {
+      "directory": "test-out/suite-2026-10-23T08-32-20-960Z",
+      "checks": [
+        "new repair version preserves geometry and texture bytes",
+        "no browser exceptions"
+      ],
+      "assetId": "art-sheng-6ce3cb51",
+      "baseVersion": 0,
+      "version": 1,
+      "before": {
+        "verts": 26951,
+        "tris": 47512,
+        "bytes": 3813968,
+        "sha256": "6ce3cb51ba55d77581d0e873ecfcdccd9a639da5132a83d4090dbcf06ea6ec6e"
+      },
+      "after": {
+        "verts": 26951,
+        "tris": 47512,
+        "bytes": 4137572,
+        "sha256": "3f54814bbdae071352610e01c187d4f76d2304303c7a626d3f119ae96574f194"
+      },
+      "verified": true
+    }
+  },
+  "licensedModelVersions": [
+    {
+      "assetId": "Avocado-ccc9c3ce",
+      "version": 1,
+      "baseVersion": 0,
+      "kind": "Optimized",
+      "status": "complete",
+      "createdAt": "2026-10-23T08:40:02.816Z",
+      "sourcePath": "backend/workspace/assets/Avocado-ccc9c3ce/original/Avocado.glb",
+      "modelFile": "model.glb",
+      "verifyPass": true,
+      "before": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 406,
+        "tris": 682,
+        "materials": 1,
+        "textures": 3,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 1
+      },
+      "after": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 283,
+        "tris": 477,
+        "materials": 1,
+        "textures": 3,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 1
+      },
+      "verified": true
+    },
+    {
+      "assetId": "Avocado-ccc9c3ce",
+      "version": 2,
+      "baseVersion": 1,
+      "kind": "Converted",
+      "status": "complete",
+      "createdAt": "2026-10-23T08:40:03.496Z",
+      "sourcePath": "pipeline-out/Avocado-ccc9c3ce-v1/model.glb",
+      "modelFile": "model.glb",
+      "verifyPass": true,
+      "before": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 283,
+        "tris": 477,
+        "materials": 1,
+        "textures": 3,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 1
+      },
+      "after": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 283,
+        "tris": 477,
+        "materials": 1,
+        "textures": 3,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 1
+      },
+      "verified": true
+    },
+    {
+      "assetId": "blender-embedded-0747b141",
+      "version": 1,
+      "baseVersion": 0,
+      "kind": "Converted",
+      "warnings": [
+        "FBX/OBJ 专有材质与约束未保证保留；请检查转换结果",
+        "原始 FBX 含 5 张图像，GLB 含 2 张；部分通道可能合并或不被支持。此转换不是完整材质无损转换，请检查粗糙度、金属度与权重贴图。"
+      ],
+      "textureInventory": {
+        "inputImages": 5,
+        "outputImages": 2
+      },
+      "sourcePath": "backend/workspace/assets/blender-embedded-0747b141/original/blender-embedded.fbx",
+      "createdAt": "2026-10-23T08:40:04.001Z",
+      "status": "complete",
+      "converter": "Three.js 0.186.1 FBX/OBJLoader + GLTFExporter",
+      "modelFile": "model.glb",
+      "verifyPass": true,
+      "before": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 36,
+        "tris": 12,
+        "materials": 1,
+        "textures": 5,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 1
+      },
+      "after": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 36,
+        "tris": 12,
+        "materials": 1,
+        "textures": 2,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 3
+      },
+      "verified": true
+    },
+    {
+      "assetId": "blender-embedded-0747b141",
+      "version": 2,
+      "baseVersion": 1,
+      "kind": "Repaired",
+      "status": "complete",
+      "createdAt": "2026-10-23T08:40:04.149Z",
+      "sourcePath": "pipeline-out/blender-embedded-0747b141-v1/model.glb",
+      "modelFile": "model.glb",
+      "verifyPass": true,
+      "before": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 36,
+        "tris": 12,
+        "materials": 1,
+        "textures": 2,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 3
+      },
+      "after": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 24,
+        "tris": 12,
+        "materials": 1,
+        "textures": 2,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 3
+      },
+      "verified": true
+    },
+    {
+      "assetId": "blender-embedded-0747b141",
+      "version": 3,
+      "baseVersion": 2,
+      "kind": "Converted",
+      "status": "complete",
+      "createdAt": "2026-10-23T08:40:04.408Z",
+      "sourcePath": "pipeline-out/blender-embedded-0747b141-v2/model.glb",
+      "modelFile": "model.glb",
+      "verifyPass": true,
+      "before": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 24,
+        "tris": 12,
+        "materials": 1,
+        "textures": 2,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 3
+      },
+      "after": {
+        "meshes": 1,
+        "primitives": 1,
+        "verts": 24,
+        "tris": 12,
+        "materials": 1,
+        "textures": 2,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "nodes": 3
+      },
+      "verified": true
+    }
+  ],
+  "release": {
+    "files": 84,
+    "bytes": 30210971,
+    "byKind": {
+      "html-link": 5,
+      "runtime-asset": 10,
+      "entry": 2,
+      "module": 67
+    }
+  },
+  "protection": {
+    "protected-assets": {
+      "files": 12,
+      "allUnchanged": true,
+      "changed": []
+    },
+    "runtime-assets": {
+      "files": 30,
+      "allUnchanged": true,
+      "changed": []
+    },
+    "architectureUnchanged": true,
+    "privateEnvExists": false
+  },
+  "secretScan": {
+    "scope": "tracked working-tree text files excluding vendor; not exhaustive Git-history credential audit",
+    "filesScanned": 174,
+    "privateCredentialPatterns": [],
+    "trackedEnvFiles": []
+  },
+  "implementationCommits": [
+    "a3beb516c9deea58d728c152287de87f46fe3577 fix(fbx): disclose incomplete texture mapping before conversion",
+    "b6a783bcaccc8bd2888a9862d3be4b911f26f890 fix(studio): complete responsive workspace and accurate comparison rendering",
+    "dcaa253dbe3e5693be35bfaac3a5abcd69c68480 fix(agent): chain verified versions and resume confirmed tool calls safely",
+    "18c963c0d60fa5a3880a83d7cddd1840a02bf63e fix(import): complete textured FBX and licensed model workflows",
+    "4ee5d86149b60d5879588cb3f2b2a1a8ba53b88a feat(studio): persist material edits and trace complete asset versions",
+    "b9ebcfc3ce512353cdbaed07b5a4cad80fb05736 fix(pipeline): round-trip glTF packages with real format validation",
+    "b0d93de4a464c88a53f8c5ca682f9adb3b2abea6 fix(studio): bind viewport and processing to selected asset version"
+  ],
+  "changedFiles": [
+    "backend/agent/agent.mjs",
+    "backend/agent/llmStream.mjs",
+    "backend/agent/tools.mjs",
+    "backend/analyze.mjs",
+    "backend/assetPackage.mjs",
+    "backend/assetSource.mjs",
+    "backend/derivedAsset.mjs",
+    "backend/gltfIO.mjs",
+    "backend/importAsset.mjs",
+    "backend/library.mjs",
+    "backend/ops/convert.mjs",
+    "backend/ops/glbWrite.mjs",
+    "backend/ops/index.mjs",
+    "backend/ops/material.mjs",
+    "backend/ops/schema.mjs",
+    "backend/ops/transformOps.mjs",
+    "backend/runPipeline.mjs",
+    "backend/server.mjs",
+    "backend/validateGltf.mjs",
+    "backend/verify.mjs",
+    "docs/STATIC-MANIFEST.json",
+    "docs/V5-PRODUCTION-WORKFLOW.md",
+    "package-lock.json",
+    "package.json",
+    "src/core/compare.js",
+    "src/core/miniViewer.js",
+    "src/core/viewer.js",
+    "src/loaders/importers.js",
+    "src/loaders/registry.js",
+    "src/main.js",
+    "src/models/library.js",
+    "src/net/api.js",
+    "src/studio/core.js",
+    "src/studio/dock.js",
+    "src/studio/panes.js",
+    "src/studio/toolbar.js",
+    "src/studio/tree.js",
+    "src/studio/ui.js",
+    "src/utils/dom.js",
+    "styles/studio.css",
+    "test-assets/licensed/Avocado.glb",
+    "test-assets/licensed/README.md",
+    "test-assets/licensed/blender-embedded.fbx",
+    "test-assets/licensed/ufbx-LICENSE.txt",
+    "tests/agent-stability.test.mjs",
+    "tests/fbxtex.test.mjs",
+    "tests/formats.test.mjs",
+    "tests/run.mjs",
+    "tools/agent-live-test.mjs",
+    "tools/art-repair-test.mjs",
+    "tools/compare-ui-test.mjs",
+    "tools/production-visual-test.mjs",
+    "tools/static-pack-test.mjs",
+    "tools/vendor-three.mjs",
+    "tools/workflow-test.mjs",
+    "vendor/three/VENDOR-MANIFEST.json",
+    "vendor/three/addons/exporters/GLTFExporter.js",
+    "CHANGELOG.md",
+    "KNOWN-ISSUES.md",
+    "README.md",
+    "TASK_STATE.md",
+    "docs/CODEX-HANDOFF.md",
+    "docs/PIPELINE.md"
+  ],
+  "screenshots": [
+    "docs/evidence/phase2/qiong-before.png",
+    "docs/evidence/phase2/qiong-after.png",
+    "docs/evidence/phase2/qiong-comparison.png",
+    "docs/evidence/phase2/avocado-before.png",
+    "docs/evidence/phase2/avocado-after.png",
+    "docs/evidence/phase2/gallery-390.png",
+    "docs/evidence/phase2/studio-390.png",
+    "docs/evidence/phase2/agent-live.png"
+  ],
+  "limitations": [
+    "Test FBX contains 5 source images but GLB contains 2 mapped images; Phong-to-PBR roughness/metalness/weight channels are not lossless; explicit confirmation and version warnings record this",
+    "No FBX export or complete animation/constraint/material compatibility claim",
+    "No KTX2 GPU compression",
+    "CPU operations cancel at safe boundaries, no automatic mutation replay",
+    "No phone hardware or large-file stress qualification",
+    "Origin/Host authorization and inherited development dependency advisories remain"
+  ],
+  "failedRunsRetained": [
+    "suite-2026-10-23T07-35-03-682Z: low-poly FBX simplify made no reduction, verification rejected",
+    "suite-2026-10-23T08-04-03-838Z: agent log/view loading race; fixed",
+    "suite-2026-10-23T08-15-34-379Z: shared-link startup ready race; fixed",
+    "suite-2026-10-23T08-20-25-837Z: unknown tool error feedback regression; fixed",
+    "suite-2026-10-23T08-22-02-373Z: compare fixture selected an unrelated earlier-test asset; fixed"
+  ]
+}

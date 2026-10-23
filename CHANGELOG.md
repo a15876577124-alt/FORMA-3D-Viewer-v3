@@ -4,6 +4,16 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
+## [2026-10-23 Production workflow] — Codex 第二阶段
+
+- 统一选中资产/版本/视口，修复乱序响应、发布条目身份和 Gallery 分享链接启动竞态。
+- NodeIO GLB/GLTF 资源包转换、OBJ 材质/变换；加入 Khronos glTF Validator，保留真实渲染与重导入检查。
+- Original/Edited/Repaired/Optimized/Converted 可追溯版本；材质保存、ZIP 下载、完整多文件发布。
+- 许可明确的 Avocado 与内嵌贴图 FBX，浏览器实际转换、处理、后验、导出与重导入。
+- Agent 真实工具调用结果串联、确认恢复、防重放、取消/超时、失败日志与 dryRun 保护。
+- 390px 面板、工具文字、Lab 初始化、对比公共变换/相机裁剪、GPU 生命周期。
+- 新增可复现验收组和真实 LLM 单独验收；详见 docs/V5-PRODUCTION-WORKFLOW.md 和 docs/audit/phase2-results.json。
+
 ## [2026-10-23 Audit] — Codex 安全接管
 
 - 从交付 `eeb7b3231d329cd3a8b05a0a7d9648fd3e708177` 创建 `feature/codex-v5-audit`，保留既有 ARCHITECTURE 未提交格式改动。
