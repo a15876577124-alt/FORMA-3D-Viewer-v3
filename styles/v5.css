@@ -5,6 +5,23 @@
 
 /* ---------- 应用外壳 ---------- */
 body:not(.mode-gallery):not(.mode-studio) { height:auto; min-height:100%; overflow-y:auto; overflow-x:clip; }
+.v5-studio-showcase { padding-block:64px; }
+.v5-studio-showcase-actions { display:flex; flex-wrap:wrap; gap:12px; }
+.v5-studio-showcase-head { max-width:820px; margin-bottom:56px; }
+.v5-studio-edition { margin-block:24px; padding-left:16px; border-left:2px solid var(--v5-gold-400); color:var(--v5-tx-lo); line-height:1.8; }
+.v5-studio-demo { display:grid; gap:48px; }
+.v5-studio-demo figure { margin:0; display:grid; grid-template-columns:minmax(180px,1fr) minmax(0,3fr); gap:32px; align-items:start; }
+.v5-studio-demo figcaption p, .v5-studio-capabilities p, .v5-studio-local p { line-height:1.8; color:var(--v5-tx-lo); }
+.v5-studio-demo img { width:100%; height:auto; display:block; border:1px solid var(--v5-line-control); border-radius:6px; }
+.v5-studio-demo-source { font-size:13px; color:var(--v5-tx-lo); line-height:1.7; margin-block:24px 48px; }
+.v5-studio-capabilities { display:grid; grid-template-columns:1fr 1fr; gap:40px; padding-block:32px; border-block:1px solid var(--v5-line-control); }
+.v5-studio-local { padding-top:48px; scroll-margin-top:90px; }
+.v5-studio-local pre { padding:20px; background:var(--v5-bg-surface); border:1px solid var(--v5-line-control); overflow-x:auto; }
+@media(max-width:767px) {
+  .v5-studio-showcase { padding-block:36px; }
+  .v5-studio-demo figure, .v5-studio-capabilities { grid-template-columns:1fr; gap:16px; }
+  .v5-studio-showcase-head { margin-bottom:36px; }
+}
 .v5-shell {
   position: relative;
   min-height: 100vh;

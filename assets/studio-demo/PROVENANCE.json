@@ -1,0 +1,28 @@
+{
+  "sourceBranch": "feature/codex-v5-release-closeout",
+  "fixture": "Avocado.glb",
+  "author": "Microsoft, 2017",
+  "license": "CC0-1.0",
+  "sourceURL": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/Avocado",
+  "capture": "Actual Edge screenshots of isolated local backend; ordinary material operation, not an external AI decision. Lossless WebP conversion only.",
+  "files": [
+    {
+      "path": "analysis.webp",
+      "source": "test-out/suite-2026-10-23T20-55-51-164Z/closeout/analysis.png",
+      "sourceSha256": "f17e7724cc2dac27586bef321a9a93a4980d0928c7d616c3b59006ee931a42fc",
+      "sha256": "363d548654a905cec6cecfe725607515e481af1af49745ce2536a9025cd8da18"
+    },
+    {
+      "path": "material.webp",
+      "source": "test-out/suite-2026-10-23T20-55-51-164Z/closeout/material.png",
+      "sourceSha256": "372fcc675dbffd8741b45441685854307933c7252c274cc2b268171094a6cf75",
+      "sha256": "528f42f25ec04c296902f6b10b20afa8e73cef65fcaecaf9734a119bb29c7b76"
+    },
+    {
+      "path": "comparison.webp",
+      "source": "test-out/suite-2026-10-23T20-55-51-164Z/closeout/comparison.png",
+      "sourceSha256": "6b657015279f38fa4e5e8bcf8c0a9ce407ca188c7ed4c35f117be65e2b385116",
+      "sha256": "3804f7a0800cdd35c965c6f4e8c39446aed32101ff621a6d0da78893b9b42d92"
+    }
+  ]
+}

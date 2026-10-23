@@ -1,6 +1,7 @@
 // Approved H01/H02: collection first, with the existing live Hero and Studio workflow.
 import { el } from '../utils/dom.js';
 import { createHero3D } from './home3d.js';
+import { IS_SHOWCASE } from '../runtime.js';
 
 
 // 五件展品的真实分组语义（与 catalog 一致，非虚构）
@@ -29,7 +30,7 @@ export function createHomePage({ catalog = [], quality = 'high' } = {}) {
         '五件数字手办，五种舞台神采。近距离观察冠饰、衣纹与脸谱，探索琼剧角色的形与色。'),
       el('div', { class: 'v5-hero-actions' },
         el('a', {class:'v5-btn v5-btn-gold',href:'#/gallery'}, '进入数字展厅 →'),
-        el('a', {class:'v5-btn v5-btn-ghost',href:'#/studio'}, '打开 AI Studio'),
+        el('a', {class:'v5-btn v5-btn-ghost',href:'#/studio'}, IS_SHOWCASE ? '了解 AI Studio' : '打开 AI Studio'),
       ),
     ),
   );
@@ -62,7 +63,7 @@ export function createHomePage({ catalog = [], quality = 'high' } = {}) {
     el('div', {}, el('p',{class:'v5-eyebrow'},'AI Studio'),
       el('h2',{class:'v5-h2'},'从观察，到创作'),
       el('p',{class:'v5-lede'},'在本地工作区分析、编辑与处理三维资产，保留原始版本，比较并导出结果。')),
-    el('a',{class:'v5-btn v5-btn-ghost',href:'#/studio'},'进入工作区 →'),
+    el('a',{class:'v5-btn v5-btn-ghost',href:'#/studio'},IS_SHOWCASE ? '查看工作流实录 →' : '进入工作区 →'),
   );
 
   const node = el('div', { class: 'v5-home' }, hero, seriesSection, laneSection);

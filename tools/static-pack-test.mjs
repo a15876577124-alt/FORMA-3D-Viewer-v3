@@ -7,7 +7,7 @@
 //   1. tools/static-release.mjs --pack 产出的目录不含运行期目录（assets/library、pipeline-out…）
 //   2. 静态包内每个请求都 200（/api/* 除外：后端本来就不在静态包里）
 //   3. #/gallery?work=jing-red 能选中并渲染到 49,178 三角形（与 ground truth 一致）
-//   4. 切到 #/studio 时后端状态如实显示「后端未运行」，不假装在线
+//   4. 静态 Studio 明确进入实录介绍页，不依赖后端
 //   5. 全程零 pageerror、零未捕获控制台错误
 import { launchBrowser } from './browser-test.mjs';
 import { spawn } from 'node:child_process';
@@ -45,6 +45,7 @@ ok('静态包已生成', fs.existsSync(path.join(PACK, 'index.html')));
 for(const license of ['vendor/three/LICENSE','vendor/fflate/LICENSE','vendor/postprocessing/LICENSE.md'])ok('保留第三方许可 '+license,fs.existsSync(path.join(PACK,license)));
 
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'STATIC-MANIFEST.json'), 'utf8'));
+ok('包内保留准确资源清单', JSON.stringify(JSON.parse(fs.readFileSync(path.join(PACK,'STATIC-MANIFEST.json'),'utf8'))) === JSON.stringify(manifest));
 ok('清单文件数与实际一致', manifest.files.every((f) => fs.existsSync(path.join(PACK, f.path))), `${manifest.totals.files} 项`);
 ok('候选文件哈希与清单一致', manifest.files.every(f => {
   const p=path.join(PACK,f.path);
@@ -115,6 +116,12 @@ try {
 
   // 五件展品逐个切换：任何一件的模型/缩略图没进包，这里都会暴露 404
   console.log('[C] 五件手办逐个加载');
+  for(const id of ['sheng','dan','jing-red','jing-yellow','jing-white']){
+    await page.goto(BASE+'/#/work/'+id,{waitUntil:'networkidle0'});
+    await page.waitForFunction(id=>document.querySelector('#v5Tech-'+id)?.textContent.includes('三角形'),{},id);
+    ok('independent detail loads '+id,await page.$eval('.v5-work-stage canvas',e=>e.width>100&&e.height>100));
+  }
+
   for (const id of ['sheng', 'dan', 'jing-red', 'jing-yellow', 'jing-white']) {
     const got = await page.evaluate(async (workId) => {
       location.hash = '#/gallery?work=' + workId;
@@ -131,19 +138,33 @@ try {
     ok(`静态包内加载 ${id}`, got.id === id && got.tris > 40000, JSON.stringify(got));
   }
 
-  console.log('[D] Studio 在纯静态环境下如实降级');
-  await page.evaluate(() => { location.hash = '#/studio'; });
-  await sleep(1500);
-  const studioState = await page.evaluate(() => ({
-    mode: document.body.className,
-    status: document.getElementById('stConnText')?.textContent || '',
-    toolbar: !!document.getElementById('studioToolbar'),
-    viewportVisible: (() => { const v = document.querySelector('.viewport'); if (!v) return false; const r = v.getBoundingClientRect(); return r.width > 300 && r.height > 200; })(),
-  }));
-  ok('Studio 图层已挂载', studioState.toolbar && /mode-studio/.test(studioState.mode), JSON.stringify(studioState));
-  ok('后端状态如实显示未运行（不伪装在线）', /未运行|未检测|连接中/.test(studioState.status), studioState.status);
-
-  await page.screenshot({ path: path.join(OUT, 'static-pack-studio.png') });
+  console.log('[D] Explicit static Studio showcase');
+  await page.goto(BASE+'/#/',{waitUntil:'networkidle0'});
+  await page.mouse.move(700,500);await page.mouse.wheel({deltaY:10000});
+  await page.waitForFunction(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2);
+  await page.click('.v5-footer a[href="#/studio"]');await page.waitForSelector('.v5-studio-showcase');
+  ok('footer Studio link opens showcase at heading',await page.evaluate(()=>scrollY===0));
+  for(const width of [1366,768,390]){
+    await page.setViewport({width,height:width===1366?768:900});
+    await page.goto(BASE+'/#/studio',{waitUntil:'networkidle0'});
+    await page.waitForSelector('.v5-studio-showcase');await page.evaluate(()=>scrollTo(0,0));
+    ok('static edition stays a public introduction '+width,await page.evaluate(()=>document.documentElement.dataset.edition==='showcase'&&!document.body.classList.contains('mode-studio')&&!window.__FORMA.studio.active));
+    ok('showcase has local instructions '+width,await page.$eval('#studio-local',e=>e.textContent.includes('npm ci')&&e.textContent.includes('npm start')));
+    ok('showcase fits without horizontal clipping '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    await page.screenshot({path:path.join(OUT,'static-studio-'+width+'.png')});
+    await page.click('#studioLocalAction');
+    ok('local instructions action keeps Studio route '+width,await page.evaluate(()=>location.hash==='#/studio'&&document.activeElement.id==='studio-local'));
+    await page.mouse.move(width/2,500);await page.mouse.wheel({deltaY:10000});
+    await page.waitForFunction(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2);
+    ok('showcase scrolls to its footer '+width,await page.evaluate(()=>scrollY>0));
+    await page.$$eval('.v5-studio-demo img',es=>es.forEach(e=>e.loading='eager'));
+    await page.waitForFunction(()=>[...document.querySelectorAll('.v5-studio-demo img')].every(e=>e.complete&&e.naturalWidth===1440));
+    ok('all three genuine workflow captures load '+width,await page.$$eval('.v5-studio-demo img',es=>es.length===3));
+    if(width===1366)await page.screenshot({path:path.join(OUT,'static-pack-studio.png'),fullPage:true});
+    ok('showcase never requests the backend '+width,await page.evaluate(()=>!performance.getEntriesByType('resource').some(r=>new URL(r.name).pathname.startsWith('/api/'))));
+    await page.reload({waitUntil:'networkidle0'});await page.waitForSelector('.v5-studio-showcase');
+  }
+  await page.setViewport({width:1440,height:900});
   await page.evaluate(() => { location.hash = '#/gallery?work=sheng'; });
   await sleep(1200);
   await page.screenshot({ path: path.join(OUT, 'static-pack-gallery.png') });

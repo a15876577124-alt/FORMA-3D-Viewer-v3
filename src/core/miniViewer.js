@@ -18,6 +18,7 @@ export function createMiniViewer({
   autoRotateSpeed = 0.05,
   view = {yaw:0.235,pitch:0.11,distMul:1,targetYMul:0.5},
   interactive = true,
+  pageScroll = false,
   cameraFov = 38,
   onReady,
   onError,
@@ -60,6 +61,10 @@ export function createMiniViewer({
     controls.minDistance = 2.2;
     controls.maxDistance = 9;
     controls.target.set(0, 0, 0);
+    if (pageScroll) {
+      controls.enableZoom = false;
+      renderer.domElement.style.touchAction = 'pan-y pinch-zoom';
+    }
   }
   const cameraControls=controls||{target:new THREE.Vector3(),update(){}};
 

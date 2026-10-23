@@ -1,4 +1,5 @@
 import { createBrand } from './ui/brand.js';
+import { IS_SHOWCASE } from './runtime.js';
 // Application entry: wires detection -> renderer -> catalogue -> panels, and
 // owns every cross-cutting action (switching exhibits, shortcuts, persistence).
 import { detectCapabilities } from './core/capabilities.js';
@@ -317,6 +318,7 @@ function boot() {
   // 这里不再构建，保证生产入口只有一个。
   function setMode(mode) {
     const next = mode === 'pipeline' ? 'studio' : 'gallery';
+    if (IS_SHOWCASE && next === 'studio') { navigate('/studio'); return next; }
     appState.setMode(next === 'studio' ? 'pipeline' : 'gallery');
     if (next === 'studio') {
       gallery.leave();
@@ -455,7 +457,9 @@ function boot() {
     },
   };
 
-  registerRoute('/studio', () => studioLayer, { title: () => 'FORMA V5 · AI Studio' });
+  registerRoute('/studio', IS_SHOWCASE
+    ? async () => (await import('./pages/studioShowcase.js')).createStudioShowcase()
+    : () => studioLayer, { title: () => IS_SHOWCASE ? 'FORMA V5 · Studio 功能与实录' : 'FORMA V5 · AI Studio' });
 
   setNotFound(() => v5State({
     tone: 'empty',
@@ -477,7 +481,7 @@ function boot() {
   if(caps.params.has('entry')&&!location.hash)location.replace('#/gallery?work='+encodeURIComponent(first.id));
   onNavigate(({ pattern }) => {
     clearToasts();syncNavActive(nav, pattern);
-    if(pattern!=='/gallery'&&pattern!=='/studio')document.body.classList.remove('mode-gallery','mode-studio');
+    if(pattern!=='/gallery'&&(pattern!=='/studio'||IS_SHOWCASE))document.body.classList.remove('mode-gallery','mode-studio');
     if(pattern!=='/gallery')resolveReady?.(true);
   });
   startRouter({ outlet });

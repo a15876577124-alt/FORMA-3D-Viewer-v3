@@ -105,7 +105,8 @@ async function render() {
   // 图层切换：按 DOM 节点去重计算可见性。
   // 若逐图层赋值 hidden，同一节点被多个路由复用时后一次会覆盖前一次，
   // 导致该节点最终被隐藏（展厅/工作室共用 existingApp 的空白根因）。
-  if(currentKey!==cacheKey)mounted.get(currentKey)?.instance?.leave?.();
+  const changed = currentKey !== cacheKey;
+  if(changed)mounted.get(currentKey)?.instance?.leave?.();
   for (const m of mounted.values()) m.node.hidden = (m.node !== layer.node);
   currentKey = cacheKey;
   currentHash = location.hash;
@@ -121,6 +122,9 @@ async function render() {
     : 'FORMA V5 — Ultimate AI 3D Creation Platform';
 
   for (const fn of listeners) fn({ pattern, params, path });
+  // A different page starts at its heading, not at the previous page's footer.
+  // Page-specific collection/contact anchors run on the next animation frame.
+  if(changed)window.scrollTo({top:0,left:0,behavior:'instant'});
 }
 
 export function startRouter({ outlet: outletEl }) {
