@@ -23,3 +23,10 @@ ARCHITECTURE.md 原有格式修改保持未提交，SHA256 177CE7069926DAE58FA57
 新增 version.json：baseVersion、kind、running/complete/failed 状态；每次处理独立输出，失败版本不复用。Material Lab 保存指定材质为 Edited 版本，预览/重置与真实保存分开；环境反射仅预览。纹理和几何后验检查通过。
 导出下载完整 ZIP（复用 Three.js 随附 MIT fflate），发布 GLTF 连同全部依赖到独立目录；仅后验通过版本可发布。版本树选择真实两端对比。
 实测 workflow 23/23（suite-2026-10-23T07-23-42-993Z），formats 4/4（含并发），batch 20/20。没有新增 ZIP 依赖。
+
+## 阶段 4：真实模型端到端
+新增许可明确的 CC0 Avocado 与 ufbx MIT Blender 内嵌贴图 FBX；来源、SHA 和许可证位于 test-assets/licensed。复用已锁定 Three.js 的 GLTFExporter，未引入 ufbx 运行时。
+修复带真实材质绑定的 FBX 在 Node 分析时调用 DOM ImageLoader 的 500。浏览器等待纹理载入后才转换，保留原始 FBX，输出 Converted GLB 版本；缺失贴图拒绝转换。
+真实点击验收揭示 DOM 工厂把 disabled=false 当作 HTML 禁用属性；已修复布尔属性，工具栏按钮恢复可用。
+workflow 34/34（suite-2026-10-23T07-36-36-155Z）：上传、分析、绑定纹理、生成 GLB、算子、后验、对比、导出及重新导入。FBX 58/58；UI 26/26。
+失败证据：12 面 FBX 使用 simplify ratio=0.7/error=0.01 时保持 12 面，后验失败，未选择失败版本；记录于 suite-2026-10-23T07-35-03-682Z。改用 weld 后顶点真实减少且面数不变。Avocado 减面真实生效。专有 FBX 材质、约束及全部动画兼容性不在本次通过声明内。

@@ -18,6 +18,7 @@ import { listModels, pickAgentModel } from './llm.mjs';
 import { runAgent } from './agent/agent.mjs';
 import { TOOLS } from './agent/tools.mjs';
 import { importAsset } from './importAsset.mjs';
+import {saveDerivedAsset} from './derivedAsset.mjs';
 import { packageZip } from './assetPackage.mjs';
 import { describeAssetSource, resolveAssetSource } from './assetSource.mjs';
 import { runAssetPipeline, makeAgentCtx } from './runPipeline.mjs';
@@ -303,6 +304,8 @@ route('GET', '/api/presets', async () => {
   const errors = validatePresets();
   return { presets: PIPELINE_PRESETS, selfCheck: { ok: errors.length === 0, errors } };
 });
+
+route('POST', '/api/assets/:id/prepare-glb', async (req,params) => { const body=await readJson(req,Math.ceil(MAX_FILE_BYTES/3)*4+1024*1024); return saveDerivedAsset({...body,assetId:assertSafeId(params.id)}); });
 
 route('POST', '/api/assets/:id/run', async (req, params) => {
   const body = await readJson(req);

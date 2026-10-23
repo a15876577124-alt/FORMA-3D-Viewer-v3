@@ -2,13 +2,13 @@
   "note": "FORMA 公开展厅静态发布清单。由 tools/static-release.mjs 生成，勿手工编辑。",
   "entry": "index.html",
   "totals": {
-    "files": 83,
-    "bytes": 30107180,
+    "files": 84,
+    "bytes": 30203916,
     "byKind": {
       "html-link": 5,
       "runtime-asset": 10,
       "entry": 2,
-      "module": 66
+      "module": 67
     }
   },
   "files": [
@@ -135,8 +135,8 @@
     {
       "path": "src/loaders/importers.js",
       "kind": "module",
-      "bytes": 11603,
-      "sha256": "dd45196fc7a1d1d2"
+      "bytes": 12221,
+      "sha256": "c4fc27626b06b8a0"
     },
     {
       "path": "src/loaders/normals.js",
@@ -189,8 +189,8 @@
     {
       "path": "src/net/api.js",
       "kind": "module",
-      "bytes": 2865,
-      "sha256": "7addbb1abd4498c8"
+      "bytes": 2978,
+      "sha256": "74864659fb36adb4"
     },
     {
       "path": "src/pages/home.js",
@@ -237,8 +237,8 @@
     {
       "path": "src/studio/core.js",
       "kind": "module",
-      "bytes": 25821,
-      "sha256": "6bde0b58c26f65b4"
+      "bytes": 27969,
+      "sha256": "587217f07bcee374"
     },
     {
       "path": "src/studio/dock.js",
@@ -261,8 +261,8 @@
     {
       "path": "src/studio/toolbar.js",
       "kind": "module",
-      "bytes": 4073,
-      "sha256": "f1cccd70b93a5392"
+      "bytes": 4237,
+      "sha256": "fae459bf3391059c"
     },
     {
       "path": "src/studio/tree.js",
@@ -333,8 +333,8 @@
     {
       "path": "src/utils/dom.js",
       "kind": "module",
-      "bytes": 3548,
-      "sha256": "09042b250de7dfd8"
+      "bytes": 3671,
+      "sha256": "3cb080611b9295b2"
     },
     {
       "path": "src/utils/storage.js",
@@ -395,6 +395,12 @@
       "kind": "module",
       "bytes": 4960,
       "sha256": "55f466192cc84298"
+    },
+    {
+      "path": "vendor/three/addons/exporters/GLTFExporter.js",
+      "kind": "module",
+      "bytes": 93570,
+      "sha256": "d766b04f233fa8bc"
     },
     {
       "path": "vendor/three/addons/libs/fflate.module.js",

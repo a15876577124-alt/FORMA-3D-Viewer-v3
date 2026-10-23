@@ -291,7 +291,14 @@ async function analyzeObjOrFbx(name, buf, format, baseDir = null) {
     object = loader.parse(buf.toString('utf8'));
     parseNote = 'three OBJLoader';
   } else {
-    const loader = new FBXLoader(THREE.DefaultLoadingManager);
+    // Geometry analysis has no DOM. Texture bytes are inspected separately below.
+    const manager = new THREE.LoadingManager();
+    manager.addHandler(/.*/, { path: '', setPath(p) { this.path=p; return this; }, load(url) {
+      const texture=new THREE.Texture(); texture.name=String(url);
+      if(String(url).startsWith('blob:')) URL.revokeObjectURL(url);
+      return texture;
+    }});
+    const loader = new FBXLoader(manager);
     // FBXLoader 内部用 new Uint8Array(buffer, from, to)，必须传真正的 ArrayBuffer
     // （Node Buffer 是 Uint8Array 子类，偏移参数会被忽略，导致格式判定失败）。
     const ab = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);

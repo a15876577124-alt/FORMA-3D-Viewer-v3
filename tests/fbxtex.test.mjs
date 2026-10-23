@@ -164,7 +164,7 @@ const bad = await fetch(`${base}/api/assets/${glbAsset.asset.id}/extract-texture
 const badBody = await bad.json().catch(() => null);
 check('非 FBX 提取被拒', bad.status >= 400 && /FBX/.test(badBody?.error?.message || ''), `${bad.status} ${JSON.stringify(badBody)}`);
 // 原始素材保护
-check('导入的 FBX 原文未被改写', sha(fs.readFileSync(path.join(ROOT, 'backend/workspace/assets', fbxAsset.asset.id, 'original', 'file.fbx'))) === sha(binBuf));
+check('导入的 FBX 原文未被改写', sha(fs.readFileSync(path.join(ROOT, 'backend/workspace', fbxAsset.asset.originalRelPath))) === sha(binBuf));
 
 be.child.kill();
 await new Promise((r) => be.child.once('exit', r));

@@ -191,6 +191,15 @@ function mtlTextureNames(mtlText) {
   return names;
 }
 
+function awaitTextures(manager) {
+  let count = 0; const failures = [];
+  const start = manager.itemStart.bind(manager);
+  manager.itemStart = url => { count++; start(url); };
+  const promise = new Promise(resolve => { manager.onLoad = resolve; });
+  manager.onError = url => failures.push(url);
+  return async () => { if(count) await promise; return failures; };
+}
+
 export async function loadOBJ(file, files, { onProgress } = {}) {
   if (file.size > MAX_FILE_BYTES) throw new Error(`too complex: ${file.size} bytes`);
 
@@ -204,6 +213,7 @@ export async function loadOBJ(file, files, { onProgress } = {}) {
     blobMap.set(f.name.toLowerCase(), u);
   }
   const manager = new THREE.LoadingManager();
+  const waitTextures = awaitTextures(manager);
   manager.setURLModifier((u) => {
     const base = decodeURIComponent(String(u).split(/[\\/]/).pop() || '').toLowerCase();
     return blobMap.get(base) || u;
@@ -227,6 +237,7 @@ export async function loadOBJ(file, files, { onProgress } = {}) {
     const objLoader = new OBJLoader(manager);
     if (materialsCreator) objLoader.setMaterials(materialsCreator);
     const obj = objLoader.parse(objText);
+    const textureFailures = await waitTextures();
 
     const root = wrap(obj);
     enableShadows(root);
@@ -244,7 +255,7 @@ export async function loadOBJ(file, files, { onProgress } = {}) {
       root, animations: [],
       extras: {
         format: 'obj', name: file.name,
-        hasMtl: !!mtlFile, missingTextures: missing, uvGenerated: uvMissing, normalsComputed: normalFixed,
+        hasMtl: !!mtlFile, missingTextures: [...missing,...textureFailures], uvGenerated: uvMissing, normalsComputed: normalFixed,
       },
     };
   } finally {
@@ -266,6 +277,7 @@ export async function loadFBX(file, files, { onProgress } = {}) {
     blobMap.set(f.name.toLowerCase(), u);
   }
   const manager = new THREE.LoadingManager();
+  const waitTextures = awaitTextures(manager);
   manager.setURLModifier((u) => {
     const base = decodeURIComponent(String(u).split(/[\\/]/).pop() || '').toLowerCase();
     return blobMap.get(base) || u;
@@ -275,6 +287,7 @@ export async function loadFBX(file, files, { onProgress } = {}) {
     const buffer = await file.arrayBuffer();
     const loader = new FBXLoader(manager);
     const obj = loader.parse(buffer, '');
+    const textureFailures = await waitTextures();
     const root = wrap(obj);
     enableShadows(root);
 
@@ -285,7 +298,7 @@ export async function loadFBX(file, files, { onProgress } = {}) {
     return {
       root,
       animations: obj.animations || [],
-      extras: { format: 'fbx', name: file.name, verts },
+      extras: { format: 'fbx', name: file.name, verts, missingTextures:textureFailures },
     };
   } finally {
     setTimeout(() => urls.forEach(URL.revokeObjectURL), 60000);

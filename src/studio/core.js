@@ -6,21 +6,24 @@
 //
 // 事件：connecting / online / offline / assets / analyze / agent / run /
 //       batch / compare / publish / log / progress
+import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
 import { pipelineApi, fileUrl } from '../net/api.js';
 import { CompareRig } from '../core/compare.js';
 import { loadGLTF, loadOBJ, loadFBX } from '../loaders/importers.js';
 
 // 从后端可服务 URL 载入真实模型。glTF 直接走 URL（相对 .bin/贴图可被解析）；
 // OBJ/FBX 的 importer 只接受 File，故先取回字节包成 File（语义与拖放一致）。
-export async function loadModelFromUrl(url, name) {
+export async function loadModelFromUrl(url, name, resources = [], full = false) {
   const ext = (String(name).split('.').pop() || '').toLowerCase();
   if (ext === 'glb' || ext === 'gltf') return (await loadGLTF(url)).root;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`载入失败 ${name}（HTTP ${res.status}）`);
   const blob = await res.blob();
   const file = new File([blob], name);
-  if (ext === 'obj') return (await loadOBJ(file, [file])).root;
-  if (ext === 'fbx') return (await loadFBX(file, [file])).root;
+  const files = [file, ...await Promise.all(resources.filter(r => fileUrl(r.path) !== url).map(async r => {
+    const response = await fetch(fileUrl(r.path)); if(!response.ok)throw Error('缺失依赖 '+r.name);return new File([await response.blob()],r.name);
+  }))];
+  if (ext === 'obj' || ext === 'fbx') {const loaded = await (ext==='obj'?loadOBJ(file,files):loadFBX(file,files));return full?loaded:loaded.root;}
   throw new Error(`暂不支持对比该格式：.${ext}`);
 }
 
@@ -155,7 +158,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       if (ticket !== selectionTicket) return null;
       const loaded = source.format === 'glb' || source.format === 'gltf'
         ? await loadGLTF(fileUrl(source.path))
-        : { root: await loadModelFromUrl(fileUrl(source.path), source.path), animations: [], extras: {format:source.format} };
+        : await loadModelFromUrl(fileUrl(source.path), source.path, source.resources, true);
       if (ticket !== selectionTicket) { viewer._disposeLoaded(loaded); return null; }
       viewer.materialState = {mode:'original'};
       const entry = {id:'studio:' + id + ':' + version, assetId:id, version, name:source.name + (version ? ' · v' + version : ' · Original'), file:fileUrl(source.path), format:source.format};
@@ -503,6 +506,28 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     return results;
   }
 
+  async function prepareGLB() {
+    if(!requireSelection())return null;
+    const selected=state.selection,ticket=selectionTicket;
+    if(!['fbx','obj'].includes(selected.format)){emit('log',{tone:'warn',text:'当前版本已支持处理'});return null;}
+    let loaded;
+    emit('progress',{busy:true,text:'生成 GLB 工作版本…'});
+    try{
+      loaded=await loadModelFromUrl(fileUrl(selected.path),selected.path,selected.resources,true);
+      if(loaded.extras.missingTextures?.length)throw Error('存在缺失贴图，请补齐资源包后转换');
+      const buffer=await new GLTFExporter().parseAsync(loaded.root,{binary:true,animations:loaded.animations,onlyVisible:false});
+      const bytes=new Uint8Array(buffer);let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
+      if(ticket!==selectionTicket)return null;
+      const result=await pipelineApi.prepareGLB(selected.assetId,{baseVersion:selected.version,dataBase64:btoa(bin),confirmToken:state.confirmToken});
+      if(ticket!==selectionTicket)return result;
+      state.confirmToken=null;state.lastRun=result;emit('run',result);
+      if(result.verify.pass)await selectAsset(result.assetId,result.version,{keepRun:true});
+      else emit('log',{tone:'err',text:'转换后验未通过，请检查验证报告'});
+      return result;
+    }catch(e){if(ticket!==selectionTicket)return null;if(e.status===409&&e.data.needConfirm){state.confirmToken=e.data.token;emit('log',{tone:'warn',text:'确认转换风险后，再次点击「转为 GLB 版本」'});}else {console.error('[prepareGLB]',e.message);emit('log',{tone:'err',text:'转换失败：'+e.message});}return null;}
+    finally{if(loaded)viewer._disposeLoaded(loaded);emit('progress',{busy:false});}
+  }
+
   async function saveMaterial(mat) {
     if (!requireSelection() || !Number.isInteger(mat?.userData?.gltfMaterialIndex)) { emit('log',{tone:'warn',text:'请先选择 GLB/GLTF 版本的材质'});return null; }
     await exitCompare();
@@ -568,6 +593,6 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     analyze, detectTextures, extractTextures,
     run, runBatch, runAgent, adoptAgentSuggestion,
     showCompare, compareVersions, exitCompare, setCompareSplit, compareStats,
-    importFile, importFiles, saveMaterial, publish, exportAs, listVersions, toFileUrl,
+    importFile, importFiles, prepareGLB, saveMaterial, publish, exportAs, listVersions, toFileUrl,
   };
 }

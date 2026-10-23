@@ -27,6 +27,7 @@ const ENTRIES = [
   'examples/jsm/loaders/OBJLoader.js',
   'examples/jsm/loaders/MTLLoader.js',
   'examples/jsm/loaders/FBXLoader.js',
+  'examples/jsm/exporters/GLTFExporter.js',
   'examples/jsm/utils/BufferGeometryUtils.js',
   'examples/jsm/postprocessing/EffectComposer.js',
   'examples/jsm/postprocessing/RenderPass.js',

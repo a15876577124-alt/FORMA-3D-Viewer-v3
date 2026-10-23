@@ -82,6 +82,28 @@ try{
   await page.evaluate(async()=>{const c=window.__FORMA.studio.core;await c.compareVersions(0,c.state.selectedVersion);});
   check('comparison selects two real version files',await page.evaluate(()=>!!window.__FORMA.studio.rig?.groupA&&!!window.__FORMA.studio.rig?.groupB));
   await page.screenshot({path:path.join(OUT,'material-comparison.png')});
+  for(const fixture of ['Avocado.glb','blender-embedded.fbx']){
+    await page.evaluate(()=>window.__FORMA.studio.core.exitCompare());
+    const input=await page.$('#studioFileInput');await input.uploadFile(path.join(ROOT,'test-assets/licensed',fixture));
+    await page.waitForFunction(name=>window.__FORMA.studio.state.selectionStatus==='ready'&&window.__FORMA.studio.state.selection?.name===name,{timeout:60000},fixture);
+    const initial=await identity();check(fixture+' actual upload loads model and report',initial.stats.tris>0&&initial.id===initial.viewer.assetId);
+    if(fixture.endsWith('.fbx')){
+      check('FBX embedded images are bound to rendered materials',await page.evaluate(()=>{let maps=0;window.__FORMA.viewer.modelRoot.traverse(o=>{for(const m of (Array.isArray(o.material)?o.material:[o.material]).filter(Boolean))if(m.map?.image?.width>0)maps++;});return maps>0;}));
+      await page.click('#stPrepareGLB');await page.waitForFunction(()=>!!window.__FORMA.studio.state.confirmToken);await page.click('#stPrepareGLB');
+      await page.waitForFunction(()=>window.__FORMA.studio.state.selectedVersion>0&&window.__FORMA.studio.state.selectionStatus==='ready',{timeout:60000});
+      check('FBX conversion passes validator and triangle verification',await page.evaluate(()=>window.__FORMA.studio.lastRun.verify.pass));
+      check('FBX converted texture still rendered',await page.evaluate(()=>{let maps=0;window.__FORMA.viewer.modelRoot.traverse(o=>{if(o.isMesh&&o.material.map?.image?.width)maps++;});return maps>0;}));
+    }
+    const base=await identity();
+    const optimized=await page.evaluate(async isFbx=>{const c=window.__FORMA.studio.core,ops=isFbx?[{op:'weld',params:{epsilon:0.000001}}]:[{op:'simplify',params:{ratio:0.7,error:0.01}}];let r=await c.run({ops});if(!r&&c.state.confirmToken)r=await c.run({ops});return r;},fixture.endsWith('.fbx'));
+    check(fixture+' actual optimizer consumes selected version',optimized?.baseVersion===base.version&&optimized.verify.pass&&(fixture.endsWith('.fbx') ? optimized.after.verts<optimized.before.verts && optimized.after.tris===optimized.before.tris : optimized.after.tris<optimized.before.tris));
+    await page.screenshot({path:path.join(OUT,fixture+'-compare.png')});
+    const final=await page.evaluate(async()=>{const c=window.__FORMA.studio.core;let r=await c.exportAs('glb');if(!r&&c.state.confirmToken)r=await c.exportAs('glb');return r;});
+    check(fixture+' optimized output exports verified GLB',final?.verify.pass&&final.baseVersion===optimized.version);
+    const again=await post('/api/assets/import',{name:'reimport-'+fixture+'.glb',dataBase64:fs.readFileSync(path.join(ROOT,final.afterPath)).toString('base64')});
+    await page.evaluate(async id=>{const c=window.__FORMA.studio.core;await c.refreshAssets();await c.selectAsset(id);},again.asset.id);
+    const round=await identity();check(fixture+' final re-import matches optimized geometry',round.report.tris===optimized.after.tris&&round.stats.tris===optimized.after.tris&&round.report.textures>0);
+  }
   const rejected=await fetch(be+'/api/assets/'+assets[0].id+'/versions/-1');check('invalid versions rejected',rejected.status===400);
   await page.screenshot({path:path.join(OUT,'identity.png')});
   check('no uncaught browser errors',errors.length===0);

@@ -32,6 +32,7 @@ export const pipelineApi = {
   health: () => request('/health'),
   models: () => request('/models', { timeoutMs: 10000 }),
   assets: () => request('/assets'),
+  prepareGLB: (id, body) => request('/assets/' + encodeURIComponent(id) + '/prepare-glb', {method:'POST',body}),
   source: (id, version = 0) => request('/assets/' + encodeURIComponent(id) + '/versions/' + version),
   importAsset: (name, dataBase64, files = []) => request('/assets/import', { method: 'POST', body: { name, dataBase64, files } }),
   analyze: (id) => request(`/assets/${encodeURIComponent(id)}/analyze`, { method: 'POST' }),

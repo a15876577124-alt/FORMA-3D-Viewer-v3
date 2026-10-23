@@ -9,6 +9,7 @@ export function el(tag, props = {}, ...children) {
     else if (k === 'style') Object.assign(n.style, v);
     else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2).toLowerCase(), v);
     else if (k === 'html') n.innerHTML = v;
+    else if (['disabled', 'hidden', 'checked', 'selected', 'multiple', 'required', 'open'].includes(k)) n[k] = Boolean(v);
     else if (v !== undefined && v !== null) n.setAttribute(k, v);
   }
   for (const c of children.flat()) if (c != null) n.append(c.nodeType ? c : document.createTextNode(String(c)));

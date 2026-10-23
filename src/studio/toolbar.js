@@ -40,12 +40,13 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
   });
   const compareBtn = act('stCompareBtn', '对比', '载入处理前后两个真实模型做滑条对比', () => core.showCompare());
   const exitCompareBtn = act('stExitCompareBtn', '退出对比', '退出 Before/After 对比并释放 GPU 资源', () => core.exitCompare());
+  const prepareBtn = act('stPrepareGLB', '转为 GLB 版本', '将 FBX/OBJ 生成可处理工作版本；保留原始资源', () => core.prepareGLB());
   const exportBtn = act('stExportBtn', '导出', '导出当前产物为 GLB / GLTF / OBJ', () => core.exportAs('glb'));
 
   exitCompareBtn.hidden = true;
   compareBtn.hidden = true;
 
-  const groupLeft = el('div', { class: 'st-tb-group' }, importBtn, analyzeBtn, aiBtn, batchBtnTop);
+  const groupLeft = el('div', { class: 'st-tb-group' }, importBtn, prepareBtn, analyzeBtn, aiBtn, batchBtnTop);
   const layoutBtn = act('stLayoutReset', '布局', '恢复默认工作区布局（面板宽度与底部任务区高度）', () => onResetLayout?.());
   const groupRight = el('div', { class: 'st-tb-group' }, compareBtn, exitCompareBtn, exportBtn, layoutBtn);
 
