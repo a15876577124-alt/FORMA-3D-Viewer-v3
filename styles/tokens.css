@@ -40,21 +40,22 @@
   /* ---------- 语义色 ---------- */
   --v5-ok:   #74bd97;
   --v5-warn: #d9a751;
-  --v5-err:  #d4705c;
-  --v5-info: #7d9fc4;
+  --v5-err:  #ed9484;
+  --v5-info: #8eb5de;
 
   /* ---------- 文本 ---------- */
   --v5-tx-hi:    #f2ede4;   /* 标题 / 关键值 */
   --v5-tx:       #c8cbd0;   /* 正文 */
   --v5-tx-mid:   #c8cbd0;
-  --v5-tx-lo:    #8b9098;   /* 次级 */
-  --v5-tx-mute:  #62676f;   /* 提示 / 禁用 */
+  --v5-tx-lo:    #9ba2ac;   /* 次级说明 */
+  --v5-tx-mute:  #62676f;   /* 仅禁用 */
 
   /* ---------- 描边 ---------- */
   --v5-line:      rgba(242, 237, 228, .09);
   --v5-line-2:    rgba(242, 237, 228, .14);
   --v5-line-gold: rgba(217, 196, 160, .28);
   --v5-line-warm: rgba(217, 196, 160, .12);
+  --v5-line-control: #69717d;
 
   /* ---------- 排版 ---------- */
   --v5-ff-display: "Optima", "Palatino Linotype", "Songti SC", "Noto Serif SC", Georgia, serif;
@@ -62,15 +63,15 @@
   --v5-ff-mono: "SF Mono", "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
 
   /* 字阶：display / headline / title / body / caption / micro */
-  --v5-fs-display: clamp(2.6rem, 6.2vw, 5.4rem);
-  --v5-fs-h1:      clamp(1.9rem, 3.4vw, 2.9rem);
-  --v5-fs-h2:      clamp(1.35rem, 2.1vw, 1.75rem);
-  --v5-fs-h3:      1.075rem;
-  --v5-fs-lg:      1rem;
-  --v5-fs-body:    .875rem;
-  --v5-fs-sm:      .8125rem;
-  --v5-fs-xs:      .75rem;
-  --v5-fs-micro:   .6875rem;
+  --v5-fs-display: clamp(40px, 6.2vw, 80px);
+  --v5-fs-h1:      clamp(28px, 3.4vw, 40px);
+  --v5-fs-h2:      clamp(20px, 2.1vw, 28px);
+  --v5-fs-h3:      18px;
+  --v5-fs-lg:      16px;
+  --v5-fs-body:    14px;
+  --v5-fs-sm:      13px;
+  --v5-fs-xs:      12px;
+  --v5-fs-micro:   11px;
 
   --v5-lh-tight:  1.08;
   --v5-lh-snug:   1.28;
@@ -116,8 +117,8 @@
 
   /* ---------- 布局 ---------- */
   --v5-topbar-h: 62px;
-  --v5-maxw: 1560px;
-  --v5-gutter: clamp(16px, 3.2vw, 44px);
+  --v5-maxw: 1328px;
+  --v5-gutter: clamp(16px, 3.89vw, 56px);
 
   /* ---------- z 层 ---------- */
   --v5-z-scene: 1;

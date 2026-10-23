@@ -8,7 +8,7 @@ import { createBrand, installBrandIcon } from './brand.js';
 export const NAV_ITEMS = [
   { to: '/', label: '首页', match: '/' },
   { to: '/gallery', label: '数字展厅', match: '/gallery' },
-  { to: '/work/sheng', label: '作品', match: '/work' },
+  { to: '/?section=collection', label: '作品', match: '/work' },
   { to: '/studio', label: 'AI Studio', match: '/studio' },
 ];
 
@@ -54,7 +54,7 @@ export function buildV5Shell({ version = 'V5' } = {}) {
         el('div', { class: 'v5-footer-col' },
           el('h4', {}, '浏览'),
           el('a', { href: '#/gallery' }, '数字展厅'),
-          el('a', { href: '#/work/sheng' }, '作品详情'),
+          el('a', { href: '#/?section=collection' }, '五件作品'),
         ),
         el('div', { class: 'v5-footer-col' },
           el('h4', {}, '工具'),
@@ -79,7 +79,8 @@ export function syncNavActive(nav, pattern) {
   const links = [...nav.querySelectorAll('.v5-nav-link')];
   for (const a of links) {
     const m = a.getAttribute('data-match');
-    const on = pattern && (m === pattern || (m !== '/' && pattern.startsWith(m)));
+    const collection=location.hash.includes('section=collection');
+    const on = collection ? m==='/work' : pattern && (m === pattern || (m !== '/' && pattern.startsWith(m)));
     if (on) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   }

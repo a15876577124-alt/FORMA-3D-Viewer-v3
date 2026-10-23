@@ -21,6 +21,27 @@ try{
   page.on('pageerror',e=>errors.push(e.message));
   await page.setViewport({width:1440,height:1000});
   await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
+  await page.goto(url+'/#/',{waitUntil:'networkidle0'});
+  await page.waitForSelector('.v5-hero-3d[data-model-state="ready"]');
+  check('H01 one primary Gallery action and secondary Studio',await page.$$eval('.v5-hero-actions a',es=>es.length===2&&es[0].getAttribute('href')==='#/gallery'&&es[1].getAttribute('href')==='#/studio'));
+  check('H02 five cards link to their own detail',await page.$$eval('.v5-series-card',es=>es.length===5&&es.every((e,i)=>e.getAttribute('href')==='#/work/'+['sheng','dan','jing-red','jing-yellow','jing-white'][i])));
+  for(const width of [1440,768,390]){
+    await page.setViewport({width,height:1000});
+    await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+    await page.waitForSelector('.v5-hero-3d[data-model-state="ready"]');
+    check('H01 home fits '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    check('A01 body text readable '+width,await page.$eval('.v5-hero-lede',e=>parseFloat(getComputedStyle(e).fontSize)>=14));
+    check('H01 uniform cards '+width,await page.$$eval('.v5-series-card',es=>Math.max(...es.map(e=>e.clientWidth))-Math.min(...es.map(e=>e.clientWidth))<=1));
+    await page.screenshot({path:path.join(OUT,'home-'+width+'.png'),fullPage:true});
+    await page.goto(url+'/#/work/dan',{waitUntil:'networkidle0'});
+    await page.waitForFunction(()=>document.querySelector('#v5Tech-dan')?.textContent.includes('真实解析'));
+    await page.screenshot({path:path.join(OUT,'detail-'+width+'.png'),fullPage:true});
+    await page.goto(url+'/#/',{waitUntil:'networkidle0'});
+  }
+  await page.setViewport({width:1440,height:1000});
+  await page.click('.v5-nav-link[data-match="/work"]');
+  await page.waitForFunction(()=>location.hash.includes('section=collection'));
+  check('H02 works navigation opens collection',await page.evaluate(()=>location.hash.includes('section=collection')));
   await page.goto(url+'/#/gallery',{waitUntil:'networkidle0'});
   await page.waitForFunction(()=>window.__FORMA?.viewer.modelRoot);
   await page.click('#glAdvanced');
