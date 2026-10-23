@@ -28,8 +28,8 @@ try{
   await page.waitForFunction(()=>window.__FORMA?.ready&&window.__FORMA.viewer.modelRoot,{timeout:30000});
   const box=selector=>page.$eval(selector,e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom};});
   let rect=await box('#viewport');check('390px Gallery viewport stays in screen',rect.x>=0&&rect.right<=391&&rect.width>300);
-  await page.click('#openInspector');await page.waitForFunction(()=>getComputedStyle(document.getElementById('inspector')).transform==='none');rect=await box('#inspector');check('390px Gallery inspector fully accessible',rect.x>=0&&rect.right<=391&&rect.width>=280);
-  await page.screenshot({path:path.join(OUT,'gallery-390-panel.png')});await page.click('#closeInspector');await page.waitForFunction(()=>document.getElementById('inspector').getBoundingClientRect().x>=innerWidth);
+  await page.click('#glAdvanced');await page.waitForFunction(()=>!document.getElementById('glDrawer').hidden);rect=await box('#glDrawer');check('390px Gallery inspector fully accessible',rect.x>=0&&rect.right<=391&&rect.width>=280);
+  await page.screenshot({path:path.join(OUT,'gallery-390-panel.png')});await page.click('#glDrawerClose');await page.waitForFunction(()=>document.getElementById('glDrawer').hidden);
   await page.screenshot({path:path.join(OUT,'gallery-390.png')});
   await page.goto(fe+'/#/studio',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__FORMA?.studio.state.status==='online',{timeout:30000});

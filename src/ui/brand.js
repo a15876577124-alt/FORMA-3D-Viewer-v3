@@ -5,7 +5,7 @@ export const BRAND = {
   name: 'FORMA',
   image: null, // Approved local SVG, transparent PNG or WebP; e.g. ./assets/brand/forma-light.svg
   favicon: null,
-  lockup: 'both', // both | wordmark | symbol (always falls back to readable text)
+  lockup: 'wordmark', // both | wordmark | symbol (always falls back to readable text)
 };
 
 // Existing V5 mark, unchanged. Never an unapproved replacement design.

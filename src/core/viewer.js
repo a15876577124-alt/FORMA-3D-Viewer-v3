@@ -2,14 +2,13 @@
 // parameter that affects how an exhibit is presented.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 import { Environment, BACKDROPS } from '../lighting/environment.js';
 import { Lighting, LIGHT_PRESETS } from '../lighting/studio.js';
 import { Stage } from '../stage/ground.js';
 import { PostFX } from '../post/composer.js';
 import {
-  normalizeModel, fitDistance, applyView, readView, countGeometry, PADDING_STANDARD, PADDING_IMMERSIVE,
+  normalizeModel, fitDistance, applyView, readView, countGeometry, PADDING_STANDARD, PADDING_IMMERSIVE, exhibitionDistance,
 } from '../models/place.js';
 import { snapshotBaseline, applyMaterialState, readEffective, sanitizeMaterials, ensureWireframeOverlay } from '../materials/override.js';
 import { buildProcedural } from '../models/procedural.js';
@@ -58,17 +57,6 @@ export class Viewer {
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.02, 220);
     this.camera.position.set(0, 1.2, 4);
 
-    // 环境照明：three 官方 RoomEnvironment（影棚灯箱）经 PMREM 处理，
-    // 为 PBR 材质提供真实反射与漫射。强度由既有「材质 → 环境反射」滑杆
-    // （envMapIntensity）管理——V3 的滑杆在无 environment 时无效，现在生效。
-    {
-      const pmrem = new THREE.PMREMGenerator(this.renderer);
-      this._roomEnv = new RoomEnvironment();
-      this._envTarget = pmrem.fromScene(this._roomEnv, 0.04);
-      this.scene.environment = this._envTarget.texture;
-      this._roomEnv.dispose(); pmrem.dispose();
-    }
-
     this.controls = new OrbitControls(this.camera, canvas);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.06;
@@ -80,7 +68,7 @@ export class Viewer {
     this.controls.enablePan = true;
     this.controls.screenSpacePanning = true;
     this.controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
-    this.controls.autoRotate = true;
+    this.controls.autoRotate = false;
     this.controls.autoRotateSpeed = 1.2;
 
     this.environment = new Environment(this.renderer, this.scene);
@@ -125,7 +113,7 @@ export class Viewer {
       const dt = Math.min(this.timer.getDelta(), 0.1);
       if (this.mixer) this.mixer.update(dt);
       this.controls.update(dt);
-      this.render(dt);
+      if(this._renderDirty || this._cameraDirty || this.controls.autoRotate || (this.action && !this.action.paused))this.render(dt);
       if (this._cameraDirty) {
         this._cameraDirty = false;
         this.onStateChange?.('camera');
@@ -134,20 +122,29 @@ export class Viewer {
     this.frame = requestAnimationFrame(tick);
   }
 
-  render() { this.compareRig?.updatePlanes(); this.post.render(); }
+  invalidate() { this._renderDirty = true; }
+
+  render() { this._renderDirty = false; this.compareRig?.updatePlanes(); this.post.render(); }
 
   // ---------------------------------------------------------------- resize --
 
   _bindResize() {
     const apply = () => {
-      const w = this.viewport.clientWidth || 1;
-      const h = this.viewport.clientHeight || 1;
+      const w = this.viewport.clientWidth;
+      const h = this.viewport.clientHeight;
+      // A hidden route keeps its last valid aspect and camera. Do not resize its
+      // shared render targets to 1x1 or serialize that temporary projection.
+      if(!w||!h)return;
+      if(this.size?.w===w && this.size?.h===h)return;
+      const view=this.modelRoot&&this.size?.w>1&&this.size?.h>1 ? this.readCamera() : null;
+      this.invalidate();
       this.size = { w, h };
       this.renderer.setPixelRatio(this.caps.dpr);
       this.renderer.setSize(w, h, false);
       this.camera.aspect = w / h;
       this.camera.updateProjectionMatrix();
       this.post.setSize(w, h, this.caps.dpr);
+      if(view&&w>1&&h>1)this.applyViewAngle(false,view);
     };
     apply();
     window.addEventListener('resize', apply);
@@ -282,17 +279,17 @@ export class Viewer {
 
   // --------------------------------------------------------------- visuals --
 
-  setToneMapping(mode) {
+  setToneMapping(mode) { this.invalidate();
     this.renderer.toneMapping = TONE_MAP[mode] ?? TONE_MAP.neutral;
     this.scene.traverse((o) => { if (o.material) { const m = Array.isArray(o.material) ? o.material : [o.material]; m.forEach(x => (x.needsUpdate = true)); } });
   }
 
-  setExposure(v) { this.renderer.toneMappingExposure = v; }
+  setExposure(v) { this.invalidate(); this.renderer.toneMappingExposure = v; }
 
-  setBackground(key) { this.environment.setBackdrop(key || 'charcoal'); }
+  setBackground(key) { this.invalidate(); this.environment.setBackdrop(key || 'charcoal'); }
   static get backgrounds() { return Object.keys(BACKDROPS); }
 
-  setFov(v) {
+  setFov(v) { this.invalidate();
     this.camera.fov = v;
     this.camera.updateProjectionMatrix();
     if (!this.modelRoot) return;
@@ -301,20 +298,20 @@ export class Viewer {
     this.applyViewAngle(false, { ...cur, fov: v });
   }
 
-  applyLighting(state) {
+  applyLighting(state) { this.invalidate();
     this.lighting.apply(state);
     this.stage.setShadowOpacity(state.shadowOpacity);
     this.stage.setContactAO(state.contactAO);
     this.environment.setIntensity(state.__envIntensity ?? 0.85);
   }
 
-  setLightMode(mode) {
+  setLightMode(mode) { this.invalidate();
     const p = this.lighting.setMode(mode);
     this.lighting.fitTo(this.box);
     return p;
   }
 
-  applyMaterial(state) {
+  applyMaterial(state) { this.invalidate();
     this.materialState = state;
     const res = applyMaterialState(this.modelRoot, state);
     return res;
@@ -322,7 +319,7 @@ export class Viewer {
 
   readMaterial() { return readEffective(this.modelRoot); }
 
-  setWireframe(on) {
+  setWireframe(on) { this.invalidate();
     this.wireframeOn = on;
     this._syncWireframe();
   }
@@ -335,11 +332,11 @@ export class Viewer {
     if (this.wireAdded !== grp) { this.scene.remove(this.wireAdded); this.scene.add(grp); this.wireAdded = grp; }
   }
 
-  setGrid(on) { this.stage.setGrid(on); }
-  setPlinth(on) { this.stage.setPlinth(on); }
-  setShadowCatcher(on) { this.stage.setCatcher(on); }
-  setAutoRotate(on) { this.controls.autoRotate = !!on; }
-  setAutoRotateSpeed(v) { this.controls.autoRotateSpeed = 1.2 * v; }
+  setGrid(on) { this.invalidate(); this.stage.setGrid(on); }
+  setPlinth(on) { this.invalidate(); this.stage.setPlinth(on); }
+  setShadowCatcher(on) { this.invalidate(); this.stage.setCatcher(on); }
+  setAutoRotate(on) { this.invalidate(); this.controls.autoRotate = !!on; }
+  setAutoRotateSpeed(v) { this.invalidate(); this.controls.autoRotateSpeed = 1.2 * v; }
 
   // 视角预设：yaw/pitch（度）。yaw 0 = 正面（+z），pitch 90 = 顶视。
   // 保持当前距离，仅改方位——不破坏用户已调好的取景。
@@ -355,23 +352,23 @@ export class Viewer {
     this.onStateChange?.();
     this.render();
   }
-  setEnvIntensity(v) { this.environment.setIntensity(v); }
+  setEnvIntensity(v) { this.invalidate(); this.environment.setIntensity(v); }
 
-  setPost(state) {
+  setPost(state) { this.invalidate();
     this.post.configure(state);
     if (!state.bloom && this.caps.lowPower) this.post.active = false;
   }
 
   // ---------------------------------------------------------------- camera --
 
-  applyViewAngle(reset, viewState) {
+  applyViewAngle(reset, viewState) { this.invalidate();
     if (!this.modelRoot) return;
     const view = reset
       ? { yaw: this.currentEntry?.best?.yaw ?? 0.42, pitch: this.currentEntry?.best?.pitch ?? 0.2, distMul: this.currentEntry?.best?.distMul ?? 1, targetYMul: this.currentEntry?.best?.targetYMul ?? 0.5, fov: this.camera.fov }
       : (viewState || this.lastView || this.currentEntry?.best);
     if (!view) return;
     if (view.fov && Math.abs(view.fov - this.camera.fov) > 0.01) { this.camera.fov = view.fov; this.camera.updateProjectionMatrix(); }
-    const r = applyView(this.camera, this.controls, this.box, view, this.padding);
+    const r = applyView(this.camera, this.controls, this.box, view, this.padding, this.presentation==='gallery'?exhibitionDistance:null);
     this.fitBase = r.base;
     this.lastView = r.view ?? view;
     this.controls.update();
@@ -380,7 +377,7 @@ export class Viewer {
   /** Restore the stored camera for the current exhibit. */
   applyStoredView(state) { this.applyViewAngle(false, state.camera); }
 
-  readCamera() { return readView(this.camera, this.controls, this.box); }
+  readCamera() { return readView(this.camera, this.controls, this.box, this.presentation==='gallery'?exhibitionDistance:null); }
 
   setImmersive(on) {
     this.immersive = on;
@@ -399,7 +396,7 @@ export class Viewer {
     this.action.reset().play();
     return this.animations[this.clipIndex].name;
   }
-  toggleAnimation() {
+  toggleAnimation() { this.invalidate();
     if (!this.action) return null;
     this.action.paused = !this.action.paused;
     return !this.action.paused;

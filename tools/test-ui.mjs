@@ -30,7 +30,16 @@ const t = (name, fn) => results.push({ name, fn });
 
 // ---------------------------------------------------------------- helpers ---
 async function current(page) { return page.evaluate(() => window.__FORMA.current?.id || null); }
-async function click(page, sel) { await page.click(sel); }
+async function click(page, sel) {
+  const inSettings=await page.$eval(sel,e=>!!e.closest('#glDrawer'));
+  if(inSettings){
+    if(await page.$eval('#glDrawer',e=>e.hidden))await page.click('#glAdvanced');
+    const closed=await page.$eval(sel,e=>{const d=e.closest('details');return d&&!d.open;});
+    if(closed){const control=await page.$(sel);const summary=await control.evaluateHandle(e=>e.closest('details').querySelector('summary'));await summary.click();}
+  }
+  if(sel.startsWith('.asset[')&&!await page.$eval('#sidebar',e=>e.getBoundingClientRect().width>0))await page.click('#glResources');
+  await page.click(sel);
+}
 async function waitForId(page, id, ms = 60000) {
   await page.waitForFunction((x) => window.__FORMA.current && window.__FORMA.current.id === x, { timeout: ms }, id);
 }
@@ -173,35 +182,35 @@ t('色调映射: Neutral 为默认', async (ctx) => {
 });
 
 t('显示: 线框开关真实叠加线框', async (ctx) => {
-  await click(ctx.page, '#wireframeQuick');
+  await click(ctx.page, '#wireframe');
   await sleep(150);
   let w = await ctx.page.evaluate(() => window.__FORMA.info.wireframe);
   if (!w) throw new Error('线框未开启');
-  await click(ctx.page, '#wireframeQuick');
+  await click(ctx.page, '#wireframe');
   await sleep(150);
   w = await ctx.page.evaluate(() => window.__FORMA.info.wireframe);
   if (w) throw new Error('线框未关闭');
 });
 
 t('显示: 网格与展台开关', async (ctx) => {
-  await click(ctx.page, '#gridQuick');
+  await click(ctx.page, '#gridToggle');
   await sleep(100);
   let g = await ctx.page.evaluate(() => window.__FORMA.viewer.stage.grid.visible);
-  if (g) throw new Error('网格未隐藏');
-  await click(ctx.page, '#gridQuick');
-  await click(ctx.page, '#plinthQuick');
+  if (!g) throw new Error('网格未显示');
+  await click(ctx.page, '#gridToggle');
+  await click(ctx.page, '#plinthToggle');
   await sleep(100);
   const p = await ctx.page.evaluate(() => window.__FORMA.viewer.stage.plinth.visible);
-  if (p) throw new Error('展台未隐藏');
-  await click(ctx.page, '#plinthQuick');
+  if (!p) throw new Error('展台未显示');
+  await click(ctx.page, '#plinthToggle');
 });
 
 t('自动旋转: 开关与转速', async (ctx) => {
-  await click(ctx.page, '#autoRotateBtn');
+  await click(ctx.page, '#autorotate');
   await sleep(100);
   let r = await ctx.page.evaluate(() => window.__FORMA.viewer.controls.autoRotate);
-  if (r) throw new Error('自动旋转未关闭');
-  await click(ctx.page, '#autoRotateBtn');
+  if (!r) throw new Error('自动旋转未开启');
+  await click(ctx.page, '#autorotate');
   await setRange(ctx.page, '#autoRotateSpeed', 2);
   await sleep(100);
   const sp = await ctx.page.evaluate(() => window.__FORMA.viewer.controls.autoRotateSpeed);
@@ -210,7 +219,7 @@ t('自动旋转: 开关与转速', async (ctx) => {
 
 t('视角: 回到最佳视角按钮', async (ctx) => {
   // 自动旋转会持续改变 yaw，先关掉才能断言
-  await ctx.page.$eval('#autoRotateBtn', (el) => { if (el.classList.contains('active')) el.click(); });
+  await ctx.page.$eval('#autorotate', (el) => { if (el.checked) el.click(); });
   await sleep(150);
   // spin the camera somewhere else first
   await ctx.page.evaluate(() => {
@@ -218,7 +227,7 @@ t('视角: 回到最佳视角按钮', async (ctx) => {
     v.controls.target.x += 0.3;
     v.controls.update();
   });
-  await click(ctx.page, '#resetChip');
+  await click(ctx.page, '#glReset');
   await sleep(250);
   const cam = await ctx.page.evaluate(() => window.__FORMA.viewer.readCamera());
   const best = await ctx.page.evaluate(() => window.__FORMA.current.best);
@@ -235,7 +244,7 @@ t('截图: 导出 PNG 返回真实像素', async (ctx) => {
 
 t('沉浸: 进入/退出并改变取景边距', async (ctx) => {
   await closeAdvanced(ctx);
-  await click(ctx.page, '#modeBtn');
+  await click(ctx.page, '#glImmersive');
   await sleep(600);
   let s = await ctx.page.evaluate(() => ({
     immersive: window.__FORMA.info.immersive,
@@ -297,7 +306,7 @@ t('持久化: 参数改动刷新后保留', async (ctx) => {
 });
 
 t('帮助: 弹窗可开关', async (ctx) => {
-  await click(ctx.page, '#helpBtn');
+  await click(ctx.page, '#glHelp');
   await sleep(100);
   let hidden = await ctx.page.$eval('#helpModal', (el) => el.hidden);
   if (hidden) throw new Error('帮助未打开');
@@ -307,22 +316,15 @@ t('帮助: 弹窗可开关', async (ctx) => {
   if (!hidden) throw new Error('帮助未关闭');
 });
 
-t('移动布局: 窄屏下出现作品下拉', async (ctx) => {
-  await ctx.page.setViewport({ width: 420, height: 800, deviceScaleFactor: 1 });
-  await sleep(500);
-  const vis = await ctx.page.evaluate(() => {
-    const g = document.getElementById('mobileGallery');
-    return g && getComputedStyle(g).display !== 'none';
-  });
-  if (!vis) throw new Error('移动端下拉未显示');
-  await ctx.page.evaluate(() => {
-    const g = document.getElementById('mobileGallery');
-    g.value = 'jing-red';
-    g.dispatchEvent(new Event('change', { bubbles: true }));
-  });
-  await waitForId(ctx.page, 'jing-red');
-  await ctx.page.setViewport({ width: 1400, height: 900, deviceScaleFactor: 1 });
-  await sleep(400);
+t('移动布局: 五件展品在底栏可选', async (ctx) => {
+  await closeAdvanced(ctx);
+  await ctx.page.setViewport({width:420,height:800,deviceScaleFactor:1});
+  await sleep(300);
+  const visible=await ctx.page.$$eval('.ex-filmstrip a',es=>es.length===5&&es.every(e=>e.getBoundingClientRect().width>40));
+  if(!visible)throw Error('移动端展品底栏不可用');
+  await ctx.page.click('.ex-filmstrip [data-work="jing-red"]');
+  await waitForId(ctx.page,'jing-red');
+  await ctx.page.setViewport({width:1400,height:900,deviceScaleFactor:1});
 });
 
 t('收尾: 控制台无错误', async (ctx) => {

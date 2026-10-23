@@ -35,7 +35,8 @@ fs.mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Runs inside the page: force a synchronous render, then read the framebuffer.
-const PROBE = () => {
+const PROBE = async () => {
+  const THREE=await import('/vendor/three/build/three.module.js');
   const c = document.getElementById('stage');
   const N = 224;
   const c2 = document.createElement('canvas');
@@ -45,6 +46,18 @@ const PROBE = () => {
   ctx.drawImage(c, 0, 0, N, N);
   const d = ctx.getImageData(0, 0, N, N).data;
 
+  // A real silhouette pass makes coverage and color checks independent of
+  // the exhibition background and the wider viewport introduced in RC2.
+  const v=window.__FORMA.viewer, bgBefore=v.scene.background, overrideBefore=v.scene.overrideMaterial;
+  const stageVisible=v.stage.group.visible,wireVisible=v.wireAdded?.visible;
+  const maskMaterial=new THREE.MeshBasicMaterial({color:0x000000,toneMapped:false});
+  v.scene.background=new THREE.Color(0xffffff);v.scene.overrideMaterial=maskMaterial;
+  v.stage.group.visible=false;if(v.wireAdded)v.wireAdded.visible=false;
+  v.renderer.render(v.scene,v.camera);ctx.drawImage(c,0,0,N,N);
+  const mask=ctx.getImageData(0,0,N,N).data;
+  v.scene.background=bgBefore;v.scene.overrideMaterial=overrideBefore;
+  v.stage.group.visible=stageVisible;if(v.wireAdded)v.wireAdded.visible=wireVisible;
+  maskMaterial.dispose();v.render();
   const n = N * N;
   const lum = new Float64Array(n);
   let sum = 0, sum2 = 0;
@@ -71,7 +84,8 @@ const PROBE = () => {
   let redPx = 0, yellowPx = 0, brightNeutralPx = 0;
   const hues = new Set();
   for (let i = 0; i < n; i++) {
-    if (lum[i] > bg + 14) covered++;
+    if(mask[i*4]>128)continue;
+    covered++;
     if (lum[i] > 252) blown++;
     const r = d[i * 4], g = d[i * 4 + 1], b = d[i * 4 + 2];
     const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
@@ -98,11 +112,11 @@ const PROBE = () => {
     stddev: +Math.sqrt(variance).toFixed(3),
     bg: +bg.toFixed(3),
     coverage: +(covered / n).toFixed(5),
-    blownRatio: +(blown / n).toFixed(5),
-    colouredRatio: +(coloured / n).toFixed(5),
-    redRatio: +(redPx / n).toFixed(5),
-    yellowRatio: +(yellowPx / n).toFixed(5),
-    brightNeutralRatio: +(brightNeutralPx / n).toFixed(5),
+    blownRatio: +(blown / Math.max(covered,1)).toFixed(5),
+    colouredRatio: +(coloured / Math.max(covered,1)).toFixed(5),
+    redRatio: +(redPx / Math.max(covered,1)).toFixed(5),
+    yellowRatio: +(yellowPx / Math.max(covered,1)).toFixed(5),
+    brightNeutralRatio: +(brightNeutralPx / Math.max(covered,1)).toFixed(5),
     uniqueColors: hues.size,
   };
 };
@@ -124,13 +138,13 @@ async function launchWithGL() {
 }
 
 // Colour guardrails: the face-paint hues that define each figurine must survive
-// tone mapping. Ratios are of the whole frame, so they only have to clear a low bar.
+// tone mapping. Ratios use only the rendered silhouette, excluding the background.
 const COLOUR_RULES = {
-  'sheng':       [['redRatio', 0.015]],
-  'dan':         [['redRatio', 0.015]],
-  'jing-red':    [['redRatio', 0.03]],
-  'jing-yellow': [['yellowRatio', 0.01], ['redRatio', 0.01]],
-  'jing-white':  [['brightNeutralRatio', 0.02]],
+  'sheng':       [['redRatio', 0.05]],
+  'dan':         [['redRatio', 0.05]],
+  'jing-red':    [['redRatio', 0.10]],
+  'jing-yellow': [['yellowRatio', 0.03], ['redRatio', 0.03]],
+  'jing-white':  [['brightNeutralRatio', 0.08]],
 };
 
 function verdict(id, info, px) {

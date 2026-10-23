@@ -1,7 +1,6 @@
 // Normal generation shared by the import pipeline.
 //
-// This mirrors tools/fix-glb.mjs exactly, so an OBJ imported at runtime shades the
-// same way the five repaired GLBs do. Source OBJ exports carry no `vn`, and naive
+// Source OBJ exports carry no `vn`, and naive
 // per-index averaging leaves dark seams along every UV island border - therefore
 // we average over a *virtual* position weld.
 import { BufferAttribute } from 'three';
@@ -63,11 +62,15 @@ export function computeWeldedNormals(geometry) {
     groupOf[i] = g;
   }
   const groupCount = groups.size;
+  const groupFaces = Array.from({ length: groupCount }, () => new Set());
+  for (let i = 0; i < vertCount; i++) {
+    for (const f of incident[i]) groupFaces[groupOf[i]].add(f);
+  }
 
   const normals = new Float32Array(vertCount * 3);
   for (let i = 0; i < vertCount; i++) {
     let sx = 0, sy = 0, sz = 0;
-    for (const f of incident[i]) { sx += faceN[f * 3]; sy += faceN[f * 3 + 1]; sz += faceN[f * 3 + 2]; }
+    for (const f of groupFaces[groupOf[i]]) { sx += faceN[f * 3]; sy += faceN[f * 3 + 1]; sz += faceN[f * 3 + 2]; }
     let len = Math.hypot(sx, sy, sz);
     if (!(len > 0)) { sy = 1; sx = 0; sz = 0; len = 1; }
     normals[i * 3] = sx / len; normals[i * 3 + 1] = sy / len; normals[i * 3 + 2] = sz / len;

@@ -30,7 +30,9 @@ const FORMAT_LABEL = {
 
 function webglSupported() {
   const c = document.createElement('canvas');
-  return !!(c.getContext('webgl2') || c.getContext('webgl'));
+  const gl=c.getContext('webgl2') || c.getContext('webgl');
+  gl?.getExtension('WEBGL_lose_context')?.loseContext();
+  return !!gl;
 }
 
 function boot() {
@@ -206,7 +208,7 @@ function boot() {
   async function select(id, opts = {}) {
     const entry = resolveEntry(id);
     if (!entry) { toast('找不到展品：' + id, 'err'); return false; }
-    if(studio?.isActive && current.entry)return studio.core.selectEntry(entry);
+    if(studio?.isActive)return studio.core.selectEntry(entry);
 
     // Hand the outgoing camera to its own exhibit before switching away.
     if (current.entry && current.entry.id !== entry.id) {
@@ -256,12 +258,8 @@ function boot() {
   // ------------------------------------------------------------ Gallery --
   // Gallery 观展模式：右栏策展化 + 高级控制台抽屉 + 隐藏生产工具。
   gallery = buildGalleryMode({
-    viewer, capture, resetView,
-    // Gallery 的辅助信息栏折叠走同一套布局系统（状态按模式分别保存）
-    onToggleRail: () => {
-      const hidden = studio?.layout?.toggleRail();
-      toast(hidden ? '已收起右侧信息栏' : '已展开右侧信息栏', 'ok', 2000);
-    },
+    viewer, capture, resetView, toggle, setImmersive,
+
   });
   // ------------------------------------------------------------- Studio --
   // AI Studio 是独立的工作区（顶部工具条 / 左侧资源树 / 中央视口 / 右侧 Lab 坞 /
@@ -269,7 +267,7 @@ function boot() {
   studio = buildStudio({
     viewer,
     appState,
-    onSelection: (entry) => { current.entry = entry; updateMeta(entry); inspector.setAnimations(viewer.animations, 0); },
+    onSelection: (entry) => { current.entry = entry; sidebar.select(entry.id); updateMeta(entry); inspector.setAnimations(viewer.animations, 0); },
     onPublish: (url, assetId, res) => {
       const file = String(url).split('/').pop();
       const item = { id: assetId + '-v' + res.version, sourceId:assetId, name:assetId + ' · v' + res.version, url, version:res.version };
@@ -319,9 +317,11 @@ function boot() {
     if (next === 'studio') {
       gallery.leave();
       studio?.enter();
+      viewer.setBackground('charcoal');
     } else {
       studio?.leave();
       gallery.enter();
+      if(current.entry)inspector.sync(viewState.get(current.entry));
       if (current.entry) gallery.syncInfo(current.entry);
     }
     return next;
@@ -378,10 +378,8 @@ function boot() {
     $('engineLabel').textContent = '本地运行 · 软件渲染模式';
   }
 
-  select(first.id);
+  // Load a model only when a 3D route is requested; home/detail use real render posters.
 
-  // 默认站在观展一侧：路由未接管前也保持 Gallery 视觉语言
-  document.body.classList.add('mode-gallery');
 
   // 视角预设（右栏「相机与环境」分组）：正/右/背/左/顶
   $('viewPresets')?.addEventListener('click', (e) => {
@@ -417,10 +415,12 @@ function boot() {
   // 否则 ?work=<id> 这类不同 cacheKey 会各自再建一份观展面板（重复 DOM）。
   const galleryLayer = {
     node: existingApp,
+    leave: () => gallery.leave(),
     enter: ({ query }) => {
       studio?.leave();
       gallery.enter();
-      const want = query?.work;
+      if(current.entry)inspector.sync(viewState.get(current.entry));
+      const want = query?.work || (!current.entry ? first.id : null);
       if (want && BY_ID.has(want) && current.entry?.id !== want) select(want);
       if (current.entry) gallery.syncInfo(current.entry);
     },
@@ -441,9 +441,11 @@ function boot() {
   const studioLayer = {
     node: existingApp,
     beforeLeave:()=>studio?.core?.canLeave()??true,
+    leave:()=>studio?.leave(),
     enter: () => {
       gallery.leave();
       studio?.enter();
+      viewer.setBackground('charcoal');
     },
     refresh: () => {
       try { window.dispatchEvent(new Event('resize')); viewer.render(); } catch { /* ignore */ }
@@ -470,8 +472,15 @@ function boot() {
     return { node: el('div', { hidden: true }) }; // 立即被重定向，节点只是占位
   });
 
+  if (!location.hash && caps.params.get('entry')) history.replaceState(null,'','#/gallery?work='+encodeURIComponent(first.id));
   startRouter({ outlet });
-  onNavigate(({ pattern }) => {clearToasts();syncNavActive(nav, pattern);});
+  if(!location.hash.includes('/gallery'))resolveReady(true);
+  onNavigate(({ pattern }) => {
+    clearToasts();syncNavActive(nav, pattern);
+    if(pattern!=='/gallery'&&pattern!=='/studio'){
+      gallery.leave();document.body.classList.remove('mode-studio');
+    }
+  });
 
   // Automation surface. Everything the test harness needs to assert real
   // rendering happens against this object - no mocking, no shortcuts.

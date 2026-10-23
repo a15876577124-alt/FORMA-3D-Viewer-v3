@@ -67,12 +67,29 @@ export function fitDistance(box, camera, padding = 1.45) {
 export const PADDING_STANDARD = 1.45;
 export const PADDING_IMMERSIVE = 1.12;
 
+// Fit all box corners in camera space, instead of treating a narrow phone as a
+// square containing the model's tallest dimension horizontally. No geometry edits.
+export function exhibitionDistance(box, camera, view) {
+  const yaw=view.yaw??0.42,pitch=view.pitch??0.2;
+  const direction=new THREE.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch));
+  const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+  const up=new THREE.Vector3().crossVectors(direction,right);
+  const target=new THREE.Vector3(0,(box.max.y-box.min.y)*(view.targetYMul??.5),0);
+  const tanV=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2),tanH=tanV*camera.aspect;
+  let distance=0;
+  for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z]){
+    const p=new THREE.Vector3(x,y,z).sub(target);
+    distance=Math.max(distance,p.dot(direction)+Math.max(Math.abs(p.dot(right))/tanH,Math.abs(p.dot(up))/tanV)*1.2);
+  }
+  return distance;
+}
+
 /** Apply a stored camera state (yaw/pitch/distMul) to camera + controls target. */
-export function applyView(camera, controls, box, view, padding = PADDING_STANDARD) {
+export function applyView(camera, controls, box, view, padding = PADDING_STANDARD, fit = null) {
   const size = box.getSize(new THREE.Vector3());
   const targetY = size.y * (view.targetYMul ?? 0.5);
   const target = new THREE.Vector3(0, targetY, 0);
-  const base = fitDistance(box, camera, PADDING_STANDARD);
+  const base = fit ? fit(box,camera,view) : fitDistance(box, camera, PADDING_STANDARD);
   const dist = base * (view.distMul ?? 1) * (padding / PADDING_STANDARD);
 
   const pitch = THREE.MathUtils.clamp(view.pitch ?? 0.2, 0.02, 1.4);
@@ -96,11 +113,12 @@ export function applyView(camera, controls, box, view, padding = PADDING_STANDAR
 }
 
 /** Read the current camera back into a storable yaw/pitch/distMul. */
-export function readView(camera, controls, box) {
+export function readView(camera, controls, box, fit = null) {
   const target = controls ? controls.target : new THREE.Vector3();
-  const base = fitDistance(box, camera);
   const offset = camera.position.clone().sub(target);
   const dist = Math.max(offset.length(), 1e-6);
+  const direction={yaw:Math.atan2(offset.x,offset.z),pitch:Math.asin(THREE.MathUtils.clamp(offset.y/dist,-1,1)),targetYMul:target.y/(box.max.y-box.min.y||1)};
+  const base = fit ? fit(box,camera,direction) : fitDistance(box, camera);
   const size = box.getSize(new THREE.Vector3());
   return {
     yaw: Math.atan2(offset.x, offset.z),

@@ -16,7 +16,7 @@ export const DEFAULT_STATE = {
   material: { mode: 'original', color: '#ffffff', metalness: 0, roughness: 0.9, envIntensity: 0.85 },
   env: { background: 'charcoal', exposure: 1.0, toneMapping: 'neutral' },
   post: { bloom: false, threshold: 0.92, strength: 0.22, radius: 0.4 },
-  view: { wireframe: false, grid: true, plinth: true, shadowCatcher: true, autoRotate: true, autoRotateSpeed: 1 },
+  view: { wireframe: false, grid: true, plinth: true, shadowCatcher: true, autoRotate: false, autoRotateSpeed: 1 },
 };
 
 function deepDefault(overrides = {}) {
@@ -28,6 +28,7 @@ function deepDefault(overrides = {}) {
 // Presets declared by the catalogue entry (e.g. demos want bloom on by default).
 function baseFor(entry) {
   const o = {};
+  if(entry.group==='figurines'){o.env={background:'paper'};o.view={grid:false,plinth:false};}
   if (entry.defaultPost) o.post = entry.defaultPost;
   if (entry.defaultMaterial) o.material = entry.defaultMaterial;
   if (entry.best) o.camera = { yaw: entry.best.yaw, pitch: entry.best.pitch, distMul: entry.best.distMul, targetYMul: entry.best.targetYMul, fov: 38 };
@@ -53,6 +54,9 @@ export class ViewState {
       for (const c of CATALOG) this.data[c.id] = migrate(c, raw.views[c.id]);
     } else {
       for (const c of CATALOG) this.data[c.id] = baseFor(c);
+    }
+    if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+      for(const state of Object.values(this.data))state.view.autoRotate=false;
     }
     this._timer = null;
     this._dirty = false;

@@ -38,6 +38,7 @@ try {
     const app = document.getElementById('app');
     return !!app && !app.hidden && app.offsetParent !== null;
   }, { timeout: 30000 });
+  await page.waitForFunction(()=>!!window.__FORMA.current && !window.__FORMA.viewer.busy);
   await check('外部 glTF + bin + PNG 真实导入', async () => {
     // Derive disposable external files from an existing real mesh. Original bytes stay untouched.
     const glb = fs.readFileSync(path.join(ROOT, 'assets/models/sheng.glb'));
@@ -77,11 +78,13 @@ try {
     return evidence;
   });
   await check('单动画剪辑可通过面板暂停和继续', async () => {
+    await page.click('#glAdvanced');
     await page.$eval('#animationPanel', (panel) => { const details = panel.closest('details'); if (!details.open) details.querySelector('summary').click(); });
     const button = await page.$('#animationPanel button:last-child');
     assert.ok(button); assert.match(await button.evaluate((node) => node.textContent), /暂停/);
     await button.click(); assert.equal(await page.evaluate(() => window.__FORMA.viewer.action.paused), true);
     await button.click(); assert.equal(await page.evaluate(() => window.__FORMA.viewer.action.paused), false);
+    await page.click('#glDrawerClose');
   });
   await page.evaluate(async () => { await window.__FORMA.select('dan'); window.__FORMA.viewer.controls.autoRotate = false; window.__FORMA.actions.resetView(); });
   await sleep(400);

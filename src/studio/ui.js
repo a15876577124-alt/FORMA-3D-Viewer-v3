@@ -239,9 +239,9 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
     // 不改动 canvas 的挂载位置，也不销毁 Viewer。
     async enter() {
       active = true;
-      const restore = core.state.selection;
-      empty.hidden=!!restore;
-      if(!restore && viewer.modelRoot)viewer.modelRoot.visible=false;
+      const restore = core.state.selectedAsset ? {assetId:core.state.selectedAsset,version:core.state.selectedVersion} : null;
+      empty.hidden=!!core.state.selection;
+      if(!core.state.selection && viewer.modelRoot)viewer.modelRoot.visible=false;
       layout.setMode('studio');
       document.body.classList.add('mode-studio');
       document.body.classList.remove('mode-gallery');
@@ -254,10 +254,11 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
       dock.renderOps();
       if (core.state.status !== 'online') await core.probe();
       else core.refreshAssets();
-      if (active && restore && core.state.selection === restore) await core.selectAsset(restore.assetId, restore.version, {keepRun:true});
+      if (active && restore && core.state.selectedAsset===restore.assetId && core.state.selectedVersion===restore.version) await core.selectAsset(restore.assetId, restore.version, {keepRun:true});
     },
     leave() {
       active = false;
+      core.invalidateSelectionRequests();
       empty.hidden=true;
       if(viewer.modelRoot)viewer.modelRoot.visible=true;
       core.exitCompare();

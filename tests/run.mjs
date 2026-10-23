@@ -7,7 +7,7 @@ import { spawn, execFileSync } from 'node:child_process';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice(7);
-if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui', 'workflow', 'formats', 'agent-stability', 'agent-live', 'production-visual', 'art-repair', 'quality', 'providers', 'fbx-materials', 'local-security', 'geometry-semantics', 'performance', 'cdp'].includes(only)) {
+if (only && !['server', 'render', 'ui', 'import', 'extended', 'shots', 'pipeline', 'agent', 'ops', 'batch', 'proxy', 'opparams', 'compare', 'fbxtex', 'vendor', 'workspaces', 'layout', 'release', 'audit', 'compare-ui', 'fbxtex-ui', 'workflow', 'formats', 'agent-stability', 'agent-live', 'production-visual', 'art-repair', 'quality', 'providers', 'fbx-materials', 'local-security', 'geometry-semantics', 'performance', 'cdp', 'exhibition'].includes(only)) {
   console.error('未知测试组：' + only); process.exit(2);
 }
 const out = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'suite-' + new Date().toISOString().replace(/[:.]/g, '-')));
@@ -76,6 +76,10 @@ try {
   if (!only || only === 'release') await check('release', 'tools/static-pack-test.mjs');
   if (!only || only === 'pipeline') await check('pipeline', 'tests/pipeline.test.mjs');
   if (!only || only === 'production-visual') await check('production-visual', 'tools/production-visual-test.mjs');
+  if (!only || only === 'exhibition') {
+    await check('exhibition-models', 'tools/exhibition-model-test.mjs');
+    await check('exhibition', 'tools/exhibition-ui-test.mjs');
+  }
   if (!only || only === 'quality') await check('quality', 'tools/quality-ui-test.mjs');
   if (only === 'art-repair') await check('art-repair', 'tools/art-repair-test.mjs');
   if (only === 'agent-live') await check('agent-live', 'tools/agent-live-test.mjs');

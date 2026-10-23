@@ -45,6 +45,7 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
 
   exitCompareBtn.hidden = true;
   compareBtn.hidden = true;
+  prepareBtn.hidden = true;
 
   const groupLeft = el('div', { class: 'st-tb-group' }, importBtn, prepareBtn, analyzeBtn, aiBtn, batchBtnTop);
   const layoutBtn = act('stLayoutReset', '布局', '恢复默认工作区布局（面板宽度与底部任务区高度）', () => onResetLayout?.());
@@ -74,6 +75,7 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
   function setAsset(name) {
     const el2 = node.querySelector('#stAssetName');
     if (el2) el2.textContent = name || '未选择资产';
+    prepareBtn.hidden = !['fbx','obj','gltf'].includes(core.state.selection?.format);
   }
 
   function setCompareAvailable(on) {

@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 export const BACKDROPS = {
+  paper: { outer: '#efede6', inner: '#efede6', halt: 0.5 },
   charcoal: { outer: '#080a0c', inner: '#1e242c', halt: 0.55 },
   slate:    { outer: '#070a0e', inner: '#18242f', halt: 0.6 },
   warm:     { outer: '#0b0907', inner: '#2a2320', halt: 0.55 },

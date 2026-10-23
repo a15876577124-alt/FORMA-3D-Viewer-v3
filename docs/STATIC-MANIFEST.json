@@ -2,18 +2,108 @@
   "note": "FORMA 公开展厅静态发布清单。由 tools/static-release.mjs 生成，勿手工编辑。",
   "entry": "index.html",
   "totals": {
-    "files": 90,
-    "bytes": 30246772,
+    "files": 93,
+    "bytes": 30177823,
     "byKind": {
-      "html-link": 5,
-      "runtime-asset": 10,
+      "runtime-asset": 15,
+      "html-link": 6,
       "entry": 2,
       "preview": 2,
-      "module": 68,
+      "module": 65,
       "license": 3
     }
   },
   "files": [
+    {
+      "path": "assets/exhibition-v1/dan.glb",
+      "kind": "runtime-asset",
+      "bytes": 6286024,
+      "sha256": "7f7757dfc2a56511"
+    },
+    {
+      "path": "assets/exhibition-v1/jing-red.glb",
+      "kind": "runtime-asset",
+      "bytes": 6551076,
+      "sha256": "5cf85470b1770825"
+    },
+    {
+      "path": "assets/exhibition-v1/jing-white.glb",
+      "kind": "runtime-asset",
+      "bytes": 4468904,
+      "sha256": "0eb0df82e42479ce"
+    },
+    {
+      "path": "assets/exhibition-v1/jing-yellow.glb",
+      "kind": "runtime-asset",
+      "bytes": 4824644,
+      "sha256": "5025b50572f728f7"
+    },
+    {
+      "path": "assets/exhibition-v1/sheng.glb",
+      "kind": "runtime-asset",
+      "bytes": 4461760,
+      "sha256": "59105b4e00f71e0e"
+    },
+    {
+      "path": "assets/exhibition/dan-thumb.webp",
+      "kind": "runtime-asset",
+      "bytes": 12724,
+      "sha256": "d46dfba9d7b98cac"
+    },
+    {
+      "path": "assets/exhibition/dan.webp",
+      "kind": "runtime-asset",
+      "bytes": 98630,
+      "sha256": "2fb573e7bd1d2658"
+    },
+    {
+      "path": "assets/exhibition/jing-red-thumb.webp",
+      "kind": "runtime-asset",
+      "bytes": 12456,
+      "sha256": "d2c3e6b0e513ee2d"
+    },
+    {
+      "path": "assets/exhibition/jing-red.webp",
+      "kind": "runtime-asset",
+      "bytes": 84806,
+      "sha256": "937151797d58ca58"
+    },
+    {
+      "path": "assets/exhibition/jing-white-thumb.webp",
+      "kind": "runtime-asset",
+      "bytes": 9212,
+      "sha256": "b20057ce1421e550"
+    },
+    {
+      "path": "assets/exhibition/jing-white.webp",
+      "kind": "runtime-asset",
+      "bytes": 58046,
+      "sha256": "093d53e55cda5e9f"
+    },
+    {
+      "path": "assets/exhibition/jing-yellow-thumb.webp",
+      "kind": "runtime-asset",
+      "bytes": 8926,
+      "sha256": "6f81abed01574539"
+    },
+    {
+      "path": "assets/exhibition/jing-yellow.webp",
+      "kind": "runtime-asset",
+      "bytes": 59966,
+      "sha256": "aab3de7227a6ec5c"
+    },
+    {
+      "path": "assets/exhibition/sheng-thumb.webp",
+      "kind": "runtime-asset",
+      "bytes": 9514,
+      "sha256": "9fd2e260011aba75"
+    },
+    {
+      "path": "assets/exhibition/sheng.webp",
+      "kind": "runtime-asset",
+      "bytes": 63164,
+      "sha256": "95f221a7f6d3a100"
+    },
     {
       "path": "assets/favicon.svg",
       "kind": "html-link",
@@ -21,70 +111,10 @@
       "sha256": "e7b95d737e5b3973"
     },
     {
-      "path": "assets/models/dan.glb",
-      "kind": "runtime-asset",
-      "bytes": 5941880,
-      "sha256": "ae34dce38bf8acc0"
-    },
-    {
-      "path": "assets/models/jing-red.glb",
-      "kind": "runtime-asset",
-      "bytes": 6209212,
-      "sha256": "d26c16e25cc6defa"
-    },
-    {
-      "path": "assets/models/jing-white.glb",
-      "kind": "runtime-asset",
-      "bytes": 4148076,
-      "sha256": "2a30c1ae95850ec0"
-    },
-    {
-      "path": "assets/models/jing-yellow.glb",
-      "kind": "runtime-asset",
-      "bytes": 4496104,
-      "sha256": "988b12c331b27e01"
-    },
-    {
-      "path": "assets/models/sheng.glb",
-      "kind": "runtime-asset",
-      "bytes": 4138144,
-      "sha256": "b59fd81f14ebda8c"
-    },
-    {
-      "path": "assets/thumbs/dan.png",
-      "kind": "runtime-asset",
-      "bytes": 318975,
-      "sha256": "828e01cf2ad95330"
-    },
-    {
-      "path": "assets/thumbs/jing-red.png",
-      "kind": "runtime-asset",
-      "bytes": 307008,
-      "sha256": "07171e499e2e340f"
-    },
-    {
-      "path": "assets/thumbs/jing-white.png",
-      "kind": "runtime-asset",
-      "bytes": 287538,
-      "sha256": "46792b6deb319e5f"
-    },
-    {
-      "path": "assets/thumbs/jing-yellow.png",
-      "kind": "runtime-asset",
-      "bytes": 284731,
-      "sha256": "38ac775f01f58283"
-    },
-    {
-      "path": "assets/thumbs/sheng.png",
-      "kind": "runtime-asset",
-      "bytes": 288474,
-      "sha256": "dd9a5f6afa19104a"
-    },
-    {
       "path": "index.html",
       "kind": "entry",
-      "bytes": 20057,
-      "sha256": "dceaaa91f36dcec0"
+      "bytes": 20156,
+      "sha256": "6af66fa7fa39c6ae"
     },
     {
       "path": "local-http.mjs",
@@ -111,28 +141,22 @@
       "sha256": "c93adef0195ab24e"
     },
     {
-      "path": "src/core/miniViewer.js",
-      "kind": "module",
-      "bytes": 6658,
-      "sha256": "71a5aebc7589a226"
-    },
-    {
       "path": "src/core/router.js",
       "kind": "module",
-      "bytes": 6188,
-      "sha256": "3cd8cc99d14934c0"
+      "bytes": 5789,
+      "sha256": "3f972fda0aee4691"
     },
     {
       "path": "src/core/viewer.js",
       "kind": "module",
-      "bytes": 18441,
-      "sha256": "086c484b8589f8d7"
+      "bytes": 18823,
+      "sha256": "86e8f50a1a0c02f7"
     },
     {
       "path": "src/lighting/environment.js",
       "kind": "module",
-      "bytes": 3383,
-      "sha256": "442c3f08433165b7"
+      "bytes": 3444,
+      "sha256": "dff48c8ba1afcb30"
     },
     {
       "path": "src/lighting/studio.js",
@@ -155,8 +179,8 @@
     {
       "path": "src/loaders/normals.js",
       "kind": "module",
-      "bytes": 4285,
-      "sha256": "985ed91c9ed65bea"
+      "bytes": 4361,
+      "sha256": "d638b40d70f3e0a6"
     },
     {
       "path": "src/loaders/registry.js",
@@ -167,8 +191,8 @@
     {
       "path": "src/main.js",
       "kind": "entry",
-      "bytes": 22896,
-      "sha256": "bac887ea1e317f5c"
+      "bytes": 23327,
+      "sha256": "a1a3d5f15893455c"
     },
     {
       "path": "src/materials/override.js",
@@ -179,8 +203,8 @@
     {
       "path": "src/models/catalog.js",
       "kind": "module",
-      "bytes": 4625,
-      "sha256": "ac99d8d3f5b01e59"
+      "bytes": 4962,
+      "sha256": "54899d064faf7c9a"
     },
     {
       "path": "src/models/library.js",
@@ -191,8 +215,8 @@
     {
       "path": "src/models/place.js",
       "kind": "module",
-      "bytes": 4740,
-      "sha256": "14d43e0abf527beb"
+      "bytes": 6011,
+      "sha256": "4ec1bc5495e585ce"
     },
     {
       "path": "src/models/procedural.js",
@@ -209,20 +233,14 @@
     {
       "path": "src/pages/home.js",
       "kind": "module",
-      "bytes": 8867,
-      "sha256": "9c13bdfead42791c"
-    },
-    {
-      "path": "src/pages/home3d.js",
-      "kind": "module",
-      "bytes": 8027,
-      "sha256": "fcfaf5ab821fcec7"
+      "bytes": 2269,
+      "sha256": "eda1421ffc710284"
     },
     {
       "path": "src/pages/work.js",
       "kind": "module",
-      "bytes": 5395,
-      "sha256": "820204a531653ba0"
+      "bytes": 2691,
+      "sha256": "64a26b3f16b20685"
     },
     {
       "path": "src/post/composer.js",
@@ -245,14 +263,14 @@
     {
       "path": "src/state/viewState.js",
       "kind": "module",
-      "bytes": 3206,
-      "sha256": "9ce305feba8c2aeb"
+      "bytes": 3467,
+      "sha256": "15a2570fd55d4b00"
     },
     {
       "path": "src/studio/core.js",
       "kind": "module",
-      "bytes": 33461,
-      "sha256": "2629a1105f03d1b4"
+      "bytes": 33796,
+      "sha256": "639ab6ee623aef4b"
     },
     {
       "path": "src/studio/dock.js",
@@ -275,8 +293,8 @@
     {
       "path": "src/studio/toolbar.js",
       "kind": "module",
-      "bytes": 4755,
-      "sha256": "77830f8d3f8cc804"
+      "bytes": 4871,
+      "sha256": "25a3008eb827cd54"
     },
     {
       "path": "src/studio/tree.js",
@@ -287,14 +305,14 @@
     {
       "path": "src/studio/ui.js",
       "kind": "module",
-      "bytes": 12389,
-      "sha256": "b88a41c4aa7e1720"
+      "bytes": 12599,
+      "sha256": "0ec4df760790de93"
     },
     {
       "path": "src/ui/brand.js",
       "kind": "module",
-      "bytes": 2401,
-      "sha256": "8721155989bbcafe"
+      "bytes": 2449,
+      "sha256": "917acde386e24cb6"
     },
     {
       "path": "src/ui/chrome.js",
@@ -305,8 +323,8 @@
     {
       "path": "src/ui/contact.js",
       "kind": "module",
-      "bytes": 2961,
-      "sha256": "c93b623fb72a465e"
+      "bytes": 2067,
+      "sha256": "fca3aea3abce824b"
     },
     {
       "path": "src/ui/feedback.js",
@@ -317,8 +335,8 @@
     {
       "path": "src/ui/gallery.js",
       "kind": "module",
-      "bytes": 8691,
-      "sha256": "cde40331e4c5367f"
+      "bytes": 5012,
+      "sha256": "ed70effd08f576e9"
     },
     {
       "path": "src/ui/inspector.js",
@@ -335,8 +353,8 @@
     {
       "path": "src/ui/shell.js",
       "kind": "module",
-      "bytes": 3822,
-      "sha256": "1be396e34f09e75f"
+      "bytes": 1269,
+      "sha256": "66abaca77d86bfff"
     },
     {
       "path": "src/ui/sidebar.js",
@@ -369,6 +387,12 @@
       "sha256": "1176ec2f589ad32f"
     },
     {
+      "path": "styles/exhibition.css",
+      "kind": "html-link",
+      "bytes": 15971,
+      "sha256": "5797ca0fe82deec9"
+    },
+    {
       "path": "styles/studio.css",
       "kind": "html-link",
       "bytes": 35749,
@@ -383,20 +407,14 @@
     {
       "path": "styles/v5.css",
       "kind": "html-link",
-      "bytes": 32382,
-      "sha256": "32d61181e9848e90"
+      "bytes": 20172,
+      "sha256": "c0d2fbb2ba4d7be4"
     },
     {
       "path": "vendor/fflate/LICENSE",
       "kind": "license",
       "bytes": 1070,
       "sha256": "370679c457d36555"
-    },
-    {
-      "path": "vendor/postprocessing/build/postprocessing.esm.js",
-      "kind": "module",
-      "bytes": 634535,
-      "sha256": "b1111c2a755e2f05"
     },
     {
       "path": "vendor/postprocessing/LICENSE.md",

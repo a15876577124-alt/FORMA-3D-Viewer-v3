@@ -153,6 +153,12 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     if(!window.confirm('当前材质有未保存修改。放弃预览并离开工作区？'))return false;
     materialDraft?.reset?.();setMaterialDraft(null);return true;
   }
+  function invalidateSelectionRequests(){
+    // Background operations may finish and retain their output, but their late
+    // response must not remount a model after the user leaves this workspace.
+    ++selectionTicket;
+    if(state.selectionStatus==='loading')state.selectionStatus='empty';
+  }
   async function selectAsset(id, version = 0, { keepRun = false } = {}) {
     if(state.materialDirty && !keepRun && !window.confirm('当前材质有未保存修改。放弃预览并切换资产或版本？'))return null;
     materialDraft?.reset?.();setMaterialDraft(null);
@@ -658,7 +664,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     state,
     selectProvider,testAiConnection,
     setMaterialDraft,
-    canLeave,
+    canLeave, invalidateSelectionRequests,
     connect, probe, refreshAssets,
     selectAsset, selectEntry, setOpEnabled, setOpParams, selectedOps, applyPreset,
     analyze, detectTextures, extractTextures,

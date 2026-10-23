@@ -51,11 +51,12 @@ try {
     && contact.mails.some((m) => m.text.includes('haorongli09@gmail.com') && m.href.startsWith('mailto:')),
   JSON.stringify(contact?.mails));
   ok('每个邮箱都有复制按钮', contact?.copies === 2, String(contact?.copies));
-  ok('首页不重复出现邮箱（页脚已让位）', contact?.pageMailLinks === 2 && !contact?.inFooter, JSON.stringify({ n: contact?.pageMailLinks, foot: contact?.inFooter }));
+  ok('公共页脚仅有一份按需联系方式', contact?.pageMailLinks === 2 && contact?.inFooter, JSON.stringify({ n: contact?.pageMailLinks, foot: contact?.inFooter }));
 
   // 真实点击复制（授予剪贴板权限后读回真实剪贴板内容）
   const ctx = browser.defaultBrowserContext();
   try { await ctx.overridePermissions(BASE, ['clipboard-read', 'clipboard-write']); } catch { /* 视版本 */ }
+  await page.click('#contactBlock summary');
   await page.click('#contactBlock .v5-contact-copy');
   await sleep(500);
   const clip = await page.evaluate(async () => {
@@ -75,7 +76,7 @@ try {
     const b = document.getElementById('contactBlock');
     return { has: !!b, mails: b ? b.querySelectorAll('a.v5-contact-mail').length : 0, foot: !!document.querySelector('.v5-footer a[href^="mailto:"]') };
   });
-  ok('作品详情页保留联系方式且不重复', workContact.has && workContact.mails === 2 && !workContact.foot, JSON.stringify(workContact));
+  ok('作品详情页保留联系方式且不重复', workContact.has && workContact.mails === 2 && workContact.foot, JSON.stringify(workContact));
 
   // ---------------------------------------------------------------- 布局
   console.log('[B] Studio 可拖拽布局');
@@ -265,22 +266,13 @@ try {
     bottomHandleHidden: getComputedStyle(document.querySelector('#stHandleBottom')).display === 'none',
   }));
   ok('Gallery 下底部任务区与横向手柄让位', galleryLayout.dockHidden === true && galleryLayout.bottomHandleHidden, JSON.stringify(galleryLayout));
-  ok('Gallery 布局模式独立', galleryLayout.mode === 'gallery' && galleryLayout.railVisible, JSON.stringify(galleryLayout));
+  ok('Gallery 布局模式独立', galleryLayout.mode === 'gallery' && !galleryLayout.railVisible, JSON.stringify(galleryLayout));
 
-  // Gallery 辅助栏可折叠 + 常驻展开入口
-  await page.click('#glRailToggle');
-  await sleep(400);
-  const railHidden = await page.evaluate(() => ({
-    hidden: document.body.classList.contains('gl-rail-hidden'),
-    restoreVisible: document.querySelector('#glRailRestore')?.getBoundingClientRect().width > 0,
-    inspectorW: document.querySelector('#inspector')?.getBoundingClientRect().width,
-  }));
-  ok('Gallery 辅助栏可折叠', railHidden.hidden && railHidden.inspectorW === 0, JSON.stringify(railHidden));
-  ok('折叠后展开入口常驻可见', railHidden.restoreVisible);
-  await page.click('#glRailRestore');
-  await sleep(400);
-  const railBack = await page.evaluate(() => ({ hidden: document.body.classList.contains('gl-rail-hidden'), w: document.querySelector('#inspector')?.getBoundingClientRect().width }));
-  ok('可把辅助栏拉回来', !railBack.hidden && railBack.w > 100, JSON.stringify(railBack));
+  // Gallery uses an on-demand settings drawer instead of a permanent rail.
+  await page.click('#glAdvanced');
+  ok('Gallery 设置可展开', await page.$eval('#glDrawer', e=>!e.hidden && e.getBoundingClientRect().width>100));
+  await page.click('#glDrawerClose');
+  ok('设置关闭后入口仍可达', await page.$eval('#glAdvanced', e=>e.getBoundingClientRect().width>40 && document.querySelector('#glDrawer').hidden));
 
   await page.evaluate(() => { location.hash = '#/studio'; });
   await page.waitForFunction('document.body.classList.contains("mode-studio")', { timeout: 30000 });

@@ -46,12 +46,12 @@ try {
       advancedBtn: vis('#glAdvanced'),
       hiddenToolBar: !vis('#studioToolbar'), hiddenTree: !vis('#studioTree'), hiddenRail: !vis('#studioRail'), hiddenDock: !vis('#studioDock'),
       hiddenPipeline: !vis('#pipelineSect'),
-      tris: Number((document.querySelector('#glTris')?.textContent || '0').replace(/,/g, '')),
+      tris: window.__FORMA.info.modelTris,
       canvasW: document.querySelector('#stage')?.clientWidth,
     };
   });
   ok('Gallery 处于观展模式', gallery.mode);
-  ok('观展信息卡显示真实三角面', gallery.tris > 10000, String(gallery.tris));
+  ok('观展标题与真实模型同时就绪', gallery.card && gallery.cardTitle==='生角' && gallery.tris > 10000, String(gallery.tris));
   ok('高级控制台入口存在', gallery.advancedBtn);
   ok('生产工具条不可见', gallery.hiddenToolBar && gallery.hiddenTree && gallery.hiddenRail && gallery.hiddenDock);
   ok('旧 AI 管线面板已下线', gallery.hiddenPipeline);
@@ -134,8 +134,8 @@ try {
   console.log('[5] 首页 → Gallery → Studio');
   await page.evaluate(() => { location.hash = '#/'; });
   await sleep(900);
-  const home = await page.evaluate(() => ({ layer: !!document.querySelector('.v5-home'), cards: document.querySelectorAll('.v5-launch').length }));
-  ok('首页启动台正常', home.layer && home.cards === 4, JSON.stringify(home));
+  const home = await page.evaluate(() => ({ layer: !!document.querySelector('.ex-home'), cards: document.querySelectorAll('.ex-work-card').length }));
+  ok('首页五件作品目录正常', home.layer && home.cards === 5, JSON.stringify(home));
   await page.evaluate(() => { location.hash = '#/gallery'; });
   await sleep(900);
   const back = await page.evaluate(() => ({ app: document.querySelector('#app')?.hidden, tris: window.__FORMA.info.modelTris }));

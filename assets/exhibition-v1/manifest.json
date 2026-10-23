@@ -1,0 +1,235 @@
+{
+  "operation": "Normals only; all original buffer bytes and material definitions preserved.",
+  "models": [
+    {
+      "id": "sheng",
+      "sourceSha256": "b59fd81f14ebda8c90590be37828640819d9f182e1ba6aaa368909340e1bf52b",
+      "outputSha256": "59105b4e00f71e0e264bb4e8de28531f37709fd841b82d7eb37027308161dbb7",
+      "materials": [
+        {
+          "pbrMetallicRoughness": {
+            "baseColorTexture": {
+              "index": 0
+            },
+            "baseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "roughnessFactor": 0.9036020036098448,
+            "metallicFactor": 0
+          },
+          "doubleSided": false
+        }
+      ],
+      "primitives": [
+        {
+          "vertices": 26951,
+          "triangles": 47512,
+          "groupCount": 23744,
+          "duplicates": 3207,
+          "before": {
+            "positionGroups": 23758,
+            "discontinuitiesOver5Degrees": 1511,
+            "maxAngle": 179.692
+          },
+          "after": {
+            "positionGroups": 23758,
+            "discontinuitiesOver5Degrees": 0,
+            "maxAngle": 0
+          }
+        }
+      ],
+      "validator": {
+        "sourceErrors": 6,
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "dan",
+      "sourceSha256": "ae34dce38bf8acc0cd058f9a42d63c4fecc231863a8d12d517b155e8ca114026",
+      "outputSha256": "7f7757dfc2a565119ae4b6cb7171a2b88335bac4130a3c26d8fbae91a2140e9b",
+      "materials": [
+        {
+          "pbrMetallicRoughness": {
+            "baseColorTexture": {
+              "index": 0
+            },
+            "baseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "roughnessFactor": 0.9036020036098448,
+            "metallicFactor": 0
+          },
+          "doubleSided": false
+        }
+      ],
+      "primitives": [
+        {
+          "vertices": 28662,
+          "triangles": 46828,
+          "groupCount": 23346,
+          "duplicates": 5316,
+          "before": {
+            "positionGroups": 23358,
+            "discontinuitiesOver5Degrees": 3766,
+            "maxAngle": 170.523
+          },
+          "after": {
+            "positionGroups": 23358,
+            "discontinuitiesOver5Degrees": 0,
+            "maxAngle": 0
+          }
+        }
+      ],
+      "validator": {
+        "sourceErrors": 5,
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "jing-red",
+      "sourceSha256": "d26c16e25cc6defaead879b440ee7ab696e2f891fb23fb16517d603bd13066e3",
+      "outputSha256": "5cf85470b1770825f583c006d17b1b23d39cdd1fbdf2e05d32e6150fc996ae7d",
+      "materials": [
+        {
+          "pbrMetallicRoughness": {
+            "baseColorTexture": {
+              "index": 0
+            },
+            "baseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "roughnessFactor": 0.9036020036098448,
+            "metallicFactor": 0
+          },
+          "doubleSided": false
+        }
+      ],
+      "primitives": [
+        {
+          "vertices": 28472,
+          "triangles": 49178,
+          "groupCount": 24566,
+          "duplicates": 3906,
+          "before": {
+            "positionGroups": 24583,
+            "discontinuitiesOver5Degrees": 2753,
+            "maxAngle": 135.335
+          },
+          "after": {
+            "positionGroups": 24583,
+            "discontinuitiesOver5Degrees": 0,
+            "maxAngle": 0
+          }
+        }
+      ],
+      "validator": {
+        "sourceErrors": 7,
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "jing-yellow",
+      "sourceSha256": "988b12c331b27e010c8ee0487555aae26b0ddec5d96274e2c1952e1eaa64ed34",
+      "outputSha256": "5025b50572f728f74f53ed97d623fc12ac1e808fc8842765f812e9ce396b0d87",
+      "materials": [
+        {
+          "pbrMetallicRoughness": {
+            "baseColorTexture": {
+              "index": 0
+            },
+            "baseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "roughnessFactor": 0.9036020036098448,
+            "metallicFactor": 0
+          },
+          "doubleSided": false
+        }
+      ],
+      "primitives": [
+        {
+          "vertices": 27361,
+          "triangles": 47852,
+          "groupCount": 23918,
+          "duplicates": 3443,
+          "before": {
+            "positionGroups": 23928,
+            "discontinuitiesOver5Degrees": 1843,
+            "maxAngle": 179.999
+          },
+          "after": {
+            "positionGroups": 23928,
+            "discontinuitiesOver5Degrees": 0,
+            "maxAngle": 0
+          }
+        }
+      ],
+      "validator": {
+        "sourceErrors": 6,
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "jing-white",
+      "sourceSha256": "2a30c1ae95850ec000a5b46fe8774e9596b9e573a7ce17aabb2c3347b79e740e",
+      "outputSha256": "0eb0df82e42479cecc1eb75ebe362af54444340c33f9433242e9b32e8c8b454b",
+      "materials": [
+        {
+          "pbrMetallicRoughness": {
+            "baseColorTexture": {
+              "index": 0
+            },
+            "baseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "roughnessFactor": 0.9036020036098448,
+            "metallicFactor": 0
+          },
+          "doubleSided": false
+        }
+      ],
+      "primitives": [
+        {
+          "vertices": 26720,
+          "triangles": 46939,
+          "groupCount": 23450,
+          "duplicates": 3270,
+          "before": {
+            "positionGroups": 23468,
+            "discontinuitiesOver5Degrees": 1815,
+            "maxAngle": 132.369
+          },
+          "after": {
+            "positionGroups": 23468,
+            "discontinuitiesOver5Degrees": 0,
+            "maxAngle": 0
+          }
+        }
+      ],
+      "validator": {
+        "sourceErrors": 8,
+        "errors": 0,
+        "warnings": 0
+      }
+    }
+  ]
+}
