@@ -79,6 +79,11 @@ try{
   const pub2=await post('/api/assets/'+savedExport.assetId+'/publish',{version:savedExport.version});check('publish is idempotent',pub.url===pub2.url);
   const loaded=await page.evaluate(async url=>{const {loadGLTF}=await import('/src/loaders/importers.js');const {disposeObject}=await import('/src/utils/dispose.js');const m=await loadGLTF(url);let count=0,roughness;m.root.traverse(o=>{if(o.isMesh){count++;roughness=o.material.roughness;}});disposeObject(m.root);return {count,roughness};},pub.url);
   check('published GLTF loads textures and edited material',loaded.count>0&&loaded.roughness===0.82);
+  await page.evaluate(async data=>{const {libraryEntryToCatalog}=await import('/src/models/library.js');await window.__FORMA.studio.core.selectEntry(libraryEntryToCatalog({id:data.assetId+'-v'+data.version,sourceId:data.assetId,version:data.version,url:data.url}));},{...savedExport,url:pub.url});
+  check('published entry selects its exact source version',(await identity()).version===savedExport.version);
+  const stale=await page.evaluate(async id=>{const api=(await import('/src/net/api.js')).pipelineApi,c=window.__FORMA.studio.core,original=api.run;let release;api.run=()=>new Promise(r=>{release=r;});try{const pending=c.exportAs('glb');await c.selectAsset(id);release({assetId:'previous-asset',version:99,afterPath:'previous.glb'});await pending;return c.state.selectedAsset===id&&c.state.lastExport===null;}finally{api.run=original;}},assets[0].id);
+  check('late export response cannot overwrite next asset state',stale);
+  await page.evaluate(v=>window.__FORMA.studio.core.selectAsset(v.assetId,v.version),savedExport);
   await page.evaluate(async()=>{const c=window.__FORMA.studio.core;await c.compareVersions(0,c.state.selectedVersion);});
   check('comparison selects two real version files',await page.evaluate(()=>!!window.__FORMA.studio.rig?.groupA&&!!window.__FORMA.studio.rig?.groupB));
   await page.screenshot({path:path.join(OUT,'material-comparison.png')});

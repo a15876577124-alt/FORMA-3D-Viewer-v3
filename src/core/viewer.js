@@ -64,8 +64,9 @@ export class Viewer {
     {
       const pmrem = new THREE.PMREMGenerator(this.renderer);
       this._roomEnv = new RoomEnvironment();
-      this.scene.environment = pmrem.fromScene(this._roomEnv, 0.04).texture;
-      this._envPmrem = pmrem;
+      this._envTarget = pmrem.fromScene(this._roomEnv, 0.04);
+      this.scene.environment = this._envTarget.texture;
+      this._roomEnv.dispose(); pmrem.dispose();
     }
 
     this.controls = new OrbitControls(this.camera, canvas);
@@ -120,6 +121,7 @@ export class Viewer {
     const tick = () => {
       this.frame = requestAnimationFrame(tick);
       this.timer.update();
+      if(document.hidden || !this.canvas.getClientRects().length) return;
       const dt = Math.min(this.timer.getDelta(), 0.1);
       if (this.mixer) this.mixer.update(dt);
       this.controls.update(dt);
@@ -132,7 +134,7 @@ export class Viewer {
     this.frame = requestAnimationFrame(tick);
   }
 
-  render() { this.post.render(); }
+  render() { this.compareRig?.updatePlanes(); this.post.render(); }
 
   // ---------------------------------------------------------------- resize --
 
@@ -203,10 +205,10 @@ export class Viewer {
   _evictCache() {
     const cap = this.caps.mobile ? 2 : 5;
     const keys = [...this.cache.keys()];
-    while (keys.length > cap) {
-      const oldest = keys.shift();
-      if (this.currentEntry && oldest === this.currentEntry.id) { keys.push(oldest); continue; }
-      if (this.pinned && this.pinned.has(oldest)) { keys.push(oldest); continue; }
+    for (const oldest of keys) {
+      if(this.cache.size <= cap)break;
+      if (this.currentEntry && oldest === this.currentEntry.id) { continue; }
+      if (this.pinned && this.pinned.has(oldest)) { continue; }
       const victim = this.cache.get(oldest);
       this.cache.delete(oldest);
       this._disposeLoaded(victim);

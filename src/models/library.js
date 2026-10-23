@@ -18,6 +18,8 @@ export function libraryEntryToCatalog(item) {
     best: { yaw: 1.62, pitch: 0.16, distMul: 1.0, targetYMul: 0.5 },
     library: true,
     sourceId: item.sourceId || null,
+    assetId: item.sourceId || null,
+    version: item.version ?? 1,
   };
 }
 

@@ -45,3 +45,32 @@ workflow 34/34（suite-2026-10-23T07-36-36-155Z）：上传、分析、绑定纹
 证据：`test-out/suite-2026-10-23T08-05-11-517Z/agent-live/`（原始工具调用日志和截图）；4 个稳定性测试通过；旧 Agent 36 项、Pipeline 50 项通过。首次真实验收发现并修复日志与模型加载时序；记录保留在 08-04-03-838Z。单组 Agent 测试发现隔离目录缺少 test-out，已修复 runner 初始化，未修改断言。
 
 限制：取消不是强制终止正在执行的同步 CPU 算子；网络失败不会自动重放可能写入的操作。服务重启会让旧确认 token 失效，再次恢复时会重新要求确认。
+
+
+## 阶段 6：界面、渲染与可靠性
+
+Gallery 390px Inspector 定位超出屏幕，Studio 固定高度工具栏被压缩。改为实际面板定位、可换行工具组、保留文字、移动抽屉。资源树前置，原作品列表与导入入口继续保留，作品选择和拖放接入统一后端资产；已发布条目携带真实 sourceId/version。Lab 初始化只展示当前页签，处理完成清除旧确认提示。
+
+Before/After 使用 Original 的同一摆放变换，不再各自归一化隐藏尺度变化。裁剪面通过相机与屏幕分割线，旋转后仍对齐；不裁剪影子，不修改作者材质。新增同机位 before.png / after.png。五轮对比后 GPU geometry/texture 回收验证，无新增效果掩盖模型细节。
+
+主 Viewer 在隐藏/后台不继续渲染；释放 PMREM 烘焙临时资源；miniViewer 释放环境目标且拒绝挂载已销毁后的迟到模型。对比部分加载失败释放另一端，包围盒工具随模型切换释放，缓存被全部 pin 时不再无限循环。
+
+全量回归捕获并修复：分享链接竞争导致 ready Promise 永远为 false；单组 Agent 临时目录初始化；比较测试在全套运行时错误选中其它组资产，改为明确选择该测试原本规定的 compare-probe（没有降低断言）。静态包测试使用随机端口，失败时输出页面诊断。未知/只读工具错误继续回灌 LLM，写入工具失败停止，保留第一轮错误恢复契约。
+
+## 开源技术决策
+
+- 继续复用 glTF Transform + meshoptimizer、Three.js 0.186.1、Sharp；未升级它们或替换正常运行的 WorkBuddy 服务。
+- 新增 [Khronos glTF Validator](https://github.com/KhronosGroup/glTF-Validator) 2.0.0-dev.3.10（Apache-2.0），实际 Node 24 + Edge 往返兼容验证。用于格式检查，不能代替视觉/语义检查。
+- [glTF Transform simplify](https://gltf-transform.dev/modules/functions/functions/simplify) 的 error/拓扑约束可能使目标减面比例不可达；无收益失败样本被保留，没有放宽错误阈值来制造结果。
+- [ufbx](https://github.com/ufbx/ufbx) 提供嵌入纹理、骨骼和厂商材质等能力，MIT 可选；本轮仅使用其带许可测试资产，未添加运行时。下一步需以当前 Three FBX 的具体失败样本评估 Windows/WASM 集成。
+- [KTX-Software](https://github.com/KhronosGroup/KTX-Software) 留作 GPU 纹理压缩候选；需要一起验证编码器、Three KTX2 解码器、移动设备格式和对应组件许可证后再引入，本轮未宣称具备此能力。
+
+## 操作演示路径
+
+1. npm start → AI Studio → 导入 test-assets/licensed/Avocado.glb（或 blender-embedded.fbx）。
+2. 确认资源树、名称、Inspector、视口一致。FBX 先“转为 GLB 版本”，阅读风险后再次确认。
+3. Material Lab 选择材质，预览/重置；保存为新版本并重新加载。Original 保持只读。
+4. 配置实际算子：Avocado 可用 simplify ratio=0.7/error=0.01；12 面 FBX 用 weld epsilon=0.000001，后验检查顶点减少/面数不变。
+5. 版本区选择 Before 与 After，旋转/滑动比较；导出选定版本，GLTF 下载 ZIP，解包后选择模型与全部依赖重新导入。
+6. 发布通过验证的版本到本地资产库；点击条目加载。这里的“发布”没有部署到公共网站。
+7. Agent 日志输入任务，选择“仅分析”或“执行 AI 任务”；风险出现后确认具体工具调用；结果和失败都写实际日志。

@@ -86,6 +86,7 @@ export async function importFiles(rawFiles, viewer, hooks = {}) {
     else { toast(MESSAGES.unsupportedExt('.' + ext), 'err'); return null; }
 
     const entry = entryFor(res, main);
+    entry.sourceFiles = [main,...assets];
     if (!entry.tris) throw new Error('no mesh: this file contains no drawable geometry');
 
     viewer.mountImported(res, entry);

@@ -44,14 +44,14 @@ if (!health?.ok) { console.error('后端未启动'); process.exit(1); }
 // 的测试留下的 FBX/其他格式资产，不能随手取第一个。
 const glbName = 'compare-probe.glb';
 let assets = await fetch(`http://127.0.0.1:${BE_PORT}/api/assets`).then((r) => r.json()).catch(() => ({ assets: [] }));
-if (!assets.assets?.some((a) => a.name.endsWith('.glb'))) {
+if (!assets.assets?.some((a) => a.name === glbName)) {
   await fetch(`http://127.0.0.1:${BE_PORT}/api/assets/import`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: glbName, dataBase64: fs.readFileSync(rawPath).toString('base64') }),
   });
   assets = await fetch(`http://127.0.0.1:${BE_PORT}/api/assets`).then((r) => r.json());
 }
-const glbAsset = assets.assets.find((a) => a.name.endsWith('.glb'));
+const glbAsset = assets.assets.find((a) => a.name === glbName);
 
 const browser = await launchBrowser();
 try {

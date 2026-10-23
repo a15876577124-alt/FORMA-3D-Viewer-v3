@@ -3,7 +3,7 @@
   "entry": "index.html",
   "totals": {
     "files": 84,
-    "bytes": 30203916,
+    "bytes": 30210819,
     "byKind": {
       "html-link": 5,
       "runtime-asset": 10,
@@ -93,14 +93,14 @@
     {
       "path": "src/core/compare.js",
       "kind": "module",
-      "bytes": 2673,
-      "sha256": "db2d2b5a58da93b6"
+      "bytes": 3008,
+      "sha256": "56dbbad37482b4a4"
     },
     {
       "path": "src/core/miniViewer.js",
       "kind": "module",
-      "bytes": 5333,
-      "sha256": "10d42d032f4abe6f"
+      "bytes": 5634,
+      "sha256": "a30de6e081543543"
     },
     {
       "path": "src/core/router.js",
@@ -111,8 +111,8 @@
     {
       "path": "src/core/viewer.js",
       "kind": "module",
-      "bytes": 17824,
-      "sha256": "9bdf70544d8cd53f"
+      "bytes": 17957,
+      "sha256": "54e010a11ee89788"
     },
     {
       "path": "src/lighting/environment.js",
@@ -147,14 +147,14 @@
     {
       "path": "src/loaders/registry.js",
       "kind": "module",
-      "bytes": 4429,
-      "sha256": "4cd32dfdd70c3a63"
+      "bytes": 4471,
+      "sha256": "f19dd5b7680d517a"
     },
     {
       "path": "src/main.js",
       "kind": "entry",
-      "bytes": 21922,
-      "sha256": "6734174e052dd27a"
+      "bytes": 22066,
+      "sha256": "2b588b2c67255123"
     },
     {
       "path": "src/materials/override.js",
@@ -171,8 +171,8 @@
     {
       "path": "src/models/library.js",
       "kind": "module",
-      "bytes": 885,
-      "sha256": "8b136cabf57513a7"
+      "bytes": 953,
+      "sha256": "920a5f61e3dab355"
     },
     {
       "path": "src/models/place.js",
@@ -189,8 +189,8 @@
     {
       "path": "src/net/api.js",
       "kind": "module",
-      "bytes": 2978,
-      "sha256": "74864659fb36adb4"
+      "bytes": 3065,
+      "sha256": "28e1a8fe5611b166"
     },
     {
       "path": "src/pages/home.js",
@@ -237,14 +237,14 @@
     {
       "path": "src/studio/core.js",
       "kind": "module",
-      "bytes": 27969,
-      "sha256": "587217f07bcee374"
+      "bytes": 30196,
+      "sha256": "850de0ff3b180ae2"
     },
     {
       "path": "src/studio/dock.js",
       "kind": "module",
-      "bytes": 11968,
-      "sha256": "c0f3997dbbe87987"
+      "bytes": 12964,
+      "sha256": "105282f55b2a5348"
     },
     {
       "path": "src/studio/layout.js",
@@ -255,14 +255,14 @@
     {
       "path": "src/studio/panes.js",
       "kind": "module",
-      "bytes": 24231,
-      "sha256": "27dec9702c3f97fd"
+      "bytes": 24395,
+      "sha256": "4d3d8e2d9d9cd66e"
     },
     {
       "path": "src/studio/toolbar.js",
       "kind": "module",
-      "bytes": 4237,
-      "sha256": "fae459bf3391059c"
+      "bytes": 4668,
+      "sha256": "500055b5680a998e"
     },
     {
       "path": "src/studio/tree.js",
@@ -273,8 +273,8 @@
     {
       "path": "src/studio/ui.js",
       "kind": "module",
-      "bytes": 10839,
-      "sha256": "cb73526b3fa54d4c"
+      "bytes": 11144,
+      "sha256": "bc8c293d8b62113f"
     },
     {
       "path": "src/ui/chrome.js",
@@ -351,8 +351,8 @@
     {
       "path": "styles/studio.css",
       "kind": "html-link",
-      "bytes": 32243,
-      "sha256": "23e88d1a679bab43"
+      "bytes": 33913,
+      "sha256": "b969fc9f309ab7fd"
     },
     {
       "path": "styles/tokens.css",

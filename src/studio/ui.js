@@ -84,8 +84,9 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
 
   workspace.append(handleBottom);
   workspace.append(dock.node);
-  sidebar.append(tree.node);
-  inspectorBody.append(labs.node);
+  sidebar.insertBefore(tree.node,sidebar.querySelector('.sidebar-body'));
+  tree.node.addEventListener('click',e=>{if(e.target.closest('[data-asset], [data-version]'))sidebar.classList.remove('st-mobile-open');});
+  inspectorBody.prepend(labs.node);
 
   // Dock 折叠 / 展开：交给布局系统，保证折叠后展开入口（头部）始终可见
   const dockCollapse = dock.node.querySelector('#stDockCollapse');
@@ -151,6 +152,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         tree.renderAssets();
         break;
       case 'select': {
+        dock.clearConfirm();
         const asset = core.state.assets.find((a) => a.id === payload);
         toolbar.setAsset(asset?.name || payload || null);
         tree.renderAssets();
@@ -165,18 +167,20 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         break;
       case 'analyze':
         labs.updateAll();
-        dock.activate('process');
+        dock.activate(core.state.lastRun ? 'verify' : 'process');
         break;
       case 'textures':
         labs.updateAll();
         break;
       case 'run':
+        dock.clearConfirm();
         labs.updateAll();
         dock.render('verify');
         dock.activate('verify');
         tree.renderVersions(payload.assetId);
         break;
       case 'batch':
+        dock.clearConfirm();
         dock.render('history');
         dock.activate('history');
         tree.renderAssets();

@@ -3,6 +3,7 @@
 // 职责：加载任意 GLB、底对齐归一化、影棚布光 + RoomEnvironment、
 // 可选交互（OrbitControls）、慢速自转、完整 dispose。
 import * as THREE from 'three';
+import {disposeObject} from '../utils/dispose.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -40,7 +41,10 @@ export function createMiniViewer({
   scene.add(keyLight, rimLight, fillLight, new THREE.AmbientLight(0x3a4050, 0.95));
 
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  const room=new RoomEnvironment();
+  const envTarget=pmrem.fromScene(room,0.04);
+  scene.environment=envTarget.texture;
+  room.dispose();pmrem.dispose();
 
   // 接地微光（与 hero 一致的克制处理）
   const glow = new THREE.Mesh(
@@ -66,10 +70,11 @@ export function createMiniViewer({
   }
 
   // ---- 加载与归一化（底对齐，脚踩 groundY）----
-  let model = null;
+  let model = null, disposed = false;
   const stats = { tris: 0, verts: 0, meshes: 0 };
   const loadPromise = new Promise((resolve) => {
     new GLTFLoader().load(modelUrl, (gltf) => {
+      if(disposed){disposeObject(gltf.scene);resolve(null);return;}
       model = gltf.scene;
       const box = new THREE.Box3().setFromObject(model);
       const size = box.getSize(new THREE.Vector3());
@@ -106,11 +111,12 @@ export function createMiniViewer({
   function tick() {
     raf = requestAnimationFrame(tick);
     const dt = clock.getDelta();
+    if(document.hidden)return;
     if (model && !reduced) root.rotation.y += autoRotateSpeed * dt * 10;
     controls?.update();
     renderer.render(scene, camera);
   }
-  function start() { if (running) return; running = true; clock.start(); tick(); }
+  function start() { if (running || disposed) return; running = true; clock.start(); tick(); }
   function stop() { running = false; cancelAnimationFrame(raf); }
   const io = new IntersectionObserver(([e]) => { e.isIntersecting ? start() : stop(); }, { threshold: 0.02 });
   io.observe(container);
@@ -119,6 +125,7 @@ export function createMiniViewer({
   frame();
 
   function dispose() {
+    if(disposed)return;disposed=true;
     stop();
     io.disconnect(); ro.disconnect(); controls?.dispose();
     scene.traverse((o) => {
@@ -128,7 +135,7 @@ export function createMiniViewer({
         for (const m of mats) { for (const v of Object.values(m)) if (v && v.isTexture) v.dispose(); m?.dispose(); }
       }
     });
-    pmrem.dispose();
+    envTarget.dispose();
     renderer.dispose();
     renderer.domElement.remove();
   }

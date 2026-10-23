@@ -2,6 +2,7 @@
 // 五个面板全部读真实数据：后端 analyze 报告、Viewer 场景里的真实几何/材质/贴图。
 // 没有一个面板是装饰性的：每个控件都直接改写 THREE 材质或触发后端真实算子。
 import { el } from '../utils/dom.js';
+import {disposeObject} from '../utils/dispose.js';
 import { fmtBytes } from './core.js';
 
 const rows = (...children) => el('div', { class: 'st-rows' }, ...children);
@@ -252,9 +253,11 @@ function geometryPane({ viewer, core }) {
   );
   node.append(actRow, sum, list);
 
-  let boundsHelper = null;
+  let boundsHelper = null, boundsRoot = null;
 
   function update() {
+    if(boundsHelper && boundsRoot!==viewer.modelRoot){disposeObject(boundsHelper);boundsHelper=null;}
+    boundsRoot=viewer.modelRoot;
     const meshes = collectMeshes(viewer.modelRoot);
     sum.innerHTML = '';
     if (!meshes.length) { sum.append(hint('当前视口没有网格。')); list.innerHTML = ''; return; }
@@ -308,7 +311,7 @@ function geometryPane({ viewer, core }) {
   node.querySelector('#stBoundsBtn').addEventListener('click', async (e) => {
     try {
       const THREE = await import('three');
-      if (boundsHelper) { viewer.scene.remove(boundsHelper); boundsHelper.traverse?.((o) => o.geometry?.dispose?.()); boundsHelper = null; e.currentTarget.classList.remove('is-on'); viewer.render?.(); return; }
+      if (boundsHelper) { disposeObject(boundsHelper); boundsHelper = null; e.currentTarget.classList.remove('is-on'); viewer.render?.(); return; }
       if (!viewer.modelRoot) return;
       const box = new THREE.Box3().setFromObject(viewer.modelRoot);
       boundsHelper = new THREE.Box3Helper(box, 0xd9c4a0);
@@ -481,6 +484,7 @@ export function createLabs({ viewer, core, toast }) {
     panes.find((p) => p.id === id)?.update();
   }
 
+  activate(activeId);
   const node = el('div', { class: 'st-labs', id: 'studioRail' }, tabs, stack);
   node.hidden = true;
 

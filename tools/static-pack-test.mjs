@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.resolve(process.env.FORMA_TEST_OUTPUT_DIR || path.join(ROOT, 'test-out', 'static-pack-' + Date.now()));
 const PACK = path.join(ROOT, 'test-out', 'static-site-' + Date.now());
-const PORT = Number(process.env.FORMA_STATIC_PACK_PORT || 5433);
+const PORT = Number(process.env.FORMA_STATIC_PACK_PORT || 0);
 fs.mkdirSync(OUT, { recursive: true });
 
 let pass = 0, fail = 0;
@@ -59,10 +59,10 @@ const served = spawn(process.execPath, ['serve.mjs'], {
   stdio: ['ignore', 'pipe', 'pipe'],
 });
 process.on('exit', () => { try { served.kill(); } catch { /* 已退出 */ } });
-const BASE = `http://127.0.0.1:${PORT}`;
+let BASE;
 await new Promise((resolve, reject) => {
   const timer = setTimeout(() => reject(new Error('静态包服务器启动超时')), 15000);
-  served.stdout.on('data', (b) => { if (String(b).includes('local')) { clearTimeout(timer); resolve(); } });
+  served.stdout.on('data', (b) => { const match=String(b).match(/http:\/\/127\.0\.0\.1:(\d+)/); if(match) {BASE=match[0];clearTimeout(timer);resolve();} });
   served.once('exit', (c) => { clearTimeout(timer); if (c) reject(new Error('静态包服务器退出 ' + c)); });
 });
 
@@ -73,13 +73,13 @@ try {
   const page = await browser.newPage();
   const pageErrors = [];
   const failed = [];
-  page.on('pageerror', (e) => pageErrors.push(String(e.message)));
+  page.on('pageerror', (e) => { pageErrors.push(String(e.message)); console.error('PAGE ERROR',e.message); });
   page.on('requestfailed', (r) => failed.push(`${r.url()} ${r.failure()?.errorText || ''}`));
   page.on('response', (r) => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
   await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
 
   await page.goto(`${BASE}/#/gallery?work=jing-red`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 120000 });
+  await page.waitForFunction('window.__FORMA && window.__FORMA.ready', { timeout: 120000 }).catch(async e=>{console.error(await page.evaluate(()=>document.body.innerText.slice(0,1200)));throw e;});
   await page.waitForFunction('window.__FORMA.info && window.__FORMA.info.modelTris > 0', { timeout: 120000 });
   await sleep(600);
 

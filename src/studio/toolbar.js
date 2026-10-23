@@ -58,6 +58,10 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
 
   statusPill.addEventListener('click', () => { core.connect(); });
 
+  const assetsBtn=act('stAssetsToggle','资产','展开或收起资源树',()=>{document.getElementById('sidebar').classList.toggle('st-mobile-open');});
+  const toolsBtn=act('stToolsToggle','工具','展开或收起资产工具',()=>{document.getElementById('inspector').classList.toggle('open');});
+  assetsBtn.classList.add('st-mobile-assets');toolsBtn.classList.add('st-mobile-tools');
+  groupRight.append(assetsBtn,toolsBtn);
   node.append(crumb, el('span', { class: 'st-tb-spacer' }), groupLeft, groupRight, statusPill, fileInput);
 
   function setStatus(status, detail) {

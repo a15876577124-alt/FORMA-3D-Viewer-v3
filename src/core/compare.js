@@ -16,19 +16,16 @@ export class CompareRig {
     this.split = 0.5;
   }
 
-  // 两个 root 均归一化到相同体积（保证对齐），加入场景，开启局部裁剪。
+  // Use Original placement for both versions; never normalize away an actual change.
   load(rootA, rootB) {
-    const infoA = normalizeModel(rootA);
-    const infoB = normalizeModel(rootB);
-    const xa = infoA?.box ? infoA.box.min.x : -0.8;
-    const xb = infoA?.box ? infoA.box.max.x : 0.8;
-    const xc = infoB?.box ? infoB.box.min.x : -0.8;
-    const xd = infoB?.box ? infoB.box.max.x : 0.8;
-    this.xMin = Math.min(xa, xc);
-    this.xMax = Math.max(xb, xd);
-
-    this.groupA = rootA;
-    this.groupB = rootB;
+    const groupA=new THREE.Group(),groupB=new THREE.Group();
+    groupA.add(rootA);groupB.add(rootB);
+    normalizeModel(groupA);
+    groupB.position.copy(groupA.position);groupB.scale.copy(groupA.scale);
+    // Preserve genuine changes in scale/position between the two asset versions.
+    rootA=groupA;rootB=groupB;
+    this.groupA=rootA;this.groupB=rootB;
+    this.viewer.compareRig=this;
     this.viewer.scene.add(rootA);
     this.viewer.scene.add(rootB);
     this.viewer.renderer.localClippingEnabled = true;
@@ -44,7 +41,7 @@ export class CompareRig {
       group.traverse((o) => {
         if (o.isMesh && o.material) {
           const mats = Array.isArray(o.material) ? o.material : [o.material];
-          for (const m of mats) { m.clippingPlanes = [plane]; m.clipShadows = true; m.needsUpdate = true; }
+          for (const m of mats) { m.clippingPlanes = [plane]; m.clipShadows = false; m.needsUpdate = true; }
         }
       });
     };
@@ -55,12 +52,21 @@ export class CompareRig {
   // t ∈ [0,1]：0 全部显示 B，1 全部显示 A。
   setSplit(t) {
     this.split = Math.max(0, Math.min(1, t));
-    const x = this.xMin + this.split * (this.xMax - this.xMin);
-    this.planeA.constant = x;      // 法线 -x → 保留 x <= constant（A 在左）
-    this.planeB.constant = -x;     // 法线 +x → 保留 x >= -constant（B 在右）
+    this.updatePlanes();
+  }
+
+  updatePlanes() {
+    const camera=this.viewer.camera;
+    camera.updateMatrixWorld();
+    const x=(2*this.split-1)*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*camera.aspect;
+    this.planeA.normal.set(-1,0,-x).normalize().applyQuaternion(camera.getWorldQuaternion(new THREE.Quaternion()));
+    this.planeA.constant=-this.planeA.normal.dot(camera.getWorldPosition(new THREE.Vector3()));
+    this.planeB.copy(this.planeA).negate();
+    this.groupA.visible=this.split>0;this.groupB.visible=this.split<1;
   }
 
   dispose() {
+    if(this.viewer.compareRig===this)this.viewer.compareRig=null;
     for (const g of [this.groupA, this.groupB]) {
       if (!g) continue;
       this.viewer.scene.remove(g);

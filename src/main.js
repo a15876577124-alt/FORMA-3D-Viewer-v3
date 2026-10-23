@@ -57,6 +57,7 @@ function boot() {
   const extra = new Map();          // imported entries, keyed by id
   const libraryMap = new Map();     // published library entries, keyed by 'lib:' id
   const current = { entry: null };
+  let resolveReady;
   // 观展模式 / AI Studio 在下方构建；这里先占位，供早于它们执行的钩子安全访问。
   let gallery = null;
   let studio = null;
@@ -127,6 +128,7 @@ function boot() {
   }
 
   async function doImport(files) {
+    if(studio?.isActive)return studio.core.importFiles([...files]);
     return importFiles(files, viewer, {
       onMounted: (imported) => {
         if (!extra.has(imported.id)) {
@@ -203,6 +205,7 @@ function boot() {
   async function select(id, opts = {}) {
     const entry = resolveEntry(id);
     if (!entry) { toast('找不到展品：' + id, 'err'); return false; }
+    if(studio?.isActive && current.entry)return studio.core.selectEntry(entry);
 
     // Hand the outgoing camera to its own exhibit before switching away.
     if (current.entry && current.entry.id !== entry.id) {
@@ -238,6 +241,7 @@ function boot() {
     if (!document.getElementById('v5Outlet')) {
       try { history.replaceState(null, '', '#' + entry.id); } catch { /* file:// may refuse */ }
     }
+    resolveReady?.(true);
     return true;
   }
 
@@ -364,7 +368,7 @@ function boot() {
   const requested = caps.params.get('entry') || hash;
   const first = (requested && resolveEntry(requested)) || FIGURINES[0];
 
-  let resolveReady;
+
   const ready = new Promise((r) => { resolveReady = r; });
 
   if (caps.params.has('test')) {
@@ -373,7 +377,7 @@ function boot() {
     $('engineLabel').textContent = '本地运行 · 软件渲染模式';
   }
 
-  select(first.id).then((ok) => resolveReady(ok));
+  select(first.id);
 
   // 默认站在观展一侧：路由未接管前也保持 Gallery 视觉语言
   document.body.classList.add('mode-gallery');

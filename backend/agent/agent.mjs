@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
 import { streamLLM } from './llmStream.mjs';
-import { toNativeTools, toPromptSpec, dispatchTool } from './tools.mjs';
+import { toNativeTools, toPromptSpec, dispatchTool, getTool } from './tools.mjs';
 import { DEFAULT_AGENT_MODEL } from '../llm.mjs';
 import { assertSafeId } from '../paths.mjs';
 
@@ -118,7 +118,7 @@ export async function runAgent({
         if(disp.needConfirm){log.status='awaiting_confirmation';log.confirmation={token:disp.token,reasons:disp.reasons,call};log.pendingCalls=calls.slice(i);break;}
         messages.push(proto==='prompt'?{role:'user',content:'工具 '+call.name+' 返回：'+JSON.stringify(result).slice(0,12000)}:{role:'tool',tool_call_id:call.id,content:JSON.stringify(result).slice(0,12000)});
         abort.throwIfAborted();
-        if(!disp.ok)throw new Error('工具 '+call.name+' 失败: '+disp.error);
+        if(!disp.ok && getTool(call.name)?.mutating)throw new Error('工具 '+call.name+' 失败: '+disp.error);
         if(call.name==='finish'){log.finish=disp.result;break;}
         if(isRepeat(lastTwoCalls,call.name,argsText))messages.push({role:'user',content:'检测到重复调用，请立即用 finish 总结。'});
         lastTwoCalls.push(call.name+'|'+argsText);if(lastTwoCalls.length>2)lastTwoCalls.shift();

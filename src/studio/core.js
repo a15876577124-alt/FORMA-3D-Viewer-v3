@@ -150,7 +150,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     state.textures = null;
     state.lastExport = null;
     state.confirmToken = null;
-    if (!keepRun) state.lastRun = null;
+    if (!keepRun) {state.lastRun = null;state.lastAgent=null;}
     emit('select', state.selectedAsset);
     if (!id) return null;
     try {
@@ -280,8 +280,8 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     const list = ops || selectedOps();
     if (!list.length) { emit('log', { tone: 'warn', text: '请至少勾选一个算子' }); return null; }
     emit('progress', { busy: true, text: dryRun ? '预览中…' : '执行中…' });
+    const ticket = selectionTicket;
     try {
-      const ticket = selectionTicket;
       const res = await pipelineApi.run(state.selectedAsset, list, state.confirmToken, dryRun, state.selectedVersion);
       if (ticket !== selectionTicket) { emit('log', {tone:'ok', text:'后台处理已完成：' + res.assetId}); return res; }
       state.confirmToken = null;
@@ -304,6 +304,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       }
       return res;
     } catch (e) {
+      if(ticket!==selectionTicket)return null;
       if (e?.status === 409 && e?.data?.needConfirm) {
         state.confirmToken = e.data.token;
         emit('confirm', { reasons: e.data.reasons || [], riskyOps: e.data.riskyOps || [] });
@@ -375,7 +376,9 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       emit('history',state.history);
       if(ticket!==selectionTicket)return res;
       if(!res.log.dryRun && res.log.currentVersion!==version){
-        await refreshAssets();await selectAsset(id,res.log.currentVersion,{keepRun:true});
+        await refreshAssets();if(ticket!==selectionTicket)return res;
+        const mounted=await selectAsset(id,res.log.currentVersion,{keepRun:true});
+        if(!mounted)return res;
       }
       state.lastAgent=res;
       emit('agent',res);
@@ -419,10 +422,15 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       await exitCompare();
       const ticket = compareTicket;
       const selected = selectionTicket;
-      const [rootA, rootB] = await Promise.all([
+      const loaded = await Promise.allSettled([
         loadModelFromUrl(fileUrl(target.beforePath), String(target.beforePath).split('/').pop()),
         loadModelFromUrl(fileUrl(target.afterPath), String(target.afterPath).split('/').pop()),
       ]);
+      if(loaded.some(r=>r.status==='rejected')){
+        for(const r of loaded)if(r.status==='fulfilled')viewer._disposeLoaded({root:r.value});
+        throw loaded.find(r=>r.status==='rejected').reason;
+      }
+      const [rootA,rootB]=loaded.map(r=>r.value);
       if (ticket !== compareTicket || selected !== selectionTicket) { viewer._disposeLoaded({root:rootA}); viewer._disposeLoaded({root:rootB}); return null; }
       const rig = new CompareRig(viewer);
       rig.load(rootA, rootB);
@@ -473,8 +481,23 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   // ------------------------------------------------------- 导入/发布 ----
-  async function importFile(file, dependencies = []) {
+  async function selectEntry(entry) {
+    if(!requireOnline())return null;
+    if(entry.assetId)return selectAsset(entry.assetId,entry.version||0);
+    if(entry.sourceFiles)return importFiles(entry.sourceFiles);
+    if(!entry.file || !/\.glb$/i.test(entry.file)){emit('log',{tone:'warn',text:'该预览没有可导入文件，请在 Gallery 查看或通过导入选择源文件'});return null;}
+    await selectAsset(null);const ticket=selectionTicket;
+    try {
+      const response=await fetch(entry.file);if(!response.ok)throw Error('无法读取展品文件');
+      const blob=await response.blob();if(ticket!==selectionTicket)return null;
+      return importFile(new File([blob],entry.id+'.glb'),[],ticket);
+    }catch(e){emit('log',{tone:'err',text:e.message});return null;}
+  }
+
+  async function importFile(file, dependencies = [], selectionRequest) {
     if (!requireOnline()) return null;
+    if(selectionRequest===undefined)await selectAsset(null);
+    const ticket=selectionRequest??selectionTicket;
     emit('progress', { busy: true, text: `导入 ${file.name}…` });
     try {
       const buf = new Uint8Array(await file.arrayBuffer());
@@ -490,7 +513,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       await refreshAssets();
       emit('imported', res);
       emit('log', { tone: 'ok', text: `已导入到工作区：${file.name}` });
-      if (res?.asset?.id || res?.id) await selectAsset(res?.asset?.id || res?.id);
+      if (ticket===selectionTicket && (res?.asset?.id || res?.id)) await selectAsset(res?.asset?.id || res?.id);
       return res;
     } catch (e) {
       emit('log', { tone: 'err', text: '导入失败：' + (e?.message || e) });
@@ -532,7 +555,9 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
 
   async function saveMaterial(mat) {
     if (!requireSelection() || !Number.isInteger(mat?.userData?.gltfMaterialIndex)) { emit('log',{tone:'warn',text:'请先选择 GLB/GLTF 版本的材质'});return null; }
-    await exitCompare();
+    let belongs=false;viewer.modelRoot.traverse(o=>{if(o.isMesh&&(Array.isArray(o.material)?o.material:[o.material]).includes(mat))belongs=true;});
+    if(!belongs){emit('log',{tone:'warn',text:'材质不属于当前版本，请重新选择'});return null;}
+    const ticket=selectionTicket;await exitCompare();if(ticket!==selectionTicket)return null;
     return run({ops:[{op:'setMaterial',params:{materialIndex:mat.userData.gltfMaterialIndex,metallicFactor:mat.metalness,roughnessFactor:mat.roughness,colorR:mat.color.r,colorG:mat.color.g,colorB:mat.color.b,opacity:mat.opacity,emissiveStrength:mat.emissiveIntensity ?? 1,alphaMode:mat.transparent?'BLEND':mat.alphaTest>0?'MASK':'OPAQUE',doubleSided:mat.side===2}}]});
   }
 
@@ -540,8 +565,9 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     if (!requireSelection()) return null;
     if (!requireOnline() || !state.selectedAsset) { emit('log', { tone: 'warn', text: '请先连接并选择资产' }); return null; }
     try {
-      const res = await pipelineApi.publish(state.selectedAsset, version ?? state.selectedVersion);
-      onPublish?.(res.url, state.selectedAsset, res);
+      const id=state.selectedAsset;
+      const res = await pipelineApi.publish(id, version ?? state.selectedVersion);
+      onPublish?.(res.url, id, res);
       emit('publish', res);
       emit('log', { tone: 'ok', text: '已发布到展厅资产库' });
       return res;
@@ -555,15 +581,18 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   async function exportAs(to, version) {
     if (!requireSelection()) return null;
     if (!requireOnline() || !state.selectedAsset) { emit('log', { tone: 'warn', text: '请先连接并选择资产' }); return null; }
+    const ticket=selectionTicket;
     emit('progress', { busy: true, text: `导出为 .${to}…` });
     try {
       const res = await pipelineApi.run(state.selectedAsset, [{ op: 'convert', params: { to } }], state.confirmToken, false, version ?? state.selectedVersion);
+      if(ticket!==selectionTicket)return res;
       state.confirmToken = null;
       state.lastExport = res;
       emit('export', { to, file: res.afterPath, url: fileUrl(res.afterPath), run: res });
       emit('log', { tone: 'ok', text: `已导出 .${to}：v${res.version}` });
       return res;
     } catch (e) {
+      if(ticket!==selectionTicket)return null;
       if (e?.status === 409 && e?.data?.needConfirm) {
         state.confirmToken = e.data.token;
         emit('confirm', { reasons: e.data.reasons || [] });
@@ -591,7 +620,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   return {
     state,
     connect, probe, refreshAssets,
-    selectAsset, setOpEnabled, setOpParams, selectedOps, applyPreset,
+    selectAsset, selectEntry, setOpEnabled, setOpParams, selectedOps, applyPreset,
     analyze, detectTextures, extractTextures,
     run, runBatch, runAgent, cancelAgent, adoptAgentSuggestion,
     showCompare, compareVersions, exitCompare, setCompareSplit, compareStats,
