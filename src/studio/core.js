@@ -457,7 +457,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
   }
 
   // ------------------------------------------------------- 导入/发布 ----
-  async function importFile(file) {
+  async function importFile(file, dependencies = []) {
     if (!requireOnline()) return null;
     emit('progress', { busy: true, text: `导入 ${file.name}…` });
     try {
@@ -465,7 +465,12 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       let bin = '';
       const CHUNK = 0x8000;
       for (let i = 0; i < buf.length; i += CHUNK) bin += String.fromCharCode.apply(null, buf.subarray(i, i + CHUNK));
-      const res = await pipelineApi.importAsset(file.name, btoa(bin));
+      const resources = await Promise.all(dependencies.map(async f => {
+        const bytes = new Uint8Array(await f.arrayBuffer()); let text = '';
+        for (let i=0;i<bytes.length;i+=CHUNK) text += String.fromCharCode.apply(null, bytes.subarray(i,i+CHUNK));
+        return {name:f.webkitRelativePath || f.name, dataBase64:btoa(text)};
+      }));
+      const res = await pipelineApi.importAsset(file.webkitRelativePath || file.name, btoa(bin), resources);
       await refreshAssets();
       emit('imported', res);
       emit('log', { tone: 'ok', text: `已导入到工作区：${file.name}` });
@@ -477,6 +482,14 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     } finally {
       emit('progress', { busy: false });
     }
+  }
+
+  async function importFiles(files) {
+    const models = files.filter(f => /\.(glb|gltf|obj|fbx)$/i.test(f.name));
+    if (!models.length) { emit('log',{tone:'warn',text:'请选择模型及它的依赖文件'}); return []; }
+    const results = [];
+    for (const file of models) results.push(await importFile(file, files.filter(f => f !== file && !models.includes(f))));
+    return results;
   }
 
   async function publish(version) {
@@ -537,6 +550,6 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
     analyze, detectTextures, extractTextures,
     run, runBatch, runAgent, adoptAgentSuggestion,
     showCompare, exitCompare, setCompareSplit, compareStats,
-    importFile, publish, exportAs, listVersions, toFileUrl,
+    importFile, importFiles, publish, exportAs, listVersions, toFileUrl,
   };
 }

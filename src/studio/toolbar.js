@@ -52,7 +52,7 @@ export function createStudioToolbar({ core, toast, compareUI, getBatchIds, onRes
   fileInput.addEventListener('change', async () => {
     const files = [...(fileInput.files || [])];
     fileInput.value = '';
-    for (const f of files) await core.importFile(f);
+    await core.importFiles(files);
   });
 
   statusPill.addEventListener('click', () => { core.connect(); });

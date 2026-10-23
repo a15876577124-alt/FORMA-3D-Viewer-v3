@@ -1,6 +1,7 @@
 // 算子注册表 + 链式执行。铁律：非破坏式（读原文件 → 写 pipeline-out 独立目录）、参数校验、能力门控。
 import fs from 'node:fs';
 import path from 'node:path';
+import {readDocument,writeDocument} from '../gltfIO.mjs';
 import { transformOps } from './transformOps.mjs';
 import { geometryOps } from './geometry.mjs';
 import { containerOps } from './container.mjs';
@@ -58,11 +59,15 @@ export async function runOps({ inPath, outDir, ops, onStep = () => {} }) {
   const cap = await detectCapabilities();
   const results = [];
   let currentIn = inPath;
+  if (path.extname(inPath).toLowerCase() === '.gltf' && ops[0]?.op !== 'convert') {
+    currentIn = path.join(outDir, '.source.glb');
+    await writeDocument(await readDocument(inPath), currentIn);
+  }
   let finalExt = path.extname(inPath).toLowerCase();
 
   for (let i = 0; i < ops.length; i++) {
     const { op, params: rawParams } = ops[i];
-    const params = rawParams || {};
+    const params = validateParams(op, rawParams || {});
     const def = OPS[op];
     if (!def) throw new OpError(`未知算子: ${op}`);
     validateParams(op, params);
@@ -72,7 +77,7 @@ export async function runOps({ inPath, outDir, ops, onStep = () => {} }) {
     }
     const isLast = i === ops.length - 1;
     // 中间产物用临时名；最终产物用 model.<ext>
-    const ext = op === 'convert' && isLast ? (params.to === 'gltf' ? '.gltf' : params.to === 'obj' ? '.obj' : '.glb') : '.glb';
+    const ext = op === 'convert' ? (params.to === 'gltf' ? '.gltf' : params.to === 'obj' ? '.obj' : '.glb') : '.glb';
     finalExt = ext;
     const outPath = path.join(outDir, isLast ? `model${ext}` : `.tmp-${i}-${op}${ext}`);
     const t0 = Date.now();

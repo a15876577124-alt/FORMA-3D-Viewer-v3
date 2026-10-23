@@ -29,7 +29,7 @@ function gltfTextureEntries(gltf, bin, baseDir) {
     if (img.bufferView !== undefined && gltf.bufferViews) {
       const bv = gltf.bufferViews[img.bufferView];
       const start = (bv.byteOffset || 0);
-      bytes = bin.subarray(start, start + bv.byteLength);
+      bytes = (gltf.buffers?.[bv.buffer]?.__bytes || bin).subarray(start, start + bv.byteLength);
     } else if (uri && uri.startsWith('data:')) {
       const m = /^data:([^;,]+)(;base64)?,(.*)$/s.exec(uri);
       if (m) {
@@ -189,10 +189,10 @@ function analyzeGltfLike(name, buf, format, baseDir = path.dirname(name)) {
       }
 
       // 诊断：法线 / UV
-      if (!prim.attributes?.NORMAL) {
+      if (prim.attributes?.NORMAL === undefined) {
         issues.push({ severity: 'warn', code: 'missing-normals', message: `网格 ${mesh.name || mi} 缺少法线（NORMAL）——光照与后处理质量受限`, target: `mesh:${mi}` });
       }
-      if (!prim.attributes?.TEXCOORD_0) {
+      if (prim.attributes?.TEXCOORD_0 === undefined) {
         issues.push({ severity: 'warn', code: 'missing-uv', message: `网格 ${mesh.name || mi} 缺少 UV（TEXCOORD_0）——贴图无法正确展开`, target: `mesh:${mi}` });
       }
 

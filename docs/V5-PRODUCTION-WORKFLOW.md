@@ -13,3 +13,8 @@ ARCHITECTURE.md 原有格式修改保持未提交，SHA256 177CE7069926DAE58FA57
 后续阶段继续修复转换、发布依赖包、材质保存、Agent 和视觉问题；此记录不等同全部目标已完成。
 
 阶段 1 实测：workflow 8/8（suite-2026-10-23T07-07-58-484Z），compare-ui 13/13（07-12-47-821Z），安全回归 7/7（07-12-58-058Z）。静态闭包 83 文件通过。
+
+## 阶段 2：真实格式与资源包
+根因：转换器先按 GLB 读取所有输入、输出报告使用输入格式、URL GLTF 预检错误、GLTF byteLength 被删除。改用现有 glTF Transform；安全读取包内依赖，保存 UTF-8；OBJ 修复全局索引、节点变换、MTL 和基色纹理。
+新依赖仅 gltf-validator 2.0.0-dev.3.10（Apache-2.0），Node 24 实测。导出 GLB/GLTF 加官方格式校验，仍做实际 Edge 重载。
+实测：formats 3/3，workflow 13/13（suite-2026-10-23T07-18-49-568Z），ops 64/64，pipeline 50/50，audit 7/7。FBX 转可处理版本与完整下载包在后续闭环阶段实现。

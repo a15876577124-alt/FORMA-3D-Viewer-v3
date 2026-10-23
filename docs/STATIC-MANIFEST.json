@@ -3,7 +3,7 @@
   "entry": "index.html",
   "totals": {
     "files": 83,
-    "bytes": 30103187,
+    "bytes": 30104572,
     "byKind": {
       "html-link": 5,
       "runtime-asset": 10,
@@ -135,8 +135,8 @@
     {
       "path": "src/loaders/importers.js",
       "kind": "module",
-      "bytes": 10697,
-      "sha256": "dc8a1baa4a3bacc3"
+      "bytes": 11346,
+      "sha256": "7cbb6167f06c78ea"
     },
     {
       "path": "src/loaders/normals.js",
@@ -189,8 +189,8 @@
     {
       "path": "src/net/api.js",
       "kind": "module",
-      "bytes": 2846,
-      "sha256": "d0cfd53663f01552"
+      "bytes": 2865,
+      "sha256": "7addbb1abd4498c8"
     },
     {
       "path": "src/pages/home.js",
@@ -237,8 +237,8 @@
     {
       "path": "src/studio/core.js",
       "kind": "module",
-      "bytes": 23713,
-      "sha256": "2405c80ee5596808"
+      "bytes": 24530,
+      "sha256": "12091baca7cc275c"
     },
     {
       "path": "src/studio/dock.js",
@@ -261,8 +261,8 @@
     {
       "path": "src/studio/toolbar.js",
       "kind": "module",
-      "bytes": 4173,
-      "sha256": "988077d6f5ae40a6"
+      "bytes": 4073,
+      "sha256": "f1cccd70b93a5392"
     },
     {
       "path": "src/studio/tree.js",

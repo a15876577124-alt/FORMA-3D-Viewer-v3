@@ -9,7 +9,7 @@ export function resolveAssetSource(assetId, version = 0) {
   const dir = path.join(PROJECT_ROOT, 'backend/workspace/assets', id);
   const meta = JSON.parse(fs.readFileSync(path.join(dir, 'meta.json'), 'utf8'));
   const base = version ? path.join(PIPELINE_OUT_ROOT, id + '-v' + version) : path.join(dir, 'original');
-  const name = version ? fs.readdirSync(base).find(f => /^model\.(glb|gltf|obj|fbx)$/.test(f)) : path.basename(meta.originalRelPath || 'file' + path.extname(meta.name));
+  const name = version ? fs.readdirSync(base).find(f => /^model\.(glb|gltf|obj|fbx)$/.test(f)) : (meta.primaryRelativePath || path.basename(meta.originalRelPath || 'file' + path.extname(meta.name)));
   if (!name) throw Object.assign(new Error('版本没有可加载的模型'), {status:404});
   const file = safeResolveExisting(base, name);
   const format = path.extname(file).slice(1);

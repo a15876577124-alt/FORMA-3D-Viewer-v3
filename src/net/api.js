@@ -33,7 +33,7 @@ export const pipelineApi = {
   models: () => request('/models', { timeoutMs: 10000 }),
   assets: () => request('/assets'),
   source: (id, version = 0) => request('/assets/' + encodeURIComponent(id) + '/versions/' + version),
-  importAsset: (name, dataBase64) => request('/assets/import', { method: 'POST', body: { name, dataBase64 } }),
+  importAsset: (name, dataBase64, files = []) => request('/assets/import', { method: 'POST', body: { name, dataBase64, files } }),
   analyze: (id) => request(`/assets/${encodeURIComponent(id)}/analyze`, { method: 'POST' }),
   report: (id) => request(`/assets/${encodeURIComponent(id)}/report`),
   textures: (id) => request(`/assets/${encodeURIComponent(id)}/textures`),

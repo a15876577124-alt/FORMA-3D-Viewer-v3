@@ -17,6 +17,7 @@ import { analyzeBuffer } from './analyze.mjs';
 import { listModels, pickAgentModel } from './llm.mjs';
 import { runAgent } from './agent/agent.mjs';
 import { TOOLS } from './agent/tools.mjs';
+import { importAsset } from './importAsset.mjs';
 import { describeAssetSource } from './assetSource.mjs';
 import { runAssetPipeline, makeAgentCtx } from './runPipeline.mjs';
 import { listOps } from './ops/index.mjs';
@@ -124,29 +125,6 @@ function listAssets() {
   return out.sort((a, b) => (b.importedAt || '').localeCompare(a.importedAt || ''));
 }
 
-function importAsset(name, dataBuf) {
-  const safeName = sanitizeName(name);
-  const { format, note } = validateFile(safeName, dataBuf);
-  const id = safeName.replace(/\.[^.]+$/, '') + '-' + crypto.createHash('sha256').update(dataBuf).digest('hex').slice(0, 8);
-  const dir = assetDir(id);
-  const ext = path.extname(safeName).toLowerCase();
-  fs.mkdirSync(path.join(dir, 'original'), { recursive: true });
-  const originalPath = path.join(dir, 'original', 'file' + ext);
-  // 幂等：同内容同 id，不覆盖已有原始文件（永不破坏原始素材）
-  if (!fs.existsSync(originalPath)) {
-    fs.writeFileSync(originalPath, dataBuf);
-  }
-  const meta = {
-    id, name: safeName, format, note,
-    bytes: dataBuf.length,
-    sha256: crypto.createHash('sha256').update(dataBuf).digest('hex'),
-    originalRelPath: path.relative(WORKSPACE, originalPath),
-    importedAt: new Date().toISOString(),
-  };
-  fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify(meta, null, 2));
-  return meta;
-}
-
 async function analyzeAsset(id) {
   const meta = readMeta(id);
   if (!meta) throw new PathError(`资产不存在: ${id}`);
@@ -204,7 +182,7 @@ route('POST', '/api/assets/import', async (req) => {
   if (buf.length && !Buffer.compare(buf.subarray(0, Math.min(8, buf.length)), Buffer.from(data, 'base64').subarray(0, Math.min(8, buf.length)))) {
     // base64 宽松性检查由 validateFile 的魔数校验兜底
   }
-  const meta = importAsset(name, buf);
+  const meta = importAsset(name, buf, body.files || []);
   const report = await analyzeAsset(meta.id);
   return { asset: meta, report };
 });

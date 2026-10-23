@@ -38,7 +38,9 @@ export function preflightGLB(buffer) {
       let json;
       try { json = JSON.parse(text); } catch { throw new Error('JSON chunk is not valid JSON'); }
       const req = json.extensionsRequired || [];
-      if (req.length) throw new Error('extensionsRequired: ' + req.join(', '));
+      const supported = new Set(['KHR_mesh_quantization','KHR_materials_unlit','KHR_texture_transform','KHR_materials_clearcoat','KHR_materials_transmission','KHR_materials_volume','KHR_materials_ior','KHR_materials_specular','KHR_materials_sheen','KHR_materials_iridescence','KHR_materials_emissive_strength','KHR_materials_anisotropy','EXT_texture_webp','EXT_mesh_gpu_instancing']);
+      const unsupported = req.filter(x => !supported.has(x));
+      if (unsupported.length) throw new Error('extensionsRequired: ' + unsupported.join(', '));
       const meshes = json.meshes || [];
       if (!meshes.length) throw new Error('no mesh found in this glTF');
       let verts = 0;
@@ -136,9 +138,11 @@ export async function loadGLTF(source, { files = [], onProgress } = {}) {
     url = source;
     baseName = String(source).split(/[\\/]/).pop() || 'model.glb';
     const { buffer } = await fetchWithProgress(url, onProgress);
-    preflightGLB(buffer);
+    const isGLB = new DataView(buffer).getUint32(0, true) === 0x46546c67;
+    if (isGLB) preflightGLB(buffer);
     const loader = new GLTFLoader();
-    gltf = await new Promise((resolve, reject) => { loader.load(url, resolve, onProgress, reject); });
+    const base = new URL('.', new URL(url, location.href)).href;
+    gltf = await new Promise((resolve, reject) => loader.parse(isGLB ? buffer : new TextDecoder().decode(buffer), base, resolve, reject));
   }
 
   const scene = gltf.scene || gltf.scenes?.[0];

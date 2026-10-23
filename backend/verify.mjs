@@ -5,6 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { parseGLB } from '../tools/glbkit.mjs';
 import { analyzeFile } from './analyze.mjs';
+import { validateGltf } from './validateGltf.mjs';
 import { validateFile } from './validate.mjs';
 
 function sha(buf) { return crypto.createHash('sha256').update(buf).digest('hex'); }
@@ -79,6 +80,12 @@ export async function verifyPair({ beforePath, afterPath, opName, params = {} })
     checks.push({ name: 'container.magic', ok: ['glb', 'gltf', 'obj'].includes(v.format), detail: v.format });
   } catch (e) {
     checks.push({ name: 'container.magic', ok: false, detail: e.message });
+  }
+
+  // Conversion must also satisfy the official format validator; rendering is tested separately.
+  if (opName === 'convert' && /\.(glb|gltf)$/i.test(afterPath)) {
+    try { const report = await validateGltf(afterPath); checks.push({name:'gltf.validator',ok:report.issues.numErrors===0,detail:report.issues}); }
+    catch(e){checks.push({name:'gltf.validator',ok:false,detail:String(e)});}
   }
 
   // 2. 重解析 + 无 error 级 issue

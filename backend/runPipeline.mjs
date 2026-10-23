@@ -90,7 +90,7 @@ export async function runAssetPipeline({ assetId, ops, confirmToken, dryRun = fa
 
   // 后验：逐算子对比其「输入 vs 输出」（而非原始 vs 最终）
   let verify = null;
-  const afterReport = await analyzeBuffer(path.basename(outPath), fs.readFileSync(outPath), meta.format);
+  const afterReport = await analyzeBuffer(path.basename(outPath), fs.readFileSync(outPath), path.extname(outPath).slice(1), { baseDir: path.dirname(outPath) });
   try {
     const checks = [];
     for (const r of results) {

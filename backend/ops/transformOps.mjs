@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import { Document, NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import * as fns from '@gltf-transform/functions';
+import {readDocument} from '../gltfIO.mjs';
 
 function newIO() {
   return new NodeIO().registerExtensions(ALL_EXTENSIONS).setAllowNetwork(false);
@@ -13,8 +14,7 @@ function newIO() {
 
 // 读 GLB 为 Document；outPath 由 index.mjs 决定。
 async function readDoc(inPath) {
-  const io = newIO();
-  return io.read(inPath);
+  return readDocument(inPath);
 }
 
 async function writeDoc(doc, outPath) {

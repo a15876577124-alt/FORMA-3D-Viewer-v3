@@ -1,11 +1,9 @@
 // GLB 容器写入工具：从 tools/fix-glb.mjs 抽取（不改动已验收的 fix-glb）。
-// buildGLB：JSON chunk 4 字节对齐（0x20 填充）+ BIN chunk（0x00 填充）+ 强制 ASCII JSON。
+// buildGLB：JSON chunk 4 字节对齐（0x20 填充）+ BIN chunk（0x00 填充）+ UTF-8 JSON。
 import { parseGLB } from '../../tools/glbkit.mjs';
 
 export function buildGLB(json, bin) {
   const jsonText = JSON.stringify(json);
-  const nonAscii = jsonText.match(/[^\x00-\x7F]/g);
-  if (nonAscii) throw new Error('JSON chunk must stay ASCII, found ' + nonAscii.length + ' chars');
   const jsonBuf = Buffer.from(jsonText, 'utf8');
   const jsonPad = (4 - (jsonBuf.length % 4)) % 4;
   const jsonChunk = Buffer.concat([jsonBuf, Buffer.alloc(jsonPad, 0x20)]);
