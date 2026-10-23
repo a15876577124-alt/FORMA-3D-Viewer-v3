@@ -4,7 +4,7 @@
   "edition": "showcase",
   "totals": {
     "files": 102,
-    "bytes": 32617277,
+    "bytes": 32617523,
     "byKind": {
       "html-link": 5,
       "runtime-asset": 15,
@@ -223,8 +223,8 @@
     {
       "path": "src/main.js",
       "kind": "entry",
-      "bytes": 23748,
-      "sha256": "1b9b707e0a520c2c"
+      "bytes": 23994,
+      "sha256": "32e78dacab07874c"
     },
     {
       "path": "src/materials/override.js",

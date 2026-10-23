@@ -211,6 +211,14 @@ function boot() {
     if (!entry) { toast('找不到展品：' + id, 'err'); return false; }
     if(studio?.isActive)return studio.core.selectEntry(entry);
 
+    // Record the requested public exhibit before loading. A completed older
+    // request must never overwrite a newer route or selection.
+    if (/^#\/gallery(?:\?|$)/.test(location.hash) && BY_ID.has(entry.id)) {
+      const query = new URLSearchParams(location.hash.split('?')[1] || '');
+      query.set('work', entry.id);
+      history.replaceState(null, '', '#/gallery?' + query.toString());
+    }
+
     // Hand the outgoing camera to its own exhibit before switching away.
     if (current.entry && current.entry.id !== entry.id) {
       try { viewState.get(current.entry).camera = viewer.readCamera(); } catch { /* no model yet */ }
@@ -239,9 +247,7 @@ function boot() {
     viewer.applyStoredView(s);
     viewState.touch();
 
-    // V3 行为：把展品写进 URL hash 以便分享。V5 引入 hash 路由后此写法会
-    // 破坏路由（#sheng 会覆盖 #/gallery），故 V5 模式下跳过——分享链接由
-    // V5 路由的 /gallery?work=<id> 承担。
+    // Legacy V3 uses a bare exhibit hash; V5 keeps the Gallery route above.
     if (!document.getElementById('v5Outlet')) {
       try { history.replaceState(null, '', '#' + entry.id); } catch { /* file:// may refuse */ }
     }

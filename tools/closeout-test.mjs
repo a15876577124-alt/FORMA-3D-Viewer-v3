@@ -78,6 +78,11 @@ try {
   }
   await page.screenshot({path:path.join(OUT,'gallery-fifth-390.png')});await page.click('#glPrevious');await page.waitForFunction(()=>window.__FORMA.current.id==='jing-yellow');
   check('previous reaches fourth exhibit',await page.$eval('#glTitle',e=>e.textContent.includes('黄谱')));
+  check('button selection updates the shareable Gallery route',await page.evaluate(()=>location.hash==='#/gallery?work=jing-yellow'));
+  await page.reload({waitUntil:'networkidle0'});await page.waitForFunction(()=>window.__FORMA.current?.id==='jing-yellow'&&window.__FORMA.info.modelTris===47852);
+  check('refresh after button selection keeps the chosen exhibit',await page.$eval('#glTitle',e=>e.textContent.includes('黄谱')));
+  facts.buttonSelectionAfterRefresh=await page.evaluate(()=>({hash:location.hash,id:window.__FORMA.current.id,tris:window.__FORMA.info.modelTris}));
+  await page.screenshot({path:path.join(OUT,'gallery-button-refresh-390.png')});
   await page.setViewport({width:1366,height:768});await page.evaluate(()=>{location.hash='#/';});
   await page.waitForSelector('.v5-hero-3d[data-model-state="ready"]');await page.mouse.move(700,500);await page.mouse.wheel({deltaY:10000});
   await page.waitForFunction(()=>document.querySelector('.v5-footer').getBoundingClientRect().bottom<=innerHeight+2);await page.click('#contactBlock summary');

@@ -138,6 +138,13 @@ try {
     ok(`静态包内加载 ${id}`, got.id === id && got.tris > 40000, JSON.stringify(got));
   }
 
+  await page.click('.gl-selection [data-id="dan"]');
+  await page.waitForFunction(()=>window.__FORMA.current?.id==='dan'&&window.__FORMA.info.modelTris===46828);
+  ok('static Gallery click updates shareable URL',await page.evaluate(()=>location.hash==='#/gallery?work=dan'));
+  await page.reload({waitUntil:'networkidle0'});
+  await page.waitForFunction(()=>window.__FORMA.current?.id==='dan'&&window.__FORMA.info.modelTris===46828);
+  ok('static Gallery click survives refresh',await page.$eval('#glTitle',e=>e.textContent.includes('旦角')));
+
   console.log('[D] Explicit static Studio showcase');
   await page.goto(BASE+'/#/',{waitUntil:'networkidle0'});
   await page.mouse.move(700,500);await page.mouse.wheel({deltaY:10000});
