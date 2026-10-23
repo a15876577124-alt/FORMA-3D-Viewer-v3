@@ -1,12 +1,12 @@
 # CODEX-HANDOFF — 当前工程交接
 
-2026-10-24：当前已进入用户批准的 UX 与正式 A/V2 设计接入，基线为实际核验的 RC1 polish `253a1ab`。当前状态以 [设计接入验收](DESIGN-INTEGRATION.md)、[Logo 接入约定](LOGO-INTEGRATION.md) 与 [剩余问题](../KNOWN-ISSUES.md) 为准。[RC1 作品集验收](RC1-PORTFOLIO-ACCEPTANCE.md)、第三阶段 [品质报告](V5-QUALITY.md)、阶段 2 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md) 与第一轮审计保留追溯。
+2026-10-24：当前发布前收尾基线为实际本地/远程一致的 `c22c14e`，工作分支 `feature/codex-v5-release-closeout`。当前交付以 [发布前收尾报告](RELEASE-CLOSEOUT.md) 为准。上一轮已完成批准的 UX 与正式 A/V2 接入。历史接入详情见 [设计接入验收](DESIGN-INTEGRATION.md)、[Logo 接入约定](LOGO-INTEGRATION.md) 与 [剩余问题](../KNOWN-ISSUES.md) 为准。[RC1 作品集验收](RC1-PORTFOLIO-ACCEPTANCE.md)、第三阶段 [品质报告](V5-QUALITY.md)、阶段 2 [生产闭环记录](V5-PRODUCTION-WORKFLOW.md) 与第一轮审计保留追溯。
 
 ## Git 与资产
 
-已核验实施基线 `253a1abfe92681f4c093118eace55e6b899be339`；本轮分阶段提交、完整测试与新候选包来源见设计接入报告。历史 RC1 完整基线为 `83453aafbc1dd8f8885f05d5ab9d1c3215218b65`，作品集代码为 `17ac8ff`。WorkBuddy 完全退出后的真实 Agent 7/7 是历史记录，本轮没有重新实连外部 AI。原 RC1 和 RC2 分支/包均保留，没有强制重置或覆盖原工程。
+本轮已核验基线 `c22c14eb0684f4eb1c533400a5f004b4a75c0455`；分阶段提交、完整测试与新候选包来源见发布前收尾报告。上一轮设计实施基线为 `253a1abfe92681f4c093118eace55e6b899be339`。历史 RC1 完整基线为 `83453aafbc1dd8f8885f05d5ab9d1c3215218b65`，作品集代码为 `17ac8ff`。WorkBuddy 完全退出后的早期 Agent 7/7 保留为历史记录；此次收尾重新使用现有配置完成真实 Agent 7/7。外部 compatible 供应商仍未配置。原 RC1 和 RC2 分支/包均保留，没有强制重置或覆盖原工程。
 
-当前开发 worktree：D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality，分支 feature/codex-v5-design-integration，从核验的 feature/codex-v5-rc1-polish 创建。原工程 FORMA-3D-Viewer-v3 保留 feature/codex-v5-audit 与原有未提交文档。不要在两个工作区交叉覆盖，不合并 main 或 force push。
+当前开发 worktree：D:\haorongli09\FORMA-3D-Viewer-琼剧五手办版\FORMA-3D-Viewer-v3-quality，分支 feature/codex-v5-release-closeout，从核验的 feature/codex-v5-design-integration 创建。原工程 FORMA-3D-Viewer-v3 保留 feature/codex-v5-audit 与原有未提交文档。不要在两个工作区交叉覆盖，不合并 main 或 force push。
 
 docs/ARCHITECTURE.md 的接手前格式改动必须继续保留，未纳入任何功能提交。原始资产、仓库外 OBJ/MTL/PNG、既有用户工作区资产、凭据均不可覆盖；所有处理输出写新版本。
 
@@ -41,6 +41,8 @@ Agent 每个任务独立追踪通过后验的版本；需要风险确认时保�
 
 ## 尚需工作
 
-复杂 FBX 的全部动画/约束/特殊材质、动态变形 bounds、KTX2 GPU 压缩、手机真机性能、批任务取消恢复、持续压力与 worker 隔离仍未完成。不可把固定模型测试扩展成所有格式/模型都无损的承诺。最终 Logo 等用户交付确认文件/分支/SHA 后独立接入。
+复杂 FBX 的全部动画/约束/特殊材质、动态变形 bounds、KTX2 GPU 压缩、手机真机性能、批任务取消恢复、持续压力与 worker 隔离仍未完成。不可把固定模型测试扩展成所有格式/模型都无损的承诺。正式 A/V2 已从交接包接入；后续品牌更新仍需经批准的正式交接文件，V3 不接入网页。
 
-本轮 P1-05 只解决法线连续性与错误元数据；白谱面部等面片仍保留，详情与 Gallery 的色调/灯光差异未校准。联系入口已收至公共页脚，原邮箱配置保留。Logo 设计方向已批准但正式文件尚未接入，brand.js 与原标识未修改。手机仍标注“真机未验证”，人工步骤见本轮报告。
+详情与 Gallery 已统一渲染基准并通过五件固定条件复测。P1-05 仍有局部几何/基础色贡献，本轮旦角 34 顶点试验只另存候选，未替换展示模型。联系保留公共页脚入口，成功/失败复制反馈已测。原生浏览器 200% 已实测；真机与读屏器待验，六步人工流程见收尾报告。
+
+静态包的显式 showcase 模式只在打包产物中设置；/studio 是实录介绍页，不探测后端决定模式。本地 local 模式始终使用真实工作区。此次 WorkBuddy 已配置服务的真实 Agent 7/7 通过；OpenAI-compatible 外部供应商仍未配置。

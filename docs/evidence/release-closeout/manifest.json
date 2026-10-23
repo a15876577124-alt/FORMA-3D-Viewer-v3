@@ -1,0 +1,290 @@
+{
+  "note": "Actual browser renders; copied without image retouching. Face pairs are current left / unapproved candidate right, identical rendering conditions.",
+  "files": [
+    {
+      "file": "gallery-before-390.png",
+      "source": "test-out/suite-2026-10-23T20-49-44-739Z/project/test-out/closeout-baseline-evidence/gallery-before-390.png",
+      "sha256": "2ee86cd834795c79a34651bc46f06b0ee73918253aaff83ebdaf747b28058f4f"
+    },
+    {
+      "file": "contact-before-failure.png",
+      "source": "test-out/suite-2026-10-23T20-49-44-739Z/project/test-out/closeout-baseline-evidence/contact-before-failure.png",
+      "sha256": "a33d26169704c1be2127059a7c12adfb4777c70674e7f9d2ebd5017784eb87bf"
+    },
+    {
+      "file": "detail-before-route.png",
+      "source": "test-out/suite-2026-10-23T20-49-44-739Z/project/test-out/closeout-baseline-evidence/detail-before-route.png",
+      "sha256": "69cb36772f2ebd043e3c103d4fa34378307c8013b86ee87c29ed3caecaa422ac"
+    },
+    {
+      "file": "studio-before-200.png",
+      "source": "test-out/suite-2026-10-23T20-49-44-739Z/project/test-out/closeout-baseline-evidence/studio-before-200.png",
+      "sha256": "c28ec21ca459a410141fbddb304017cff0fbc4a79a22cb42b23140ce9a4ce2a9"
+    },
+    {
+      "file": "static-studio-before.png",
+      "source": "test-out/suite-2026-10-23T20-49-44-739Z/release/static-pack-studio.png",
+      "sha256": "2da89ddd1e4e3a175bb0347393f9a705c80f9b086ff16e88df4043b80352b112"
+    },
+    {
+      "file": "static-studio-1366.png",
+      "source": "test-out/suite-2026-10-23T21-29-52-119Z/release/static-studio-1366.png",
+      "sha256": "9f389709cd5fef19270369bbfcda7184f40a9553dcf15ba31d42ca75e68fd070"
+    },
+    {
+      "file": "static-studio-768.png",
+      "source": "test-out/suite-2026-10-23T21-29-52-119Z/release/static-studio-768.png",
+      "sha256": "7aa9bb380b25b366a6ad54115a4d701179d35d07b4229e5f016f3b8ab63bf3f6"
+    },
+    {
+      "file": "static-studio-390.png",
+      "source": "test-out/suite-2026-10-23T21-29-52-119Z/release/static-studio-390.png",
+      "sha256": "4bcb1370a8bb745080f3ebd7611c7ca9e5f4bd13a9398e302f89555fe2b91ff9"
+    },
+    {
+      "file": "static-pack-studio.png",
+      "source": "test-out/suite-2026-10-23T21-29-52-119Z/release/static-pack-studio.png",
+      "sha256": "634b1bee1df8e478ade074c824af23a8112ffbd938f1565b6e3cf06d9471085e"
+    },
+    {
+      "file": "static-pack-gallery.png",
+      "source": "test-out/suite-2026-10-23T21-29-52-119Z/release/static-pack-gallery.png",
+      "sha256": "19573f05d523be0d8738f501d8227bd43009fedd8bde96e01c135d00573a5a7c"
+    },
+    {
+      "file": "analysis.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/analysis.png",
+      "sha256": "1fe36e796b9559964a1edd843bb3424fd2bd750238c61f0160e8e0d463262afd"
+    },
+    {
+      "file": "material.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/material.png",
+      "sha256": "89b17d4d173cb8c72b0f500b3a41b8513eddaa58d27ecddadae1999ea427bc3c"
+    },
+    {
+      "file": "comparison.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/comparison.png",
+      "sha256": "e4c2ae8fddd59945078b4f8d14db704090ef42dbab3c6bebc312f9b97784d7c2"
+    },
+    {
+      "file": "reimport.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/reimport.png",
+      "sha256": "6e51ce194c467433c56be7d9bd3b300e7fd68e024c94f7fba18d96fcd4a49786"
+    },
+    {
+      "file": "contact-failure.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/contact-failure.png",
+      "sha256": "7ef6f779001d470f68b9b49cf185622be100894839222ca1623d6633953cf9f7"
+    },
+    {
+      "file": "detail-route-top.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/detail-route-top.png",
+      "sha256": "df040354971e611162be685bf020f2f64d54043b6ce26a0d8ae2ce1d8a44339b"
+    },
+    {
+      "file": "detail-touch-scroll-390.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/detail-touch-scroll-390.png",
+      "sha256": "5950fea00ab5ad4885ece58e5066fbab25cf88c27bad7796d73e74c86bd06997"
+    },
+    {
+      "file": "gallery-fifth-390.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/gallery-fifth-390.png",
+      "sha256": "2d18726c18ffd0877efef9abd4776ccec391d5cf9ef989ef9407fefc4d0b9838"
+    },
+    {
+      "file": "home-desktop.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/home-desktop.png",
+      "sha256": "4d28f00e3cb4c8241a630ec2d8e92cedbcae32209f40efcbdaf8e18d87629b44"
+    },
+    {
+      "file": "collection-desktop.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/collection-desktop.png",
+      "sha256": "997bd3ea9c1b9551382295f8287c43273a38fa120816bbc6b59bb6ca8279b273"
+    },
+    {
+      "file": "home-390.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/home-390.png",
+      "sha256": "3366708203a04446769310726cce494ed8900609e3d2e6fb471dae6c3b5c560b"
+    },
+    {
+      "file": "home-768.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/home-768.png",
+      "sha256": "50948fff8030be5af8505f6a93112fb49add5f039e8d109184b5279ce6da5521"
+    },
+    {
+      "file": "work-390.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/work-390.png",
+      "sha256": "485a8da852e952d5a95b39fe157ffb8645f22e98f7b0c02a5b07dedc7fa360a4"
+    },
+    {
+      "file": "work-768.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/work-768.png",
+      "sha256": "1b79ef3db07c8e820822e290f0ddd3551763e17c2af96bcba4aa7e7a8acc3f3d"
+    },
+    {
+      "file": "gallery-390.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/gallery-390.png",
+      "sha256": "e7258feccd8736f1367670fb8d1e9c04da60ec889afe0a9f471edcd3ecb638b5"
+    },
+    {
+      "file": "gallery-768.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/gallery-768.png",
+      "sha256": "24b603ebe80ee38e5fb6e2e186b54b001768d43cfc0d30cad88c89bbc1a1f2e3"
+    },
+    {
+      "file": "work-sheng.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/work-sheng.png",
+      "sha256": "37bf4f6bfb898f92305c0ab6437184b508ad808a3bf44a2fe725ae73e6eeaa35"
+    },
+    {
+      "file": "gallery-sheng.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/gallery-sheng.png",
+      "sha256": "1ba79eed17b19e80a504aa0b880c6af33fdcac30ec7b39731f051dc13ea8dae4"
+    },
+    {
+      "file": "work-dan.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/work-dan.png",
+      "sha256": "1d40570d789b247421957362d55dd4e567b8251830f95cce47207050079b5466"
+    },
+    {
+      "file": "gallery-dan.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/gallery-dan.png",
+      "sha256": "b5aa60c3fbcd9232463ee302a4d3a7dbf996a5f8cbb34fbf2944c91c4ed3125d"
+    },
+    {
+      "file": "work-jing-red.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/work-jing-red.png",
+      "sha256": "af715a5f6d313cea18dd30ac5b9a7cde27173ff73e36c4b82076d35d3febde04"
+    },
+    {
+      "file": "gallery-jing-red.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/gallery-jing-red.png",
+      "sha256": "bcc7baebd711723f1259286f6b5ac70fcd6cc185fd1d877af9d2b4c5200ae5fa"
+    },
+    {
+      "file": "work-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/work-jing-yellow.png",
+      "sha256": "1162849ea02080843b0becc32c34fbd12c75d25f4778cb5e120c527f040284ee"
+    },
+    {
+      "file": "gallery-jing-yellow.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/gallery-jing-yellow.png",
+      "sha256": "b778119ab7370ee8de8e32642cd80e038c457c79573b545ad227002ce358d0a3"
+    },
+    {
+      "file": "work-jing-white.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/work-jing-white.png",
+      "sha256": "b87fea8b8ffe05f11eeca8b4ce43695d77849b71a890f83bb4803d4707b6b2d4"
+    },
+    {
+      "file": "gallery-jing-white.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/portfolio/gallery-jing-white.png",
+      "sha256": "f2f27070f4465964a23e9e5d4b704c2403a852a35e201896c4631f35a80c07b3"
+    },
+    {
+      "file": "home-1366.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/design/home-1366.png",
+      "sha256": "de835d1c0958a36dbca035bc252cbb8c8155005caecb94e570be256ce2ccbef2"
+    },
+    {
+      "file": "studio-768.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/design/studio-768.png",
+      "sha256": "0b1a7a7ce21e9af853ae91f38345d6b1f892ac00a2f6752e59b103c8be9a9ea7"
+    },
+    {
+      "file": "studio-390.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/design/studio-390.png",
+      "sha256": "f77399c7a151930dc8572d2da1a5ea01dd967e78f986181d3b8d35e9f1d83d3c"
+    },
+    {
+      "file": "gallery-settings-desktop.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/design/gallery-settings-desktop.png",
+      "sha256": "be1764ae5c029583df1abec90c0fab355abcafba5b3c061733f1a3f30f628df6"
+    },
+    {
+      "file": "brand-static-reduced-motion.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/design/brand-static-reduced-motion.png",
+      "sha256": "8e8eb33ad83004f0d6f25d194cfd01dbc70a18c0d76648ecbf4b33f3afe3317f"
+    },
+    {
+      "file": "brand-v2-final.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/design/brand-v2-final.png",
+      "sha256": "ae994b3351f303127874c22e4754c075a3265a5d5a926a588bf72ed02ad1215d"
+    },
+    {
+      "file": "home-200.png",
+      "source": "test-out/suite-2026-10-23T21-04-32-392Z/native-zoom/home-200.png",
+      "sha256": "0533d930ed7af84ad00573212900d4d0f2a1141611da45afd57a936c4fa07fcf"
+    },
+    {
+      "file": "detail-200.png",
+      "source": "test-out/suite-2026-10-23T21-04-32-392Z/native-zoom/detail-200.png",
+      "sha256": "304116819b2c4b7d3e6da7544b9845c8491f333b7a61f85a0524bbb51ff65f53"
+    },
+    {
+      "file": "gallery-200.png",
+      "source": "test-out/suite-2026-10-23T21-04-32-392Z/native-zoom/gallery-200.png",
+      "sha256": "0c30483d4572a75b98f276cc6a3a58d219252a257bca7e4f2de8edaf6e1fee76"
+    },
+    {
+      "file": "studio-200.png",
+      "source": "test-out/suite-2026-10-23T21-04-32-392Z/native-zoom/studio-200.png",
+      "sha256": "4daa16dda137bb480ae71e7ac44ddcbd46cd4000f9585c14ff9464dba4c70353"
+    },
+    {
+      "file": "studio-model-200.png",
+      "source": "test-out/suite-2026-10-23T21-04-32-392Z/native-zoom/studio-model-200.png",
+      "sha256": "30bc5eb969516bdc6d8c5eae2ba73f2f329e3253109935ffdf545eeccefcee8d"
+    },
+    {
+      "file": "face-close-front-authored-paired.png",
+      "source": "test-out/suite-2026-10-23T21-00-51-629Z/face-candidate/close-front-authored-paired.png",
+      "sha256": "7d247cf5bef3749489b9c0fd8a948c027cf509e7888425b7e3ab4de82df59bc0"
+    },
+    {
+      "file": "face-close-front-clay-paired.png",
+      "source": "test-out/suite-2026-10-23T21-00-51-629Z/face-candidate/close-front-clay-paired.png",
+      "sha256": "68fe31ec6261c79f8ee6cf14509ac59df28ff5ac9ce161152ad4a8053da9fbf9"
+    },
+    {
+      "file": "face-close-oblique-authored-paired.png",
+      "source": "test-out/suite-2026-10-23T21-00-51-629Z/face-candidate/close-oblique-authored-paired.png",
+      "sha256": "a801bac5ddcf841cae0a38225adef55b5ca3a27f32c20ac4a0d05d24091438ff"
+    },
+    {
+      "file": "face-close-oblique-clay-paired.png",
+      "source": "test-out/suite-2026-10-23T21-00-51-629Z/face-candidate/close-oblique-clay-paired.png",
+      "sha256": "082949b535eac5b0aaf0d4c0db468dad2351c8ac04f916553553a58584f61b32"
+    },
+    {
+      "file": "face-normal-front-authored-paired.png",
+      "source": "test-out/suite-2026-10-23T21-00-51-629Z/face-candidate/normal-front-authored-paired.png",
+      "sha256": "49dded32f38ca9a5c73139f54961bd27aadcdfd2dded998f57d25c241dff8d37"
+    },
+    {
+      "file": "face-normal-front-clay-paired.png",
+      "source": "test-out/suite-2026-10-23T21-00-51-629Z/face-candidate/normal-front-clay-paired.png",
+      "sha256": "4c3e6f4530d039417130bf63c21e154963eb85d86293da7974ac10c447631d41"
+    },
+    {
+      "file": "face-normal-oblique-authored-paired.png",
+      "source": "test-out/suite-2026-10-23T21-00-51-629Z/face-candidate/normal-oblique-authored-paired.png",
+      "sha256": "561a44db79e202ac00c3cc89755fe194ea471564c1a8a47c0671be87b48d00f0"
+    },
+    {
+      "file": "face-normal-oblique-clay-paired.png",
+      "source": "test-out/suite-2026-10-23T21-00-51-629Z/face-candidate/normal-oblique-clay-paired.png",
+      "sha256": "79f03d22d79b32b85be0103c811924e5b23ef39f3f215c10859132801eb82251"
+    },
+    {
+      "file": "agent-live.png",
+      "source": "test-out/suite-2026-10-23T21-06-51-521Z/agent-live/live-agent.png",
+      "sha256": "196a86c6ac2311453d725886d07cb1ea7800654a33a9dc4acbeaebc3d5b9988c"
+    },
+    {
+      "file": "gallery-button-refresh-390.png",
+      "source": "test-out/suite-2026-10-23T21-25-58-555Z/closeout/gallery-button-refresh-390.png",
+      "sha256": "bcc80d4f0ad963be6e9f7abe5e2b8fc3db9ff641e4294c6ae350da274a586f64"
+    }
+  ]
+}

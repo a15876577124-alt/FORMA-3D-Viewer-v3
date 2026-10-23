@@ -1,8 +1,17 @@
 # TASK_STATE — FORMA V5
 
-更新：2026-10-24（Asia/Shanghai）。当前已完成批准设计的工程接入与候选包验证。
+更新：2026-10-24（Asia/Shanghai）。当前发布前收尾在 feature/codex-v5-release-closeout；从实际本地/远程一致的 c22c14e 开始。
 
-## 当前：批准的 UX / A / V2 接入
+## 当前：发布前收尾
+
+- 静态包显式 showcase 模式，Studio 进入真实工作流介绍；本地仍完整工作区，断线可重试恢复。
+- 修复跨页滚动位置、详情画布截获滚轮、短屏/原生 200% Studio 视口、窄屏五件选择与点击切换后的刷新保持、复制失败旧反馈、导出确认文案与重复提交。
+- 全量 36/36；收尾 33、设计 76、作品集 43、品质 34、布局 47、工作流 38；WorkBuddy 真实 Agent 7/7。原生 200% 专项通过；真机及读屏器仍待验。
+- 旦角局部 34 顶点试验另存 assets/experiments/dan-cheek-depth-v1，八组固定条件对照；改善不够明确，未替换当前展示版，未进入静态包。
+- 正式 A/V2 保持已接入，V3 未进网页。Original、五件当前展示模型、品牌文件、私人数据、原工程 ARCHITECTURE.md 和历史包保留。
+- 候选位置、源码提交、独立包结果和证据以 [发布前收尾报告](docs/RELEASE-CLOSEOUT.md) / [机器结果](docs/audit/release-closeout-results.json) 为准。
+
+## 历史基线：批准的 UX / A / V2 接入
 
 - 从本地/远程干净且一致的 `feature/codex-v5-rc1-polish` / `253a1ab` 创建 `feature/codex-v5-design-integration`，运行代码 `0febd7648377f93a1fcff808270190cb97cb8b06` 已推送；不合并 main、不公开部署。
 - 作品优先首页、真实滚轮滚动、Gallery 选择条/设置模态、Studio 冻结材质确认/版本/数值/保存状态、768px 按钮遮挡修复；保持原生 JS/CSS/Three.js 和真实资产流水线。

@@ -7,6 +7,8 @@
 - Replacement: copy a newly approved delivery into `assets/brand/`, update provenance/config only, run `npm run release:verify` and isolated design/quality/layout/release tests. Never edit frozen path data or the delivered animation source in place.
 - Verified: real Edge static fallback, reduced-motion changes, no pre-interaction V2 download, single playback, exact final SVG paths, focus return, and standalone package. Physical phone rendering remains unverified.
 
+本轮发布前收尾追加验证：V2 暂停后时间不再推进、重播、播放中切页销毁、独立静态包资源完整。正式品牌五个文件逐字节保留，见 RELEASE-CLOSEOUT.md。
+
 ## Historical RC1 reservation (superseded by integration above)
 
 Ownership: this worktree owns application integration; the independent Logo workspace owns artwork. No design file, design branch or external workspace has been accessed, modified or merged in the RC1 portfolio pass. Design direction is approved (A Spatial Monogram; motion direction Spatial Construction), but formal SVG/animation/icon files have not been integrated. Approval of a concept is distinct from delivery of runtime files. No screenshot tracing or temporary animation was added.

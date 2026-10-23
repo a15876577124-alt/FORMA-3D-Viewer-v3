@@ -4,6 +4,14 @@ All notable changes to FORMA are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/).
 
+## [2026-10-24 Release Closeout] — 展示候选收尾
+
+- 显式静态展示模式与 Studio 真实工作流介绍，保留本地完整工作区和真实离线/恢复状态。
+- 修复页脚跳转后的滚动位置、详情滚轮/触摸页面浏览、原生 200% 短屏工作区；窄屏可顺序选择全部五件作品，点击切换同步分享地址，刷新保留当前作品。
+- 复制失败不再残留成功反馈；导出确认名称正确、重复点击不重复落盘、成功清理确认。
+- 旦角局部候选和八组固定条件对比独立保存，未替换 Original/当前展示版。
+- 36/36 完整回归，33 项收尾、13 项原生缩放、7 项真实 Agent；独立静态包、截图和剩余限制见 docs/RELEASE-CLOSEOUT.md。
+
 ## [2026-10-24 Approved Design RC] — 已批准设计接入与跨页面渲染校准
 
 - 独立 `feature/codex-v5-design-integration`，实际基线 `253a1ab`；保留原生 JS/CSS/Three.js，不移植 React 演示代码。

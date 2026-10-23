@@ -2,7 +2,9 @@
 
 一个实时三维展示器，用于陈列五件琼剧角色数字手办（生角、旦角·完整头饰、净角·红谱 / 黄谱 / 白谱），支持专业影棚布光、材质与后期调整、多格式模型导入、逐展品参数持久化、沉浸模式与截图导出。
 
-**V5 双工作区**（当前设计接入分支 `feature/codex-v5-design-integration`，基于核验的 `feature/codex-v5-rc1-polish` / `253a1ab`）：
+本轮候选说明、真实截图与测试见 [发布前收尾报告](docs/RELEASE-CLOSEOUT.md)。静态 ZIP 的 Studio 是真实工作流介绍页；完整编辑、处理与 AI 在本地源码 `npm ci` / `npm start` 中使用。正式 A / V2 已接入，V3 不包含在网页。
+
+**V5 双工作区**（当前收尾分支 `feature/codex-v5-release-closeout`，基于核验的 `feature/codex-v5-design-integration` / `c22c14e`）：
 
 - **Gallery 数字展厅**：观展优先。大视口、五件作品选择条、最佳视角 / 自动旋转 / 观展设置；灯光、材质、后期、显示与 PNG 导出在设置中可达，生产工具在观展模式下不出现。
 - **AI Studio 专业工作区**：五区布局（顶部工具条 / 左资源树 / 中央视口 / 右 Lab 坞 / 底部任务 Dock），已接入统一资产/版本、材质保存、真实 GLB/GLTF/FBX 工作流程、Agent、后验、真实两版本比较和完整资源包导出，见 [生产闭环记录](docs/V5-PRODUCTION-WORKFLOW.md)。

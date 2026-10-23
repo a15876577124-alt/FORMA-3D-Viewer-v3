@@ -1,0 +1,70 @@
+# Release closeout evidence
+
+57 actual screenshots. See [acceptance report](../../RELEASE-CLOSEOUT.md) and [source hashes](manifest.json). Desktop viewport simulations are not physical phone tests. Native zoom images use browser.tabs.setZoom(2), not CSS scaling.
+
+- Static Studio: static-studio-before → static-studio-1366 / 768 / 390; static-pack-studio is a complete page capture.
+- Navigation: gallery-before-390 → gallery-390 and gallery-fifth-390. The before and after Dan views share reduced motion/default framing; the fifth screenshot demonstrates reachability.
+- Scroll/copy: detail-before-route → detail-route-top; contact-before-failure → contact-failure.
+- Native 200%: studio-before-200 has a 29.5 CSS px canvas; studio-200 / studio-model-200 show the new scrollable middle workspace and usable model area.
+- Studio workflow: analysis → material → comparison → reimport. These captures show licensed isolated Avocado data, not user assets.
+- Face experiment: all eight face-*-paired images show **current left / candidate right**. Normal distance/close × front/oblique × authored/clay, 512×512 each, shared camera/lighting/exposure. No candidate is promoted.
+- Brand, five actual details/Gallery, contact, short desktop and native zoom retain their filenames below.
+
+- [gallery-before-390.png](gallery-before-390.png)
+- [contact-before-failure.png](contact-before-failure.png)
+- [detail-before-route.png](detail-before-route.png)
+- [studio-before-200.png](studio-before-200.png)
+- [static-studio-before.png](static-studio-before.png)
+- [static-studio-1366.png](static-studio-1366.png)
+- [static-studio-768.png](static-studio-768.png)
+- [static-studio-390.png](static-studio-390.png)
+- [static-pack-studio.png](static-pack-studio.png)
+- [static-pack-gallery.png](static-pack-gallery.png)
+- [analysis.png](analysis.png)
+- [material.png](material.png)
+- [comparison.png](comparison.png)
+- [reimport.png](reimport.png)
+- [contact-failure.png](contact-failure.png)
+- [detail-route-top.png](detail-route-top.png)
+- [detail-touch-scroll-390.png](detail-touch-scroll-390.png)
+- [gallery-fifth-390.png](gallery-fifth-390.png)
+- [home-desktop.png](home-desktop.png)
+- [collection-desktop.png](collection-desktop.png)
+- [home-390.png](home-390.png)
+- [home-768.png](home-768.png)
+- [work-390.png](work-390.png)
+- [work-768.png](work-768.png)
+- [gallery-390.png](gallery-390.png)
+- [gallery-768.png](gallery-768.png)
+- [work-sheng.png](work-sheng.png)
+- [gallery-sheng.png](gallery-sheng.png)
+- [work-dan.png](work-dan.png)
+- [gallery-dan.png](gallery-dan.png)
+- [work-jing-red.png](work-jing-red.png)
+- [gallery-jing-red.png](gallery-jing-red.png)
+- [work-jing-yellow.png](work-jing-yellow.png)
+- [gallery-jing-yellow.png](gallery-jing-yellow.png)
+- [work-jing-white.png](work-jing-white.png)
+- [gallery-jing-white.png](gallery-jing-white.png)
+- [home-1366.png](home-1366.png)
+- [studio-768.png](studio-768.png)
+- [studio-390.png](studio-390.png)
+- [gallery-settings-desktop.png](gallery-settings-desktop.png)
+- [brand-static-reduced-motion.png](brand-static-reduced-motion.png)
+- [brand-v2-final.png](brand-v2-final.png)
+- [home-200.png](home-200.png)
+- [detail-200.png](detail-200.png)
+- [gallery-200.png](gallery-200.png)
+- [studio-200.png](studio-200.png)
+- [studio-model-200.png](studio-model-200.png)
+- [face-close-front-authored-paired.png](face-close-front-authored-paired.png)
+- [face-close-front-clay-paired.png](face-close-front-clay-paired.png)
+- [face-close-oblique-authored-paired.png](face-close-oblique-authored-paired.png)
+- [face-close-oblique-clay-paired.png](face-close-oblique-clay-paired.png)
+- [face-normal-front-authored-paired.png](face-normal-front-authored-paired.png)
+- [face-normal-front-clay-paired.png](face-normal-front-clay-paired.png)
+- [face-normal-oblique-authored-paired.png](face-normal-oblique-authored-paired.png)
+- [face-normal-oblique-clay-paired.png](face-normal-oblique-clay-paired.png)
+- [agent-live.png](agent-live.png)
+
+- [gallery-button-refresh-390.png](gallery-button-refresh-390.png) — actual button selection followed by browser refresh.

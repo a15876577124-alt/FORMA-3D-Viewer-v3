@@ -1,0 +1,2659 @@
+{
+  "generatedAt": "2026-10-23T21:30:28.030Z",
+  "branch": "feature/codex-v5-release-closeout",
+  "sourceCommit": "8a025d72847846da0af3806e2adcf7fa598a668f",
+  "baseline": "c22c14eb0684f4eb1c533400a5f004b4a75c0455",
+  "environment": {
+    "node": "v24.22.0",
+    "npm": "11.19.1",
+    "edge": "155.0.4283.62",
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "physicalPhone": false,
+    "screenReader": false
+  },
+  "fullSuite": {
+    "path": "test-out/suite-2026-10-23T21-25-58-555Z",
+    "generatedAt": "2026-10-23T21:29:12.619Z",
+    "results": [
+      {
+        "name": "vendor",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "vendorscan",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "assets",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "release",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "pipeline",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "production-visual",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "portfolio-models",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "portfolio",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "quality",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "closeout",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "design",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "calibration",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "agent-stability",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "agent",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "providers",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbx-materials",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "local-security",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "geometry-semantics",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "audit",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ops",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "opparams",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "batch",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "formats",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "workflow",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "compare-ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "fbxtex-ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "proxy",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "server",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "render",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "ui",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "import",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "extended",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "workspaces",
+        "code": 0,
+        "passed": true
+      },
+      {
+        "name": "layout",
+        "code": 0,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "targeted": {
+    "closeout": {
+      "checks": [
+        "local source is a real workbench",
+        "material edit creates a draft",
+        "cancelled navigation preserves draft",
+        "save makes a validated derivative of the same asset",
+        "Original restores its actual file",
+        "export confirmation names the correct action",
+        "export uses the selected Edited version",
+        "double export click creates one output",
+        "successful export clears its confirmation",
+        "exported GLB contains the saved material",
+        "re-import really renders the saved material",
+        "connection failure preserves full Studio",
+        "explicit retry recovers connection",
+        "Studio controls hit-testable 768",
+        "Studio controls hit-testable 390",
+        "390px can select sheng",
+        "390px can select dan",
+        "390px can select jing-red",
+        "390px can select jing-yellow",
+        "390px can select jing-white",
+        "previous reaches fourth exhibit",
+        "button selection updates the shareable Gallery route",
+        "refresh after button selection keeps the chosen exhibit",
+        "both mailto addresses are correct",
+        "actual clipboard holds the email",
+        "failed repeat copy clears old success label",
+        "footer to detail starts at the page heading",
+        "brand pause stops timeline",
+        "route exit destroys active brand player",
+        "Gallery refresh restores actual identity",
+        "legal personalized exposure survives refresh",
+        "emulated vertical touch over detail canvas scrolls the page",
+        "no uncaught page errors"
+      ],
+      "errors": [],
+      "buttonSelectionAfterRefresh": {
+        "hash": "#/gallery?work=jing-yellow",
+        "id": "jing-yellow",
+        "tris": 47852
+      }
+    },
+    "nativeZoom": {
+      "path": "test-out/suite-2026-10-23T21-04-32-392Z/native-zoom",
+      "method": "Temporary test extension chrome.tabs.setZoom(2); getZoom verification; no CSS zoom, no deviceScaleFactor simulation",
+      "checks": [
+        "browser reports native 200 percent",
+        "no horizontal page clipping at 200% home",
+        "footer reachable at 200% home",
+        "detail starts at top after footer navigation",
+        "no horizontal page clipping at 200% detail",
+        "footer reachable at 200% detail",
+        "no horizontal page clipping at 200% gallery",
+        "settings opens at 200%",
+        "no horizontal page clipping at 200% studio",
+        "Studio primary actions reachable at 200%",
+        "Studio retains usable canvas at native zoom",
+        "Studio processing area reachable at native zoom",
+        "no page exceptions"
+      ],
+      "errors": [],
+      "before": {
+        "width": 1336,
+        "height": 805,
+        "dpr": 1,
+        "visualScale": 1
+      },
+      "zoom": 2,
+      "after": {
+        "width": 668,
+        "height": 402,
+        "dpr": 2,
+        "visualScale": 1
+      },
+      "status": "verified"
+    },
+    "staticPackage": {
+      "path": "test-out/suite-2026-10-23T21-29-52-119Z",
+      "pack": "D:\\haorongli09\\FORMA-3D-Viewer-琼剧五手办版\\FORMA-3D-Viewer-v3-quality\\test-out\\FORMA-Portfolio-Candidate-8a025d7-extracted",
+      "reusedCandidate": true,
+      "pass": 53,
+      "fail": 0,
+      "failures": []
+    },
+    "launcher": {
+      "checks": [
+        "launcher reports startup",
+        "/ returns 200",
+        "/src/main.js returns 200",
+        "/api/health returns 200"
+      ],
+      "front": 52296,
+      "back": 52297,
+      "isolatedRoot": "D:\\haorongli09\\FORMA-3D-Viewer-琼剧五手办版\\FORMA-3D-Viewer-v3-quality\\test-out\\suite-2026-10-23T21-09-36-303Z\\project",
+      "noBrowserAutoOpen": true,
+      "log": "==============================================\n  FORMA V5 · 本地完整版\n  数字展厅 + AI 资产管线（分析/优化/导出）\n==============================================\n\n• 启动 AI 管线后端 :52297 …\n[后端] [FORMA pipeline] http://127.0.0.1:52297 (仅本机监听)\n  ✓ 后端就绪 (http://127.0.0.1:52297)\n\n• 启动前端服务 :52296 …\n[前端] FORMA 3D Viewer V3\n[前端]   serving : D:\\haorongli09\\FORMA-3D-Viewer-琼剧五手办版\\FORMA-3D-Viewer-v3-quality\\test-out\\suite-2026-10-23T21-09-36-303Z\\project\n[前端]   local   : http://127.0.0.1:52296/\n[前端]   api     : /api/* -> http://127.0.0.1:52297\n[前端]   Ctrl+C to stop\n\n✓ 启动完成：http://127.0.0.1:52296/#/studio\n  浏览器将自动打开；关闭本窗口或按 Ctrl+C 即停止全部服务。\n\n",
+      "path": "test-out/suite-2026-10-23T21-09-36-303Z/project/test-out/launcher-report.json"
+    }
+  },
+  "baselineReproduction": {
+    "baseline": "c22c14e",
+    "errors": [],
+    "copyFailureLabel": "已复制",
+    "detailEnteredAtScrollY": 392,
+    "studioCanvasHeight": 29.5,
+    "zoom": 2,
+    "galleryButtonRefresh": {
+      "failedAssertion": "button selection updates the shareable Gallery route",
+      "suite": "test-out/suite-2026-10-23T21-22-13-161Z",
+      "fixedSuite": "test-out/suite-2026-10-23T21-25-58-555Z"
+    }
+  },
+  "performance": {
+    "caveat": "Single same-machine sample per state, not a demonstrated speed improvement; viewport and GPU counts unchanged for this measurement.",
+    "before": {
+      "label": "after",
+      "node": "v24.22.0",
+      "measurements": {
+        "homeReadyMs": 1694,
+        "reducedMotionHero": {
+          "draws": 0,
+          "elapsedMs": 499
+        },
+        "downloadBytes": 9788335,
+        "requestCount": 84,
+        "galleryFrames": {
+          "medianMs": 4.199999999999818,
+          "p95Ms": 4.300000000000182,
+          "memory": {
+            "geometries": 7,
+            "textures": 8,
+            "programs": 9,
+            "triangles": 95804,
+            "calls": 11
+          }
+        },
+        "hiddenHero": {
+          "draws": 0
+        },
+        "analysisMs": [
+          8.709399999999732,
+          3.8463999999994485,
+          5.76339999999982,
+          3.809900000000198,
+          5.008499999999913,
+          5.3771999999999025
+        ],
+        "upload": {
+          "encodedBytes": 44741369,
+          "elapsedMs": 312.78729999999996,
+          "frontend": {
+            "memory": {
+              "rss": 66834432,
+              "heapTotal": 12369920,
+              "heapUsed": 7547496,
+              "external": 6660502,
+              "arrayBuffers": 2556775
+            },
+            "maxRssKiB": 75736
+          },
+          "backend": {
+            "memory": {
+              "rss": 291221504,
+              "heapTotal": 82034688,
+              "heapUsed": 63376688,
+              "external": 164569975,
+              "arrayBuffers": 157103911
+            },
+            "maxRssKiB": 360852
+          }
+        }
+      },
+      "errors": [],
+      "resources": [
+        {
+          "path": "/styles.css",
+          "bytes": 28888,
+          "duration": 6.5
+        },
+        {
+          "path": "/styles/tokens.css",
+          "bytes": 4695,
+          "duration": 6.100000001490116
+        },
+        {
+          "path": "/styles/v5.css",
+          "bytes": 32616,
+          "duration": 7.899999998509884
+        },
+        {
+          "path": "/styles/studio.css",
+          "bytes": 43071,
+          "duration": 7.899999998509884
+        },
+        {
+          "path": "/src/main.js",
+          "bytes": 23749,
+          "duration": 3.0999999940395355
+        },
+        {
+          "path": "/src/ui/brand.js",
+          "bytes": 2785,
+          "duration": 4.100000001490116
+        },
+        {
+          "path": "/src/core/capabilities.js",
+          "bytes": 2235,
+          "duration": 4.5
+        },
+        {
+          "path": "/src/state/viewState.js",
+          "bytes": 3671,
+          "duration": 5.399999998509884
+        },
+        {
+          "path": "/src/core/viewer.js",
+          "bytes": 18272,
+          "duration": 5.0999999940395355
+        },
+        {
+          "path": "/src/state/appState.js",
+          "bytes": 1893,
+          "duration": 7.100000001490116
+        },
+        {
+          "path": "/src/models/catalog.js",
+          "bytes": 4955,
+          "duration": 7.800000004470348
+        },
+        {
+          "path": "/src/models/library.js",
+          "bytes": 1281,
+          "duration": 9.600000001490116
+        },
+        {
+          "path": "/src/ui/sidebar.js",
+          "bytes": 8813,
+          "duration": 10.300000004470348
+        },
+        {
+          "path": "/src/ui/gallery.js",
+          "bytes": 12090,
+          "duration": 10.300000004470348
+        },
+        {
+          "path": "/src/studio/ui.js",
+          "bytes": 13526,
+          "duration": 10.400000005960464
+        },
+        {
+          "path": "/src/ui/shell.js",
+          "bytes": 4133,
+          "duration": 11.400000005960464
+        },
+        {
+          "path": "/src/core/router.js",
+          "bytes": 6681,
+          "duration": 11.399999998509884
+        },
+        {
+          "path": "/src/ui/feedback.js",
+          "bytes": 5732,
+          "duration": 14.100000001490116
+        },
+        {
+          "path": "/src/pages/home.js",
+          "bytes": 4558,
+          "duration": 14.300000004470348
+        },
+        {
+          "path": "/src/pages/work.js",
+          "bytes": 5240,
+          "duration": 14.300000004470348
+        },
+        {
+          "path": "/src/ui/inspector.js",
+          "bytes": 11322,
+          "duration": 14.5
+        },
+        {
+          "path": "/src/ui/chrome.js",
+          "bytes": 6247,
+          "duration": 15.699999995529652
+        },
+        {
+          "path": "/src/loaders/registry.js",
+          "bytes": 4887,
+          "duration": 15.799999997019768
+        },
+        {
+          "path": "/src/loaders/errors.js",
+          "bytes": 4645,
+          "duration": 17.69999999552965
+        },
+        {
+          "path": "/src/utils/dom.js",
+          "bytes": 4214,
+          "duration": 19.399999998509884
+        },
+        {
+          "path": "/src/utils/storage.js",
+          "bytes": 1698,
+          "duration": 12.200000002980232
+        },
+        {
+          "path": "/src/lighting/environment.js",
+          "bytes": 3776,
+          "duration": 13.899999998509884
+        },
+        {
+          "path": "/vendor/three/addons/controls/OrbitControls.js",
+          "bytes": 41055,
+          "duration": 13.699999995529652
+        },
+        {
+          "path": "/src/lighting/profile.js",
+          "bytes": 549,
+          "duration": 16.399999998509884
+        },
+        {
+          "path": "/src/lighting/studio.js",
+          "bytes": 6475,
+          "duration": 17
+        },
+        {
+          "path": "/src/stage/ground.js",
+          "bytes": 5405,
+          "duration": 17.600000001490116
+        },
+        {
+          "path": "/vendor/three/build/three.module.js",
+          "bytes": 663072,
+          "duration": 19.100000001490116
+        },
+        {
+          "path": "/src/post/composer.js",
+          "bytes": 3320,
+          "duration": 17
+        },
+        {
+          "path": "/src/models/place.js",
+          "bytes": 5040,
+          "duration": 17.69999999552965
+        },
+        {
+          "path": "/src/materials/override.js",
+          "bytes": 7035,
+          "duration": 22.100000001490116
+        },
+        {
+          "path": "/src/models/procedural.js",
+          "bytes": 5374,
+          "duration": 22
+        },
+        {
+          "path": "/src/loaders/importers.js",
+          "bytes": 12827,
+          "duration": 22.200000002980232
+        },
+        {
+          "path": "/src/loaders/normals.js",
+          "bytes": 4663,
+          "duration": 22.400000005960464
+        },
+        {
+          "path": "/src/utils/dispose.js",
+          "bytes": 3307,
+          "duration": 22.100000001490116
+        },
+        {
+          "path": "/src/studio/core.js",
+          "bytes": 36026,
+          "duration": 18.700000002980232
+        },
+        {
+          "path": "/src/studio/tree.js",
+          "bytes": 10219,
+          "duration": 22
+        },
+        {
+          "path": "/src/studio/dock.js",
+          "bytes": 15814,
+          "duration": 22.399999998509884
+        },
+        {
+          "path": "/src/studio/panes.js",
+          "bytes": 30499,
+          "duration": 22.200000002980232
+        },
+        {
+          "path": "/src/studio/toolbar.js",
+          "bytes": 7956,
+          "duration": 22.200000002980232
+        },
+        {
+          "path": "/src/studio/layout.js",
+          "bytes": 10672,
+          "duration": 22.299999997019768
+        },
+        {
+          "path": "/src/ui/contact.js",
+          "bytes": 2538,
+          "duration": 20.30000000447035
+        },
+        {
+          "path": "/src/ui/brandMotion.js",
+          "bytes": 3880,
+          "duration": 24.200000002980232
+        },
+        {
+          "path": "/src/pages/home3d.js",
+          "bytes": 8781,
+          "duration": 21.399999998509884
+        },
+        {
+          "path": "/src/core/miniViewer.js",
+          "bytes": 6953,
+          "duration": 21.399999998509884
+        },
+        {
+          "path": "/vendor/three/addons/environments/RoomEnvironment.js",
+          "bytes": 5260,
+          "duration": 16
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/EffectComposer.js",
+          "bytes": 8801,
+          "duration": 11.200000002980232
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/RenderPass.js",
+          "bytes": 4580,
+          "duration": 11.100000001490116
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/UnrealBloomPass.js",
+          "bytes": 15697,
+          "duration": 13.200000002980232
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/OutputPass.js",
+          "bytes": 4484,
+          "duration": 14.100000001490116
+        },
+        {
+          "path": "/vendor/three/build/three.core.js",
+          "bytes": 1458413,
+          "duration": 30.600000001490116
+        },
+        {
+          "path": "/vendor/three/addons/loaders/GLTFLoader.js",
+          "bytes": 117870,
+          "duration": 11.100000001490116
+        },
+        {
+          "path": "/vendor/three/addons/loaders/MTLLoader.js",
+          "bytes": 11656,
+          "duration": 10.899999998509884
+        },
+        {
+          "path": "/vendor/three/addons/loaders/OBJLoader.js",
+          "bytes": 23216,
+          "duration": 10.800000004470348
+        },
+        {
+          "path": "/vendor/three/addons/loaders/FBXLoader.js",
+          "bytes": 113672,
+          "duration": 16.899999998509884
+        },
+        {
+          "path": "/vendor/three/addons/exporters/GLTFExporter.js",
+          "bytes": 93870,
+          "duration": 18.200000002980232
+        },
+        {
+          "path": "/src/net/api.js",
+          "bytes": 3607,
+          "duration": 16.600000001490116
+        },
+        {
+          "path": "/src/core/compare.js",
+          "bytes": 3388,
+          "duration": 16.700000002980232
+        },
+        {
+          "path": "/src/ui/opParams.js",
+          "bytes": 4956,
+          "duration": 13.699999995529652
+        },
+        {
+          "path": "/vendor/postprocessing/build/postprocessing.esm.js",
+          "bytes": 634835,
+          "duration": 19.900000005960464
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/Pass.js",
+          "bytes": 4518,
+          "duration": 13.300000004470348
+        },
+        {
+          "path": "/vendor/three/addons/shaders/CopyShader.js",
+          "bytes": 1029,
+          "duration": 12.899999998509884
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/ShaderPass.js",
+          "bytes": 3528,
+          "duration": 13.200000002980232
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/MaskPass.js",
+          "bytes": 4994,
+          "duration": 13.399999998509884
+        },
+        {
+          "path": "/vendor/three/addons/shaders/LuminosityHighPassShader.js",
+          "bytes": 1591,
+          "duration": 12.700000002980232
+        },
+        {
+          "path": "/vendor/three/addons/shaders/OutputShader.js",
+          "bytes": 2176,
+          "duration": 14.399999998509884
+        },
+        {
+          "path": "/vendor/three/addons/utils/BufferGeometryUtils.js",
+          "bytes": 38012,
+          "duration": 14.299999997019768
+        },
+        {
+          "path": "/vendor/three/addons/utils/SkeletonUtils.js",
+          "bytes": 11835,
+          "duration": 14.100000001490116
+        },
+        {
+          "path": "/vendor/three/addons/libs/fflate.module.js",
+          "bytes": 89684,
+          "duration": 12.799999997019768
+        },
+        {
+          "path": "/vendor/three/addons/curves/NURBSCurve.js",
+          "bytes": 4188,
+          "duration": 14.300000004470348
+        },
+        {
+          "path": "/vendor/three/addons/curves/NURBSUtils.js",
+          "bytes": 11102,
+          "duration": 2.100000001490116
+        },
+        {
+          "path": "/assets/portfolio-v1/sheng.glb",
+          "bytes": 4462060,
+          "duration": 101.39999999850988
+        },
+        {
+          "path": "/assets/brand/lockup-ivory.svg",
+          "bytes": 1568,
+          "duration": 3.100000001490116
+        },
+        {
+          "path": "/assets/brand/lockup-nav-ivory.svg",
+          "bytes": 1639,
+          "duration": 3.100000001490116
+        },
+        {
+          "path": "/assets/thumbs/sheng.png",
+          "bytes": 288774,
+          "duration": 6.600000001490116
+        },
+        {
+          "path": "/assets/thumbs/jing-red.png",
+          "bytes": 307308,
+          "duration": 6.300000004470348
+        },
+        {
+          "path": "/assets/thumbs/dan.png",
+          "bytes": 319275,
+          "duration": 6.100000001490116
+        },
+        {
+          "path": "/assets/thumbs/jing-yellow.png",
+          "bytes": 285031,
+          "duration": 6.600000001490116
+        },
+        {
+          "path": "/assets/thumbs/jing-white.png",
+          "bytes": 287838,
+          "duration": 11.899999998509884
+        },
+        {
+          "path": "/assets/brand/favicon.svg",
+          "bytes": 747,
+          "duration": 3.1999999955296516
+        }
+      ],
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "after": {
+      "label": "after",
+      "node": "v24.22.0",
+      "measurements": {
+        "homeReadyMs": 1539,
+        "reducedMotionHero": {
+          "draws": 0,
+          "elapsedMs": 498.80000000447035
+        },
+        "downloadBytes": 9793823,
+        "requestCount": 85,
+        "galleryFrames": {
+          "medianMs": 4.199999999999818,
+          "p95Ms": 4.300000000000182,
+          "memory": {
+            "geometries": 7,
+            "textures": 8,
+            "programs": 9,
+            "triangles": 95804,
+            "calls": 11
+          }
+        },
+        "hiddenHero": {
+          "draws": 0
+        },
+        "analysisMs": [
+          8.57760000000053,
+          3.6474000000007436,
+          5.3034999999999854,
+          3.3689000000003944,
+          7.811999999999898,
+          7.948800000000119
+        ],
+        "upload": {
+          "encodedBytes": 44741369,
+          "elapsedMs": 273.4922999999999,
+          "frontend": {
+            "memory": {
+              "rss": 66134016,
+              "heapTotal": 11845632,
+              "heapUsed": 7540056,
+              "external": 6332822,
+              "arrayBuffers": 2229095
+            },
+            "maxRssKiB": 76176
+          },
+          "backend": {
+            "memory": {
+              "rss": 291217408,
+              "heapTotal": 82296832,
+              "heapUsed": 63303584,
+              "external": 164569975,
+              "arrayBuffers": 157103911
+            },
+            "maxRssKiB": 360784
+          }
+        }
+      },
+      "errors": [],
+      "resources": [
+        {
+          "path": "/styles.css",
+          "bytes": 28888,
+          "duration": 6.100000001490116
+        },
+        {
+          "path": "/styles/v5.css",
+          "bytes": 34046,
+          "duration": 8.200000002980232
+        },
+        {
+          "path": "/styles/tokens.css",
+          "bytes": 4695,
+          "duration": 8.300000004470348
+        },
+        {
+          "path": "/styles/studio.css",
+          "bytes": 43823,
+          "duration": 8.300000004470348
+        },
+        {
+          "path": "/src/main.js",
+          "bytes": 24294,
+          "duration": 2.2000000029802322
+        },
+        {
+          "path": "/src/ui/brand.js",
+          "bytes": 2785,
+          "duration": 4.200000002980232
+        },
+        {
+          "path": "/src/runtime.js",
+          "bytes": 477,
+          "duration": 4.299999997019768
+        },
+        {
+          "path": "/src/core/capabilities.js",
+          "bytes": 2235,
+          "duration": 5.100000001490116
+        },
+        {
+          "path": "/src/state/viewState.js",
+          "bytes": 3671,
+          "duration": 4.799999997019768
+        },
+        {
+          "path": "/src/state/appState.js",
+          "bytes": 1893,
+          "duration": 5
+        },
+        {
+          "path": "/src/core/viewer.js",
+          "bytes": 18272,
+          "duration": 5.699999995529652
+        },
+        {
+          "path": "/src/models/catalog.js",
+          "bytes": 4955,
+          "duration": 8.699999995529652
+        },
+        {
+          "path": "/src/ui/sidebar.js",
+          "bytes": 8813,
+          "duration": 9.399999998509884
+        },
+        {
+          "path": "/src/models/library.js",
+          "bytes": 1281,
+          "duration": 8.199999995529652
+        },
+        {
+          "path": "/src/ui/gallery.js",
+          "bytes": 13205,
+          "duration": 9.400000005960464
+        },
+        {
+          "path": "/src/ui/shell.js",
+          "bytes": 4133,
+          "duration": 9.900000005960464
+        },
+        {
+          "path": "/src/studio/ui.js",
+          "bytes": 13578,
+          "duration": 9.600000001490116
+        },
+        {
+          "path": "/src/core/router.js",
+          "bytes": 6938,
+          "duration": 11.900000005960464
+        },
+        {
+          "path": "/src/ui/feedback.js",
+          "bytes": 5732,
+          "duration": 12.600000001490116
+        },
+        {
+          "path": "/src/pages/home.js",
+          "bytes": 4683,
+          "duration": 12.800000004470348
+        },
+        {
+          "path": "/src/ui/inspector.js",
+          "bytes": 11322,
+          "duration": 12.800000004470348
+        },
+        {
+          "path": "/src/pages/work.js",
+          "bytes": 5396,
+          "duration": 12.899999998509884
+        },
+        {
+          "path": "/src/ui/chrome.js",
+          "bytes": 6247,
+          "duration": 14.299999997019768
+        },
+        {
+          "path": "/src/loaders/registry.js",
+          "bytes": 4887,
+          "duration": 15.799999997019768
+        },
+        {
+          "path": "/src/loaders/errors.js",
+          "bytes": 4645,
+          "duration": 15.899999998509884
+        },
+        {
+          "path": "/src/utils/dom.js",
+          "bytes": 4214,
+          "duration": 17.700000002980232
+        },
+        {
+          "path": "/src/utils/storage.js",
+          "bytes": 1698,
+          "duration": 10.300000004470348
+        },
+        {
+          "path": "/vendor/three/addons/controls/OrbitControls.js",
+          "bytes": 41055,
+          "duration": 12
+        },
+        {
+          "path": "/vendor/three/build/three.module.js",
+          "bytes": 663072,
+          "duration": 16.5
+        },
+        {
+          "path": "/src/lighting/environment.js",
+          "bytes": 3776,
+          "duration": 12.100000001490116
+        },
+        {
+          "path": "/src/lighting/profile.js",
+          "bytes": 549,
+          "duration": 12.299999997019768
+        },
+        {
+          "path": "/src/lighting/studio.js",
+          "bytes": 6475,
+          "duration": 13.799999997019768
+        },
+        {
+          "path": "/src/stage/ground.js",
+          "bytes": 5405,
+          "duration": 16.19999999552965
+        },
+        {
+          "path": "/src/post/composer.js",
+          "bytes": 3320,
+          "duration": 16.299999997019768
+        },
+        {
+          "path": "/src/materials/override.js",
+          "bytes": 7035,
+          "duration": 17.299999997019768
+        },
+        {
+          "path": "/src/models/place.js",
+          "bytes": 5040,
+          "duration": 18.5
+        },
+        {
+          "path": "/src/models/procedural.js",
+          "bytes": 5374,
+          "duration": 18.69999999552965
+        },
+        {
+          "path": "/src/utils/dispose.js",
+          "bytes": 3307,
+          "duration": 20.19999999552965
+        },
+        {
+          "path": "/src/loaders/normals.js",
+          "bytes": 4663,
+          "duration": 20.5
+        },
+        {
+          "path": "/src/loaders/importers.js",
+          "bytes": 12827,
+          "duration": 20.299999997019768
+        },
+        {
+          "path": "/src/ui/contact.js",
+          "bytes": 2839,
+          "duration": 16
+        },
+        {
+          "path": "/src/ui/brandMotion.js",
+          "bytes": 3880,
+          "duration": 16.899999998509884
+        },
+        {
+          "path": "/src/studio/core.js",
+          "bytes": 36148,
+          "duration": 17
+        },
+        {
+          "path": "/src/studio/tree.js",
+          "bytes": 10219,
+          "duration": 19.799999997019768
+        },
+        {
+          "path": "/src/studio/toolbar.js",
+          "bytes": 7956,
+          "duration": 19.799999997019768
+        },
+        {
+          "path": "/src/studio/dock.js",
+          "bytes": 15814,
+          "duration": 19.799999997019768
+        },
+        {
+          "path": "/src/studio/layout.js",
+          "bytes": 10672,
+          "duration": 20
+        },
+        {
+          "path": "/src/studio/panes.js",
+          "bytes": 30499,
+          "duration": 19.899999998509884
+        },
+        {
+          "path": "/src/pages/home3d.js",
+          "bytes": 8781,
+          "duration": 16.899999998509884
+        },
+        {
+          "path": "/src/core/miniViewer.js",
+          "bytes": 7109,
+          "duration": 20.200000002980232
+        },
+        {
+          "path": "/vendor/three/addons/environments/RoomEnvironment.js",
+          "bytes": 5260,
+          "duration": 14.799999997019768
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/RenderPass.js",
+          "bytes": 4580,
+          "duration": 9.5
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/EffectComposer.js",
+          "bytes": 8801,
+          "duration": 9.5
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/UnrealBloomPass.js",
+          "bytes": 15697,
+          "duration": 9.700000002980232
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/OutputPass.js",
+          "bytes": 4484,
+          "duration": 9.5
+        },
+        {
+          "path": "/vendor/three/build/three.core.js",
+          "bytes": 1458413,
+          "duration": 31.399999998509884
+        },
+        {
+          "path": "/vendor/three/addons/loaders/MTLLoader.js",
+          "bytes": 11656,
+          "duration": 9.799999997019768
+        },
+        {
+          "path": "/vendor/three/addons/loaders/OBJLoader.js",
+          "bytes": 23216,
+          "duration": 9.899999998509884
+        },
+        {
+          "path": "/vendor/three/addons/loaders/GLTFLoader.js",
+          "bytes": 117870,
+          "duration": 9.600000001490116
+        },
+        {
+          "path": "/vendor/three/addons/loaders/FBXLoader.js",
+          "bytes": 113672,
+          "duration": 15.600000001490116
+        },
+        {
+          "path": "/vendor/three/addons/exporters/GLTFExporter.js",
+          "bytes": 93870,
+          "duration": 9
+        },
+        {
+          "path": "/src/core/compare.js",
+          "bytes": 3388,
+          "duration": 14.299999997019768
+        },
+        {
+          "path": "/src/net/api.js",
+          "bytes": 3607,
+          "duration": 14.199999995529652
+        },
+        {
+          "path": "/src/ui/opParams.js",
+          "bytes": 4956,
+          "duration": 11.700000002980232
+        },
+        {
+          "path": "/vendor/postprocessing/build/postprocessing.esm.js",
+          "bytes": 634835,
+          "duration": 18.399999998509884
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/Pass.js",
+          "bytes": 4518,
+          "duration": 12.5
+        },
+        {
+          "path": "/vendor/three/addons/shaders/OutputShader.js",
+          "bytes": 2176,
+          "duration": 11.799999997019768
+        },
+        {
+          "path": "/vendor/three/addons/shaders/CopyShader.js",
+          "bytes": 1029,
+          "duration": 12.200000002980232
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/ShaderPass.js",
+          "bytes": 3528,
+          "duration": 11.899999998509884
+        },
+        {
+          "path": "/vendor/three/addons/postprocessing/MaskPass.js",
+          "bytes": 4994,
+          "duration": 15.100000001490116
+        },
+        {
+          "path": "/vendor/three/addons/shaders/LuminosityHighPassShader.js",
+          "bytes": 1591,
+          "duration": 14.900000005960464
+        },
+        {
+          "path": "/vendor/three/addons/utils/BufferGeometryUtils.js",
+          "bytes": 38012,
+          "duration": 14.100000001490116
+        },
+        {
+          "path": "/vendor/three/addons/utils/SkeletonUtils.js",
+          "bytes": 11835,
+          "duration": 13.199999995529652
+        },
+        {
+          "path": "/vendor/three/addons/libs/fflate.module.js",
+          "bytes": 89684,
+          "duration": 10.800000004470348
+        },
+        {
+          "path": "/vendor/three/addons/curves/NURBSCurve.js",
+          "bytes": 4188,
+          "duration": 10.399999998509884
+        },
+        {
+          "path": "/vendor/three/addons/curves/NURBSUtils.js",
+          "bytes": 11102,
+          "duration": 2.6999999955296516
+        },
+        {
+          "path": "/assets/portfolio-v1/sheng.glb",
+          "bytes": 4462060,
+          "duration": 94.39999999850988
+        },
+        {
+          "path": "/assets/brand/lockup-nav-ivory.svg",
+          "bytes": 1639,
+          "duration": 2.6999999955296516
+        },
+        {
+          "path": "/assets/brand/lockup-ivory.svg",
+          "bytes": 1568,
+          "duration": 3.399999998509884
+        },
+        {
+          "path": "/assets/thumbs/sheng.png",
+          "bytes": 288774,
+          "duration": 5.4000000059604645
+        },
+        {
+          "path": "/assets/thumbs/dan.png",
+          "bytes": 319275,
+          "duration": 7.9000000059604645
+        },
+        {
+          "path": "/assets/thumbs/jing-red.png",
+          "bytes": 307308,
+          "duration": 7.600000001490116
+        },
+        {
+          "path": "/assets/thumbs/jing-yellow.png",
+          "bytes": 285031,
+          "duration": 7.800000004470348
+        },
+        {
+          "path": "/assets/thumbs/jing-white.png",
+          "bytes": 287838,
+          "duration": 12.200000002980232
+        },
+        {
+          "path": "/assets/brand/favicon.svg",
+          "bytes": 747,
+          "duration": 6.5
+        }
+      ],
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  "calibration": {
+    "baseline": false,
+    "conditions": "512x512, DPR 1, hardware MSAA, identical normalized geometry/camera, authored material, no bloom/shadows/stage, black background; renderer profiles compared.",
+    "models": [
+      {
+        "id": "sheng",
+        "meanChannelDelta": 1.026883544945683,
+        "gallery": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "detail": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "camera": [
+          2.565827486707868,
+          1.214573527120164,
+          -0.12634137101034654
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "tone": [
+          7,
+          7
+        ],
+        "exposure": [
+          1,
+          1
+        ],
+        "lights": {
+          "gallery": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ],
+          "detail": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ]
+        }
+      },
+      {
+        "id": "dan",
+        "meanChannelDelta": 0.8040983410172949,
+        "gallery": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "detail": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "camera": [
+          2.544367235417062,
+          1.188863865482971,
+          -0.382471317121975
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "tone": [
+          7,
+          7
+        ],
+        "exposure": [
+          1,
+          1
+        ],
+        "lights": {
+          "gallery": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ],
+          "detail": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ]
+        },
+        "faceCamera": {
+          "position": [
+            1.0686342388751662,
+            1.1073228235028478,
+            -0.1606379531912295
+          ],
+          "target": [
+            0,
+            0.944,
+            0
+          ]
+        },
+        "normals": [
+          {
+            "vertices": 28662,
+            "triangles": 46828,
+            "repeated": 5304,
+            "minLength": 0.9999999578867866,
+            "maxLength": 1.0000000466012195,
+            "maxSeamDegrees": 0
+          }
+        ]
+      },
+      {
+        "id": "jing-red",
+        "meanChannelDelta": 0.5216329481901221,
+        "gallery": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "detail": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "camera": [
+          2.565827057021971,
+          1.214573527120164,
+          -0.12635009706510192
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "tone": [
+          7,
+          7
+        ],
+        "exposure": [
+          1,
+          1
+        ],
+        "lights": {
+          "gallery": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ],
+          "detail": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ]
+        }
+      },
+      {
+        "id": "jing-yellow",
+        "meanChannelDelta": 1.4292565316500088,
+        "gallery": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "detail": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "camera": [
+          2.5583542814584157,
+          1.214573527120164,
+          0.2329296119384178
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "tone": [
+          7,
+          7
+        ],
+        "exposure": [
+          1,
+          1
+        ],
+        "lights": {
+          "gallery": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ],
+          "detail": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ]
+        }
+      },
+      {
+        "id": "jing-white",
+        "meanChannelDelta": 1.0753318976542323,
+        "gallery": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "detail": [
+          {
+            "metalness": 0,
+            "roughness": 0.9036020036098448,
+            "map": true,
+            "normalMap": false,
+            "env": 1,
+            "flat": false,
+            "anisotropy": 8
+          }
+        ],
+        "camera": [
+          2.5502162681515594,
+          1.214573527120164,
+          0.30956391784172566
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "tone": [
+          7,
+          7
+        ],
+        "exposure": [
+          1,
+          1
+        ],
+        "lights": {
+          "gallery": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ],
+          "detail": [
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                2.8136822185426347,
+                4.47943059347883,
+                2.380808031074537
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffffff",
+              "intensity": 2.2
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -4.2491678266379305,
+                3.0662228408735626,
+                1.9829449857643673
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "dfe9f2",
+              "intensity": 0.55
+            },
+            {
+              "type": "DirectionalLight",
+              "pos": [
+                -1.8343004295433132,
+                3.682472103568064,
+                -3.9306437775928145
+              ],
+              "target": [
+                0,
+                0.8,
+                0
+              ],
+              "color": "ffe9d0",
+              "intensity": 1.1
+            },
+            {
+              "type": "HemisphereLight",
+              "pos": [
+                0,
+                1,
+                0
+              ],
+              "color": "dfe8f0",
+              "intensity": 0.25
+            }
+          ]
+        },
+        "faceCamera": {
+          "position": [
+            1.0710908326236552,
+            1.1181208813904688,
+            0.1300168454935248
+          ],
+          "target": [
+            0,
+            0.944,
+            0
+          ]
+        },
+        "normals": [
+          {
+            "vertices": 26720,
+            "triangles": 46939,
+            "repeated": 3252,
+            "minLength": 0.9999999526022829,
+            "maxLength": 1.0000000477667832,
+            "maxSeamDegrees": 0
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "faceCandidate": {
+    "path": "assets/experiments/dan-cheek-depth-v1/candidate.glb",
+    "sourceSha256": "7f7757dfc2a565119ae4b6cb7171a2b88335bac4130a3c26d8fbae91a2140e9b",
+    "candidateSha256": "c1deb6821870f386d99a779f935ac4dd5d9669f5bcbb1675f4f710b08249f8f2",
+    "region": {
+      "center": [
+        0.044,
+        -0.009,
+        -0.031
+      ],
+      "radiiYZ": [
+        0.008,
+        0.008
+      ],
+      "frontMinX": 0.035,
+      "iterations": 2,
+      "strength": 0.35,
+      "maxDepth": 0.00035
+    },
+    "vertices": 28662,
+    "triangles": 46828,
+    "changedVertices": 34,
+    "updatedNormals": 76,
+    "maxDisplacement": 0.00018675625324249268,
+    "meanDisplacement": 0.0000350808396058924,
+    "flippedTriangles": 0,
+    "minAreaRatio": 0.9163832329222887,
+    "validator": {
+      "numErrors": 0,
+      "numWarnings": 0,
+      "numInfos": 3,
+      "numHints": 2,
+      "messages": [
+        {
+          "code": "BUFFER_VIEW_TARGET_MISSING",
+          "message": "bufferView.target should be set for vertex or index data.",
+          "severity": 3,
+          "pointer": "/meshes/0/primitives/0/attributes/TEXCOORD_0"
+        },
+        {
+          "code": "BUFFER_VIEW_TARGET_MISSING",
+          "message": "bufferView.target should be set for vertex or index data.",
+          "severity": 3,
+          "pointer": "/meshes/0/primitives/0/indices"
+        },
+        {
+          "code": "UNUSED_OBJECT",
+          "message": "This object may be unused.",
+          "severity": 2,
+          "pointer": "/bufferViews/1"
+        },
+        {
+          "code": "UNUSED_OBJECT",
+          "message": "This object may be unused.",
+          "severity": 2,
+          "pointer": "/bufferViews/4"
+        },
+        {
+          "code": "UNUSED_OBJECT",
+          "message": "This object may be unused.",
+          "severity": 2,
+          "pointer": "/bufferViews/5"
+        }
+      ],
+      "truncated": false
+    },
+    "unchanged": [
+      "all original binary bytes",
+      "UV coordinates",
+      "indices",
+      "Y and Z coordinates",
+      "materials",
+      "textures",
+      "images",
+      "normals outside affected triangles"
+    ],
+    "approvedForDisplay": false,
+    "conditions": [
+      {
+        "key": "normal-front-authored",
+        "camera": [
+          2.5729533491854997,
+          1.188863865482971,
+          1.575479541717742e-16
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "exposure": 1,
+        "toneMapping": 7
+      },
+      {
+        "key": "normal-front-clay",
+        "camera": [
+          2.5729533491854997,
+          1.188863865482971,
+          1.575479541717742e-16
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "exposure": 1,
+        "toneMapping": 7
+      },
+      {
+        "key": "normal-oblique-authored",
+        "camera": [
+          2.3901700099776133,
+          1.188863865482971,
+          -0.9524580098295663
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "exposure": 1,
+        "toneMapping": 7
+      },
+      {
+        "key": "normal-oblique-clay",
+        "camera": [
+          2.3901700099776133,
+          1.188863865482971,
+          -0.9524580098295663
+        ],
+        "target": [
+          0,
+          0.8,
+          0
+        ],
+        "exposure": 1,
+        "toneMapping": 7
+      },
+      {
+        "key": "close-front-authored",
+        "camera": [
+          1.1578290071334754,
+          1.0389887394673372,
+          7.089657937729844e-17
+        ],
+        "target": [
+          0,
+          0.8640000000000001,
+          0
+        ],
+        "exposure": 1,
+        "toneMapping": 7
+      },
+      {
+        "key": "close-front-clay",
+        "camera": [
+          1.1578290071334754,
+          1.0389887394673372,
+          7.089657937729844e-17
+        ],
+        "target": [
+          0,
+          0.8640000000000001,
+          0
+        ],
+        "exposure": 1,
+        "toneMapping": 7
+      },
+      {
+        "key": "close-oblique-authored",
+        "camera": [
+          1.0755765044899261,
+          1.0389887394673372,
+          -0.4286061044233049
+        ],
+        "target": [
+          0,
+          0.8640000000000001,
+          0
+        ],
+        "exposure": 1,
+        "toneMapping": 7
+      },
+      {
+        "key": "close-oblique-clay",
+        "camera": [
+          1.0755765044899261,
+          1.0389887394673372,
+          -0.4286061044233049
+        ],
+        "target": [
+          0,
+          0.8640000000000001,
+          0
+        ],
+        "exposure": 1,
+        "toneMapping": 7
+      }
+    ],
+    "render": "Actual Edge, 512x512 DPR1 MSAA. Same camera, scene, lighting, exposure, environment and authored materials; only geometry and affected normals differ."
+  },
+  "agent": {
+    "checks": [
+      "real model returns native tool-call chunks",
+      "real run logs its provider configuration snapshot",
+      "real agent completes without failure",
+      "two real operators pass post-verification",
+      "second operator consumes previous output",
+      "viewport selects actual AI result",
+      "no browser runtime exceptions"
+    ],
+    "errors": [],
+    "model": "deepseek-v4-pro",
+    "runId": "run_1792789615106_52cc5637",
+    "provider": "workbuddy",
+    "status": "complete",
+    "totalMs": 16309,
+    "logPath": "test-out/suite-2026-10-23T21-06-51-521Z/agent-live/live-agent.json",
+    "calls": [
+      {
+        "name": "analyze_asset",
+        "parameters": {
+          "assetId": "agent-live-avocado-ccc9c3ce"
+        },
+        "ok": true,
+        "ms": 10,
+        "version": 0
+      },
+      {
+        "name": "propose_ops",
+        "parameters": {
+          "ops": [
+            {
+              "op": "weld",
+              "reason": "按极小容差合并完全重合/近似重合的重复顶点，减少冗余顶点数据，不改变轮廓与外观。epsilon 取 0.000001（1e-6），仅合并几乎重叠的顶点，风险极低。",
+              "risk": "极低。容差极小，仅合并基本重合的顶点；法线/UV 同时接近才合并，不会破坏 UV 接缝或改变脸谱纹样。"
+            },
+            {
+              "op": "dedup",
+              "reason": "合并完全重复的 accessor、材质与贴图，去除冗余存储，减小体积，无损。",
+              "risk": "无外观风险。仅去除完全重复数据，不改变几何与贴图像素。"
+            }
+          ]
+        },
+        "ok": true,
+        "ms": 1
+      },
+      {
+        "name": "run_op",
+        "parameters": {
+          "assetId": "agent-live-avocado-ccc9c3ce",
+          "op": "weld",
+          "params": {
+            "epsilon": 0.000001
+          }
+        },
+        "ok": true,
+        "ms": 103,
+        "version": 1,
+        "baseVersion": 0,
+        "beforePath": "backend/workspace/assets/agent-live-avocado-ccc9c3ce/original/agent-live-avocado.glb",
+        "afterPath": "pipeline-out/agent-live-avocado-ccc9c3ce-v1/model.glb",
+        "verified": true
+      },
+      {
+        "name": "run_op",
+        "parameters": {
+          "assetId": "agent-live-avocado-ccc9c3ce",
+          "op": "dedup"
+        },
+        "ok": true,
+        "ms": 81,
+        "version": 2,
+        "baseVersion": 1,
+        "beforePath": "pipeline-out/agent-live-avocado-ccc9c3ce-v1/model.glb",
+        "afterPath": "pipeline-out/agent-live-avocado-ccc9c3ce-v2/model.glb",
+        "verified": true
+      },
+      {
+        "name": "verify",
+        "parameters": {
+          "assetId": "agent-live-avocado-ccc9c3ce",
+          "version": 2
+        },
+        "ok": true,
+        "ms": 0
+      },
+      {
+        "name": "compare",
+        "parameters": {
+          "assetId": "agent-live-avocado-ccc9c3ce",
+          "version": 2
+        },
+        "ok": true,
+        "ms": 1,
+        "version": 2
+      },
+      {
+        "name": "finish",
+        "parameters": {
+          "summary": "对许可明确的 Avocado 测试资产（agent-live-avocado-ccc9c3ce，GLB，406 顶点 / 682 三角形 / 3 张贴图）依次执行了两个无损算子并完成后验：\n\n1. weld (epsilon=0.000001)：容差极小，merged=0，说明该网格本就无冗余顶点，几何与贴图完全未变（406→406 顶点，682→682 三角形），边界盒一致。\n2. dedup：合并完全重复的 accessor/材质/贴图。由于资产仅有 1 个材质、3 张互不重复的贴图，无冗余可合并，顶点/三角形/字节数均不变。\n\n最终版本 v2 后验通过（容器格式、重解析、无错误、三角形数与边界盒均一致），外观零改变。未做减面（simplify）与任何贴图操作（resize/compress/convert），符合要求。\n\n结论：该资产本身已较干净，本次两个无损算子未产生可观测的体积或几何收益，但流程已验证通过、无副作用。如需进一步优化体积，后续可考虑（需人工复核外观）：几何量化 quantize、贴图缩放/压缩 textureResize/textureCompress，但这些属于有损算子，本次按指示未执行。",
+          "appliedOps": [
+            "weld(epsilon=0.000001)",
+            "dedup"
+          ]
+        },
+        "ok": true,
+        "ms": 0
+      }
+    ]
+  },
+  "workflow": {
+    "original": {
+      "assetId": "Avocado-ccc9c3ce",
+      "version": 0,
+      "path": "backend/workspace/assets/Avocado-ccc9c3ce/original/Avocado.glb"
+    },
+    "edited": {
+      "assetId": "Avocado-ccc9c3ce",
+      "version": 3,
+      "baseVersion": 0,
+      "afterPath": "pipeline-out/Avocado-ccc9c3ce-v3/model.glb"
+    },
+    "exported": {
+      "assetId": "Avocado-ccc9c3ce",
+      "version": 4,
+      "baseVersion": 3,
+      "afterPath": "pipeline-out/Avocado-ccc9c3ce-v4/model.glb",
+      "verify": {
+        "pass": true,
+        "checks": [
+          {
+            "op": "convert",
+            "pass": true,
+            "checks": [
+              {
+                "name": "container.magic",
+                "ok": true,
+                "detail": "glb"
+              },
+              {
+                "name": "gltf.validator",
+                "ok": true,
+                "detail": {
+                  "numErrors": 0,
+                  "numWarnings": 0,
+                  "numInfos": 0,
+                  "numHints": 0,
+                  "messages": [],
+                  "truncated": false
+                }
+              },
+              {
+                "name": "analyze.reparse",
+                "ok": true
+              },
+              {
+                "name": "analyze.no-error",
+                "ok": true,
+                "detail": ""
+              },
+              {
+                "name": "mono.convert.geometry=",
+                "ok": true,
+                "detail": "406/682->406/682"
+              }
+            ],
+            "opName": "convert",
+            "params": {
+              "to": "glb"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "candidate": {
+    "file": "test-out/FORMA-Portfolio-Candidate-8a025d7.zip",
+    "bytes": 27253815,
+    "sha256": "61d5e877340ffb219cb1c834033e4d289f004222e19b257468fa3bc1debc5d6e",
+    "source": {
+      "runtimeCommit": "8a025d72847846da0af3806e2adcf7fa598a668f",
+      "branch": "feature/codex-v5-release-closeout",
+      "baseline": "c22c14eb0684f4eb1c533400a5f004b4a75c0455",
+      "builtAt": "2026-10-23T21:29:50.570Z",
+      "edition": "showcase",
+      "manifestSha256": "b1c0359f42f2cefdbad64f832bf01b3621a3c6376c926adab785db626ee85f83",
+      "scope": "Home, five Works, interactive Gallery, actual Studio workflow introduction, approved A/V2. No backend, private assets, face trial or V3."
+    }
+  },
+  "protectedFiles": [
+    {
+      "file": "assets/models/dan.glb",
+      "sha256": "ae34dce38bf8acc0cd058f9a42d63c4fecc231863a8d12d517b155e8ca114026"
+    },
+    {
+      "file": "assets/models/jing-red.glb",
+      "sha256": "d26c16e25cc6defaead879b440ee7ab696e2f891fb23fb16517d603bd13066e3"
+    },
+    {
+      "file": "assets/models/jing-white.glb",
+      "sha256": "2a30c1ae95850ec000a5b46fe8774e9596b9e573a7ce17aabb2c3347b79e740e"
+    },
+    {
+      "file": "assets/models/jing-yellow.glb",
+      "sha256": "988b12c331b27e010c8ee0487555aae26b0ddec5d96274e2c1952e1eaa64ed34"
+    },
+    {
+      "file": "assets/models/sheng.glb",
+      "sha256": "b59fd81f14ebda8c90590be37828640819d9f182e1ba6aaa368909340e1bf52b"
+    },
+    {
+      "file": "assets/portfolio-v1/dan.glb",
+      "sha256": "7f7757dfc2a565119ae4b6cb7171a2b88335bac4130a3c26d8fbae91a2140e9b"
+    },
+    {
+      "file": "assets/portfolio-v1/jing-red.glb",
+      "sha256": "5cf85470b1770825f583c006d17b1b23d39cdd1fbdf2e05d32e6150fc996ae7d"
+    },
+    {
+      "file": "assets/portfolio-v1/jing-white.glb",
+      "sha256": "0eb0df82e42479cecc1eb75ebe362af54444340c33f9433242e9b32e8c8b454b"
+    },
+    {
+      "file": "assets/portfolio-v1/jing-yellow.glb",
+      "sha256": "5025b50572f728f74f53ed97d623fc12ac1e808fc8842765f812e9ce396b0d87"
+    },
+    {
+      "file": "assets/portfolio-v1/sheng.glb",
+      "sha256": "59105b4e00f71e0e264bb4e8de28531f37709fd841b82d7eb37027308161dbb7"
+    },
+    {
+      "file": "assets/raw/dan.glb",
+      "sha256": "640e77d37273049347944181e48f2cbd2d0dec62563d97bbfc265823fe26ee70"
+    },
+    {
+      "file": "assets/raw/jing-red.glb",
+      "sha256": "2290c61726996d8d4b1766d3fc0d5cb569731e1aab6d44a1a58bd7af6160a3ee"
+    },
+    {
+      "file": "assets/raw/jing-white.glb",
+      "sha256": "1c5a7822420474026017b0559cd6b744850a827d96023b685a6f7ae7a0db7a57"
+    },
+    {
+      "file": "assets/raw/jing-yellow.glb",
+      "sha256": "390a8b5bdecafde02695eb7cf8442e75f989028c419d66365e8e6e717d9303fd"
+    },
+    {
+      "file": "assets/raw/sheng.glb",
+      "sha256": "6ce3cb51ba55d77581d0e873ecfcdccd9a639da5132a83d4090dbcf06ea6ec6e"
+    },
+    {
+      "file": "assets/brand/lockup-nav-ivory.svg",
+      "sha256": "d52a2437c6558d006e43341d7403533ae5dde77500c2b6633026f6c247b3b5c3"
+    },
+    {
+      "file": "assets/brand/lockup-ivory.svg",
+      "sha256": "1558971d72ebab63f152962c5b23edc66942aadf27f07fa2d674abe6d82f7939"
+    },
+    {
+      "file": "assets/brand/favicon.svg",
+      "sha256": "18f7978168cfda3d3abf68a878bc41066f1fec6775e8f7ccf41de5e637c695bb"
+    },
+    {
+      "file": "assets/brand/motion-v2/geometry.js",
+      "sha256": "6a58e09dc35190cf1b82f0f203a7c3e2f6ed926059e796ba7cb10b2386994b6a"
+    },
+    {
+      "file": "assets/brand/motion-v2/motion.js",
+      "sha256": "27bc23fef49038ec96cbe111d91bc9b9a6d6bda0be42a81fd8962db7bc2c5cde"
+    }
+  ],
+  "originalArchitectureSha256": "177ce7069926dae58fa57fde4ca2caad0c775c0c5198ac4f0a8c06318f21aa42",
+  "commits": [
+    "8a025d72847846da0af3806e2adcf7fa598a668f fix(gallery): preserve button-selected exhibits across share links and refresh",
+    "cd8630b68970e2b5c44fd5f63e6bfd8a291ff729 test(release): cover real closeout flows, native zoom and isolated cheek trial",
+    "14f7e8694f7698674b1b36a0c99e146d790d662b fix(workspaces): make exhibit navigation, copy feedback and export confirmation reliable",
+    "c9fd2a9f4bbe2ff6de582d1d6b9287a0dc7ce5f0 feat(showcase): provide explicit static Studio edition and reliable public scrolling"
+  ],
+  "changedFiles": [
+    "assets/experiments/dan-cheek-depth-v1/README.md",
+    "assets/experiments/dan-cheek-depth-v1/candidate.glb",
+    "assets/experiments/dan-cheek-depth-v1/report.json",
+    "assets/studio-demo/PROVENANCE.json",
+    "assets/studio-demo/analysis.webp",
+    "assets/studio-demo/comparison.webp",
+    "assets/studio-demo/material.webp",
+    "docs/STATIC-MANIFEST.json",
+    "index.html",
+    "src/core/miniViewer.js",
+    "src/core/router.js",
+    "src/main.js",
+    "src/pages/home.js",
+    "src/pages/studioShowcase.js",
+    "src/pages/work.js",
+    "src/runtime.js",
+    "src/studio/core.js",
+    "src/studio/ui.js",
+    "src/ui/contact.js",
+    "src/ui/gallery.js",
+    "styles/studio.css",
+    "styles/v5.css",
+    "tests/run.mjs",
+    "tools/closeout-test.mjs",
+    "tools/face-candidate-test.mjs",
+    "tools/make-face-candidate.mjs",
+    "tools/native-zoom-test.mjs",
+    "tools/static-pack-test.mjs",
+    "tools/static-release.mjs"
+  ],
+  "evidence": {
+    "index": "docs/evidence/release-closeout/README.md",
+    "screenshots": 57
+  },
+  "intermediateCandidate": {
+    "file": "test-out/FORMA-Portfolio-Candidate-cd8630b.zip",
+    "sourceCommit": "cd8630b68970e2b5c44fd5f63e6bfd8a291ff729",
+    "note": "Superseded: late Gallery button-selection URL/refresh defect. Kept for traceability, not final delivery."
+  }
+}
