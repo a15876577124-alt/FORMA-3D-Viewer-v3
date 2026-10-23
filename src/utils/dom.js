@@ -18,6 +18,7 @@ export function el(tag, props = {}, ...children) {
 
 let toastWrap = null;
 const TIMERS = new Map();
+export function clearToasts(){for(const timer of TIMERS.values())clearTimeout(timer);TIMERS.clear();$('toastWrap')?.replaceChildren();}
 
 export function toast(message, kind = '', ms = 4200) {
   if (!toastWrap) toastWrap = $('toastWrap');

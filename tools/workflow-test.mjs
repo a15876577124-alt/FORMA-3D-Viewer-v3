@@ -95,11 +95,11 @@ try{
     if(fixture.endsWith('.fbx')){
       check('FBX embedded images are bound to rendered materials',await page.evaluate(()=>{let maps=0;window.__FORMA.viewer.modelRoot.traverse(o=>{for(const m of (Array.isArray(o.material)?o.material:[o.material]).filter(Boolean))if(m.map?.image?.width>0)maps++;});return maps>0;}));
       await page.click('#stPrepareGLB');await page.waitForFunction(()=>!!window.__FORMA.studio.state.confirmToken);
-      check('FBX conversion shows image loss before confirmation',await page.$eval('#stConfirm',e=>!e.hidden&&e.textContent.includes('5 张')&&e.textContent.includes('2 张')));
+      check('FBX conversion shows channel packing and material risks before confirmation',await page.$eval('#stConfirm',e=>!e.hidden&&e.textContent.includes('5 张')&&e.textContent.includes('通道')));
       await page.click('#stPrepareGLB');
       await page.waitForFunction(()=>window.__FORMA.studio.state.selectedVersion>0&&window.__FORMA.studio.state.selectionStatus==='ready',{timeout:60000});
       check('FBX conversion passes validator and triangle verification',await page.evaluate(()=>window.__FORMA.studio.lastRun.verify.pass));
-      check('FBX conversion reports unsupported texture inventory',await page.evaluate(()=>window.__FORMA.studio.lastRun.results[0].warnings.some(w=>w.includes('5 张')&&w.includes('2 张'))));
+      check('FBX conversion records all five source channel decisions',await page.evaluate(()=>{const r=window.__FORMA.studio.lastRun.channelReport;return r.channels.length===5&&r.channels.every(c=>['exact','channel-packed','approximate'].includes(c.status));}));
       check('FBX converted texture still rendered',await page.evaluate(()=>{let maps=0;window.__FORMA.viewer.modelRoot.traverse(o=>{if(o.isMesh&&o.material.map?.image?.width)maps++;});return maps>0;}));
     }
     const base=await identity();

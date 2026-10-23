@@ -4,7 +4,7 @@
 // 共用同一个 Viewer 与同一份 DOM：不重复初始化 WebGL，不做第二次 canvas 挂载。
 // .sidebar 里插入资源树；main.workspace 首部插工具条、尾部插 Dock；
 // .inspector 里插 Lab 坞。可见性由 body.mode-studio / body.mode-gallery 控制。
-import { el, $, toast } from '../utils/dom.js';
+import { el, $, toast, clearToasts } from '../utils/dom.js';
 import { createStudioCore } from './core.js';
 import { createAssetTree } from './tree.js';
 import { createLabs } from './panes.js';
@@ -161,6 +161,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         tree.renderAssets();
         break;
       case 'select': {
+        clearToasts();
         empty.hidden=!!payload;
         dock.clearConfirm();
         const asset = core.state.assets.find((a) => a.id === payload);
@@ -212,6 +213,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         dock.activate('process');
         break;
       case 'progress':
+        if(payload.busy)clearToasts();
         dock.setBusy(payload.busy, payload.text);
         break;
       case 'log':

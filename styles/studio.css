@@ -575,5 +575,8 @@ body.mode-studio #studioRail {display:block !important;}
 .st-toolbar.has-draft .st-crumb-item::after { content:' · 未保存材质'; color:var(--v5-warn); }
 .st-tex-preview { width:64px; height:64px; object-fit:contain; border:1px solid var(--v5-line-2); border-radius:6px; flex:none; }
 .st-tex-binding { display:block; flex-basis:100%; color:var(--v5-tx-lo); font-size:11px; overflow-wrap:anywhere; }
-.st-tex-row { flex-wrap:wrap; }
+.st-tex-row:has(.st-tex-preview) { grid-template-columns:64px minmax(0,1fr); }
+.st-tex-row:has(.st-tex-preview) .st-tex-preview { grid-row:span 3; }
+.st-tex-row:has(.st-tex-preview) .st-tex-name { white-space:normal; overflow-wrap:anywhere; }
+.st-tex-binding { grid-column:1 / -1; }
 #stPresetInfo { overflow-wrap:anywhere; margin:8px 0; }

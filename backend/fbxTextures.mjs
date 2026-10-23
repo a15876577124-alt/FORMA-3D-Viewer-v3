@@ -100,6 +100,7 @@ function videoFields(node) {
   if (!uri) uri = strings.find((s) => IMG_RE.test(s)) || strings.find((s) => s && !/^(Clip|Video)$/.test(s)) || null;
   if (!content) content = raws.length ? raws.reduce((a, b) => (b.length > a.length ? b : a)) : null;
   return {
+    id: String(node.props[0]?.value ?? ''),
     name: nameFromNode || basenameOf(uri) || basenameOf(strings[0]) || 'texture',
     uri,
     content,
@@ -143,6 +144,7 @@ export function detectFbxTexturesDetailed(buf, { baseDir = null } = {}) {
     const payload = bytes || disk;
     out.push({
       index: i,
+      id: f.id,
       name: f.name,
       uri,
       source,                                   // embedded | external | missing

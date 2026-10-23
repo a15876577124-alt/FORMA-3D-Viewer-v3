@@ -401,6 +401,15 @@ function texturePane({ viewer, core }) {
 
   function renderFbx() {
     fbxBox.innerHTML = '';
+    const report=core.state.selection?.versionMeta?.channelReport;
+    if(report){
+      fbxBox.append(el('div',{class:'st-subhead'},'FBX → glTF 逐通道结果'));
+      const labels={exact:'精确保留','channel-packed':'通道打包',approximate:'近似转换',unsupported:'不支持','missing-resource':'缺少资源'};
+      for(const r of report.channels)fbxBox.append(el('div',{class:'st-issue'},
+        el('span',{class:'st-issue-tag'},labels[r.status]||r.status),
+        el('span',{class:'st-issue-msg'},r.material+' / '+r.property+' → '+(r.outputChannel||'—')),
+        el('span',{class:'st-tex-binding'},r.sourceName+' · '+r.conversion+(r.risk?' · '+r.risk:''))));
+    }
     fbxBox.append(el('div', { class: 'st-subhead' }, 'FBX 贴图关系（后端真实解析）'));
     const t = core.state.textures;
     if (!t) {

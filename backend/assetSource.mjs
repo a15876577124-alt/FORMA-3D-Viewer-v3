@@ -18,5 +18,7 @@ export function resolveAssetSource(assetId, version = 0) {
 export async function describeAssetSource(id, version = 0) {
   const src = resolveAssetSource(id, version);
   const report = await analyzeBuffer(path.basename(src.file), fs.readFileSync(src.file), src.format === 'fbx' ? src.meta.format : src.format, {baseDir:path.dirname(src.file)});
-  return {assetId:src.assetId, version:src.version, path:src.path, format:src.format, name:src.meta.name, report, resources:version ? [] : (src.meta.files || []).map(name => ({name,path:path.relative(PROJECT_ROOT,safeResolveExisting(path.join(PROJECT_ROOT,'backend/workspace/assets',src.assetId,'original'),name)).split(path.sep).join('/')}))};
+  const metaPath=path.join(path.dirname(src.file),'version.json');
+  const versionMeta=version&&fs.existsSync(metaPath)?JSON.parse(fs.readFileSync(metaPath,'utf8')):null;
+  return {assetId:src.assetId, version:src.version, path:src.path, format:src.format, name:src.meta.name, report, versionMeta, resources:version ? [] : (src.meta.files || []).map(name => ({name,path:path.relative(PROJECT_ROOT,safeResolveExisting(path.join(PROJECT_ROOT,'backend/workspace/assets',src.assetId,'original'),name)).split(path.sep).join('/')}))};
 }
