@@ -29,7 +29,7 @@ export function createWorkPage({ params, catalog = [] } = {}) {
     container: stage,
     modelUrl: entry.file || `./assets/models/${id}.glb`,
     autoRotateSpeed: 0.04,
-    initialYaw:Math.atan2(1.1,4.6)-(entry.best?.yaw||0),
+    view:entry.best,
     onReady:stats=>techBox.querySelector('.v5-tech-body').replaceChildren(buildReportStats(stats)),
     onError: () => stage.replaceChildren(el('div', { class: 'v5-state', 'data-tone': 'err' },
       el('div', { class: 'v5-state-icon' }, '!'),

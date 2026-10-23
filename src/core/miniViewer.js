@@ -6,24 +6,28 @@ import * as THREE from 'three';
 import {disposeObject} from '../utils/dispose.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { Environment } from '../lighting/environment.js';
+import { Lighting } from '../lighting/studio.js';
+import { PUBLIC_RENDER_PROFILE } from '../lighting/profile.js';
+import { normalizeModel, applyView, readView } from '../models/place.js';
+import { sanitizeMaterials } from '../materials/override.js';
 
 export function createMiniViewer({
   container,
   modelUrl,
   autoRotateSpeed = 0.05,
-  initialYaw = 0,
+  view = {yaw:0.235,pitch:0.11,distMul:1,targetYMul:0.5},
   interactive = true,
-  cameraFov = 34,
-  fitHeight = 2.1,
-  groundY = -1.05,
+  cameraFov = 38,
   onReady,
   onError,
 } = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  renderer.toneMapping = PUBLIC_RENDER_PROFILE.toneMapping;
+  renderer.toneMappingExposure = PUBLIC_RENDER_PROFILE.exposure;
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.VSMShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.domElement.className = 'v5-mini-canvas';
   container.append(renderer.domElement);
@@ -32,20 +36,8 @@ export function createMiniViewer({
   const camera = new THREE.PerspectiveCamera(cameraFov, 1, 0.05, 80);
   camera.position.set(1.1, 0.5, 4.6);
 
-  // 影棚三点 + RoomEnvironment 反射
-  const keyLight = new THREE.DirectionalLight(0xffe2b8, 3.0);
-  keyLight.position.set(-2.2, 3.2, 2.9);
-  const rimLight = new THREE.DirectionalLight(0x9db8dd, 1.6);
-  rimLight.position.set(2.9, 2.2, -2.5);
-  const fillLight = new THREE.DirectionalLight(0xd9c4a0, 0.55);
-  fillLight.position.set(1.6, 0.5, 2.4);
-  scene.add(keyLight, rimLight, fillLight, new THREE.AmbientLight(0x3a4050, 0.95));
-
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const room=new RoomEnvironment();
-  const envTarget=pmrem.fromScene(room,0.04);
-  scene.environment=envTarget.texture;
-  room.dispose();pmrem.dispose();
+  const lighting=new Lighting(scene,innerWidth<=767?1024:2048);
+  const environment=new Environment(renderer,scene);
 
   // 接地微光（与 hero 一致的克制处理）
   const glow = new THREE.Mesh(
@@ -53,11 +45,10 @@ export function createMiniViewer({
     new THREE.MeshBasicMaterial({ color: 0xd9c4a0, transparent: true, opacity: 0.032, blending: THREE.AdditiveBlending, depthWrite: false }),
   );
   glow.rotation.x = -Math.PI / 2;
-  glow.position.y = groundY - 0.01;
+  glow.position.y = -0.01;
   scene.add(glow);
 
   const root = new THREE.Group();
-  root.rotation.y=initialYaw;
   scene.add(root);
 
   const controls = interactive
@@ -70,35 +61,33 @@ export function createMiniViewer({
     controls.maxDistance = 9;
     controls.target.set(0, 0, 0);
   }
+  const cameraControls=controls||{target:new THREE.Vector3(),update(){}};
 
-  // ---- 加载与归一化（底对齐，脚踩 groundY）----
-  let model = null, disposed = false;
+  // ---- 与 Gallery 共用底对齐归一化和纹理采样 ----
+  let model = null, bounds=null, framed=false, disposed = false;
   const stats = { tris: 0, verts: 0, meshes: 0, textures:0, maxTextureWidth:0 };
   const loadPromise = new Promise((resolve) => {
     new GLTFLoader().load(modelUrl, (gltf) => {
       if(disposed){disposeObject(gltf.scene);resolve(null);return;}
       model = gltf.scene;
-      const box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3());
-      const center = box.getCenter(new THREE.Vector3());
-      const scale = fitHeight / Math.max(size.x, size.y, size.z);
-      model.scale.setScalar(scale);
-      model.position.set(-center.x * scale, -box.min.y * scale + groundY, -center.z * scale);
+      sanitizeMaterials(model,renderer.capabilities.getMaxAnisotropy());
+      bounds=normalizeModel(model).box;
+      lighting.setMode('studio');lighting.fitTo(bounds);
       const textures=new Set();
       model.traverse((o) => {
         if (!o.isMesh) return;
+        o.castShadow=true;o.receiveShadow=true;
         stats.meshes++;
         const pos = o.geometry?.getAttribute?.('position');
         if (pos) { stats.verts += pos.count; stats.tris += (o.geometry.index ? o.geometry.index.count : pos.count) / 3; }
         const mats = Array.isArray(o.material) ? o.material : (o.material ? [o.material] : []);
         for (const m of mats) {
-          if ('envMapIntensity' in m) m.envMapIntensity = 0.85;
           for(const value of Object.values(m))if(value?.isTexture)textures.add(value);
         }
       });
       root.add(model);
       stats.textures=textures.size;stats.maxTextureWidth=Math.max(0,...[...textures].map(t=>t.image?.width||0));
-      render();
+      frame();
       resolve(stats);
       onReady?.(stats);
     }, undefined, (err) => { onError?.(err); resolve(null); });
@@ -108,23 +97,24 @@ export function createMiniViewer({
   function frame() {
     const w = container.clientWidth || 1;
     const h = container.clientHeight || 1;
+    const current=bounds&&framed?readView(camera,cameraControls,bounds):view;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
+    if(bounds){applyView(camera,cameraControls,bounds,current);framed=true;}
     render();
   }
   let raf = 0, running = false;
   const clock = new THREE.Clock();
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(controls){controls.enableDamping=!reduced;controls.addEventListener('change',()=>{if(reduced)render();});}
+  if(controls){controls.enableDamping=!reduced;controls.autoRotate=!reduced&&autoRotateSpeed>0;controls.autoRotateSpeed=autoRotateSpeed*30;controls.addEventListener('change',()=>{if(reduced)render();});}
   function render(){if(!disposed&&!document.hidden&&renderer.domElement.getClientRects().length)renderer.render(scene,camera);}
 
   function tick() {
     raf = requestAnimationFrame(tick);
     const dt = clock.getDelta();
     if(document.hidden)return;
-    if (model && !reduced) root.rotation.y += autoRotateSpeed * dt * 10;
-    controls?.update();
+    controls?.update(dt);
     renderer.render(scene, camera);
   }
   function start() { if (running || disposed || document.hidden) return; if(reduced){render();return;}running = true; clock.start(); tick(); }
@@ -149,11 +139,13 @@ export function createMiniViewer({
         for (const m of mats) { for (const v of Object.values(m)) if (v && v.isTexture) v.dispose(); m?.dispose(); }
       }
     });
-    envTarget.dispose();
+    lighting.key.shadow.dispose();
+    environment.dispose();
     renderer.dispose();
     renderer.forceContextLoss();
     renderer.domElement.remove();
   }
 
-  return { loadPromise, stats, dispose, start, stop, get running() { return running; } };
+  return { loadPromise, stats, dispose, start, stop, render, renderer, scene, camera, controls, root,
+    get modelRoot() { return model; }, get running() { return running; } };
 }

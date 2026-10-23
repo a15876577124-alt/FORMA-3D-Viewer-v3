@@ -2,12 +2,12 @@
   "note": "FORMA 公开展厅静态发布清单。由 tools/static-release.mjs 生成，勿手工编辑。",
   "entry": "index.html",
   "totals": {
-    "files": 95,
-    "bytes": 31934064,
+    "files": 96,
+    "bytes": 31934477,
     "byKind": {
       "html-link": 5,
       "runtime-asset": 12,
-      "module": 71,
+      "module": 72,
       "entry": 2,
       "preview": 2,
       "license": 3
@@ -125,8 +125,8 @@
     {
       "path": "src/core/capabilities.js",
       "kind": "module",
-      "bytes": 1901,
-      "sha256": "ec2d3e131fcbdfb1"
+      "bytes": 1935,
+      "sha256": "869fdc548734055f"
     },
     {
       "path": "src/core/compare.js",
@@ -137,8 +137,8 @@
     {
       "path": "src/core/miniViewer.js",
       "kind": "module",
-      "bytes": 6691,
-      "sha256": "bf4088e67db19fc9"
+      "bytes": 6653,
+      "sha256": "4e496ac0926736a3"
     },
     {
       "path": "src/core/router.js",
@@ -149,14 +149,20 @@
     {
       "path": "src/core/viewer.js",
       "kind": "module",
-      "bytes": 17861,
-      "sha256": "df7894d3ea15b788"
+      "bytes": 17972,
+      "sha256": "4daf0bc5a431d17c"
     },
     {
       "path": "src/lighting/environment.js",
       "kind": "module",
-      "bytes": 3383,
-      "sha256": "442c3f08433165b7"
+      "bytes": 3476,
+      "sha256": "f22d8c32e8ce8421"
+    },
+    {
+      "path": "src/lighting/profile.js",
+      "kind": "module",
+      "bytes": 249,
+      "sha256": "0d0eff31e30bed8b"
     },
     {
       "path": "src/lighting/studio.js",
@@ -245,8 +251,8 @@
     {
       "path": "src/pages/work.js",
       "kind": "module",
-      "bytes": 4976,
-      "sha256": "1492c175272cdc95"
+      "bytes": 4940,
+      "sha256": "3fc9044c82092cae"
     },
     {
       "path": "src/post/composer.js",

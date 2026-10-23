@@ -6,6 +6,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import { Environment, BACKDROPS } from '../lighting/environment.js';
 import { Lighting, LIGHT_PRESETS } from '../lighting/studio.js';
+import { PUBLIC_RENDER_PROFILE } from '../lighting/profile.js';
 import { Stage } from '../stage/ground.js';
 import { PostFX } from '../post/composer.js';
 import {
@@ -43,8 +44,8 @@ export class Viewer {
     });
     this.renderer.setPixelRatio(caps.dpr);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.renderer.toneMapping = TONE_MAP.neutral;
-    this.renderer.toneMappingExposure = 1;
+    this.renderer.toneMapping = PUBLIC_RENDER_PROFILE.toneMapping;
+    this.renderer.toneMappingExposure = PUBLIC_RENDER_PROFILE.exposure;
     this.renderer.shadowMap.enabled = true;
     // three r186 removed PCFSoftShadowMap. VSM is the only remaining type whose
     // blur radius can be tuned, and soft contact shadow is a stated requirement,

@@ -6,6 +6,7 @@
 // with zero external assets.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { PUBLIC_RENDER_PROFILE } from './profile.js';
 
 export const BACKDROPS = {
   charcoal: { outer: '#080a0c', inner: '#1e242c', halt: 0.55 },
@@ -64,7 +65,7 @@ export class Environment {
     const room = new RoomEnvironment();
     this.envRT = pmrem.fromScene(room, 0.04);
     this.scene.environment = this.envRT.texture;
-    this.scene.environmentIntensity = 0.85;
+    this.scene.environmentIntensity = PUBLIC_RENDER_PROFILE.environmentIntensity;
 
     room.traverse((o) => {
       if (o.geometry) o.geometry.dispose();

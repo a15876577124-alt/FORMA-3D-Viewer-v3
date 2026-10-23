@@ -8,8 +8,6 @@ export function detectCapabilities() {
   const renderer = gl ? (() => {
     const ext = gl.getExtension('WEBGL_debug_renderer_info');
     const info = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : '';
-    const lose = gl.getExtension('WEBGL_lose_context');
-    if (lose) lose.loseContext();
     return String(info || '').toLowerCase();
   })() : '';
 
@@ -29,6 +27,8 @@ export function detectCapabilities() {
     const ext = gl.getExtension('EXT_texture_filter_anisotropic');
     return ext ? gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT) : 1;
   })();
+  // Read capabilities while the temporary context is still alive.
+  gl?.getExtension('WEBGL_lose_context')?.loseContext();
 
   return {
     mobile,
