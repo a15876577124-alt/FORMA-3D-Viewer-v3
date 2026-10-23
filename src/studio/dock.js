@@ -223,12 +223,12 @@ export function createDock({ core, toast, getBatchIds }) {
     statusPill.classList.toggle('is-busy', busy);
   }
 
-  function showConfirm(reasons) {
+  function showConfirm(reasons, action = '执行') {
     confirmBox.hidden = false;
     confirmBox.innerHTML = '';
     confirmBox.append(el('strong', {}, '需要确认：'));
     for (const r of reasons) confirmBox.append(el('span', { class: 'st-confirm-reason' }, r));
-    confirmBox.append(el('span', { class: 'st-hint' }, '再次点击「执行」即视为确认。'));
+    confirmBox.append(el('span', { class: 'st-hint' }, '再次点击「'+action+'」即视为确认。'));
   }
   function clearConfirm() { confirmBox.hidden = true; confirmBox.innerHTML = ''; }
 

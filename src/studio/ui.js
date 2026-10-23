@@ -198,7 +198,7 @@ export function buildStudio({ viewer, appState, onPublish, onSyncLibrary, getLoc
         toolbar.setCompareAvailable(!!payload);
         break;
       case 'confirm':
-        dock.showConfirm(payload.reasons || []);
+        dock.showConfirm(payload.reasons || [], payload.action);
         dock.activate('process');
         break;
       case 'progress':

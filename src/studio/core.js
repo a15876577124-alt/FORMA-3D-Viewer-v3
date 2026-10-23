@@ -549,7 +549,7 @@ export function createStudioCore({ viewer, appState, onPublish, onSyncLibrary, o
       if(result.verify.pass)await selectAsset(result.assetId,result.version,{keepRun:true});
       else emit('log',{tone:'err',text:'转换后验未通过，请检查验证报告'});
       return result;
-    }catch(e){if(ticket!==selectionTicket)return null;if(e.status===409&&e.data.needConfirm){state.confirmToken=e.data.token;emit('log',{tone:'warn',text:'确认转换风险后，再次点击「转为 GLB 版本」'});}else {console.error('[prepareGLB]',e.message);emit('log',{tone:'err',text:'转换失败：'+e.message});}return null;}
+    }catch(e){if(ticket!==selectionTicket)return null;if(e.status===409&&e.data.needConfirm){state.confirmToken=e.data.token;emit('confirm',{reasons:e.data.reasons||[],action:'转为 GLB 版本'});emit('log',{tone:'warn',text:(e.data.reasons||['确认转换风险']).join('；')+'；确认后再次点击「转为 GLB 版本」'});}else {console.error('[prepareGLB]',e.message);emit('log',{tone:'err',text:'转换失败：'+e.message});}return null;}
     finally{if(loaded)viewer._disposeLoaded(loaded);emit('progress',{busy:false});}
   }
 
