@@ -4,6 +4,7 @@
    ========================================================================== */
 
 /* ---------- 应用外壳 ---------- */
+body:not(.mode-gallery):not(.mode-studio) { height:auto; min-height:100%; overflow-y:auto; overflow-x:clip; }
 .v5-shell {
   position: relative;
   min-height: 100vh;
@@ -19,6 +20,7 @@
 
 /* 顶部品牌栏 */
 .v5-topbar {
+  flex-shrink:0;
   position: sticky;
   top: 0;
   z-index: var(--v5-z-topbar);
